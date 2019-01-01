@@ -4,19 +4,11 @@ gi.require_version('WebKit2', '4.0')
 from gi.repository import WebKit2
 from gi.repository import Gtk
 
-
-embed_url = 'https://embed.gog.com'
-api_url = 'https://api.gog.com'
-
-
-
 class LoginWindow(Gtk.Window):
 
-    def __init__(self, api):
+    def __init__(self, api, parent=None):
         self.api = api
-        Gtk.Window.__init__(self, title=self.api.get_name())
-
-
+        Gtk.Window.__init__(self, title=self.api.get_name(), parent=parent)
 
         self.set_border_width(0)
         self.set_default_size(390, 510)
@@ -27,14 +19,12 @@ class LoginWindow(Gtk.Window):
         self.webview.connect('load-changed', self.on_navigation)
 
         self.add(self.webview)
-
         self.show_all()
 
     def on_navigation(self, widget, load_event):
         if load_event == WebKit2.LoadEvent.FINISHED:
             uri = widget.get_uri()
-            print(uri)
             if uri.startswith(self.api.get_redirect_uri()):
-                print("success")
-                print(uri)
+                print("success: " + uri)
+                self.api.authenticate(uri)
                 self.destroy()
