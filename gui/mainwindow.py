@@ -11,11 +11,22 @@ class MainWindow(Gtk.Window):
         Gtk.Window.__init__(self, title=name)
 
         # Load the content of the window from a glade file
+
         builder = Gtk.Builder()
         builder.add_from_file("gui/glade/mainwindow.glade")
         builder.connect_signals(self)
 
         vbox = builder.get_object("vbox")
+
+        self.library = builder.get_object("window_library")
+
+
+        #self.button_box = Gtk.Box()
+
+
+        #self.library_button = Gtk.Button.new_with_label("library")
+        #self.library_button.connect("clicked", self.on_button_get_library_clicked)
+        #self.button_box.pack_start(self.library_button, True, True, 0)
 
         self.add(vbox)
         self.show_all()
@@ -31,4 +42,12 @@ class MainWindow(Gtk.Window):
     def on_button_get_library_clicked(self, button):
         print("go get the library")
         self.api.read_activate_token()
-        self.api.get_library()
+        games = self.api.get_library()
+        game_number = 0
+        for product in games['products']:
+            game_number += 1
+            print("{}: {}".format(game_number, product['title']))
+            button = Gtk.Button.new_with_label(product['title'])
+            self.library.add(button)
+        self.show_all()
+

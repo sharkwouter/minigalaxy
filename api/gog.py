@@ -98,9 +98,11 @@ class GOGAPI():
         params = {
             'mediaType': 1,
             'system': '1024', #1024 is Linux
+            'page': 2,
         }
         response = requests.get(url, headers=headers, params=params)
-        print(response.json())
+
+        return response.json()
 
     def get_redirect_uri(self):
         return self.redirect_uri

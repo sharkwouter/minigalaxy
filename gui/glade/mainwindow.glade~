@@ -17,6 +17,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_button_login_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -30,6 +31,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_button_refresh_token_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -43,6 +45,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_button_get_library_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -58,12 +61,27 @@
       </packing>
     </child>
     <child>
-      <object class="GtkScrolledWindow" id="window_library">
+      <object class="GtkScrolledWindow">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
+        <property name="border_width">9</property>
         <property name="shadow_type">in</property>
         <child>
-          <placeholder/>
+          <object class="GtkViewport">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkFlowBox" id="window_library">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="homogeneous">True</property>
+                <property name="column_spacing">15</property>
+                <property name="row_spacing">10</property>
+                <property name="max_children_per_line">5</property>
+                <property name="selection_mode">none</property>
+              </object>
+            </child>
+          </object>
         </child>
       </object>
       <packing>
