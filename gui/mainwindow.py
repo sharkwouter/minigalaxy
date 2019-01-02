@@ -4,6 +4,8 @@ from gi.repository import Gtk
 from sys import platform
 if not platform.startswith('darwin'):
     from gui.loginwindow import LoginWindow
+else:
+    import webbrowser
 
 
 class MainWindow(Gtk.Window):
@@ -34,7 +36,11 @@ class MainWindow(Gtk.Window):
         self.show_all()
 
     def on_button_login_clicked(self, button):
-        LoginWindow(self.api)
+        if not platform.startswith('darwin'):
+            LoginWindow(self.api)
+        else:
+            webbrowser.open(self.api.get_login_url(), new=1)
+            self.present()
 
     def on_button_refresh_token_clicked(self, button):
         print("token needs to be refreshed")
