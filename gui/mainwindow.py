@@ -1,7 +1,9 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from gui.loginwindow import LoginWindow
+from sys import platform
+if not platform.startswith('darwin'):
+    from gui.loginwindow import LoginWindow
 
 
 class MainWindow(Gtk.Window):
