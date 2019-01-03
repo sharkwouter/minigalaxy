@@ -6,7 +6,7 @@ if not platform.startswith('darwin'):
     from gui.loginwindow import LoginWindow
 
 
-@Gtk.Template.from_file("gui/glade/application.glade")
+@Gtk.Template.from_file("data/ui/application.ui")
 class MainWindow(Gtk.ApplicationWindow):
 
     __gtype_name__ = "Window"
