@@ -23,6 +23,27 @@ class Window(Gtk.ApplicationWindow):
         Gtk.ApplicationWindow.__init__(self, title=name)
         self.api = api
 
+        self.__authenticate()
+
+        self.show_all()
+
+        self.sync_library(None)
+
+    @Gtk.Template.Callback("on_header_sync_clicked")
+    def sync_library(self, button):
+        print("go get the library")
+        games = self.api.get_library()
+        for product in games['products']:
+            print(product)
+            button = Gtk.Button.new_with_label(product['title'])
+            self.library.add(button)
+        self.show_all()
+
+    """
+    The API remembers the authentication token and uses it
+    The token is not valid for a long time
+    """
+    def __authenticate(self):
         url = None
         token = None
 
@@ -46,15 +67,3 @@ class Window(Gtk.ApplicationWindow):
         with open("refresh.txt", 'w') as out:
             out.write(authenticated)
             out.close()
-
-        self.show_all()
-
-    @Gtk.Template.Callback("on_header_sync_clicked")
-    def sync_library(self, button):
-        print("go get the library")
-        games = self.api.get_library()
-        for product in games['products']:
-            print(product)
-            button = Gtk.Button.new_with_label(product['title'])
-            self.library.add(button)
-        self.show_all()
