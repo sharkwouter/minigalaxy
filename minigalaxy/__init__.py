@@ -1,0 +1,1 @@
+""" MiniGalaxy packages """
