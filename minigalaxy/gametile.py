@@ -17,7 +17,7 @@ class GameTile(Gtk.Box):
         self.id = id
         self.name = name
         self.api = api
-        self.button.set_label(name)
+        self.button.set_label("download")
         self.image_url = image
         image_thread = threading.Thread(target=self.__load_image)
         image_thread.daemon = True
@@ -33,7 +33,8 @@ class GameTile(Gtk.Box):
         download_thread.start()
 
     def __load_image(self):
-        image_url = "https:" + self.image_url + "_392.jpg"
+        #image_url = "https:" + self.image_url + "_392.jpg" #This is the bigger image size
+        image_url = "https:" + self.image_url + "_196.jpg"
         filename = "data/images/" + str(self.id) + ".jpg"
         if not os.path.isfile(filename):
             download = requests.get(image_url)

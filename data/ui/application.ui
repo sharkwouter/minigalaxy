@@ -10,13 +10,12 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkButton" id="menu_logout">
-            <property name="label" translatable="yes">Logout</property>
+          <object class="GtkModelButton">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <signal name="clicked" handler="on_menu_logout_clicked" swapped="no"/>
+            <property name="text" translatable="yes">Logout</property>
+            <property name="centered">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -25,14 +24,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="menu_preferences">
-            <property name="label">gtk-preferences</property>
+          <object class="GtkModelButton">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <property name="use_stock">True</property>
-            <signal name="clicked" handler="on_menu_preferences_clicked" swapped="no"/>
+            <property name="text" translatable="yes">Preferences</property>
+            <property name="centered">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -52,14 +49,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="menu_about">
-            <property name="label">gtk-about</property>
+          <object class="GtkModelButton">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="relief">none</property>
-            <property name="use_stock">True</property>
-            <signal name="clicked" handler="on_menu_about_clicked" swapped="no"/>
+            <property name="text" translatable="yes">About</property>
+            <property name="centered">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -73,7 +68,7 @@
   <template class="Window" parent="GtkApplicationWindow">
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
-    <property name="default_width">1600</property>
+    <property name="default_width">1400</property>
     <property name="default_height">800</property>
     <child>
       <object class="GtkScrolledWindow">
@@ -129,9 +124,14 @@
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
             <property name="valign">center</property>
+            <property name="use_popover">False</property>
             <property name="popover">menu</property>
             <child>
-              <placeholder/>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_name">open-menu-symbolic</property>
+              </object>
             </child>
           </object>
           <packing>
