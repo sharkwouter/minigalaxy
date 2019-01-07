@@ -3,6 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import os
 from minigalaxy.login import Login
+from minigalaxy.gametile import GameTile
 
 @Gtk.Template.from_file("data/ui/application.ui")
 class Window(Gtk.ApplicationWindow):
@@ -35,8 +36,8 @@ class Window(Gtk.ApplicationWindow):
         games = self.api.get_library()
         for product in games['products']:
             print(product)
-            button = Gtk.Button.new_with_label(product['title'])
-            self.library.add(button)
+            gametile = GameTile(id=product["id"],name=product["title"], image=product["image"], api=self.api)
+            self.library.add(gametile)
         self.show_all()
 
     """

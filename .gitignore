@@ -4,3 +4,4 @@ __pycache__/
 activate.txt
 refresh.txt
 *~
+data/images/*.jpg

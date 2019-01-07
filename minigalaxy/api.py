@@ -68,11 +68,31 @@ class Api:
         params = {
             'mediaType': 1,
             'system': '1024', #1024 is Linux
-            'page': 2,
+            'page': 1,
         }
         response = requests.get(url, headers=headers, params=params)
 
         return response.json()
+
+    def get_game_info(self, id):
+        if not self.active_token or not id:
+            return
+
+        url = "https://embed.gog.com/account/gameDetails/" + str(id) + ".json"
+        headers = {
+            'Authorization': "Bearer " + self.active_token,
+            'Content-Type': "application/json"
+        }
+        response = requests.get(url, headers=headers)
+
+        print(response.text)
+
+        response_json = response.json()
+
+        return {
+
+
+        }
 
     def get_login_url(self):
         params = {
