@@ -61,38 +61,33 @@ class Api:
             return
 
         url = "https://embed.gog.com/account/getFilteredProducts"
-        headers = {
-            'Authorization': "Bearer " + self.active_token,
-            'Content-Type': "application/json"
-        }
         params = {
             'mediaType': 1,
             'system': '1024', #1024 is Linux
             'page': 1,
         }
-        response = requests.get(url, headers=headers, params=params)
+        response = self.__request(url, params=params)
 
-        return response.json()
 
-    def get_game_info(self, id):
-        if not self.active_token or not id:
+        return response
+
+    def download(self, id=None):
+        if not id:
             return
+        url = self.__get_download_url(id)
+        file_data = self.__request(url)
 
-        url = "https://embed.gog.com/account/gameDetails/" + str(id) + ".json"
+        file_url = file_data["downlink"]
+        filename = "data/download/{}.sh".format(id)
         headers = {
             'Authorization': "Bearer " + self.active_token,
-            'Content-Type': "application/json"
         }
-        response = requests.get(url, headers=headers)
-
-        print(response.text)
-
-        response_json = response.json()
-
-        return {
-
-
-        }
+        data = requests.get(file_url, stream=True, headers=headers)
+        handle = open(filename, "wb")
+        for chunk in data.iter_content(chunk_size=512):
+            if chunk:
+                handle.write(chunk)
+        handle.close()
 
     def get_login_url(self):
         params = {
@@ -105,3 +100,19 @@ class Api:
 
     def get_redirect_url(self):
         return self.redirect_uri
+
+    def __get_download_url(self, id):
+        url = 'https://api.gog.com/products/{}?expand=downloads'.format(id)
+        response = self.__request(url)
+        for installer in response["downloads"]["installers"]:
+            if installer["id"] == "installer_linux_en":
+                return_url = installer["files"][0]["downlink"]
+                print(str(return_url))
+                return return_url
+
+    def __request(self, url=None, params=None):
+        headers = {
+            'Authorization': "Bearer " + self.active_token,
+        }
+        response = requests.get(url, headers=headers, params=params)
+        return response.json()

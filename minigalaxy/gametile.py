@@ -19,14 +19,18 @@ class GameTile(Gtk.Box):
         self.api = api
         self.button.set_label(name)
         self.image_url = image
-        image_threat = threading.Thread(target=self.__load_image)
-        image_threat.start()
+        image_thread = threading.Thread(target=self.__load_image)
+        image_thread.daemon = True
+        image_thread.start()
         #self.__load_image(image)
         #self.show_all()
 
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget):
-        print("button")
+        #self.api.get_downlink(self.id)
+        download_thread = threading.Thread(target=self.__download_file)
+        download_thread.daemon = True
+        download_thread.start()
 
     def __load_image(self):
         image_url = "https:" + self.image_url + "_392.jpg"
@@ -37,3 +41,6 @@ class GameTile(Gtk.Box):
                 writer.write(download.content)
                 writer.close()
         self.image.set_from_file(filename)
+
+    def __download_file(self):
+        self.api.download(self.id)
