@@ -4,6 +4,7 @@ from gi.repository import Gtk, GdkPixbuf
 import requests
 import os
 import threading
+import subprocess
 
 @Gtk.Template.from_file("data/ui/gametile.ui")
 class GameTile(Gtk.Box):
@@ -11,6 +12,8 @@ class GameTile(Gtk.Box):
 
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
+
+    state = None
 
     def __init__(self, id=None, name=None, image=None, api=None):
         Gtk.Frame.__init__(self)
@@ -20,13 +23,19 @@ class GameTile(Gtk.Box):
         self.button.set_label("download")
         self.image_url = image
         self.progress_bar = None
+
+        self.__set_state()
+
         image_thread = threading.Thread(target=self.__load_image)
         image_thread.daemon = True
         image_thread.start()
 
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget):
+        if self.state:
+            return
         self.__create_progress_bar()
+        self.button.set_sensitive(False)
         download_thread = threading.Thread(target=self.__download_file)
         download_thread.start()
 
@@ -56,13 +65,20 @@ class GameTile(Gtk.Box):
                 chunk_count += 1
                 handler.write(chunk)
                 downloaded_size += len(chunk)
-                if chunk_count == 1000:
+                #Only update the progress bar when 2 megabyte
+                if chunk_count == 4000:
                     percentage = downloaded_size / total_size
                     self.progress_bar.set_fraction(percentage)
                     self.progress_bar.show_all()
                     chunk_count = 0
-        self.set_center_widget(None)
         handler.close()
+        self.progress_bar.destroy()
+        self.__install_game()
+        self.__set_state()
+
+    def __install_game(self):
+        filename = "data/download/{}.sh".format(self.id)
+        subprocess.run(["unzip", "-qq", "data/download/{}.sh".format(self.id), "data/noarch/*", "-d", "data/installed/{}/".format(self.id)])
 
     def __create_progress_bar(self):
         self.progress_bar = Gtk.ProgressBar()
@@ -74,3 +90,15 @@ class GameTile(Gtk.Box):
         self.progress_bar.set_fraction(0.0)
         self.show_all()
 
+    def __set_state(self):
+        filename = "data/installed/{}/data/noarch/start.sh".format(self.id)
+        if os.path.isfile(filename):
+            self.state = "installed"
+            self.button.set_label("play")
+            self.button.set_sensitive(True)
+            self.button.connect("clicked", self.__start_game)
+            self.button.show_all()
+
+    def __start_game(self, widget):
+        filename = "data/installed/{}/data/noarch/start.sh".format(self.id)
+        subprocess.run([filename])

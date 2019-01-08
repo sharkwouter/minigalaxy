@@ -6,4 +6,5 @@ refresh.txt
 *~
 data/images/*.jpg
 data/download/*.sh
+data/installed/
 *.pyc
