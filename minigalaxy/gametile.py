@@ -30,12 +30,16 @@ class GameTile(Gtk.Box):
         image_thread.daemon = True
         image_thread.start()
 
+    def __str__(self):
+        return self.name
+
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget):
         if self.state:
             return
         self.__create_progress_bar()
         self.button.set_sensitive(False)
+        self.button.set_label("downloading...")
         download_thread = threading.Thread(target=self.__download_file)
         download_thread.start()
 
