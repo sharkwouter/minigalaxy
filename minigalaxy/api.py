@@ -80,7 +80,7 @@ class Api:
         file_url = file_data["downlink"]
         filename = "data/download/{}.sh".format(id)
         headers = {
-            'Authorization': "Bearer " + self.active_token,
+            #'Authorization': "Bearer " + self.active_token,
         }
         data = requests.get(file_url, stream=True, headers=headers)
         handle = open(filename, "wb")
@@ -101,14 +101,12 @@ class Api:
     def get_redirect_url(self):
         return self.redirect_uri
 
-    def __get_download_url(self, id):
+    def get_download_info(self, id):
         url = 'https://api.gog.com/products/{}?expand=downloads'.format(id)
         response = self.__request(url)
         for installer in response["downloads"]["installers"]:
             if installer["id"] == "installer_linux_en":
-                return_url = installer["files"][0]["downlink"]
-                print(str(return_url))
-                return return_url
+                return self.__request(installer["files"][0]["downlink"])
 
     def __request(self, url=None, params=None):
         headers = {
