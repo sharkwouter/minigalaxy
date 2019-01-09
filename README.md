@@ -13,7 +13,7 @@ MiniGalaxy requires the following software to work properly:
 
 ## Installation
 
-** Ubuntu 18.10 **
+**Ubuntu 18.10**
 
 ```sh
 sudo apt-get install python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webkit2-4.0 python3-requests
