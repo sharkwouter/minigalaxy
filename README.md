@@ -31,6 +31,7 @@ The following changes still need to be made:
 * Move download and install locations
 * Create settings window
 * Create about window
+* Fix refresh button
 * Sort games based on name
 * Add a search bar
 * Implement SQLite
