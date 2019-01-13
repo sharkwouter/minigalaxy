@@ -52,7 +52,7 @@ class Window(Gtk.ApplicationWindow):
             with open("refresh.txt", 'r') as out:
                 token = out.read()
 
-        authenticated = self.api.authenticate(token=token, url=url)
+        authenticated = self.api.authenticate(refresh_token=token, login_code=url)
 
         while not authenticated:
             login_url = self.api.get_login_url()
@@ -63,7 +63,7 @@ class Window(Gtk.ApplicationWindow):
             if response == Gtk.ResponseType.NONE:
                 print("This was your action")
                 result = login.get_result()
-                authenticated = self.api.authenticate(token=token, url=result)
+                authenticated = self.api.authenticate(refresh_token=token, login_code=result)
 
         with open("refresh.txt", 'w') as out:
             out.write(authenticated)

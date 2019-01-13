@@ -1,4 +1,4 @@
-from urllib.parse import urlencode, urlparse, parse_qsl
+from urllib.parse import urlencode
 import requests
 
 
@@ -14,11 +14,11 @@ class Api:
     active_until = None
 
     # use a method to authenticate, based on the information we have. Returns None if no information was entered
-    def authenticate(self, url=None, token=None):
-        if token:
-            return self.__refresh_token(token)
-        elif url:
-            return self.__get_token(url)
+    def authenticate(self, login_code=None, refresh_token=None):
+        if refresh_token:
+            return self.__refresh_token(refresh_token)
+        elif login_code:
+            return self.__get_token(login_code)
         else:
             return None
 
@@ -38,18 +38,14 @@ class Api:
 
         return response_params['refresh_token']
 
-    # Get a token based on the url returned by the login screen
-    def __get_token(self, oauth_response):
-        parsed_url = urlparse(oauth_response)
-        input_params = dict(parse_qsl(parsed_url.query))
-        code = input_params.get('code')
-
+    # Get a token based on the code returned by the login screen
+    def __get_token(self, login_code):
         request_url = "https://auth.gog.com/token"
         params = {
             'client_id': self.client_id,
             'client_secret': self.client_secret,
             'grant_type': 'authorization_code',
-            'code': code,
+            'code': login_code,
             'redirect_uri': self.redirect_uri,
         }
         response = requests.get(request_url, params=params)
