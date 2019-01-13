@@ -22,6 +22,26 @@ cd minigalaxy
 python3 minigalaxy.py
 ```
 
+## Todo
+
+The following changes still need to be made:
+
+* Migrate from unzip commands to libzip
+* Create a Gtk.Application class which is called first
+* Move download and install locations
+* Create settings window
+* Create about window
+* Sort games based on name
+* Add a search bar
+* Implement SQLite
+* Move minigalaxy.py to the bin directory
+
+To ensure the quality of the code, the following files need some refactor work:
+
+* gametile.py
+* api.py
+* window.py
+
 ## Resources
 For the development of the following resources are being used for reference:
 
