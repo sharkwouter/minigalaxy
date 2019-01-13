@@ -13,6 +13,7 @@ class Api:
     active_token = None
     active_until = None
 
+    # use a method to authenticate, based on the information we have. Returns None if no information was entered
     def authenticate(self, url=None, token=None):
         if token:
             return self.__refresh_token(token)
@@ -21,13 +22,14 @@ class Api:
         else:
             return None
 
-    def __refresh_token(self, token):
+    # Get a new token with the refresh token received when authenticating the last time
+    def __refresh_token(self, refresh_token):
         request_url = "https://auth.gog.com/token"
         params = {
             'client_id': self.client_id,
             'client_secret': self.client_secret,
             'grant_type': 'refresh_token',
-            'refresh_token': token,
+            'refresh_token': refresh_token,
         }
         response = requests.get(request_url, params=params)
 
@@ -36,8 +38,9 @@ class Api:
 
         return response_params['refresh_token']
 
-    def __get_token(self, url):
-        parsed_url = urlparse(url)
+    # Get a token based on the url returned by the login screen
+    def __get_token(self, oauth_response):
+        parsed_url = urlparse(oauth_response)
         input_params = dict(parse_qsl(parsed_url.query))
         code = input_params.get('code')
 
@@ -56,6 +59,7 @@ class Api:
 
         return response_params['refresh_token']
 
+    # Get all Linux games in the library of the user. Ignore other platforms and movies
     def get_library(self):
         if not self.active_token:
             return
@@ -68,27 +72,9 @@ class Api:
         }
         response = self.__request(url, params=params)
 
-
         return response
 
-    def download(self, id=None):
-        if not id:
-            return
-        url = self.__get_download_url(id)
-        file_data = self.__request(url)
-
-        file_url = file_data["downlink"]
-        filename = "data/download/{}.sh".format(id)
-        headers = {
-            #'Authorization': "Bearer " + self.active_token,
-        }
-        data = requests.get(file_url, stream=True, headers=headers)
-        handle = open(filename, "wb")
-        for chunk in data.iter_content(chunk_size=512):
-            if chunk:
-                handle.write(chunk)
-        handle.close()
-
+    # Generate the URL for the login page for GOG
     def get_login_url(self):
         params = {
             'client_id': self.client_id,
@@ -101,13 +87,15 @@ class Api:
     def get_redirect_url(self):
         return self.redirect_uri
 
-    def get_download_info(self, id):
-        url = 'https://api.gog.com/products/{}?expand=downloads'.format(id)
+    # This returns a unique download url and a link to the checksum of the download
+    def get_download_info(self, game_id):
+        url = 'https://api.gog.com/products/{}?expand=downloads'.format(game_id)
         response = self.__request(url)
         for installer in response["downloads"]["installers"]:
             if installer["id"] == "installer_linux_en":
                 return self.__request(installer["files"][0]["downlink"])
 
+    # Make a request with the active token
     def __request(self, url=None, params=None):
         headers = {
             'Authorization': "Bearer " + self.active_token,
