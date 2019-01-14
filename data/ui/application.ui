@@ -10,7 +10,7 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkModelButton">
+          <object class="GtkModelButton" id="menu_logout">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -24,7 +24,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton">
+          <object class="GtkModelButton" id="menu_preferences">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
@@ -49,7 +49,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton">
+          <object class="GtkModelButton" id="menu_about">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
