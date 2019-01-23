@@ -5,6 +5,7 @@ gi.require_version('WebKit2', '4.0')
 from gi.repository import WebKit2
 from gi.repository import Gtk
 
+
 @Gtk.Template.from_file("data/ui/login.ui")
 class Login(Gtk.Dialog):
     __gtype_name__ = "Login"
@@ -41,7 +42,7 @@ class Login(Gtk.Dialog):
         return self.result
 
     # Get the code from the url returned by GOG when logging in has succeeded
-    def __get_code_from_url(self, url):
+    def __get_code_from_url(self, url: str):
         parsed_url = urlparse(url)
         input_params = dict(parse_qsl(parsed_url.query))
         return input_params.get('code')

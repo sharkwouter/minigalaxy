@@ -18,6 +18,8 @@ class Window(Gtk.ApplicationWindow):
 
     api = None
 
+    tiles = []
+
     refresh_token_file = "refresh.txt"
 
     def __init__(self, name, api):
@@ -34,10 +36,15 @@ class Window(Gtk.ApplicationWindow):
     def sync_library(self, button):
         print("go get the library")
         games = self.api.get_library()
+        tiles = []
         for product in games['products']:
             print(product)
             gametile = GameTile(id=product["id"],name=product["title"], image=product["image"], api=self.api)
-            self.library.add(gametile)
+            tiles.append(gametile)
+
+        tiles.sort()
+        for tile in tiles:
+            self.library.add(tile)
         self.show_all()
 
     """

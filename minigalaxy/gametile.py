@@ -5,6 +5,8 @@ import requests
 import os
 import threading
 import subprocess
+import zipfile
+import tempfile
 
 @Gtk.Template.from_file("data/ui/gametile.ui")
 class GameTile(Gtk.Box):
@@ -24,6 +26,8 @@ class GameTile(Gtk.Box):
         self.image_url = image
         self.progress_bar = None
 
+        self.image.set_tooltip_text(self.name)
+
         self.__set_state()
 
         image_thread = threading.Thread(target=self.__load_image)
@@ -34,7 +38,7 @@ class GameTile(Gtk.Box):
         return self.name
 
     @Gtk.Template.Callback("on_button_clicked")
-    def on_button_click(self, widget):
+    def on_button_click(self, widget) -> None:
         if self.state:
             return
         self.__create_progress_bar()
@@ -43,7 +47,7 @@ class GameTile(Gtk.Box):
         download_thread = threading.Thread(target=self.__download_file)
         download_thread.start()
 
-    def __load_image(self):
+    def __load_image(self) -> None:
         #image_url = "https:" + self.image_url + "_392.jpg" #This is the bigger image size
         image_url = "https:" + self.image_url + "_196.jpg"
         filename = "data/images/" + str(self.id) + ".jpg"
@@ -54,7 +58,7 @@ class GameTile(Gtk.Box):
                 writer.close()
         self.image.set_from_file(filename)
 
-    def __download_file(self):
+    def __download_file(self) -> None:
         download_info = self.api.get_download_info(self.id)
         file_url = download_info["downlink"]
         filename = "data/download/{}.sh".format(self.id)
@@ -80,11 +84,16 @@ class GameTile(Gtk.Box):
         self.__install_game()
         self.__set_state()
 
-    def __install_game(self):
-        filename = "data/download/{}.sh".format(self.id)
-        subprocess.run(["unzip", "-qq", "data/download/{}.sh".format(self.id), "data/noarch/*", "-d", "data/installed/{}/".format(self.id)])
+    def __install_game(self) -> None:
+        outputpath = "data/installed/{}/".format(self.id)
 
-    def __create_progress_bar(self):
+        with tempfile.TemporaryDirectory() as dir:
+            subprocess.call(["unzip", "-qq", "data/download/{}.sh".format(self.id), "data/noarch/*", "-d",
+                            dir])
+            os.rename(dir + "/data/noarch", outputpath)
+        print("still there")
+
+    def __create_progress_bar(self) -> None:
         self.progress_bar = Gtk.ProgressBar()
         self.progress_bar.set_halign(Gtk.Align.CENTER)
         self.progress_bar.set_size_request(196, -1)
@@ -94,8 +103,8 @@ class GameTile(Gtk.Box):
         self.progress_bar.set_fraction(0.0)
         self.show_all()
 
-    def __set_state(self):
-        filename = "data/installed/{}/data/noarch/start.sh".format(self.id)
+    def __set_state(self) -> None:
+        filename = "data/installed/{}/start.sh".format(self.id)
         if os.path.isfile(filename):
             self.state = "installed"
             self.button.set_label("play")
@@ -103,6 +112,13 @@ class GameTile(Gtk.Box):
             self.button.connect("clicked", self.__start_game)
             self.button.show_all()
 
-    def __start_game(self, widget):
-        filename = "data/installed/{}/data/noarch/start.sh".format(self.id)
+    def __start_game(self, widget) -> None:
+        filename = "data/installed/{}/start.sh".format(self.id)
         subprocess.run([filename])
+
+    def __lt__(self, other):
+        names = [str(self), str(other)]
+        names.sort()
+        if names[0] == str(self):
+            return True
+        return False
