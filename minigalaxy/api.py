@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 import requests
+from minigalaxy.game import Game
 
 
 class Api:
@@ -55,19 +56,31 @@ class Api:
         return response_params['refresh_token']
 
     # Get all Linux games in the library of the user. Ignore other platforms and movies
-    def get_library(self) -> tuple:
+    def get_library(self):
         if not self.active_token:
             return
 
+        games = []
+        current_page = 1
+        all_pages_processed = False
         url = "https://embed.gog.com/account/getFilteredProducts"
-        params = {
-            'mediaType': 1,
-            'system': '1024',  # 1024 is Linux
-            'page': 1,
-        }
-        response = self.__request(url, params=params)
 
-        return response
+        while not all_pages_processed:
+            params = {
+                'mediaType': 1,
+                'system': '1024',  # 1024 is Linux
+                'page': current_page,
+            }
+            response = self.__request(url, params=params)
+            total_pages = response['totalPages']
+
+            for product in response['products']:
+                game = Game(name=product["title"],game_id=product["id"], image_url=product["image"])
+                games.append(game)
+            if current_page == total_pages:
+                all_pages_processed = True
+            current_page += 1
+        return games
 
     # Generate the URL for the login page for GOG
     def get_login_url(self) -> str:

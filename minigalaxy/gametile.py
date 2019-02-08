@@ -17,16 +17,14 @@ class GameTile(Gtk.Box):
 
     state = None
 
-    def __init__(self, id=None, name=None, image=None, api=None):
+    def __init__(self, game=None, api=None):
         Gtk.Frame.__init__(self)
-        self.id = id
-        self.name = name
+        self.game = game
         self.api = api
         self.button.set_label("download")
-        self.image_url = image
         self.progress_bar = None
 
-        self.image.set_tooltip_text(self.name)
+        self.image.set_tooltip_text(self.game.get_name())
 
         self.__set_state()
 
@@ -35,7 +33,7 @@ class GameTile(Gtk.Box):
         image_thread.start()
 
     def __str__(self):
-        return self.name
+        return self.game.get_name()
 
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget) -> None:
@@ -49,8 +47,8 @@ class GameTile(Gtk.Box):
 
     def __load_image(self) -> None:
         #image_url = "https:" + self.image_url + "_392.jpg" #This is the bigger image size
-        image_url = "https:" + self.image_url + "_196.jpg"
-        filename = "data/images/" + str(self.id) + ".jpg"
+        image_url = "https:" + self.game.get_image_url() + "_196.jpg"
+        filename = "data/images/" + str(self.game.get_id()) + ".jpg"
         if not os.path.isfile(filename):
             download = requests.get(image_url)
             with open(filename, "wb") as writer:
@@ -59,9 +57,9 @@ class GameTile(Gtk.Box):
         self.image.set_from_file(filename)
 
     def __download_file(self) -> None:
-        download_info = self.api.get_download_info(self.id)
+        download_info = self.api.get_download_info(self.game.get_id())
         file_url = download_info["downlink"]
-        filename = "data/download/{}.sh".format(self.id)
+        filename = "data/download/{}.sh".format(self.game.get_id())
         data = requests.get(file_url, stream=True)
         handler = open(filename, "wb")
 
@@ -85,10 +83,10 @@ class GameTile(Gtk.Box):
         self.__set_state()
 
     def __install_game(self) -> None:
-        outputpath = "data/installed/{}/".format(self.id)
+        outputpath = "data/installed/{}/".format(self.game.get_id())
 
         with tempfile.TemporaryDirectory() as dir:
-            subprocess.call(["unzip", "-qq", "data/download/{}.sh".format(self.id), "data/noarch/*", "-d",
+            subprocess.call(["unzip", "-qq", "data/download/{}.sh".format(self.game.get_id()), "data/noarch/*", "-d",
                             dir])
             os.rename(dir + "/data/noarch", outputpath)
         print("still there")
@@ -104,7 +102,7 @@ class GameTile(Gtk.Box):
         self.show_all()
 
     def __set_state(self) -> None:
-        filename = "data/installed/{}/start.sh".format(self.id)
+        filename = "data/installed/{}/start.sh".format(self.game.get_id())
         if os.path.isfile(filename):
             self.state = "installed"
             self.button.set_label("play")
@@ -113,7 +111,7 @@ class GameTile(Gtk.Box):
             self.button.show_all()
 
     def __start_game(self, widget) -> None:
-        filename = "data/installed/{}/start.sh".format(self.id)
+        filename = "data/installed/{}/start.sh".format(self.game.get_id())
         subprocess.run([filename])
 
     def __lt__(self, other):
