@@ -10,9 +10,6 @@ class Api:
     client_id = "46899977096215655"
     client_secret = "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
 
-    active_token = None
-    active_until = None
-
     # use a method to authenticate, based on the information we have. Returns None if no information was entered
     def authenticate(self, login_code: str = None, refresh_token: str = None) -> str:
         if refresh_token:
@@ -96,8 +93,8 @@ class Api:
         return self.redirect_uri
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game_id: int) -> tuple:
-        url = 'https://api.gog.com/products/{}?expand=downloads'.format(game_id)
+    def get_download_info(self, game: Game) -> tuple:
+        url = 'https://api.gog.com/products/{}?expand=downloads'.format(game.id)
         response = self.__request(url)
         for installer in response["downloads"]["installers"]:
             if installer["id"] == "installer_linux_en":
