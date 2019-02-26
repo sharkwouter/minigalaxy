@@ -32,7 +32,7 @@ The following changes still need to be made:
 * Create settings window
 * Create about window
 * Fix refresh button
-* Sort games based on name
+* ~~Sort games based on name~~
 * Add a search bar
 * Implement SQLite
 * Move minigalaxy.py to the bin directory
