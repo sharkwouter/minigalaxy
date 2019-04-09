@@ -1,6 +1,8 @@
 # MiniGalaxy
 This project is supposed to become a simple client for GOG which works on Linux. Currently it is still work in progress and almost nothing has been implemented yet.
 
+![screenshot](https://github.com/sharkwouter/minigalaxy/raw/master/screenshot.png)
+
 ## Requirements
 
 MiniGalaxy requires the following software to work properly:
