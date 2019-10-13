@@ -36,8 +36,7 @@ The following changes still need to be made:
 * Fix refresh button
 * ~~Sort games based on name~~
 * Add a search bar
-* Implement SQLite
-* Move minigalaxy.py to the bin directory
+* ~~Move minigalaxy.py to the bin directory~~
 
 To ensure the quality of the code, the following files need some refactor work:
 
