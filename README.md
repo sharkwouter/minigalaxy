@@ -1,6 +1,8 @@
 # MiniGalaxy
 This project is supposed to become a simple client for GOG which works on Linux. Currently it is still work in progress and almost nothing has been implemented yet.
 
+![screenshot](https://github.com/sharkwouter/minigalaxy/raw/master/screenshot.png)
+
 ## Requirements
 
 MiniGalaxy requires the following software to work properly:
@@ -32,7 +34,7 @@ The following changes still need to be made:
 * Create settings window
 * Create about window
 * Fix refresh button
-* Sort games based on name
+* ~~Sort games based on name~~
 * Add a search bar
 * Implement SQLite
 * Move minigalaxy.py to the bin directory

@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 import requests
+from minigalaxy.game import Game
 
 
 class Api:
@@ -8,9 +9,6 @@ class Api:
 
     client_id = "46899977096215655"
     client_secret = "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
-
-    active_token = None
-    active_until = None
 
     # use a method to authenticate, based on the information we have. Returns None if no information was entered
     def authenticate(self, login_code: str = None, refresh_token: str = None) -> str:
@@ -55,19 +53,31 @@ class Api:
         return response_params['refresh_token']
 
     # Get all Linux games in the library of the user. Ignore other platforms and movies
-    def get_library(self) -> tuple:
+    def get_library(self):
         if not self.active_token:
             return
 
+        games = []
+        current_page = 1
+        all_pages_processed = False
         url = "https://embed.gog.com/account/getFilteredProducts"
-        params = {
-            'mediaType': 1,
-            'system': '1024',  # 1024 is Linux
-            'page': 1,
-        }
-        response = self.__request(url, params=params)
 
-        return response
+        while not all_pages_processed:
+            params = {
+                'mediaType': 1,
+                'system': '1024',  # 1024 is Linux
+                'page': current_page,
+            }
+            response = self.__request(url, params=params)
+            total_pages = response['totalPages']
+
+            for product in response['products']:
+                game = Game(name=product["title"],game_id=product["id"], image_url=product["image"])
+                games.append(game)
+            if current_page == total_pages:
+                all_pages_processed = True
+            current_page += 1
+        return games
 
     # Generate the URL for the login page for GOG
     def get_login_url(self) -> str:
@@ -83,8 +93,8 @@ class Api:
         return self.redirect_uri
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game_id: int) -> tuple:
-        url = 'https://api.gog.com/products/{}?expand=downloads'.format(game_id)
+    def get_download_info(self, game: Game) -> tuple:
+        url = 'https://api.gog.com/products/{}?expand=downloads'.format(game.id)
         response = self.__request(url)
         for installer in response["downloads"]["installers"]:
             if installer["id"] == "installer_linux_en":

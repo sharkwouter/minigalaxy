@@ -37,9 +37,9 @@ class Window(Gtk.ApplicationWindow):
         print("go get the library")
         games = self.api.get_library()
         tiles = []
-        for product in games['products']:
-            print(product)
-            gametile = GameTile(id=product["id"],name=product["title"], image=product["image"], api=self.api)
+        for game in games:
+            print(game)
+            gametile = GameTile(game=game, api=self.api)
             tiles.append(gametile)
 
         tiles.sort()
