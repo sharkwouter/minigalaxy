@@ -56,7 +56,7 @@ class GameTile(Gtk.Box):
         self.image.set_from_file(filename)
 
     def __download_file(self) -> None:
-        download_info = self.api.get_download_info(self.game.id)
+        download_info = self.api.get_download_info(self.game)
         file_url = download_info["downlink"]
         filename = "data/download/{}.sh".format(self.game.id)
         data = requests.get(file_url, stream=True)
