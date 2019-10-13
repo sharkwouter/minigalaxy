@@ -3,7 +3,9 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import os
 from minigalaxy.login import Login
-from minigalaxy.gametile import GameTile
+from minigalaxy.window.gametile import GameTile
+from minigalaxy.window.preferences import Preferences
+
 
 @Gtk.Template.from_file("data/ui/application.ui")
 class Window(Gtk.ApplicationWindow):
@@ -46,6 +48,10 @@ class Window(Gtk.ApplicationWindow):
         for tile in tiles:
             self.library.add(tile)
         self.show_all()
+
+    @Gtk.Template.Callback("on_menu_preferences_clicked")
+    def show_preferences(self, button):
+        preferences_window = Preferences()
 
     """
     The API remembers the authentication token and uses it

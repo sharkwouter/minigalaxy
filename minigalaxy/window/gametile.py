@@ -8,6 +8,7 @@ import subprocess
 import zipfile
 import tempfile
 
+
 @Gtk.Template.from_file("data/ui/gametile.ui")
 class GameTile(Gtk.Box):
     __gtype_name__ = "GameTile"
@@ -39,8 +40,8 @@ class GameTile(Gtk.Box):
         if self.state:
             return
         self.__create_progress_bar()
-        self.button.set_sensitive(False)
-        self.button.set_label("downloading...")
+        widget.set_sensitive(False)
+        widget.set_label("downloading...")
         download_thread = threading.Thread(target=self.__download_file)
         download_thread.start()
 
@@ -70,7 +71,7 @@ class GameTile(Gtk.Box):
                 chunk_count += 1
                 handler.write(chunk)
                 downloaded_size += len(chunk)
-                #Only update the progress bar when 2 megabyte
+                #Only update the progress bar every 2 megabytes
                 if chunk_count == 4000:
                     percentage = downloaded_size / total_size
                     self.progress_bar.set_fraction(percentage)
@@ -112,9 +113,9 @@ class GameTile(Gtk.Box):
 
         self.button.show_all()
 
-    def __start_game(self, widget) -> None:
+    def __start_game(self, widget) -> subprocess:
         filename = "data/installed/{}/start.sh".format(self.game.id)
-        subprocess.run([filename])
+        return subprocess.run([filename])
 
     def __lt__(self, other):
         names = [str(self), str(other)]

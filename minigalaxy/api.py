@@ -96,6 +96,7 @@ class Api:
     def get_download_info(self, game: Game) -> tuple:
         url = 'https://api.gog.com/products/{}?expand=downloads'.format(game.id)
         response = self.__request(url)
+        print(repr(response))
         for installer in response["downloads"]["installers"]:
             if installer["id"] == "installer_linux_en":
                 return self.__request(installer["files"][0]["downlink"])
