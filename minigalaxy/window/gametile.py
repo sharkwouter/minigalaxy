@@ -5,8 +5,6 @@ import requests
 import os
 import threading
 import subprocess
-import zipfile
-import tempfile
 
 
 @Gtk.Template.from_file("data/ui/gametile.ui")
@@ -46,7 +44,7 @@ class GameTile(Gtk.Box):
         download_thread.start()
 
     def __load_image(self) -> None:
-        #image_url = "https:" + self.image_url + "_392.jpg" #This is the bigger image size
+        # image_url = "https:" + self.image_url + "_392.jpg" #This is the bigger image size
         image_url = "https:{}_196.jpg".format(self.game.image_url)
         filename = "data/images/{}.jpg".format(self.game.id)
         if not os.path.isfile(filename):
@@ -71,7 +69,7 @@ class GameTile(Gtk.Box):
                 chunk_count += 1
                 handler.write(chunk)
                 downloaded_size += len(chunk)
-                #Only update the progress bar every 2 megabytes
+                # Only update the progress bar every 2 megabytes
                 if chunk_count == 4000:
                     percentage = downloaded_size / total_size
                     self.progress_bar.set_fraction(percentage)
@@ -85,11 +83,9 @@ class GameTile(Gtk.Box):
     def __install_game(self) -> None:
         outputpath = "data/installed/{}/".format(self.game.id)
 
-        with tempfile.TemporaryDirectory() as dir:
-            subprocess.call(["unzip", "-qq", "data/download/{}.sh".format(self.game.id), "data/noarch/*", "-d",
-                            dir])
-            os.rename(dir + "/data/noarch", outputpath)
-        print("still there")
+        subprocess.call(["unzip", "-qq", "data/download/{}.sh".format(self.game.id), "data/noarch/*", "-d",
+                         "temp"])
+        os.rename("temp/data/noarch", outputpath)
 
     def __create_progress_bar(self) -> None:
         self.progress_bar = Gtk.ProgressBar()
@@ -111,7 +107,7 @@ class GameTile(Gtk.Box):
         else:
             self.button.set_label("download")
 
-        self.button.show_all()
+        self.button.show()
 
     def __start_game(self, widget) -> subprocess:
         filename = "data/installed/{}/start.sh".format(self.game.id)
