@@ -28,7 +28,7 @@ python3 minigalaxy.py
 
 The following changes still need to be made:
 
-* Migrate from unzip commands to libzip
+* ~~Migrate from unzip commands to zipfile~~ Not desirable, since zipfile doesn't preserve permissions
 * Create a Gtk.Application class which is called first
 * Move download and install locations
 * Create settings window
@@ -37,6 +37,9 @@ The following changes still need to be made:
 * ~~Sort games based on name~~
 * Add a search bar
 * ~~Move minigalaxy.py to the bin directory~~
+* Create ``setup.py``
+* Move to sqlite
+* Remove command line output where it isn't needed
 
 To ensure the quality of the code, the following files need some refactor work:
 
