@@ -40,6 +40,7 @@ class Preferences(Gtk.Dialog):
         self.combobox_language.set_entry_text_column(1)
         self.renderer_text = Gtk.CellRendererText()
         self.combobox_language.pack_start(self.renderer_text, False)
+        self.combobox_language.add_attribute(self.renderer_text, "text", 1)
 
         self.show_all()
 
