@@ -1,3 +1,5 @@
+import shutil
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf
@@ -81,11 +83,16 @@ class GameTile(Gtk.Box):
         self.__load_state()
 
     def __install_game(self) -> None:
-        outputpath = "data/installed/{}/".format(self.game.id)
+        outputpath = "data/installed/{}/".format(self.game.name)
+        temp_dir = "temp/{}".format(self.game.id)
+
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
 
         subprocess.call(["unzip", "-qq", "data/download/{}.sh".format(self.game.id), "data/noarch/*", "-d",
-                         "temp"])
-        os.rename("temp/data/noarch", outputpath)
+                         temp_dir])
+        os.rename(os.path.join(temp_dir, "data/noarch"), outputpath)
+        shutil.rmtree(temp_dir, ignore_errors=True)
 
     def __create_progress_bar(self) -> None:
         self.progress_bar = Gtk.ProgressBar()
@@ -95,10 +102,10 @@ class GameTile(Gtk.Box):
         self.progress_bar.set_vexpand(False)
         self.set_center_widget(self.progress_bar)
         self.progress_bar.set_fraction(0.0)
-        self.show_all()
+        self.show()
 
     def __load_state(self) -> None:
-        filename = "data/installed/{}/start.sh".format(self.game.id)
+        filename = "data/installed/{}/start.sh".format(self.game.name)
         if os.path.isfile(filename):
             self.state = "installed"
             self.button.set_label("play")
@@ -110,7 +117,7 @@ class GameTile(Gtk.Box):
         self.button.show()
 
     def __start_game(self, widget) -> subprocess:
-        filename = "data/installed/{}/start.sh".format(self.game.id)
+        filename = "data/installed/{}/start.sh".format(self.game.name)
         return subprocess.run([filename])
 
     def __lt__(self, other):
