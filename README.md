@@ -6,7 +6,7 @@ A simple GOG client for Linux that lets you download and play your GOG Linux gam
 
 ## Requirements
 
-MiniGalaxy requires the following software to work properly:
+MiniGalaxy requires the following dependencies to be installed:
 
 * *python3* - versions below 3.6 have not been tested
 * *python3-gobject* - python library for GTK+, version 3.30+ is required
