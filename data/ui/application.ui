@@ -97,6 +97,27 @@
           </object>
         </child>
         <child>
+          <object class="GtkSwitch" id="header_installed">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="tooltip_text" translatable="yes">Show only installed games</property>
+            <signal name="state-set" handler="on_header_installed_state_set" swapped="no"/>
+          </object>
+          <packing>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="header_installed_label">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Installed</property>
+          </object>
+          <packing>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkMenuButton" id="header_menu">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -111,6 +132,19 @@
                 <property name="icon_name">open-menu-symbolic</property>
               </object>
             </child>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSearchEntry" id="header_search">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="primary_icon_name">edit-find-symbolic</property>
+            <property name="primary_icon_activatable">False</property>
+            <property name="primary_icon_sensitive">False</property>
           </object>
           <packing>
             <property name="pack_type">end</property>

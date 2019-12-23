@@ -16,13 +16,12 @@ class GameTile(Gtk.Box):
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
 
-    state = None
-
     def __init__(self, game=None, api=None):
         Gtk.Frame.__init__(self)
         self.game = game
         self.api = api
         self.progress_bar = None
+        self.installed = False
 
         self.image.set_tooltip_text(self.game.name)
 
@@ -44,7 +43,7 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget) -> None:
-        if self.state:
+        if self.installed:
             return
         self.__create_progress_bar()
         widget.set_sensitive(False)
@@ -116,11 +115,12 @@ class GameTile(Gtk.Box):
 
     def __load_state(self) -> None:
         if os.path.isfile(self.executable_path):
-            self.state = "installed"
+            self.installed = True
             self.button.set_label("play")
             self.button.set_sensitive(True)
             self.button.connect("clicked", self.__start_game)
         else:
+            self.installed = False
             self.button.set_label("download")
 
         self.button.show()
