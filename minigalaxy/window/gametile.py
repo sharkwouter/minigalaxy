@@ -129,6 +129,11 @@ class GameTile(Gtk.Box):
         return subprocess.run([self.executable_path])
 
     def __lt__(self, other):
+        if self.image.get_sensitive() != other.image.get_sensitive():
+            if self.image.get_sensitive():
+                return True
+            else:
+                return False
         names = [str(self), str(other)]
         names.sort()
         if names[0] == str(self):

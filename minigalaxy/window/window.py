@@ -70,14 +70,14 @@ class Window(Gtk.ApplicationWindow):
 
     def update_game_tiles(self):
         for gametile in self.tiles:
-            print(str(gametile))
             if gametile.installed and self.show_installed_only or not self.show_installed_only:
                 if self.search_string.lower() in str(gametile).lower():
-                    gametile.show()
+                    gametile.image.set_sensitive(True)
                 else:
-                    gametile.hide()
+                    gametile.image.set_sensitive(False)
             else:
-                gametile.hide()
+                gametile.image.set_sensitive(False)
+
 
     """
     The API remembers the authentication token and uses it
