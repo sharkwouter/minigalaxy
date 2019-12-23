@@ -30,22 +30,24 @@ The following changes still need to be made:
 
 * ~~Migrate from unzip commands to zipfile~~ Not desirable, since zipfile doesn't preserve permissions
 * Create a Gtk.Application class which is called first
-* Move download and install locations
-* Create settings window
+* ~~Move download and install locations~~
+* ~~Create settings window~~
 * Create about window
 * Fix refresh button
 * ~~Sort games based on name~~
 * Add a search bar
 * ~~Move minigalaxy.py to the bin directory~~
 * Create ``setup.py``
-* Move to sqlite
+* ~~Move to sqlite~~ A JSON file was chosen instead
 * Remove command line output where it isn't needed
 
-To ensure the quality of the code, the following files need some refactor work:
+## Known issues
 
-* gametile.py
-* api.py
-* window.py
+Expect to see the following issues:
+
+* Changing the installation directory makes MiniGalaxy unable to detect previously installed games
+* After an hour of use, MiniGalaxy may need to be restarted before being able to install games again
+* Selected language isn't being used yet
 
 ## Resources
 For the development of the following resources are being used for reference:
