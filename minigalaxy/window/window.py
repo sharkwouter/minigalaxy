@@ -119,6 +119,9 @@ class Window(Gtk.ApplicationWindow):
             login = Login(login_url=login_url, redirect_url=redirect_url, parent=self)
             response = login.run()
             login.hide()
+            if response == Gtk.ResponseType.DELETE_EVENT:
+                Gtk.main_quit()
+                exit(1)
             if response == Gtk.ResponseType.NONE:
                 result = login.get_result()
                 authenticated = self.api.authenticate(refresh_token=token, login_code=result)
