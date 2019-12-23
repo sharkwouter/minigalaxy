@@ -2,7 +2,7 @@ import os
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-from minigalaxy.login import Login
+from minigalaxy.window.login import Login
 from minigalaxy.window.gametile import GameTile
 from minigalaxy.window.preferences import Preferences
 from minigalaxy.window.about import About

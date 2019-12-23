@@ -1,12 +1,14 @@
+import os
 from urllib.parse import urlparse, parse_qsl
 import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('WebKit2', '4.0')
 from gi.repository import WebKit2
 from gi.repository import Gtk
+from minigalaxy.directories import UI_DIR
 
 
-@Gtk.Template.from_file("data/ui/login.ui")
+@Gtk.Template.from_file(os.path.join(UI_DIR, "login.ui"))
 class Login(Gtk.Dialog):
     __gtype_name__ = "Login"
 
