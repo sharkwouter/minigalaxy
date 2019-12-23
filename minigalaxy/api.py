@@ -4,11 +4,12 @@ from minigalaxy.game import Game
 
 
 class Api:
-    login_success_url = "https://embed.gog.com/on_login_success"
-    redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
-
-    client_id = "46899977096215655"
-    client_secret = "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
+    def __init__(self, config):
+        self.config = config
+        self.login_success_url = "https://embed.gog.com/on_login_success"
+        self.redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
+        self.client_id = "46899977096215655"
+        self.client_secret = "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
 
     # use a method to authenticate, based on the information we have. Returns None if no information was entered
     def authenticate(self, login_code: str = None, refresh_token: str = None) -> str:

@@ -5,6 +5,8 @@ import os
 from minigalaxy.login import Login
 from minigalaxy.window.gametile import GameTile
 from minigalaxy.window.preferences import Preferences
+from minigalaxy.api import Api
+from minigalaxy.config import Config
 
 
 @Gtk.Template.from_file("data/ui/application.ui")
@@ -24,9 +26,10 @@ class Window(Gtk.ApplicationWindow):
 
     refresh_token_file = "refresh.txt"
 
-    def __init__(self, name, api):
+    def __init__(self, name):
         Gtk.ApplicationWindow.__init__(self, title=name)
-        self.api = api
+        self.config = Config()
+        self.api = Api(self.config)
 
         self.__authenticate()
 
@@ -34,13 +37,12 @@ class Window(Gtk.ApplicationWindow):
 
         self.sync_library(None)
 
+
     @Gtk.Template.Callback("on_header_sync_clicked")
     def sync_library(self, button):
-        print("go get the library")
         games = self.api.get_library()
         tiles = []
         for game in games:
-            print(game)
             gametile = GameTile(game=game, api=self.api)
             tiles.append(gametile)
 
@@ -51,7 +53,8 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
-        preferences_window = Preferences()
+        preferences_window = Preferences(self.config)
+        preferences_window.show()
 
     """
     The API remembers the authentication token and uses it
@@ -59,11 +62,7 @@ class Window(Gtk.ApplicationWindow):
     """
     def __authenticate(self):
         url = None
-        token = None
-
-        if os.path.isfile(self.refresh_token_file):
-            with open("refresh.txt", 'r') as out:
-                token = out.read()
+        token = self.config.get("refresh_token")
 
         authenticated = self.api.authenticate(refresh_token=token, login_code=url)
 
@@ -78,6 +77,4 @@ class Window(Gtk.ApplicationWindow):
                 result = login.get_result()
                 authenticated = self.api.authenticate(refresh_token=token, login_code=result)
 
-        with open("refresh.txt", 'w') as out:
-            out.write(authenticated)
-            out.close()
+        self.config.set("refresh_token", authenticated)
