@@ -6,10 +6,10 @@ import requests
 import os
 import threading
 import subprocess
-from minigalaxy.directories import CACHE_DIR, THUMBNAIL_DIR
+from minigalaxy.directories import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 
 
-@Gtk.Template.from_file("data/ui/gametile.ui")
+@Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
 class GameTile(Gtk.Box):
     __gtype_name__ = "GameTile"
 

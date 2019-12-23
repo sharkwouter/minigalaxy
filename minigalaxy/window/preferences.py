@@ -2,6 +2,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import os
+from minigalaxy.directories import UI_DIR
 
 SUPPORTED_LANGUAGES = [
     ["br", "Brazilian Portuguese"],
@@ -25,7 +26,8 @@ SUPPORTED_LANGUAGES = [
     ["tr", "Turkish"],
 ]
 
-@Gtk.Template.from_file("data/ui/preferences.ui")
+
+@Gtk.Template.from_file(os.path.join(UI_DIR, "preferences.ui"))
 class Preferences(Gtk.Dialog):
     __gtype_name__ = "Preferences"
 
@@ -34,8 +36,8 @@ class Preferences(Gtk.Dialog):
     combobox_language = Gtk.Template.Child()
     entry_installpath = Gtk.Template.Child()
 
-    def __init__(self, config):
-        Gtk.Dialog.__init__(self, title="Preferences")
+    def __init__(self, parent, config):
+        Gtk.Dialog.__init__(self, title="Preferences", parent=parent, modal=True)
         self.__config = config
         self.__set_language_list()
         self.entry_installpath.set_text(config.get("install_dir"))

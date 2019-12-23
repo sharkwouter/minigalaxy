@@ -48,16 +48,6 @@ Expect to see the following issues:
 * Using MiniGalaxy without an internet connection does not work
 * Changing the installation directory makes MiniGalaxy unable to detect previously installed games
 * After an hour of use, MiniGalaxy may need to be restarted before being able to install games again
-* Selected language isn't being used yet
-* Sometimes after installing a game MiniGalaxy will crash with the following error:
-
-```
-[xcb] Unknown sequence number while processing queue
-[xcb] Most likely this is a multi-threaded client and XInitThreads has not been called
-[xcb] Aborting, sorry about that.
-python3: ../../src/xcb_io.c:263: poll_for_event: Assertion `!xcb_xlib_threads_sequence_lost' failed.
-Aborted
-```
 
 ## Resources
 For the development of the following resources are being used for reference:

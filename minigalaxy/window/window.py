@@ -1,14 +1,17 @@
+import os
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from minigalaxy.login import Login
 from minigalaxy.window.gametile import GameTile
 from minigalaxy.window.preferences import Preferences
+from minigalaxy.window.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
+from minigalaxy.directories import UI_DIR
 
 
-@Gtk.Template.from_file("data/ui/application.ui")
+@Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
 class Window(Gtk.ApplicationWindow):
 
     __gtype_name__ = "Window"
@@ -65,8 +68,13 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
-        preferences_window = Preferences(self.config)
+        preferences_window = Preferences(self, self.config)
         preferences_window.show()
+
+    @Gtk.Template.Callback("on_menu_about_clicked")
+    def show_about(self, button):
+        about_window = About(self)
+        about_window.show()
 
     def filter_tiles(self, child):
         tile = child.get_children()[0]
