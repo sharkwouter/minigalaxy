@@ -1,7 +1,8 @@
 # MiniGalaxy
-This project is supposed to become a simple client for GOG which works on Linux. Currently it is still work in progress and almost nothing has been implemented yet.
 
-![screenshot](https://github.com/sharkwouter/minigalaxy/raw/master/screenshot.png)
+A simple GOG client for Linux. Just click download and play!
+
+![screenshot](screenshot.png?raw=true)
 
 ## Requirements
 
@@ -11,7 +12,7 @@ MiniGalaxy requires the following software to work properly:
 * *python3-gobject* - python library for GTK+, version 3.30+ is required
 * *python3-requests* - python library for making requests to server
 * *GTK+* - versions below 3.24 have not been tested
-* *webkit2gtk* - a browser engine library used for logging into GOG, a version with support for API version 4.0 is required
+* *webkit2gtk* - a browser engine library. It is used for logging into GOG. A version with support for API version 4.0 is required
 
 ## Installation
 
@@ -52,11 +53,3 @@ Expect to see the following issues:
 * Changing the installation directory makes MiniGalaxy unable to detect previously installed games
 * After an hour of use, MiniGalaxy may need to be restarted before being able to install games again
 
-## Resources
-For the development of the following resources are being used for reference:
-
-* [Unofficial GOG API documentation](https://gogapidocs.readthedocs.io/en/latest/)
-* [The Python GTK+ 3 Tutorial](https://python-gtk-3-tutorial.readthedocs.io/en/latest/)
-* [PyGObject documentation](https://pygobject.readthedocs.io/en/latest/index.html)
-* [Lutris' implementation](https://github.com/lutris/lutris/blob/gog/lutris/services/gog.py)
-* [sys library documentation](https://docs.python.org/3/library/sys.html#sys.platform)
