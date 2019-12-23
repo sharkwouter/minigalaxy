@@ -12,7 +12,7 @@
     <property name="website_label" translatable="yes">Github page</property>
     <property name="authors">&lt;a href="https://github.com/sharkwouter"&gt;Wouter Wijsman&lt;/a&gt;</property>
     <property name="artists">&lt;a href="https://opengameart.org/users/epic-runes"&gt;Epic Runes&lt;/a&gt;</property>
-    <property name="logo">data/images/logo.png</property>
+    <property name="logo_icon_name">image-missing</property>
     <property name="license_type">gpl-3-0</property>
     <child type="titlebar">
       <placeholder/>
