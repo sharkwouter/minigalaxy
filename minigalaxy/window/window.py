@@ -103,7 +103,6 @@ class Window(Gtk.ApplicationWindow):
             response = login.run()
             login.hide()
             if response == Gtk.ResponseType.NONE:
-                print("This was your action")
                 result = login.get_result()
                 authenticated = self.api.authenticate(refresh_token=token, login_code=result)
 

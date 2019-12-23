@@ -32,14 +32,14 @@ The following changes still need to be made:
 * Create a Gtk.Application class which is called first
 * ~~Move download and install locations~~
 * ~~Create settings window~~
-* Create about window
+* ~~Create about window~~
 * ~~Fix refresh button~~
 * ~~Sort games based on name~~
 * ~~Add a search bar~~
 * ~~Move minigalaxy.py to the bin directory~~
 * Create ``setup.py``
 * ~~Move to sqlite~~ A JSON file was chosen instead
-* Remove command line output where it isn't needed
+* ~~Remove command line output where it isn't needed~~
 
 ## Known issues
 
