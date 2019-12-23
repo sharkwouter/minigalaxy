@@ -167,12 +167,14 @@
               <object class="GtkFlowBox" id="library">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="valign">start</property>
                 <property name="border_width">15</property>
                 <property name="homogeneous">True</property>
                 <property name="column_spacing">15</property>
                 <property name="row_spacing">10</property>
-                <property name="max_children_per_line">5</property>
+                <property name="max_children_per_line">100</property>
                 <property name="selection_mode">none</property>
+                <property name="activate_on_single_click">False</property>
               </object>
             </child>
           </object>

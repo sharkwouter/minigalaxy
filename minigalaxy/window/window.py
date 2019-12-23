@@ -51,32 +51,32 @@ class Window(Gtk.ApplicationWindow):
         self.tiles.sort()
         for tile in self.tiles:
             self.library.add(tile)
-        self.update_game_tiles()
+            tile.show()
 
     @Gtk.Template.Callback("on_header_installed_state_set")
     def show_installed_only_triggered(self, switch, state):
         self.show_installed_only = state
-        self.update_game_tiles()
+        self.library.set_filter_func(self.filter_tiles)
 
     @Gtk.Template.Callback("on_header_search_changed")
     def search(self, widget):
         self.search_string = widget.get_text()
-        self.update_game_tiles()
+        self.library.set_filter_func(self.filter_tiles)
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
         preferences_window = Preferences(self.config)
         preferences_window.show()
 
-    def update_game_tiles(self):
-        for gametile in self.tiles:
-            if gametile.installed and self.show_installed_only or not self.show_installed_only:
-                if self.search_string.lower() in str(gametile).lower():
-                    gametile.image.set_sensitive(True)
-                else:
-                    gametile.image.set_sensitive(False)
+    def filter_tiles(self, child):
+        tile = child.get_children()[0]
+        if tile.installed and self.show_installed_only or not self.show_installed_only:
+            if self.search_string.lower() in str(tile).lower():
+                return True
             else:
-                gametile.image.set_sensitive(False)
+                return False
+        else:
+            return False
 
     """
     The API remembers the authentication token and uses it
