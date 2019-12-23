@@ -1,3 +1,4 @@
+import time
 from urllib.parse import urlencode
 import requests
 from minigalaxy.game import Game
@@ -11,7 +12,8 @@ class Api:
         self.client_id = "46899977096215655"
         self.client_secret = "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
 
-    # use a method to authenticate, based on the information we have. Returns None if no information was entered
+    # use a method to authenticate, based on the information we have
+    # Returns an empty string if no information was entered
     def authenticate(self, login_code: str = None, refresh_token: str = None) -> str:
         if refresh_token:
             return self.__refresh_token(refresh_token)
@@ -33,6 +35,8 @@ class Api:
 
         response_params = response.json()
         self.active_token = response_params['access_token']
+        expires_in = response_params["expires_in"]
+        self.active_token_expiration_time = time.time() + int(expires_in)
 
         return response_params['refresh_token']
 
@@ -113,7 +117,7 @@ class Api:
         # This is just a backup, if the preferred language has been found, this part won't execute
         return self.__request(possible_downloads[-1]["files"][0]["downlink"])
 
-    def get_user_info(self):
+    def get_user_info(self) -> str:
         username = self.config.get("username")
         if not username:
             url = "https://embed.gog.com/userData.json"
@@ -124,6 +128,13 @@ class Api:
 
     # Make a request with the active token
     def __request(self, url: str = None, params: dict = None) -> tuple:
+        # Refresh the token if needed
+        if self.active_token_expiration_time < time.time():
+            print("Refreshing token")
+            refresh_token = self.config.get("refresh_token")
+            self.config.set("refresh_token", self.__refresh_token(refresh_token))
+
+        # Make the request
         headers = {
             'Authorization': "Bearer " + self.active_token,
         }

@@ -1,6 +1,6 @@
 # MiniGalaxy
 
-A simple GOG client for Linux. Just click download and play!
+A simple GOG client for Linux that lets you download and play your GOG Linux games.
 
 ![screenshot](screenshot.png?raw=true)
 
@@ -31,7 +31,6 @@ The following changes still need to be made:
 
 * Create a Gtk.Application class which is called first
 * Create ``setup.py``
-* Deal with api tokens expiring
 * Make users able to remove games
 * Show error when failing to launch a game
 
@@ -41,5 +40,3 @@ Expect to see the following issues:
 
 * Using MiniGalaxy without an internet connection does not work
 * Changing the installation directory makes MiniGalaxy unable to detect previously installed games
-* After an hour of use, MiniGalaxy may need to be restarted before being able to install games again
-
