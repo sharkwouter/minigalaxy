@@ -27,8 +27,9 @@ class GameTile(Gtk.Box):
         self.image.set_tooltip_text(self.game.name)
 
         self.install_dir = os.path.join(self.api.config.get("install_dir"), self.game.name)
+        self.download_dir = os.path.join(CACHE_DIR, "download")
         self.executable_path = os.path.join(self.install_dir, "start.sh")
-        self.download_path = os.path.join(CACHE_DIR, "{}.sh".format(self.game.name))
+        self.download_path = os.path.join(self.download_dir, "{}.sh".format(self.game.name))
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
 
@@ -65,6 +66,8 @@ class GameTile(Gtk.Box):
         self.image.set_from_file(filename)
 
     def __download_file(self) -> None:
+        if not os.path.exists(self.download_dir):
+            os.makedirs(self.download_dir)
         download_info = self.api.get_download_info(self.game)
         file_url = download_info["downlink"]
         data = requests.get(file_url, stream=True)
@@ -99,6 +102,7 @@ class GameTile(Gtk.Box):
                          temp_dir])
         os.rename(os.path.join(temp_dir, "data/noarch"), self.install_dir)
         shutil.rmtree(temp_dir, ignore_errors=True)
+        os.remove(self.download_path)
 
     def __create_progress_bar(self) -> None:
         self.progress_bar = Gtk.ProgressBar()
