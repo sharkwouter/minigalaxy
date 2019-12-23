@@ -1,7 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-import os
 from minigalaxy.login import Login
 from minigalaxy.window.gametile import GameTile
 from minigalaxy.window.preferences import Preferences
@@ -16,57 +15,69 @@ class Window(Gtk.ApplicationWindow):
 
     header_sync = Gtk.Template.Child()
     header_installed = Gtk.Template.Child()
+    header_search = Gtk.Template.Child()
     menu_about = Gtk.Template.Child()
     menu_preferences = Gtk.Template.Child()
     menu_logout = Gtk.Template.Child()
     library = Gtk.Template.Child()
-
-    api = None
-
-    tiles = []
-
-    refresh_token_file = "refresh.txt"
 
     def __init__(self, name):
         Gtk.ApplicationWindow.__init__(self, title=name)
         self.config = Config()
         self.api = Api(self.config)
         self.show_installed_only = False
+        self.search_string = ""
+        self.tiles = []
 
         self.__authenticate()
 
         self.show_all()
 
-        self.sync_library(None)
+        self.sync_library()
 
     @Gtk.Template.Callback("on_header_sync_clicked")
-    def sync_library(self, button):
-        # Remove old game tiles
+    def sync_library(self, button=None):
+        # Remove old tiles
         for gametile in self.library.get_children():
             self.library.remove(gametile)
 
         # Get and add new ones
         games = self.api.get_library()
-        tiles = []
+        self.tiles = []
         for game in games:
             gametile = GameTile(game=game, api=self.api)
-            if not self.show_installed_only or gametile.installed:
-                tiles.append(gametile)
+            self.tiles.append(gametile)
 
-        tiles.sort()
-        for tile in tiles:
+        self.tiles.sort()
+        for tile in self.tiles:
             self.library.add(tile)
-        self.show_all()
+        self.update_game_tiles()
 
     @Gtk.Template.Callback("on_header_installed_state_set")
     def show_installed_only_triggered(self, switch, state):
         self.show_installed_only = state
-        self.sync_library(None)
+        self.update_game_tiles()
+
+    @Gtk.Template.Callback("on_header_search_changed")
+    def search(self, widget):
+        self.search_string = widget.get_text()
+        self.update_game_tiles()
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
         preferences_window = Preferences(self.config)
         preferences_window.show()
+
+    def update_game_tiles(self):
+        for gametile in self.tiles:
+            print(str(gametile))
+            if gametile.installed and self.show_installed_only or not self.show_installed_only:
+                if self.search_string.lower() in str(gametile).lower():
+                    gametile.show()
+                else:
+                    gametile.hide()
+            else:
+                gametile.hide()
 
     """
     The API remembers the authentication token and uses it

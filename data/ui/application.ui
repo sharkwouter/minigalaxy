@@ -145,6 +145,7 @@
             <property name="primary_icon_name">edit-find-symbolic</property>
             <property name="primary_icon_activatable">False</property>
             <property name="primary_icon_sensitive">False</property>
+            <signal name="search-changed" handler="on_header_search_changed" swapped="no"/>
           </object>
           <packing>
             <property name="pack_type">end</property>
