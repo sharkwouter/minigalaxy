@@ -45,6 +45,7 @@ The following changes still need to be made:
 
 Expect to see the following issues:
 
+* The refresh button doesn't work
 * Changing the installation directory makes MiniGalaxy unable to detect previously installed games
 * After an hour of use, MiniGalaxy may need to be restarted before being able to install games again
 * Selected language isn't being used yet
