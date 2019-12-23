@@ -40,6 +40,9 @@ The following changes still need to be made:
 * Create ``setup.py``
 * ~~Move to sqlite~~ A JSON file was chosen instead
 * ~~Remove command line output where it isn't needed~~
+* Deal with api tokens expiring
+* Make users able to remove games
+* Show error when failing to launch a game
 
 ## Known issues
 
