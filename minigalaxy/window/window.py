@@ -78,7 +78,6 @@ class Window(Gtk.ApplicationWindow):
             else:
                 gametile.image.set_sensitive(False)
 
-
     """
     The API remembers the authentication token and uses it
     The token is not valid for a long time

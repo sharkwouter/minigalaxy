@@ -35,7 +35,7 @@ The following changes still need to be made:
 * Create about window
 * ~~Fix refresh button~~
 * ~~Sort games based on name~~
-* Add a search bar
+* ~~Add a search bar~~
 * ~~Move minigalaxy.py to the bin directory~~
 * Create ``setup.py``
 * ~~Move to sqlite~~ A JSON file was chosen instead
