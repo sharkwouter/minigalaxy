@@ -29,18 +29,8 @@ python3 minigalaxy.py
 
 The following changes still need to be made:
 
-* ~~Migrate from unzip commands to zipfile~~ Not desirable, since zipfile doesn't preserve permissions
 * Create a Gtk.Application class which is called first
-* ~~Move download and install locations~~
-* ~~Create settings window~~
-* ~~Create about window~~
-* ~~Fix refresh button~~
-* ~~Sort games based on name~~
-* ~~Add a search bar~~
-* ~~Move minigalaxy.py to the bin directory~~
 * Create ``setup.py``
-* ~~Move to sqlite~~ A JSON file was chosen instead
-* ~~Remove command line output where it isn't needed~~
 * Deal with api tokens expiring
 * Make users able to remove games
 * Show error when failing to launch a game
