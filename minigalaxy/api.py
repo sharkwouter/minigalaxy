@@ -113,6 +113,15 @@ class Api:
         # This is just a backup, if the preferred language has been found, this part won't execute
         return self.__request(possible_downloads[-1]["files"][0]["downlink"])
 
+    def get_user_info(self):
+        username = self.config.get("username")
+        if not username:
+            url = "https://embed.gog.com/userData.json"
+            response = self.__request(url)
+            username = response["username"]
+            self.config.set("username", username)
+        return username
+
     # Make a request with the active token
     def __request(self, url: str = None, params: dict = None) -> tuple:
         headers = {

@@ -43,3 +43,11 @@ class Config:
             return self.__config[key]
         except KeyError:
             return None
+
+    def unset(self, key):
+        try:
+            del self.__config[key]
+            self.__update_config_file()
+            return True
+        except:
+            return False

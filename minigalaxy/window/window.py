@@ -16,6 +16,7 @@ class Window(Gtk.ApplicationWindow):
 
     __gtype_name__ = "Window"
 
+    HeaderBar = Gtk.Template.Child()
     header_sync = Gtk.Template.Child()
     header_installed = Gtk.Template.Child()
     header_search = Gtk.Template.Child()
@@ -33,10 +34,10 @@ class Window(Gtk.ApplicationWindow):
         self.tiles = []
 
         self.__authenticate()
+        self.HeaderBar.set_subtitle(self.api.get_user_info())
+        self.sync_library()
 
         self.show_all()
-
-        self.sync_library()
 
     @Gtk.Template.Callback("on_header_sync_clicked")
     def sync_library(self, button=None):
@@ -75,6 +76,22 @@ class Window(Gtk.ApplicationWindow):
     def show_about(self, button):
         about_window = About(self)
         about_window.show()
+
+    @Gtk.Template.Callback("on_menu_logout_clicked")
+    def logout(self, button):
+        # Unset everything which is specific to this user
+        self.HeaderBar.set_subtitle("")
+        self.config.unset("username")
+        self.config.unset("refresh_token")
+        self.hide()
+
+        # Show the login screen
+        self.__authenticate()
+        self.HeaderBar.set_subtitle(self.api.get_user_info())
+        self.sync_library()
+
+        self.show_all()
+
 
     def filter_tiles(self, child):
         tile = child.get_children()[0]
