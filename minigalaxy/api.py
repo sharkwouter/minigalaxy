@@ -65,16 +65,17 @@ class Api:
 
         while not all_pages_processed:
             params = {
-                'mediaType': 1,
-                'system': '1024',  # 1024 is Linux
+                'mediaType': 1, # 1 means game
                 'page': current_page,
             }
             response = self.__request(url, params=params)
-            total_pages = response['totalPages']
+            total_pages = response["totalPages"]
 
-            for product in response['products']:
-                game = Game(name=product["title"],game_id=product["id"], image_url=product["image"])
-                games.append(game)
+            for product in response["products"]:
+                # Only add products which work on Linux
+                if product["worksOn"]["Linux"]:
+                    game = Game(name=product["title"], game_id=product["id"], image_url=product["image"])
+                    games.append(game)
             if current_page == total_pages:
                 all_pages_processed = True
             current_page += 1
@@ -98,9 +99,20 @@ class Api:
         url = 'https://api.gog.com/products/{}?expand=downloads'.format(game.id)
         response = self.__request(url)
         print(repr(response))
+        possible_downloads = []
         for installer in response["downloads"]["installers"]:
-            if installer["id"] == "installer_linux_en":
-                return self.__request(installer["files"][0]["downlink"])
+            if installer["os"] == "linux":
+                if installer['language'] == self.config.get("lang"):
+                    return self.__request(installer["files"][0]["downlink"])
+                if len(possible_downloads) == 0:
+                    possible_downloads.append(installer)
+                    continue
+                if installer['language'] == "en":
+                    possible_downloads.append(installer)
+
+        # Return last entry in possible_downloads. This will either be English or the first langauge in the list
+        # This is just a backup, if the preferred language has been found, this part won't execute
+        return self.__request(possible_downloads[-1]["files"][0]["downlink"])
 
     # Make a request with the active token
     def __request(self, url: str = None, params: dict = None) -> tuple:
