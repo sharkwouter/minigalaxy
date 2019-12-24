@@ -1,4 +1,4 @@
-# MiniGalaxy
+# Minigalaxy
 
 A simple GOG client for Linux that lets you download and play your GOG Linux games
 
@@ -6,13 +6,13 @@ A simple GOG client for Linux that lets you download and play your GOG Linux gam
 
 ## Features
 
-The most important features of MiniGalaxy:
+The most important features of Minigalaxy:
 
 - Log in with your GOG account
 - Download the Linux games you own on GOG
 - Launch them
 
-In addition to that, MiniGalaxy also allows you to:
+In addition to that, Minigalaxy also allows you to:
 
 - Select in which language you'd prefer to download your games
 - Change where games are installed
@@ -37,5 +37,5 @@ Packages for Ubuntu, Debian and Arch are coming soon!
 
 Expect to see the following issues:
 
-* Using MiniGalaxy without an internet connection does not work
+* Using Minigalaxy without an internet connection does not work
 * Changing the installation directory makes MiniGalaxy unable to detect previously installed games
