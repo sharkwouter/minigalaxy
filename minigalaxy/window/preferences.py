@@ -104,8 +104,6 @@ class Preferences(Gtk.Dialog):
             dialog.run()
             dialog.close()
 
-
-
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def cancel_pressed(self, button):
         self.response(Gtk.ResponseType.CANCEL)
