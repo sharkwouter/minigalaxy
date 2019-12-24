@@ -10,6 +10,6 @@ UI_DIR = "data/ui"
 if not os.path.exists(UI_DIR):
     UI_DIR = "/usr/share/minigalaxy/ui"
 
-LOGO_PATH = "data/images/logo.png"
+LOGO_PATH = "data/minigalaxy.png"
 if not os.path.exists(LOGO_PATH):
     LOGO_PATH = "/usr/share/pixmaps/minigalaxy.png"

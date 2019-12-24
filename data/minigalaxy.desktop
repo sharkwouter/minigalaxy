@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Minigalaxy
+GenericName=GOG client
+Comment=A simple GOG Linux client
+Exec=minigalaxy
+Icon=minigalaxy
+Type=Application
+Categories=GTK;Utility;Game;

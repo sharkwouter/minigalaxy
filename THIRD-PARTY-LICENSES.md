@@ -1,4 +1,4 @@
-## Logo image (data/images/logo.png)
+## Logo image (minigalaxy.png)
 
 **Copyright Epic Runes**
 

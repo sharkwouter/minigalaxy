@@ -1,5 +1,7 @@
 venv/
 __pycache__/
+dist/
 .idea/
 *~
 *.pyc
+*.egg-info/
