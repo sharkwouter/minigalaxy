@@ -4,34 +4,34 @@ A simple GOG client for Linux that lets you download and play your GOG Linux gam
 
 ![screenshot](screenshot.png?raw=true)
 
-## Requirements
+## Features
 
-MiniGalaxy requires the following dependencies to be installed:
+The most important features of MiniGalaxy:
 
-* *python3* - versions below 3.6 have not been tested
-* *python3-gobject* - python library for GTK+, version 3.30+ is required
-* *python3-requests* - python library for making requests to server
-* *GTK+* - versions below 3.24 have not been tested
-* *webkit2gtk* - a browser engine library. It is used for logging into GOG. A version with support for API version 4.0 is required
+- Log in with your GOG account
+- Download the Linux games you own on GOG
+- Launch them
+
+In addition to that, MiniGalaxy also allows you to:
+
+- Select in which language you'd prefer to download your games
+- Only log in once without storing your password
+- Search your GOG Linux library
+- Show all games or just the ones you've installed
+- View the error message if a game fails to launch
 
 ## Installation
 
-**Ubuntu 18.10**
+**Ubuntu/Debian**
 
 ```sh
 sudo apt-get install git python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webkit2-4.0 python3-requests
 git clone https://github.com/sharkwouter/minigalaxy.git
 cd minigalaxy
-python3 minigalaxy.py
+python3 bin/minigalaxy.py
 ```
 
-## Todo
-
-The following changes still need to be made:
-
-* Create a Gtk.Application class which is called first
-* Create ``setup.py``
-* Make users able to remove games
+Packages for Ubuntu, Debian and Arch are coming soon!
 
 ## Known issues
 
