@@ -71,6 +71,7 @@ class Window(Gtk.ApplicationWindow):
     def show_preferences(self, button):
         preferences_window = Preferences(self, self.config)
         preferences_window.show()
+        self.sync_library()
 
     @Gtk.Template.Callback("on_menu_about_clicked")
     def show_about(self, button):
