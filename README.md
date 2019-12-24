@@ -27,8 +27,8 @@ In addition to that, MiniGalaxy also allows you to:
 ```sh
 sudo apt-get install git python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webkit2-4.0 python3-requests
 git clone https://github.com/sharkwouter/minigalaxy.git
-cd minigalaxy
-python3 bin/minigalaxy.py
+cd minigalaxy/bin
+./minigalaxy
 ```
 
 Packages for Ubuntu, Debian and Arch are coming soon!
