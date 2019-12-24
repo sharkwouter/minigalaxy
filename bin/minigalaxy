@@ -18,7 +18,7 @@ from minigalaxy.window import Window
 
 
 def main():
-    window = Window("MiniGalaxy")
+    window = Window("Minigalaxy")
     window.connect("destroy", Gtk.main_quit)
     Gtk.main()
 
