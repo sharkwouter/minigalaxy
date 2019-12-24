@@ -38,4 +38,4 @@ Packages for Ubuntu, Debian and Arch are coming soon!
 Expect to see the following issues:
 
 * Using Minigalaxy without an internet connection does not work
-* Changing the installation directory makes MiniGalaxy unable to detect previously installed games
+* Changing the installation directory makes Minigalaxy unable to detect previously installed games
