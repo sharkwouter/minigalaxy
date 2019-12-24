@@ -1,14 +1,14 @@
 import os
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, GdkPixbuf
 from minigalaxy.window.login import Login
 from minigalaxy.window.gametile import GameTile
 from minigalaxy.window.preferences import Preferences
 from minigalaxy.window.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
-from minigalaxy.directories import UI_DIR
+from minigalaxy.directories import UI_DIR, LOGO_PATH
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
@@ -33,6 +33,11 @@ class Window(Gtk.ApplicationWindow):
         self.search_string = ""
         self.tiles = []
 
+        # Set the icon
+        icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_PATH)
+        self.set_default_icon_list([icon])
+
+        # Interact with the API
         self.__authenticate()
         self.HeaderBar.set_subtitle(self.api.get_user_info())
         self.sync_library()

@@ -12,4 +12,4 @@ if not os.path.exists(UI_DIR):
 
 LOGO_PATH = "data/images/logo.png"
 if not os.path.exists(LOGO_PATH):
-    LOGO_PATH = "/usr/share/minigalaxy/images/logo.png"
+    LOGO_PATH = "/usr/share/pixmaps/minigalaxy.png"
