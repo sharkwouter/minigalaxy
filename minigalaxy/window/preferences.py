@@ -94,11 +94,12 @@ class Preferences(Gtk.Dialog):
             self.destroy()
         else:
             dialog = Gtk.MessageDialog(
-                self,
-                0,
-                Gtk.MessageType.ERROR,
-                Gtk.ButtonsType.OK,
-                "{} isn't a usable path".format(self.entry_installpath.get_text())
+                parent=self,
+                modal=True,
+                destroy_with_parent=True,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text="{} isn't a usable path".format(self.entry_installpath.get_text())
             )
             dialog.run()
             dialog.close()
