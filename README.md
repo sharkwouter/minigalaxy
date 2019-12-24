@@ -15,7 +15,7 @@ The most important features of MiniGalaxy:
 In addition to that, MiniGalaxy also allows you to:
 
 - Select in which language you'd prefer to download your games
-- Only log in once without storing your password
+- Change where games are installed
 - Search your GOG Linux library
 - Show all games or just the ones you've installed
 - View the error message if a game fails to launch
