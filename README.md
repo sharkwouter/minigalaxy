@@ -1,6 +1,6 @@
 # MiniGalaxy
 
-A simple GOG client for Linux that lets you download and play your GOG Linux games.
+A simple GOG client for Linux that lets you download and play your GOG Linux games
 
 ![screenshot](screenshot.png?raw=true)
 
