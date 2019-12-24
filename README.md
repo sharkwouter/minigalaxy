@@ -32,7 +32,6 @@ The following changes still need to be made:
 * Create a Gtk.Application class which is called first
 * Create ``setup.py``
 * Make users able to remove games
-* Show error when failing to launch a game
 
 ## Known issues
 
