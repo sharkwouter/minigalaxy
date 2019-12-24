@@ -42,7 +42,7 @@ class Preferences(Gtk.Dialog):
         self.__set_language_list()
         self.entry_installpath.set_text(config.get("install_dir"))
 
-    def __set_language_list(self):
+    def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)
         for lang in SUPPORTED_LANGUAGES:
             languages.append(lang)
@@ -60,7 +60,7 @@ class Preferences(Gtk.Dialog):
                 self.combobox_language.set_active(key)
                 break
 
-    def __save_language_choice(self):
+    def __save_language_choice(self) -> None:
         lang_choice = self.combobox_language.get_active_iter()
         if lang_choice is not None:
             model = self.combobox_language.get_model()
