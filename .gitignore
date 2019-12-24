@@ -1,7 +1,10 @@
 venv/
 __pycache__/
 dist/
+build/
+.pybuild/
 .idea/
 *~
 *.pyc
 *.egg-info/
+*.swp

@@ -11,7 +11,6 @@ setup(
         ('share/applications', ['data/minigalaxy.desktop']),
         ('share/pixmaps', ['data/minigalaxy.png']),
         ('share/minigalaxy/ui', glob('data/ui/*.ui')),
-        ('share/docs/minigalaxy', ['LICENSE', 'THIRD-PARTY-LICENSES.md', 'README.md'])
     ],
 
     # Project uses reStructuredText, so ensure that the docutils get
@@ -33,6 +32,6 @@ setup(
         "Source Code": "https://github.com/sharkwouter/minigalaxy",
     },
     classifiers=[
-        'License :: OSI Approved :: Gnu General Public License version 3'
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     ]
 )
