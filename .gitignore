@@ -1,10 +1,5 @@
 venv/
 __pycache__/
 .idea/
-activate.txt
-refresh.txt
 *~
-data/images/*.jpg
-data/download/*.sh
-data/installed/
 *.pyc
