@@ -126,7 +126,26 @@ class GameTile(Gtk.Box):
         self.button.show()
 
     def __start_game(self, widget) -> subprocess:
-        return subprocess.run([self.executable_path])
+        game = subprocess.Popen([self.executable_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        try:
+            game.wait(timeout=float(5))
+        except subprocess.TimeoutExpired:
+            return game
+
+        # Now deal with the error we've received
+        stdout, stderror = game.communicate()
+        error_text = "Failed to start {}:".format(self.game.name)
+        error_message = stderror.decode("utf-8")
+        print(error_text)
+        print(error_message)
+        dialog = Gtk.MessageDialog(
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.CLOSE,
+            text=error_text
+        )
+        dialog.format_secondary_text(error_message)
+        dialog.run()
+        dialog.destroy()
 
     def __lt__(self, other):
         names = [str(self), str(other)]
