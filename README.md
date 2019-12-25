@@ -20,15 +20,57 @@ In addition to that, Minigalaxy also allows you to:
 - Show all games or just the ones you've installed
 - View the error message if a game fails to launch
 
+## System requirements
+
+Minigalaxy should work on the following distributions:
+
+- Debian Buster (10.0) or newer
+- Ubuntu 18.10 or newer
+- Arch Linux
+- Manjaro
+
+Other Linux distributions may work as well. Minigalaxy requires the following dependencies:
+
+- GTK+
+- Python 3
+- PyGObject 3.30+
+- Webkit2gtk with API version 4.0 support
+- Python Requests
+
+
 ## Installation
 
 **Ubuntu/Debian**
 
-```sh
-sudo apt-get install git python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webkit2-4.0 python3-requests
+Download the latest deb package from the [releases page](https://github.com/sharkwouter/minigalaxy/releases) and install it.
+
+**Arch/Manjaro**
+
+Build the [AUR package](https://aur.archlinux.org/packages/minigalaxy). For this you can use an AUR helper, or use the following set of commands:
+
+```shell script
+git clone https://aur.archlinux.org/minigalaxy.git
+cd minigalaxy
+makepkg -si
+```
+
+**Other distributions**
+
+***Without VENV***
+```shell script
 git clone https://github.com/sharkwouter/minigalaxy.git
-cd minigalaxy/bin
-./minigalaxy
+cd minigalaxy
+bin/minigalaxy
+```
+
+***With VENV***
+```shell script
+git clone https://github.com/sharkwouter/minigalaxy.git
+cd minigalaxy
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+bin/minigalaxy
 ```
 
 Packages for Ubuntu, Debian and Arch are coming soon!
