@@ -36,7 +36,6 @@ class GameTile(Gtk.Box):
         self.__load_state()
 
         image_thread = threading.Thread(target=self.__load_image)
-        image_thread.daemon = True
         image_thread.start()
 
     def __str__(self):
