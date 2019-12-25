@@ -54,6 +54,8 @@ class Api:
 
         response_params = response.json()
         self.active_token = response_params['access_token']
+        expires_in = response_params["expires_in"]
+        self.active_token_expiration_time = time.time() + int(expires_in)
 
         return response_params['refresh_token']
 
@@ -69,7 +71,7 @@ class Api:
 
         while not all_pages_processed:
             params = {
-                'mediaType': 1, # 1 means game
+                'mediaType': 1,  # 1 means game
                 'page': current_page,
             }
             response = self.__request(url, params=params)
