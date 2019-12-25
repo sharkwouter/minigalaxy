@@ -73,11 +73,10 @@ pip install -r requirements.txt
 bin/minigalaxy
 ```
 
-Packages for Ubuntu, Debian and Arch are coming soon!
-
 ## Known issues
 
 Expect to see the following issues:
 
 * Using Minigalaxy without an internet connection does not work
 * Changing the installation directory makes Minigalaxy unable to detect previously installed games
+* Installed games cannot be removed from within the client yet
