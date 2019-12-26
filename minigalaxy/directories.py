@@ -1,6 +1,7 @@
 import os
 
 CONFIG_DIR = os.path.join(os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config')), "minigalaxy")
+CONFIG_PATH = os.path.join(CONFIG_DIR, "config.json")
 CACHE_DIR = os.path.join(os.getenv('XDG_CACHE_HOME', os.path.expanduser('~/.cache')), "minigalaxy")
 
 THUMBNAIL_DIR = os.path.join(CACHE_DIR, "thumbnails")
