@@ -60,7 +60,7 @@ class GameTile(Gtk.Box):
             with open(filename, "wb") as writer:
                 writer.write(download.content)
                 writer.close()
-        self.image.set_from_file(filename)
+        GLib.idle_add(self.image.set_from_file, filename)
 
     def __download_file(self) -> None:
         if not os.path.exists(self.download_dir):
