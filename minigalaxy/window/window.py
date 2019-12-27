@@ -54,7 +54,6 @@ class Window(Gtk.ApplicationWindow):
         for child in self.library.get_children():
             tile = child.get_children()[0]
             current_tiles.append(tile)
-            tile.load_state()
 
         # Only add games if they aren't already in the list. Otherwise just reload their state
         for game in games:
@@ -66,20 +65,20 @@ class Window(Gtk.ApplicationWindow):
             if not_found:
                 gametile = GameTile(game=game, api=self.api)
                 self.library.add(gametile)
-                gametile.show()
 
-        # Filter the library again
-        self.library.set_filter_func(self.filter_tiles)
+        self.sort_library()
+        self.filter_library()
+        self.library.show_all()
 
     @Gtk.Template.Callback("on_header_installed_state_set")
     def show_installed_only_triggered(self, switch, state):
         self.show_installed_only = state
-        self.library.set_filter_func(self.filter_tiles)
+        self.library.set_filter_func(self.__filter_library_func)
 
     @Gtk.Template.Callback("on_header_search_changed")
     def search(self, widget):
         self.search_string = widget.get_text()
-        self.library.set_filter_func(self.filter_tiles)
+        self.library.set_filter_func(self.__filter_library_func)
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
@@ -106,7 +105,16 @@ class Window(Gtk.ApplicationWindow):
 
         self.show_all()
 
-    def filter_tiles(self, child):
+    def refresh_game_install_states(self):
+        for child in self.library.get_children():
+            tile = child.get_children()[0]
+            tile.load_state()
+        self.filter_library()
+
+    def filter_library(self):
+        self.library.set_filter_func(self.__filter_library_func)
+
+    def __filter_library_func(self, child):
         tile = child.get_children()[0]
         if tile.installed and self.show_installed_only or not self.show_installed_only:
             if self.search_string.lower() in str(tile).lower():
@@ -115,6 +123,14 @@ class Window(Gtk.ApplicationWindow):
                 return False
         else:
             return False
+
+    def sort_library(self):
+        self.library.set_sort_func(self.__sort_library_func)
+
+    def __sort_library_func(self, child1, child2):
+        tile1 = child1.get_children()[0]
+        tile2 = child2.get_children()[0]
+        return tile2 < tile1
 
     """
     The API remembers the authentication token and uses it
