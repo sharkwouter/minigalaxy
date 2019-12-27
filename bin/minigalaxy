@@ -12,10 +12,6 @@ if os.path.isdir(os.path.join(LAUNCH_PATH, "../minigalaxy")):
     sys.path.insert(0, SOURCE_PATH)
     os.chdir(SOURCE_PATH)
 
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
-from minigalaxy.window import Window
 from minigalaxy.version import VERSION
 from minigalaxy.directories import CONFIG_PATH
 
@@ -51,6 +47,14 @@ def parse_args():
 
 def main():
     parse_args()
+
+    # Import the gi module after parsing arguments
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    from minigalaxy.window import Window
+
+    # Start the application
     window = Window(APPLICATION_NAME)
     window.connect("destroy", Gtk.main_quit)
     Gtk.main()

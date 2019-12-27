@@ -6,3 +6,7 @@ export PYBUILD_INSTALL_ARGS_python3=--install-scripts=/usr/games/
 
 %:
 	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_auto_build:
+	help2man -N -s 6 -n "a simple GTK based GOG Linux client" bin/minigalaxy > debian/minigalaxy.6
+	dh_auto_build

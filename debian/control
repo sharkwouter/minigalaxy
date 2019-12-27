@@ -2,7 +2,7 @@ Source: minigalaxy
 Section: games
 Priority: optional
 Maintainer: Wouter Wijsman <wwijsman@live.nl>
-Build-Depends: debhelper (>= 11), dh-python, python3-all, python3-setuptools
+Build-Depends: debhelper (>= 11), dh-python, python3-all, python3-setuptools, help2man
 Standards-Version: 4.3.0
 Homepage: https://github.com/sharkwouter/minigalaxy
 X-Python3-Version: >= 3.6
@@ -11,5 +11,12 @@ Package: minigalaxy
 Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends}, python3-requests, python3-gi (>= 3.30), python3-gi-cairo, gir1.2-gtk-3.0, gir1.2-webkit2-4.0
 Description: Simple GOG Linux client
- Allows you to download and play your GOG Linux games
-
+ Allows you to download and play Linux games from the gog.com game store.
+ Requires a GOG or Facebook account to work.
+ .
+ Besides installing games, it offers the following feature:
+  - Select in which language you'd prefer to download your games
+  - Change where games are installed
+  - Search your GOG Linux library
+  - Show all games or just the ones you've installed
+  - View the error message if a game fails to launch

@@ -4,6 +4,7 @@ dist/
 build/
 .pybuild/
 .idea/
+debian/minigalaxy.6
 *~
 *.pyc
 *.egg-info/
