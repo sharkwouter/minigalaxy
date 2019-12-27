@@ -66,7 +66,7 @@ class Window(Gtk.ApplicationWindow):
                     not_found = False
                     break
             if not_found:
-                gametile = GameTile(game=game, api=self.api)
+                gametile = GameTile(parent=self, game=game, api=self.api)
                 self.library.add(gametile)
 
         self.sort_library()

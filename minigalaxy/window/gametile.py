@@ -16,8 +16,9 @@ class GameTile(Gtk.Box):
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
 
-    def __init__(self, game=None, api=None):
+    def __init__(self, parent, game=None, api=None):
         Gtk.Frame.__init__(self)
+        self.parent = parent
         self.game = game
         self.api = api
         self.progress_bar = None
@@ -89,6 +90,7 @@ class GameTile(Gtk.Box):
         self.busy = False
         GLib.idle_add(self.load_state)
         GLib.idle_add(self.button.set_sensitive, True)
+        GLib.idle_add(self.parent.filter_library)
 
     def __install_game(self) -> None:
         # Make a temporary directory for extracting the installer
