@@ -110,9 +110,7 @@ class GameTile(Gtk.Box):
             os.makedirs(library_dir)
 
         # Copy the game files into the correct directory
-        dir_to_move = os.path.join(temp_dir, "data/noarch")
-        print(dir_to_move)
-        shutil.move(dir_to_move, self.__get_install_dir())
+        shutil.move(os.path.join(temp_dir, "data/noarch"), self.__get_install_dir())
         shutil.rmtree(temp_dir, ignore_errors=True)
         os.remove(self.download_path)
 
