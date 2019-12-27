@@ -28,6 +28,7 @@ Minigalaxy should work on the following distributions:
 - Ubuntu 18.10 or newer
 - Arch Linux
 - Manjaro
+- Fedora 31
 
 Other Linux distributions may work as well. Minigalaxy requires the following dependencies:
 
