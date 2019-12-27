@@ -6,7 +6,7 @@ import requests
 import os
 import threading
 import subprocess
-from minigalaxy.directories import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
+from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -55,8 +55,6 @@ class GameTile(Gtk.Box):
         image_url = "https:{}_196.jpg".format(self.game.image_url)
         filename = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
         if not os.path.isfile(filename):
-            if not os.path.exists(THUMBNAIL_DIR):
-                os.makedirs(THUMBNAIL_DIR)
             download = requests.get(image_url)
             with open(filename, "wb") as writer:
                 writer.write(download.content)

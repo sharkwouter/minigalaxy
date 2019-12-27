@@ -1,6 +1,6 @@
 import os
 import json
-from minigalaxy.directories import CONFIG_DIR, CONFIG_PATH, DEFAULT_INSTALL_DIR
+from minigalaxy.paths import CONFIG_DIR, CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
 
 DEFAULT_CONFIG = {
             "lang": "en",
@@ -11,7 +11,7 @@ DEFAULT_CONFIG = {
 
 class Config:
     def __init__(self):
-        self.__config_file = CONFIG_PATH
+        self.__config_file = CONFIG_FILE_PATH
         self.__config = self.__load_config_file()
 
     def __load_config_file(self) -> dict:

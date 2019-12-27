@@ -2,6 +2,7 @@
 import sys
 import os
 import getopt
+import shutil
 from os.path import realpath, dirname, normpath
 
 APPLICATION_NAME = "Minigalaxy"
@@ -13,7 +14,7 @@ if os.path.isdir(os.path.join(LAUNCH_PATH, "../minigalaxy")):
     os.chdir(SOURCE_PATH)
 
 from minigalaxy.version import VERSION
-from minigalaxy.directories import CONFIG_PATH
+from minigalaxy.paths import CONFIG_DIR, CACHE_DIR
 
 
 def usage():
@@ -42,7 +43,8 @@ def parse_args():
             usage()
             sys.exit()
         elif o == "--reset":
-            os.remove(CONFIG_PATH)
+            shutil.rmtree(CONFIG_DIR, ignore_errors=True)
+            shutil.rmtree(CACHE_DIR, ignore_errors=True)
 
 
 def main():

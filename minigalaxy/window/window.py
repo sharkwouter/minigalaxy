@@ -8,7 +8,7 @@ from minigalaxy.window.preferences import Preferences
 from minigalaxy.window.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
-from minigalaxy.directories import UI_DIR, LOGO_PATH
+from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
@@ -31,11 +31,14 @@ class Window(Gtk.ApplicationWindow):
         self.api = Api(self.config)
         self.show_installed_only = False
         self.search_string = ""
-        self.tiles = []
 
         # Set the icon
-        icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_PATH)
+        icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_IMAGE_PATH)
         self.set_default_icon_list([icon])
+
+        # Create the thumbnails directory
+        if not os.path.exists(THUMBNAIL_DIR):
+            os.makedirs(THUMBNAIL_DIR)
 
         # Interact with the API
         self.__authenticate()

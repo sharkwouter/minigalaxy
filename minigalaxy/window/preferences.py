@@ -2,7 +2,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import os
-from minigalaxy.directories import UI_DIR
+from minigalaxy.paths import UI_DIR
 
 SUPPORTED_LANGUAGES = [
     ["br", "Brazilian Portuguese"],
