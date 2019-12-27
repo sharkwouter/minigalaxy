@@ -1,7 +1,7 @@
 import shutil
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gtk, GdkPixbuf, GLib
 import requests
 import os
 import threading
@@ -80,16 +80,15 @@ class GameTile(Gtk.Box):
                 # Only update the progress bar every 2 megabytes
                 if chunk_count == 4000:
                     percentage = downloaded_size / total_size
-                    self.progress_bar.set_fraction(percentage)
-                    self.progress_bar.show_all()
+                    GLib.idle_add(self.progress_bar.set_fraction, percentage)
                     chunk_count = 0
         handler.close()
-        self.progress_bar.destroy()
-        self.button.set_label("installing..")
+        GLib.idle_add(self.progress_bar.destroy)
+        GLib.idle_add(self.button.set_label, "installing..")
         self.__install_game()
         self.busy = False
-        self.load_state()
-        self.button.set_sensitive(True)
+        GLib.idle_add(self.load_state)
+        GLib.idle_add(self.button.set_sensitive, True)
 
     def __install_game(self) -> None:
         # Make a temporary directory for extracting the installer
@@ -123,7 +122,7 @@ class GameTile(Gtk.Box):
         self.progress_bar.set_vexpand(False)
         self.set_center_widget(self.progress_bar)
         self.progress_bar.set_fraction(0.0)
-        self.show()
+        self.progress_bar.show_all()
 
     def __get_install_dir(self):
         return os.path.join(self.api.config.get("install_dir"), self.game.name)
