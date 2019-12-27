@@ -46,21 +46,30 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_header_sync_clicked")
     def sync_library(self, button=None):
-        # Remove old tiles
-        for gametile in self.library.get_children():
-            self.library.remove(gametile)
-
-        # Get and add new ones
+        # Get and add new games
         games = self.api.get_library()
-        self.tiles = []
-        for game in games:
-            gametile = GameTile(game=game, api=self.api)
-            self.tiles.append(gametile)
 
-        self.tiles.sort()
-        for tile in self.tiles:
-            self.library.add(tile)
-            tile.show()
+        # Make a list with the game tiles which are already loaded
+        current_tiles = []
+        for child in self.library.get_children():
+            tile = child.get_children()[0]
+            current_tiles.append(tile)
+            tile.load_state()
+
+        # Only add games if they aren't already in the list. Otherwise just reload their state
+        for game in games:
+            not_found = True
+            for tile in current_tiles:
+                if tile.game.id == game.id:
+                    not_found = False
+                    break
+            if not_found:
+                gametile = GameTile(game=game, api=self.api)
+                self.library.add(gametile)
+                gametile.show()
+
+        # Filter the library again
+        self.library.set_filter_func(self.filter_tiles)
 
     @Gtk.Template.Callback("on_header_installed_state_set")
     def show_installed_only_triggered(self, switch, state):
@@ -76,7 +85,6 @@ class Window(Gtk.ApplicationWindow):
     def show_preferences(self, button):
         preferences_window = Preferences(self, self.config)
         preferences_window.show()
-        self.sync_library()
 
     @Gtk.Template.Callback("on_menu_about_clicked")
     def show_about(self, button):
@@ -97,7 +105,6 @@ class Window(Gtk.ApplicationWindow):
         self.sync_library()
 
         self.show_all()
-
 
     def filter_tiles(self, child):
         tile = child.get_children()[0]

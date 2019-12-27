@@ -40,6 +40,7 @@ class Config:
 
     def get(self, key):
         try:
+            self.__load_config_file()
             return self.__config[key]
         except KeyError:
             return None

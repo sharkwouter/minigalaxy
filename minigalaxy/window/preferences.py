@@ -39,6 +39,7 @@ class Preferences(Gtk.Dialog):
     def __init__(self, parent, config):
         Gtk.Dialog.__init__(self, title="Preferences", parent=parent, modal=True)
         self.__config = config
+        self.parent = parent
         self.__set_language_list()
         self.entry_installpath.set_text(config.get("install_dir"))
 
@@ -91,6 +92,7 @@ class Preferences(Gtk.Dialog):
         self.__save_language_choice()
         if self.__save_install_dir_choice():
             self.response(Gtk.ResponseType.OK)
+            self.parent.sync_library()
             self.destroy()
         else:
             dialog = Gtk.MessageDialog(

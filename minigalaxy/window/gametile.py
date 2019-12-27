@@ -22,18 +22,16 @@ class GameTile(Gtk.Box):
         self.api = api
         self.progress_bar = None
         self.installed = False
+        self.busy = False
 
         self.image.set_tooltip_text(self.game.name)
 
-        self.install_dir = self.api.config.get("install_dir")
-        self.game_install_dir = os.path.join(self.install_dir, self.game.name)
         self.download_dir = os.path.join(CACHE_DIR, "download")
-        self.executable_path = os.path.join(self.game_install_dir, "start.sh")
         self.download_path = os.path.join(self.download_dir, "{}.sh".format(self.game.name))
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
 
-        self.__load_state()
+        self.load_state()
 
         image_thread = threading.Thread(target=self.__load_image)
         image_thread.start()
@@ -43,8 +41,9 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget) -> None:
-        if self.installed:
+        if self.installed or self.busy:
             return
+        self.busy = True
         self.__create_progress_bar()
         widget.set_sensitive(False)
         widget.set_label("downloading...")
@@ -88,8 +87,11 @@ class GameTile(Gtk.Box):
                     chunk_count = 0
         handler.close()
         self.progress_bar.destroy()
+        self.button.set_label("installing..")
         self.__install_game()
-        self.__load_state()
+        self.busy = False
+        self.load_state()
+        self.button.set_sensitive(True)
 
     def __install_game(self) -> None:
         # Make a temporary directory for extracting the installer
@@ -103,12 +105,15 @@ class GameTile(Gtk.Box):
         subprocess.call(["unzip", "-qq", self.download_path, "-d",
                          temp_dir])
 
+        library_dir = self.api.config.get("install_dir")
         # Make sure the install directory exists
-        if not os.path.exists(self.install_dir):
-            os.makedirs(self.install_dir)
+        if not os.path.exists(library_dir):
+            os.makedirs(library_dir)
 
         # Copy the game files into the correct directory
-        shutil.move(os.path.join(temp_dir, "data/noarch"), self.game_install_dir)
+        dir_to_move = os.path.join(temp_dir, "data/noarch")
+        print(dir_to_move)
+        shutil.move(dir_to_move, self.__get_install_dir())
         shutil.rmtree(temp_dir, ignore_errors=True)
         os.remove(self.download_path)
 
@@ -122,20 +127,25 @@ class GameTile(Gtk.Box):
         self.progress_bar.set_fraction(0.0)
         self.show()
 
-    def __load_state(self) -> None:
-        if os.path.isfile(self.executable_path):
+    def __get_install_dir(self):
+        return os.path.join(self.api.config.get("install_dir"), self.game.name)
+
+    def __get_executable_path(self):
+        return os.path.join(self.__get_install_dir(), "start.sh")
+
+    def load_state(self) -> None:
+        if self.busy:
+            return
+        if os.path.isfile(self.__get_executable_path()):
             self.installed = True
             self.button.set_label("play")
-            self.button.set_sensitive(True)
             self.button.connect("clicked", self.__start_game)
         else:
             self.installed = False
             self.button.set_label("download")
 
-        self.button.show()
-
     def __start_game(self, widget) -> subprocess:
-        game = subprocess.Popen([self.executable_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        game = subprocess.Popen([self.__get_executable_path()], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         try:
             game.wait(timeout=float(5))
         except subprocess.TimeoutExpired:
