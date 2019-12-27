@@ -1,11 +1,21 @@
 venv/
 __pycache__/
 dist/
-build/
-.pybuild/
 .idea/
-debian/minigalaxy.6
 *~
 *.pyc
 *.egg-info/
 *.swp
+
+# Files generated when building the deb package
+.pybuild/
+build/
+debian/minigalaxy.6
+debian/files
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/minigalaxy/
+debian/minigalaxy.substvars
+debian/minigalaxy.debhelper.log
+debian/minigalaxy.postinst.debhelper
+debian/minigalaxy.prerm.debhelper
