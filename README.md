@@ -29,7 +29,7 @@ Minigalaxy should work on the following distributions:
 - Arch Linux
 - Manjaro
 - Fedora 31
-- openSUSE
+- openSUSE Tumbleweed
 
 Other Linux distributions may work as well. Minigalaxy requires the following dependencies:
 
