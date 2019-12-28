@@ -29,6 +29,7 @@ Minigalaxy should work on the following distributions:
 - Arch Linux
 - Manjaro
 - Fedora 31
+- openSUSE
 
 Other Linux distributions may work as well. Minigalaxy requires the following dependencies:
 
@@ -61,6 +62,14 @@ Available in [Copr](https://copr.fedorainfracloud.org/coprs/atim/minigalaxy/)
 
 ```
 sudo dnf copr enable atim/minigalaxy -y && sudo dnf install minigalaxy
+
+**openSUSE**
+
+Minigalaxy can be found in the [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy).
+```
+zypper ar -f obs://games:tools gamestools
+zypper ref
+zypper in minigalaxy
 ```
 
 **Other distributions**
