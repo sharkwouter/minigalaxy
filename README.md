@@ -62,6 +62,7 @@ Available in [Copr](https://copr.fedorainfracloud.org/coprs/atim/minigalaxy/)
 
 ```
 sudo dnf copr enable atim/minigalaxy -y && sudo dnf install minigalaxy
+```
 
 **openSUSE**
 
