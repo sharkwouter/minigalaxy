@@ -1,3 +1,7 @@
+**0.9.2 (unreleased)**
+- Fixed potential crash after logging in the first time
+- Fixed issue with thumbnails sometimes not fully loading
+
 **0.9.1**
 - Fixed crashes and freezes sometimes happening while downloading and installing games.
 - Fixed installation failing when the installation directory is not on same filesystem as ``/home``.
