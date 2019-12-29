@@ -35,6 +35,11 @@ Minigalaxy should work on the following distributions:
 - Fedora 31
 - openSUSE Tumbleweed
 
+Minigalaxy does **not** ship for the following distributions because they do not contain the required version of PyGObject:
+
+- Ubuntu 18.04
+- openSUSE 15.1
+
 Other Linux distributions may work as well. Minigalaxy requires the following dependencies:
 
 - GTK+
@@ -42,7 +47,6 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 - PyGObject 3.30+
 - Webkit2gtk with API version 4.0 support
 - Python Requests
-
 
 ## Installation
 
