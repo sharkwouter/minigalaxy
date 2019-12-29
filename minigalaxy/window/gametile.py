@@ -126,7 +126,7 @@ class GameTile(Gtk.Box):
         self.progress_bar.show_all()
 
     def __get_install_dir(self):
-        if self.install_dir and os.path.exists(self.install_dir):
+        if self.install_dir and os.path.isdir(self.install_dir):
             return self.install_dir
         return os.path.join(self.api.config.get("install_dir"), self.game.name)
 

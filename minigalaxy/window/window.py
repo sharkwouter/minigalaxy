@@ -51,6 +51,7 @@ class Window(Gtk.ApplicationWindow):
     def sync_library(self, button=None):
         # Get and add new games
         games = self.api.get_library()
+        installed_games = self.__get_installed_games()
 
         # Make a list with the game tiles which are already loaded
         current_tiles = []
@@ -66,7 +67,23 @@ class Window(Gtk.ApplicationWindow):
                     not_found = False
                     break
             if not_found:
-                gametile = GameTile(parent=self, game=game, api=self.api)
+                # Check if game is already installed
+                installed = False
+                install_dir = ""
+                for installed_game in installed_games:
+                    if installed_game["name"].strip() == game.name.strip():
+                        print("Found game: {}".format(game.name))
+                        installed = True
+                        install_dir = installed_game["dir"]
+                        break
+                # Create the game tile
+                gametile = GameTile(
+                    parent=self,
+                    game=game,
+                    api=self.api,
+                    installed=installed,
+                    install_dir=install_dir,
+                )
                 self.library.add(gametile)
 
         self.sort_library()
@@ -134,6 +151,23 @@ class Window(Gtk.ApplicationWindow):
         tile1 = child1.get_children()[0]
         tile2 = child2.get_children()[0]
         return tile2 < tile1
+
+    def __get_installed_games(self) -> dict:
+        games = []
+        directories = os.listdir(self.config.get("install_dir"))
+        for directory in directories:
+            full_path = os.path.join(self.config.get("install_dir"), directory)
+            if not os.path.isdir(full_path):
+                continue
+            # Make sure the gameinfo file exists
+            gameinfo = os.path.join(full_path, "gameinfo")
+            if not os.path.isfile(gameinfo):
+                continue
+            with open(gameinfo, 'r') as file:
+                name = file.readline()
+                games.append({'name': name, 'dir': full_path})
+                file.close()
+        return games
 
     """
     The API remembers the authentication token and uses it
