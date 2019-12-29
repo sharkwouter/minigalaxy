@@ -1,7 +1,7 @@
 **0.9.2 (unreleased)**
-- Fixed potential crash after logging in the first time
+- Fixed FTL not being able to start
 - Fixed issue with thumbnails sometimes not fully loading
-- Show an error message when launching a game without start script
+- Fixed potential crash after logging in the first time
 - Detect installed games regardless of directory names
 
 **0.9.1**
