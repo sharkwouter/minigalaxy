@@ -64,17 +64,17 @@ makepkg -si
 
 Available in [Copr](https://copr.fedorainfracloud.org/coprs/atim/minigalaxy/)
 
-```
+```shell script
 sudo dnf copr enable atim/minigalaxy -y && sudo dnf install minigalaxy
 ```
 
 **openSUSE**
 
 Minigalaxy can be found in the [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy).
-```
-zypper ar -f obs://games:tools gamestools
-zypper ref
-zypper in minigalaxy
+```shell script
+sudo zypper ar -f obs://games:tools gamestools
+sudo zypper ref
+sudo zypper in minigalaxy
 ```
 
 **Other distributions**
