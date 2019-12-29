@@ -16,13 +16,13 @@ class GameTile(Gtk.Box):
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
 
-    def __init__(self, parent, game=None, api=None, installed=False, install_dir=""):
+    def __init__(self, parent, game=None, api=None, install_dir=""):
         Gtk.Frame.__init__(self)
         self.parent = parent
         self.game = game
         self.api = api
         self.progress_bar = None
-        self.installed = installed
+        self.installed = False
         self.install_dir = install_dir
         self.busy = False
 
@@ -126,9 +126,9 @@ class GameTile(Gtk.Box):
         self.progress_bar.show_all()
 
     def __get_install_dir(self):
-        if self.install_dir and os.path.isdir(self.install_dir):
-            return self.install_dir
-        return os.path.join(self.api.config.get("install_dir"), self.game.name)
+        if not self.install_dir or not os.path.isdir(self.install_dir):
+            self.install_dir = os.path.join(self.api.config.get("install_dir"), self.game.name)
+        return self.install_dir
 
     def __get_executable_path(self):
         return os.path.join(self.__get_install_dir(), "start.sh")

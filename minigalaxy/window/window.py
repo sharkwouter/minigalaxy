@@ -71,7 +71,7 @@ class Window(Gtk.ApplicationWindow):
                 installed = False
                 install_dir = ""
                 for installed_game in installed_games:
-                    if installed_game["name"].strip() == game.name.strip():
+                    if installed_game["name"] == game.name:
                         print("Found game: {}".format(game.name))
                         installed = True
                         install_dir = installed_game["dir"]
@@ -81,9 +81,9 @@ class Window(Gtk.ApplicationWindow):
                     parent=self,
                     game=game,
                     api=self.api,
-                    installed=installed,
                     install_dir=install_dir,
                 )
+                gametile.load_state()
                 self.library.add(gametile)
 
         self.sort_library()
@@ -125,9 +125,17 @@ class Window(Gtk.ApplicationWindow):
 
         self.show_all()
 
-    def refresh_game_install_states(self):
+    def refresh_game_install_states(self, path_changed=False):
+        installed_games = self.__get_installed_games()
         for child in self.library.get_children():
             tile = child.get_children()[0]
+            if path_changed:
+                tile.install_dir = ""
+            # Check if game isn't installed already
+            for installed_game in installed_games:
+                if installed_game["name"] == tile.game.name:
+                    tile.install_dir = installed_game["dir"]
+                    break
             tile.load_state()
         self.filter_library()
 
@@ -165,7 +173,7 @@ class Window(Gtk.ApplicationWindow):
                 continue
             with open(gameinfo, 'r') as file:
                 name = file.readline()
-                games.append({'name': name, 'dir': full_path})
+                games.append({'name': name.strip(), 'dir': full_path})
                 file.close()
         return games
 

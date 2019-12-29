@@ -92,7 +92,7 @@ class Preferences(Gtk.Dialog):
         self.__save_language_choice()
         if self.__save_install_dir_choice():
             self.response(Gtk.ResponseType.OK)
-            self.parent.refresh_game_install_states()
+            self.parent.refresh_game_install_states(path_changed=True)
             self.destroy()
         else:
             dialog = Gtk.MessageDialog(
