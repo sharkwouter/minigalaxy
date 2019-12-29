@@ -16,6 +16,7 @@ class GameTile(Gtk.Box):
 
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
+    menu_button = Gtk.Template.Child()
 
     def __init__(self, parent, game=None, api=None, install_dir=""):
         Gtk.Frame.__init__(self)
@@ -55,6 +56,18 @@ class GameTile(Gtk.Box):
             widget.set_label("downloading...")
             download_thread = threading.Thread(target=self.__download_file)
             download_thread.start()
+
+    @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
+    def on_menu_button_uninstall(self, widget):
+        self.menu_button.hide()
+        self.button.set_sensitive(False)
+        self.button.set_label("uninstalling..")
+        uninstall_thread = threading.Thread(target=self.__uninstall_game)
+        uninstall_thread.start()
+
+    @Gtk.Template.Callback("on_menu_button_open_clicked")
+    def on_menu_button_open_files(self, widget):
+        subprocess.call(["xdg-open", self.__get_install_dir()])
 
     def __load_image(self) -> None:
         # image_url = "https:" + self.image_url + "_392.jpg" #This is the bigger image size
@@ -119,6 +132,11 @@ class GameTile(Gtk.Box):
         shutil.rmtree(temp_dir, ignore_errors=True)
         os.remove(self.download_path)
 
+    def __uninstall_game(self):
+        shutil.rmtree(self.__get_install_dir(), ignore_errors=True)
+        GLib.idle_add(self.load_state)
+        GLib.idle_add(self.button.set_sensitive, True)
+
     def __create_progress_bar(self) -> None:
         self.progress_bar = Gtk.ProgressBar()
         self.progress_bar.set_halign(Gtk.Align.CENTER)
@@ -143,9 +161,11 @@ class GameTile(Gtk.Box):
         if os.path.isfile(os.path.join(self.__get_install_dir(), "gameinfo")):
             self.installed = True
             self.button.set_label("play")
+            self.menu_button.show()
         else:
             self.installed = False
             self.button.set_label("download")
+            self.menu_button.hide()
 
     def __start_game(self) -> subprocess:
         error_message = ""

@@ -2,6 +2,57 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkPopover" id="menu">
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkModelButton" id="menu_button_open">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">Open Files</property>
+            <signal name="clicked" handler="on_menu_button_open_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_button_uninstall">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">Uninstall</property>
+            <signal name="clicked" handler="on_menu_button_uninstall_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">Close</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <template class="GameTile" parent="GtkBox">
     <property name="width_request">196</property>
     <property name="visible">True</property>
@@ -12,20 +63,56 @@
     <property name="vexpand">False</property>
     <property name="orientation">vertical</property>
     <child>
-      <object class="GtkImage" id="image">
+      <object class="GtkOverlay">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="icon_name">dialog-warning-symbolic</property>
-        <property name="icon_size">0</property>
+        <child>
+          <object class="GtkImage" id="image">
+            <property name="width_request">196</property>
+            <property name="height_request">110</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="icon_name">dialog-warning-symbolic</property>
+            <property name="icon_size">0</property>
+          </object>
+          <packing>
+            <property name="pass_through">True</property>
+            <property name="index">-1</property>
+          </packing>
+        </child>
+        <child type="overlay">
+          <object class="GtkMenuButton" id="menu_button">
+            <property name="can_focus">True</property>
+            <property name="has_focus">True</property>
+            <property name="focus_on_click">False</property>
+            <property name="receives_default">True</property>
+            <property name="no_show_all">True</property>
+            <property name="halign">end</property>
+            <property name="valign">start</property>
+            <property name="relief">none</property>
+            <property name="use_popover">False</property>
+            <property name="popover">menu</property>
+            <child>
+              <object class="GtkImage" id="menu_icon">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="icon_name">applications-system-symbolic</property>
+                <property name="icon_size">3</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="index">2</property>
+          </packing>
+        </child>
       </object>
       <packing>
-        <property name="expand">True</property>
+        <property name="expand">False</property>
         <property name="fill">True</property>
         <property name="position">0</property>
       </packing>
-    </child>
-    <child type="center">
-      <placeholder/>
     </child>
     <child>
       <object class="GtkButton" id="button">
@@ -46,6 +133,9 @@
         <property name="pack_type">end</property>
         <property name="position">1</property>
       </packing>
+    </child>
+    <child>
+      <placeholder/>
     </child>
   </template>
 </interface>
