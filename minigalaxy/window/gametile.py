@@ -16,13 +16,14 @@ class GameTile(Gtk.Box):
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
 
-    def __init__(self, parent, game=None, api=None):
+    def __init__(self, parent, game=None, api=None, installed=False, install_dir=""):
         Gtk.Frame.__init__(self)
         self.parent = parent
         self.game = game
         self.api = api
         self.progress_bar = None
-        self.installed = False
+        self.installed = installed
+        self.install_dir = install_dir
         self.busy = False
 
         self.image.set_tooltip_text(self.game.name)
@@ -125,6 +126,8 @@ class GameTile(Gtk.Box):
         self.progress_bar.show_all()
 
     def __get_install_dir(self):
+        if self.install_dir and os.path.exists(self.install_dir):
+            return self.install_dir
         return os.path.join(self.api.config.get("install_dir"), self.game.name)
 
     def __get_executable_path(self):
@@ -133,7 +136,7 @@ class GameTile(Gtk.Box):
     def load_state(self) -> None:
         if self.busy:
             return
-        if os.path.isfile(self.__get_executable_path()):
+        if os.path.isfile(os.path.join(self.__get_install_dir(), "gameinfo")):
             self.installed = True
             self.button.set_label("play")
             self.button.connect("clicked", self.__start_game)
@@ -142,16 +145,22 @@ class GameTile(Gtk.Box):
             self.button.set_label("download")
 
     def __start_game(self, widget) -> subprocess:
-        game = subprocess.Popen([self.__get_executable_path()], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        error_message = ""
         try:
-            game.wait(timeout=float(5))
-        except subprocess.TimeoutExpired:
-            return game
+            game = subprocess.Popen([self.__get_executable_path()], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            try:
+                game.wait(timeout=float(5))
+            except subprocess.TimeoutExpired:
+                return game
+        except FileNotFoundError as e:
+            error_message = str(e)
 
         # Now deal with the error we've received
-        stdout, stderror = game.communicate()
+        if not error_message:
+            stdout, stderror = game.communicate()
+            error_message = stderror.decode("utf-8")
+
         error_text = "Failed to start {}:".format(self.game.name)
-        error_message = stderror.decode("utf-8")
         print(error_text)
         print(error_message)
         dialog = Gtk.MessageDialog(
