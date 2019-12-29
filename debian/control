@@ -6,6 +6,7 @@ Build-Depends: debhelper (>= 11), dh-python, python3-all, python3-setuptools, he
 Standards-Version: 4.3.0
 Homepage: https://github.com/sharkwouter/minigalaxy
 X-Python3-Version: >= 3.6
+Vcs-Git: https://github.com/sharkwouter/minigalaxy.git
 
 Package: minigalaxy
 Architecture: all
