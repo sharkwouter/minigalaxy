@@ -104,7 +104,7 @@ class Preferences(Gtk.Dialog):
                 text="{} isn't a usable path".format(self.entry_installpath.get_text())
             )
             dialog.run()
-            dialog.close()
+            dialog.destroy()
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def cancel_pressed(self, button):

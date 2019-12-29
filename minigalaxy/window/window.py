@@ -103,12 +103,14 @@ class Window(Gtk.ApplicationWindow):
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
         preferences_window = Preferences(self, self.config)
-        preferences_window.show()
+        preferences_window.run()
+        preferences_window.destroy()
 
     @Gtk.Template.Callback("on_menu_about_clicked")
     def show_about(self, button):
         about_window = About(self)
-        about_window.show()
+        about_window.run()
+        about_window.destroy()
 
     @Gtk.Template.Callback("on_menu_logout_clicked")
     def logout(self, button):
