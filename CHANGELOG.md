@@ -1,5 +1,5 @@
 **0.9.2 (unreleased)**
-- Added a settings buttons to installed games which allow you to:
+- Added a button to installed games which allow you to:
     - Uninstall a game.
     - Open the directory in which the game is installed.
 - Fixed FTL not being able to start.
