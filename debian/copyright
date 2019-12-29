@@ -10,6 +10,11 @@ Files: data/minigalaxy.png
 Copyright: 2014 Epic Runes <https://opengameart.org/users/epic-runes>
 License: CC-BY-3.0
 
+Files: data/minigalaxy.metainfo.xml
+ data/minigalaxy.desktop
+Copyright: 2019 Wouter Wijsman <wwijsman@live.nl
+License: CC0-1.0
+
 License: GPL-3+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -312,3 +317,7 @@ License: CC-BY-3.0
     additional rights are deemed to be included in the License; this
     License is not intended to restrict the license of any rights under
     applicable law.
+    
+License: CC0-1.0
+ On Debian systems, the complete text of the Create Commons Universal license
+ version 1.0 can be found in "/usr/share/common-licenses/CC0-1.0".

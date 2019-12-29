@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2019-2020 Wouter Wijsman <wwijsman@live.nl> -->
+<component type="desktop-application">
+    <id>minigalaxy</id>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license> GPL-3.0-or-later</project_license>
+    <name>Minigalaxy</name>
+    <summary>A simple GOG client for Linux</summary>
+
+    <description>
+        <p>
+        Minigalaxy lets you download, install and play your GOG Linux games without getting in your way.
+        </p>
+        <p> Besides installing games, it offers the following features:</p>
+        <ul>
+            <li>Select in which language you'd prefer to download your games</li>
+            <li>Change where games are installed</li>
+            <li>Search your GOG Linux library</li>
+            <li>Show all games or just the ones you've installed</li>
+            <li>View the error message if a game fails to launch</li>
+        </ul>
+        <p>
+        An account on gog.com is required to use this application.
+        </p>
+    </description>
+
+    <launchable type="desktop-id">minigalaxy.desktop</launchable>
+
+    <screenshots>
+        <screenshot type="default">
+            <caption>Minigalaxy</caption>
+            <image>https://raw.githubusercontent.com/sharkwouter/minigalaxy/master/screenshot.png</image>
+        </screenshot>
+    </screenshots>
+
+    <url type="homepage">https://github.com/sharkwouter/minigalaxy</url>
+
+    <developer_name>Wouter "sharkwouter" Wijsman</developer_name>
+
+    <provides>
+        <binary>minigalaxy</binary>
+    </provides>
+
+    <releases>
+        <release version="0.9.1" date="2019-12-27">
+            <description>
+                <p>Fixed crashes and freezes sometimes happening while downloading and installing games.</p>
+                <p>Fixed installation failing when the installation directory is not on same filesystem as /home.</p>
+                <p>Fixed downloads crashing when the installation directory is changed or the refresh button is pressed.</p>
+                <p>Fixed changing installation directory not loading which games are installed in the new directory.</p>
+                <p>Fixed copyright file in deb package not being machine readable.</p>
+                <p>Moved binary to /usr/games in the deb package.</p>
+                <p>Add command line options --help, --version and --reset. The reset option will reset the cache and configuration.</p>
+            </description>
+        </release>
+            <release version="0.9.0" date="2019-12-25">
+                <description>
+                    <p>Initial release.</p>
+                </description>
+            </release>
+    </releases>
+</component>

@@ -9,8 +9,9 @@ setup(
 
     data_files=[
         ('share/applications', ['data/minigalaxy.desktop']),
-        ('share/pixmaps', ['data/minigalaxy.png']),
+        ('share/icons/hicolor/192x192/apps', ['data/minigalaxy.png']),
         ('share/minigalaxy/ui', glob('data/ui/*.ui')),
+        ('share/metainfo', ['data/minigalaxy.metainfo.xml']),
     ],
 
     # Project uses reStructuredText, so ensure that the docutils get
