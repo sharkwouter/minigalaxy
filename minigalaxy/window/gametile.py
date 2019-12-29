@@ -3,6 +3,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, GLib
 import requests
+import json
 import os
 import threading
 import subprocess
@@ -43,14 +44,17 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget) -> None:
-        if self.installed or self.busy:
+        if self.busy:
             return
-        self.busy = True
-        self.__create_progress_bar()
-        widget.set_sensitive(False)
-        widget.set_label("downloading...")
-        download_thread = threading.Thread(target=self.__download_file)
-        download_thread.start()
+        if self.installed:
+            self.__start_game()
+        else:
+            self.busy = True
+            self.__create_progress_bar()
+            widget.set_sensitive(False)
+            widget.set_label("downloading...")
+            download_thread = threading.Thread(target=self.__download_file)
+            download_thread.start()
 
     def __load_image(self) -> None:
         # image_url = "https:" + self.image_url + "_392.jpg" #This is the bigger image size
@@ -139,26 +143,46 @@ class GameTile(Gtk.Box):
         if os.path.isfile(os.path.join(self.__get_install_dir(), "gameinfo")):
             self.installed = True
             self.button.set_label("play")
-            self.button.connect("clicked", self.__start_game)
         else:
             self.installed = False
             self.button.set_label("download")
 
-    def __start_game(self, widget) -> subprocess:
+    def __start_game(self) -> subprocess:
         error_message = ""
+        game = None
         try:
             game = subprocess.Popen([self.__get_executable_path()], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except FileNotFoundError:
+            # Try the goggame-*.info file to figure out what the binary is
+            info_file = os.path.join(self.__get_install_dir(), "game/goggame-{}.info".format(self.game.id))
+            if os.path.isfile(info_file):
+                with open(info_file, 'r') as file:
+                    info = json.loads(file.read())
+                    print(info)
+                    file.close()
+                if info:
+                    binary_dir = os.path.join(self.__get_install_dir(), "game")
+                    os.chdir(binary_dir)
+                    exec_command = "./{}".format(info["playTasks"][0]["path"])
+                    game = subprocess.Popen([exec_command], stdout=subprocess.PIPE,
+                                            stderr=subprocess.PIPE)
+            else:
+                error_message = "No executable was found in {}".format(self.__get_install_dir())
+
+        if game:
             try:
-                game.wait(timeout=float(5))
+                game.wait(timeout=float(3))
             except subprocess.TimeoutExpired:
                 return game
-        except FileNotFoundError as e:
-            error_message = "No start.sh executable was found in {}".format(self.__get_install_dir())
+        else:
+            error_message = "Couldn't start subprocess"
 
         # Now deal with the error we've received
         if not error_message:
             stdout, stderror = game.communicate()
             error_message = stderror.decode("utf-8")
+            if not error_message:
+                error_message = "No error message was returned"
 
         error_text = "Failed to start {}:".format(self.game.name)
         print(error_text)
