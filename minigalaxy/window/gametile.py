@@ -153,7 +153,7 @@ class GameTile(Gtk.Box):
             except subprocess.TimeoutExpired:
                 return game
         except FileNotFoundError as e:
-            error_message = str(e)
+            error_message = "No start.sh executable was found in {}".format(self.__get_install_dir())
 
         # Now deal with the error we've received
         if not error_message:
