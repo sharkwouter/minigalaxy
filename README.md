@@ -20,6 +20,10 @@ In addition to that, Minigalaxy also allows you to:
 - Show all games or just the ones you've installed
 - View the error message if a game fails to launch
 
+Features **not** in Minigalaxy:
+
+- Installing games meant for other platforms
+
 ## System requirements
 
 Minigalaxy should work on the following distributions:
@@ -98,5 +102,4 @@ Expect to see the following issues:
 
 * Using Minigalaxy without an internet connection does not work
 * Changing the installation directory makes Minigalaxy unable to detect previously installed games
-* Installed games cannot be removed from within the client yet
 * Updating games has not been implemented yet
