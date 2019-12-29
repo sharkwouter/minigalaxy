@@ -1,11 +1,12 @@
 **0.9.2 (unreleased)**
 - Added a settings buttons to installed games which allow you to:
-    - Uninstall a game
-    - Open the directory in which the game is installed
-- Fixed FTL not being able to start
-- Fixed issue with thumbnails sometimes not fully loading
-- Fixed potential crash after logging in the first time
-- Detect installed games regardless of directory names
+    - Uninstall a game.
+    - Open the directory in which the game is installed.
+- Fixed FTL not being able to start.
+- Fixed issue with thumbnails sometimes not fully loading.
+- Fixed potential crash after logging in the first time.
+- Detect installed games regardless of directory names.
+- Fixed close button on about window not working.
 
 **0.9.1**
 - Fixed crashes and freezes sometimes happening while downloading and installing games.
