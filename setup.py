@@ -4,7 +4,7 @@ import subprocess
 from minigalaxy.version import VERSION
 
 # Generate the translations
-subprocess.run(['scripts/compile-languages.sh'])
+subprocess.run(['scripts/compile-translations.sh'])
 
 setup(
     name="Minigalaxy",
