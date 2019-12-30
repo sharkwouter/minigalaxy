@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.22.1 -->
-<interface>
+<interface domain="minigalaxy">
   <requires lib="gtk+" version="3.20"/>
   <template class="Preferences" parent="GtkDialog">
     <property name="can_focus">False</property>
@@ -19,7 +19,7 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button_cancel">
-                <property name="label" translatable="yes">Cancel</property>
+                <property name="label" translatable="yes" context="cancel">Cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -33,7 +33,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button_save">
-                <property name="label" translatable="yes">Save</property>
+                <property name="label" translatable="yes" context="save" comments="Saves the preferences">Save</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -60,7 +60,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Prefered language: </property>
+                <property name="label" translatable="yes" context="preferred_language" comments="Prefered language to download games in. Ends with &quot;: &quot;.">Prefered language: </property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -91,7 +91,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Installation path: </property>
+                <property name="label" translatable="yes" context="install_path" comments="The place directory in which games are installed. Ends with &quot;: &quot;.">Installation path: </property>
               </object>
               <packing>
                 <property name="left_attach">0</property>

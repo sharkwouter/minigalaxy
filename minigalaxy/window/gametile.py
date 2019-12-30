@@ -7,6 +7,7 @@ import json
 import os
 import threading
 import subprocess
+from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 
 
@@ -53,7 +54,7 @@ class GameTile(Gtk.Box):
             self.busy = True
             self.__create_progress_bar()
             widget.set_sensitive(False)
-            widget.set_label("downloading...")
+            widget.set_label(_("downloading..."))
             download_thread = threading.Thread(target=self.__download_file)
             download_thread.start()
 
@@ -61,7 +62,7 @@ class GameTile(Gtk.Box):
     def on_menu_button_uninstall(self, widget):
         self.menu_button.hide()
         self.button.set_sensitive(False)
-        self.button.set_label("uninstalling..")
+        self.button.set_label(_("uninstalling.."))
         uninstall_thread = threading.Thread(target=self.__uninstall_game)
         uninstall_thread.start()
 
@@ -103,7 +104,7 @@ class GameTile(Gtk.Box):
                     chunk_count = 0
         handler.close()
         GLib.idle_add(self.progress_bar.destroy)
-        GLib.idle_add(self.button.set_label, "installing..")
+        GLib.idle_add(self.button.set_label, _("installing.."))
         self.__install_game()
         self.busy = False
         GLib.idle_add(self.load_state)
@@ -160,11 +161,11 @@ class GameTile(Gtk.Box):
             return
         if os.path.isfile(os.path.join(self.__get_install_dir(), "gameinfo")):
             self.installed = True
-            self.button.set_label("play")
+            self.button.set_label(_("play"))
             self.menu_button.show()
         else:
             self.installed = False
-            self.button.set_label("download")
+            self.button.set_label(_("download"))
             self.menu_button.hide()
 
     def __start_game(self) -> subprocess:
@@ -187,7 +188,7 @@ class GameTile(Gtk.Box):
                     game = subprocess.Popen([exec_command], stdout=subprocess.PIPE,
                                             stderr=subprocess.PIPE)
             else:
-                error_message = "No executable was found in {}".format(self.__get_install_dir())
+                error_message = _("No executable was found in {}").format(self.__get_install_dir())
 
         if game:
             try:
@@ -195,16 +196,16 @@ class GameTile(Gtk.Box):
             except subprocess.TimeoutExpired:
                 return game
         else:
-            error_message = "Couldn't start subprocess"
+            error_message = _("Couldn't start subprocess")
 
         # Now deal with the error we've received
         if not error_message:
             stdout, stderror = game.communicate()
             error_message = stderror.decode("utf-8")
             if not error_message:
-                error_message = "No error message was returned"
+                error_message = _("No error message was returned")
 
-        error_text = "Failed to start {}:".format(self.game.name)
+        error_text = _("Failed to start {}:").format(self.game.name)
         print(error_text)
         print(error_message)
         dialog = Gtk.MessageDialog(

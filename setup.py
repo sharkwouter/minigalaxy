@@ -1,6 +1,11 @@
 from setuptools import setup, find_packages
 from glob import glob
+import subprocess
 from minigalaxy.version import VERSION
+
+# Generate the translations
+subprocess.run(['scripts/compile-languages.sh'])
+
 setup(
     name="Minigalaxy",
     version=VERSION,
@@ -12,6 +17,9 @@ setup(
         ('share/icons/hicolor/192x192/apps', ['data/minigalaxy.png']),
         ('share/minigalaxy/ui', glob('data/ui/*.ui')),
         ('share/metainfo', ['data/minigalaxy.metainfo.xml']),
+
+        # Add translations
+        ('share/minigalaxy/translations/nl/LC_MESSAGES/', ['data/mo/nl/LC_MESSAGES/minigalaxy.mo']),
     ],
 
     # Project uses reStructuredText, so ensure that the docutils get

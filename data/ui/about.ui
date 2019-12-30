@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Generated with glade 3.22.1 -->
-<interface>
+<interface domain="minigalaxy">
   <requires lib="gtk+" version="3.20"/>
   <template class="About" parent="GtkAboutDialog">
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">MiniGalaxy</property>
-    <property name="copyright" translatable="yes">Copyright © 2019-2020 Wouter Wijsman</property>
-    <property name="comments" translatable="yes">A simple GOG client for Linux</property>
+    <property name="copyright">Copyright © 2019-2020 Wouter Wijsman</property>
+    <property name="comments" translatable="yes" context="short_description" comments="A short description of what Minigalaxy is">A simple GOG client for Linux</property>
     <property name="website">https://github.com/sharkwouter/minigalaxy</property>
-    <property name="website_label" translatable="yes">Github page</property>
+    <property name="website_label" translatable="yes" context="github_page_link" comments="A link to the Github page">Github page</property>
     <property name="authors">&lt;a href="https://github.com/sharkwouter"&gt;Wouter Wijsman&lt;/a&gt;</property>
     <property name="artists">&lt;a href="https://opengameart.org/users/epic-runes"&gt;Epic Runes&lt;/a&gt;</property>
     <property name="logo_icon_name">image-missing</property>

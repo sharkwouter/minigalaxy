@@ -2,28 +2,29 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import os
+from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR
 
 SUPPORTED_LANGUAGES = [
-    ["br", "Brazilian Portuguese"],
-    ["cn", "Chinese"],
-    ["da", "Danish"],
-    ["nl", "Dutch"],
-    ["en", "English"],
-    ["fi", "Finnish"],
-    ["fr", "French"],
-    ["de", "German"],
-    ["hu", "Hungarian"],
-    ["it", "Italian"],
-    ["jp", "Japanese"],
-    ["ko", "Korean"],
-    ["no", "Norwegian"],
-    ["pl", "Polish"],
-    ["pt", "Portuguese"],
-    ["ru", "Russian"],
-    ["es", "Spanish"],
-    ["sv", "Swedish"],
-    ["tr", "Turkish"],
+    ["br", _("Brazilian Portuguese")],
+    ["cn", _("Chinese")],
+    ["da", _("Danish")],
+    ["nl", _("Dutch")],
+    ["en", _("English")],
+    ["fi", _("Finnish")],
+    ["fr", _("French")],
+    ["de", _("German")],
+    ["hu", _("Hungarian")],
+    ["it", _("Italian")],
+    ["jp", _("Japanese")],
+    ["ko", _("Korean")],
+    ["no", _("Norwegian")],
+    ["pl", _("Polish")],
+    ["pt", _("Portuguese")],
+    ["ru", _("Russian")],
+    ["es", _("Spanish")],
+    ["sv", _("Swedish")],
+    ["tr", _("Turkish")],
 ]
 
 
@@ -37,7 +38,7 @@ class Preferences(Gtk.Dialog):
     entry_installpath = Gtk.Template.Child()
 
     def __init__(self, parent, config):
-        Gtk.Dialog.__init__(self, title="Preferences", parent=parent, modal=True)
+        Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
         self.__config = config
         self.parent = parent
         self.__set_language_list()
@@ -101,7 +102,7 @@ class Preferences(Gtk.Dialog):
                 destroy_with_parent=True,
                 message_type=Gtk.MessageType.ERROR,
                 buttons=Gtk.ButtonsType.OK,
-                text="{} isn't a usable path".format(self.entry_installpath.get_text())
+                text=_("{} isn't a usable path").format(self.entry_installpath.get_text())
             )
             dialog.run()
             dialog.destroy()
