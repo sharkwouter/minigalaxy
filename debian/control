@@ -7,6 +7,7 @@ Standards-Version: 4.3.0
 Homepage: https://github.com/sharkwouter/minigalaxy
 X-Python3-Version: >= 3.6
 Vcs-Git: https://github.com/sharkwouter/minigalaxy.git
+Vcs-Browser: https://github.com/sharkwouter/minigalaxy
 
 Package: minigalaxy
 Architecture: all
