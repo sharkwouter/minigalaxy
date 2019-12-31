@@ -5,6 +5,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('WebKit2', '4.0')
 from gi.repository import WebKit2
 from gi.repository import Gtk
+from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR
 
 
@@ -19,7 +20,7 @@ class Login(Gtk.Dialog):
     result = None
 
     def __init__(self, login_url=None, redirect_url=None, parent=None):
-        Gtk.Dialog.__init__(self, title="Login", parent=parent, flags=0, buttons=())
+        Gtk.Dialog.__init__(self, title=_("Login"), parent=parent, flags=0, buttons=())
 
         self.redirect_url = redirect_url
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-30 18:10+0100\n"
+"POT-Creation-Date: 2019-12-31 12:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -110,6 +110,10 @@ msgstr ""
 
 #: minigalaxy/window/preferences.py:20
 msgid "Korean"
+msgstr ""
+
+#: minigalaxy/window/login.py:23
+msgid "Login"
 msgstr ""
 
 #. Logs the users gog account out and returns to login page
