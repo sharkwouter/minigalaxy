@@ -9,6 +9,7 @@ from minigalaxy.window.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
+from minigalaxy.game import Game
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
@@ -31,6 +32,7 @@ class Window(Gtk.ApplicationWindow):
         self.api = Api(self.config)
         self.show_installed_only = False
         self.search_string = ""
+        self.offline = False
 
         # Set the icon
         icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_IMAGE_PATH)
@@ -49,8 +51,7 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_header_sync_clicked")
     def sync_library(self, button=None):
-        # Get and add new games
-        games = self.api.get_library()
+        # Get installed games
         installed_games = self.__get_installed_games()
 
         # Make a list with the game tiles which are already loaded
@@ -60,31 +61,50 @@ class Window(Gtk.ApplicationWindow):
             current_tiles.append(tile)
 
         # Only add games if they aren't already in the list. Otherwise just reload their state
-        for game in games:
-            not_found = True
-            for tile in current_tiles:
-                if tile.game.id == game.id:
-                    not_found = False
-                    break
-            if not_found:
-                # Check if game is already installed
-                installed = False
-                install_dir = ""
-                for installed_game in installed_games:
-                    if installed_game["name"] == game.name:
-                        print("Found game: {}".format(game.name))
-                        installed = True
-                        install_dir = installed_game["dir"]
+        if not self.offline:
+            games = self.api.get_library()
+            for game in games:
+                not_found = True
+                for tile in current_tiles:
+                    if tile.game.id == game.id:
+                        not_found = False
                         break
-                # Create the game tile
-                gametile = GameTile(
-                    parent=self,
-                    game=game,
-                    api=self.api,
-                    install_dir=install_dir,
-                )
-                gametile.load_state()
-                self.library.add(gametile)
+                if not_found:
+                    # Check if game is already installed
+                    installed = False
+                    install_dir = ""
+                    for installed_game in installed_games:
+                        if installed_game["name"] == game.name:
+                            print("Found game: {}".format(game.name))
+                            installed = True
+                            install_dir = installed_game["dir"]
+                            break
+                    # Create the game tile
+                    gametile = GameTile(
+                        parent=self,
+                        game=game,
+                        api=self.api,
+                        install_dir=install_dir,
+                    )
+                    gametile.load_state()
+                    self.library.add(gametile)
+        else:
+            for game in installed_games:
+                not_found = True
+                for tile in current_tiles:
+                    if tile.game.name == game["name"]:
+                        not_found = False
+                        break
+                if not_found:
+                    # Create the game tile
+                    gametile = GameTile(
+                        parent=self,
+                        game=Game(game["name"], 0, ""),
+                        api=self.api,
+                        install_dir=game["dir"],
+                    )
+                    gametile.load_state()
+                    self.library.add(gametile)
 
         self.sort_library()
         self.filter_library()

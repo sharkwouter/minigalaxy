@@ -73,10 +73,17 @@ class GameTile(Gtk.Box):
         subprocess.call(["xdg-open", self.__get_install_dir()])
 
     def __load_image(self) -> None:
-        # image_url = "https:" + self.image_url + "_392.jpg" #This is the bigger image size
-        image_url = "https:{}_196.jpg".format(self.game.image_url)
+        # Set the image to the one in the game directory in offline mode
+        if self.game.id == 0:
+            filename = os.path.join(self.__get_install_dir(), "thumbnail.jpg")
+            if os.path.isfile(filename):
+                GLib.idle_add(self.image.set_from_file, filename)
+            return
+
         filename = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
+        # Download the image if it doesn't exist yet
         if not os.path.isfile(filename):
+            image_url = "https:{}_196.jpg".format(self.game.image_url)
             download = requests.get(image_url)
             with open(filename, "wb") as writer:
                 writer.write(download.content)
@@ -136,6 +143,10 @@ class GameTile(Gtk.Box):
 
         # Copy the game files into the correct directory
         shutil.move(os.path.join(temp_dir, "data/noarch"), self.__get_install_dir())
+        shutil.copyfile(
+            os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id)),
+            os.path.join(self.__get_install_dir(), "thumbnail.jpg"),
+        )
 
         # Remove the temporary directory
         shutil.rmtree(temp_dir, ignore_errors=True)
