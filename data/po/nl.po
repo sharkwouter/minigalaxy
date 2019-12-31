@@ -112,9 +112,9 @@ msgstr "Japans"
 msgid "Korean"
 msgstr "Koreaans"
 
-+#: minigalaxy/window/login.py:23
-+msgid "Login"
-+msgstr "Log in"
+#: minigalaxy/window/login.py:23
+msgid "Login"
+msgstr "Log in"
 
 #. Logs the users gog account out and returns to login page
 #: data/ui/application.ui:17
