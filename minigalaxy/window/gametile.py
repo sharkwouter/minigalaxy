@@ -1,4 +1,6 @@
 import shutil
+import zipfile
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, GLib
@@ -112,24 +114,30 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.parent.filter_library)
 
     def __install_game(self) -> None:
-        # Make a temporary directory for extracting the installer
+        # Make a temporary empty directory for extracting the installer
         temp_dir = os.path.join(CACHE_DIR, "extract/{}".format(self.game.id))
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir, ignore_errors=True)
-
         os.makedirs(temp_dir)
 
-        # Extract the game files
-        subprocess.call(["unzip", "-qq", self.download_path, "-d",
-                         temp_dir])
+        # Extract the installer
+        with zipfile.ZipFile(self.download_path) as archive:
+            for member in archive.namelist():
+                file = archive.getinfo(member)
+                archive.extract(file, temp_dir)
+                # Set permissions
+                attr = file.external_attr >> 16
+                os.chmod(os.path.join(temp_dir, member), attr)
 
-        library_dir = self.api.config.get("install_dir")
         # Make sure the install directory exists
+        library_dir = self.api.config.get("install_dir")
         if not os.path.exists(library_dir):
             os.makedirs(library_dir)
 
         # Copy the game files into the correct directory
         shutil.move(os.path.join(temp_dir, "data/noarch"), self.__get_install_dir())
+
+        # Remove the temporary directory
         shutil.rmtree(temp_dir, ignore_errors=True)
         os.remove(self.download_path)
 
