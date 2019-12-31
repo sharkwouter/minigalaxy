@@ -20,6 +20,7 @@ setup(
 
         # Add translations
         ('share/minigalaxy/translations/nl/LC_MESSAGES/', ['data/mo/nl/LC_MESSAGES/minigalaxy.mo']),
+        ('share/minigalaxy/translations/zh_TW/LC_MESSAGES/', ['data/mo/zh_TW/LC_MESSAGES/minigalaxy.mo']),
     ],
 
     # Project uses reStructuredText, so ensure that the docutils get
