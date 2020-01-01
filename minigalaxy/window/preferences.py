@@ -85,6 +85,13 @@ class Preferences(Gtk.Dialog):
                 os.remove(write_test_file)
             except:
                 return False
+        # Remove the old directory if it is empty
+        old_dir = self.__config.get("install_dir")
+        try:
+            os.rmdir(old_dir)
+        except OSError:
+            pass
+
         self.__config.set("install_dir", choice)
         return True
 
