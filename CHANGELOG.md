@@ -2,10 +2,13 @@
 - Added a button to installed games which allow you to:
     - Uninstall a game.
     - Open the directory in which the game is installed.
+- Added translation support. The following languages are now supported:
+    - Dutch
+    - Taiwanese Mandarin (thanks to s8321414)
+- Improved game detection to check in all directories in the install path.
 - Fixed FTL not being able to start.
 - Fixed issue with thumbnails sometimes not fully loading.
 - Fixed potential crash after logging in the first time.
-- Detect installed games regardless of directory names.
 - Fixed close button on about window not working.
 
 **0.9.1**
