@@ -100,6 +100,21 @@ pip install -r requirements.txt
 bin/minigalaxy
 ```
 
+## Support
+If you need any help using Minigalaxy, feel free to join the [Minigalaxy Discord server](https://discord.gg/RC4cXVD).
+Bugs reports and feature requests can also be made [here](https://github.com/sharkwouter/minigalaxy/issues).
+
+## Contribute
+
+Currently help is needed with the following:
+
+- Reporting bugs in the [issue tracker](https://github.com/sharkwouter/minigalaxy/issues).
+- Translating to different languages. Instructions [here](https://github.com/sharkwouter/minigalaxy/issues/17#issuecomment-569771040).
+- Testing issues with the ["needs testing"](https://github.com/sharkwouter/minigalaxy/issues?q=is%3Aissue+is%3Aopen+label%3A%22needs+testing%22) tag.
+- Working on or giving input on issues with the ["help wanted"](https://github.com/sharkwouter/minigalaxy/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) tag.
+
+Feel free to join the [Minigalaxy Discord](https://discord.gg/RC4cXVD) if you would like to help out.
+
 ## Known issues
 
 Expect to see the following issues:
