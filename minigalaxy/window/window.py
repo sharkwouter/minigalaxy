@@ -60,23 +60,43 @@ class Window(Gtk.ApplicationWindow):
             tile = child.get_children()[0]
             current_tiles.append(tile)
 
+        # Recheck online status
+
+        if button and self.offline:
+            self.__authenticate()
+
+        # Refresh games list from API
+        games = []
+        if not self.offline:
+            try:
+                games = self.api.get_library()
+            except:
+                dialog = Gtk.MessageDialog(
+                    message_type=Gtk.MessageType.ERROR,
+                    parent=self,
+                    modal=True,
+                    buttons=Gtk.ButtonsType.CLOSE,
+                    text=_("Failed to retrieve library")
+                )
+                dialog.format_secondary_text(_("Couldn't connect to GOG servers"))
+                dialog.run()
+                dialog.destroy()
+                self.offline = True
+
         # Only add games if they aren't already in the list. Otherwise just reload their state
         if not self.offline:
-            games = self.api.get_library()
             for game in games:
                 not_found = True
                 for tile in current_tiles:
-                    if tile.game.id == game.id:
+                    if tile.game.name == game.name:
                         not_found = False
                         break
                 if not_found:
                     # Check if game is already installed
-                    installed = False
                     install_dir = ""
                     for installed_game in installed_games:
                         if installed_game["name"] == game.name:
                             print("Found game: {}".format(game.name))
-                            installed = True
                             install_dir = installed_game["dir"]
                             break
                     # Create the game tile
@@ -166,6 +186,8 @@ class Window(Gtk.ApplicationWindow):
 
     def __filter_library_func(self, child):
         tile = child.get_children()[0]
+        if not tile.installed and self.offline:
+            return False
         if tile.installed and self.show_installed_only or not self.show_installed_only:
             if self.search_string.lower() in str(tile).lower():
                 return True
@@ -206,6 +228,37 @@ class Window(Gtk.ApplicationWindow):
     def __authenticate(self):
         url = None
         token = self.config.get("refresh_token")
+
+        # Make sure there is an internet connection, but only once
+        if self.api.can_connect():
+            self.offline = False
+        else:
+            if token:
+                self.offline = True
+                dialog = Gtk.MessageDialog(
+                    message_type=Gtk.MessageType.ERROR,
+                    parent=self,
+                    modal=True,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=_("Couldn't connect to GOG servers")
+                )
+                dialog.format_secondary_text(_("Minigalaxy is now running in offline mode"))
+                dialog.run()
+                dialog.destroy()
+                return
+            else:
+                dialog = Gtk.MessageDialog(
+                    message_type=Gtk.MessageType.ERROR,
+                    parent=self,
+                    modal=True,
+                    buttons=Gtk.ButtonsType.CLOSE,
+                    text=_("Couldn't connect to GOG servers")
+                )
+                dialog.format_secondary_text(_("Try again with an active internet connection"))
+                dialog.run()
+                dialog.destroy()
+                exit(1)
+                return
 
         authenticated = self.api.authenticate(refresh_token=token, login_code=url)
 

@@ -73,22 +73,28 @@ class GameTile(Gtk.Box):
         subprocess.call(["xdg-open", self.__get_install_dir()])
 
     def __load_image(self) -> None:
+        image_thumbnail_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
+        image_install_dir = os.path.join(self.__get_install_dir(), "thumbnail.jpg")
+
         # Set the image to the one in the game directory in offline mode
         if self.game.id == 0:
-            filename = os.path.join(self.__get_install_dir(), "thumbnail.jpg")
-            if os.path.isfile(filename):
-                GLib.idle_add(self.image.set_from_file, filename)
+            if os.path.isfile(image_install_dir):
+                GLib.idle_add(self.image.set_from_file, image_install_dir)
             return
 
-        filename = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
         # Download the image if it doesn't exist yet
-        if not os.path.isfile(filename):
+        if not os.path.isfile(image_thumbnail_dir):
             image_url = "https:{}_196.jpg".format(self.game.image_url)
             download = requests.get(image_url)
-            with open(filename, "wb") as writer:
+            with open(image_thumbnail_dir, "wb") as writer:
                 writer.write(download.content)
                 writer.close()
-        GLib.idle_add(self.image.set_from_file, filename)
+
+        # Copy the image to the game directory if not there yet
+        if not os.path.isfile(image_install_dir) and os.path.isdir(self.__get_install_dir()):
+            shutil.copy2(image_thumbnail_dir, image_install_dir)
+
+        GLib.idle_add(self.image.set_from_file, image_thumbnail_dir)
 
     def __download_file(self) -> None:
         if not os.path.exists(self.download_dir):

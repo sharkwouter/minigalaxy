@@ -128,6 +128,14 @@ class Api:
             self.config.set("username", username)
         return username
 
+    def can_connect(self) -> bool:
+        url = "https://embed.gog.com"
+        try:
+            requests.get(url, timeout=5)
+        except requests.exceptions.ConnectionError:
+            return False
+        return True
+
     # Make a request with the active token
     def __request(self, url: str = None, params: dict = None) -> tuple:
         # Refresh the token if needed
