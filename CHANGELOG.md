@@ -5,6 +5,7 @@
 - Added translation support. The following languages are now supported:
     - Dutch
     - Taiwanese Mandarin (thanks to s8321414)
+- Added offline mode.
 - Improved game detection to check in all directories in the install path.
 - Fixed FTL not being able to start.
 - Fixed issue with thumbnails sometimes not fully loading.
