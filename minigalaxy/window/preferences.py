@@ -69,6 +69,25 @@ class Preferences(Gtk.Dialog):
             lang, _ = model[lang_choice][:2]
             self.__config.set("lang", lang)
 
+    @Gtk.Template.Callback("on_button_choose_clicked")
+    def __install_dir_choice(self, widget):
+        folder = Gtk.FileChooserDialog("Please choose a folder", self,
+                                         Gtk.FileChooserAction.SELECT_FOLDER,
+                                         (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                         "Select", Gtk.ResponseType.OK))
+    
+        folder.set_default_size(800, 400)
+
+        response = folder.run()
+        if response == Gtk.ResponseType.OK:
+            folder_path = folder.get_filename()
+        elif response == Gtk.ResponseType.CANCEL:
+            print("Cancel clicked")
+
+        folder.destroy()
+        
+        final_path = self.entry_installpath.set_text(folder_path)
+        
     def __save_install_dir_choice(self) -> bool:
         choice = self.entry_installpath.get_text()
         if not os.path.exists(choice):
