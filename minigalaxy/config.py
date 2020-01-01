@@ -22,11 +22,17 @@ class Config:
             return self.__create_config_file()
 
     def __create_config_file(self) -> dict:
+        # Make sure the configuration directory exists before creating the configuration file
         if not os.path.exists(CONFIG_DIR):
             os.makedirs(CONFIG_DIR)
         with open(self.__config_file, "w") as file:
             file.write(json.dumps(DEFAULT_CONFIG))
             file.close()
+
+        # Make sure the default installation path exists
+        if not os.path.isdir(DEFAULT_INSTALL_DIR):
+            os.makedirs(DEFAULT_INSTALL_DIR)
+
         return DEFAULT_CONFIG
 
     def __update_config_file(self):
