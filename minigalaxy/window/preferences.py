@@ -35,14 +35,14 @@ class Preferences(Gtk.Dialog):
     button_cancel = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
     combobox_language = Gtk.Template.Child()
-    entry_installpath = Gtk.Template.Child()
+    filechooser_button = Gtk.Template.Child()
 
     def __init__(self, parent, config):
         Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
         self.__config = config
         self.parent = parent
         self.__set_language_list()
-        self.entry_installpath.set_text(config.get("install_dir"))
+        self.filechooser_button.set_current_folder(config.get("install_dir"))
 
     def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)
@@ -69,9 +69,19 @@ class Preferences(Gtk.Dialog):
             lang, _ = model[lang_choice][:2]
             self.__config.set("lang", lang)
 
+    ###
+    @Gtk.Template.Callback('on_filechooser_button_file_set')
+    def __set_install_path(self, widget) -> None:
+        path = self.filechooser_button.get_filename()
+        print("The path is :", path)
+        self.filechooser_button.set_current_folder(path)
+
     def __save_install_dir_choice(self) -> bool:
-        choice = self.entry_installpath.get_text()
+        choice = self.filechooser_button.get_current_folder()
+        print("The path saved is :", choice)
+
         if not os.path.exists(choice):
+
             try:
                 os.makedirs(choice)
             except:
