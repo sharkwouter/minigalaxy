@@ -69,19 +69,15 @@ class Preferences(Gtk.Dialog):
             lang, _ = model[lang_choice][:2]
             self.__config.set("lang", lang)
 
-    ###
     @Gtk.Template.Callback('on_filechooser_button_file_set')
     def __set_install_path(self, widget) -> None:
         path = self.filechooser_button.get_filename()
-        print("The path is :", path)
         self.filechooser_button.set_current_folder(path)
 
     def __save_install_dir_choice(self) -> bool:
         choice = self.filechooser_button.get_current_folder()
-        print("The path saved is :", choice)
 
         if not os.path.exists(choice):
-
             try:
                 os.makedirs(choice)
             except:
