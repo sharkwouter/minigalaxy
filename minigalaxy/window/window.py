@@ -1,4 +1,5 @@
 import os
+import re
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf
@@ -88,8 +89,9 @@ class Window(Gtk.ApplicationWindow):
             for game in games:
                 not_found = True
                 for tile in current_tiles:
-                    if tile.game.name == game.name:
+                    if self.__games_match(tile.game.name, game.name):
                         not_found = False
+                        tile.game = game
                         break
                 if not_found:
                     # Check if game is already installed
@@ -220,6 +222,14 @@ class Window(Gtk.ApplicationWindow):
                 games.append({'name': name.strip(), 'dir': full_path})
                 file.close()
         return games
+
+    def __clean_game_name(self, name):
+        return re.sub('[^A-Za-z0-9]+', '', name).lower()
+
+    def __games_match(self, name1, name2):
+        name1_clean = self.__clean_game_name(name1)
+        name2_clean = self.__clean_game_name(name2)
+        return name1_clean == name2_clean
 
     """
     The API remembers the authentication token and uses it
