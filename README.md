@@ -2,7 +2,7 @@
 
 A simple GOG client for Linux that lets you download and play your GOG Linux games
 
-![screenshot](screenshot.png?raw=true)
+![screenshot](screenshot.jpg?raw=true)
 
 ## Features
 
