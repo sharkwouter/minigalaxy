@@ -195,41 +195,47 @@ class GameTile(Gtk.Box):
 
     def __start_game(self) -> subprocess:
         error_message = ""
-        game = None
+        process = None
         try:
-            game = subprocess.Popen([self.__get_executable_path()], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            process = subprocess.Popen([self.__get_executable_path()], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except FileNotFoundError:
             # Try the goggame-*.info file to figure out what the binary is
             try:
                 info_file = glob.glob(os.path.join(self.__get_install_dir(), "game/goggame-*.info"))[0]
+            except IndexError:
+                error_message = _("No executable was found in {}").format(self.__get_install_dir())
+            # Run alternative binary found in goggame info file
+            if not error_message:
                 with open(info_file, 'r') as file:
                     info = json.loads(file.read())
-                    print(info)
                     file.close()
                 if info:
                     binary_dir = os.path.join(self.__get_install_dir(), "game")
                     os.chdir(binary_dir)
                     exec_command = "./{}".format(info["playTasks"][0]["path"])
-                    game = subprocess.Popen([exec_command], stdout=subprocess.PIPE,
-                                            stderr=subprocess.PIPE)
-            except:
-                error_message = _("No executable was found in {}").format(self.__get_install_dir())
+                    process = subprocess.Popen(
+                        [exec_command],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE
+                    )
 
-        if game:
+        # Check if the application has started and see if it is still runnning after a short timeout
+        if process:
             try:
-                game.wait(timeout=float(3))
+                process.wait(timeout=float(3))
             except subprocess.TimeoutExpired:
-                return game
-        else:
+                return process
+        elif not error_message:
             error_message = _("Couldn't start subprocess")
 
-        # Now deal with the error we've received
+        # Set the error message to what's been received in std error if not yet set
         if not error_message:
-            stdout, stderror = game.communicate()
+            stdout, stderror = process.communicate()
             error_message = stderror.decode("utf-8")
             if not error_message:
                 error_message = _("No error message was returned")
 
+        # Show the error as both a dialog and in the terminal
         error_text = _("Failed to start {}:").format(self.game.name)
         print(error_text)
         print(error_message)
