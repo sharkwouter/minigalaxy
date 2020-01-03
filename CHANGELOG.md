@@ -8,6 +8,7 @@
 - Added offline mode.
 - Improved game detection to check in all directories in the installation path.
 - The preferences menu now uses a file picker for setting the installation path (thanks to Odelpasso).
+- Startup time has been reduced.
 - Fixed FTL not being able to start.
 - Fixed issue with thumbnails sometimes not fully loading.
 - Fixed potential crash after logging in the first time.
