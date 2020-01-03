@@ -1,7 +1,6 @@
 import os
 import re
 import threading
-
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, GLib
@@ -225,7 +224,6 @@ class Window(Gtk.ApplicationWindow):
         # Update the library
         self.library.add(gametile)
         self.__update_library_view()
-
 
     def __get_installed_games(self) -> dict:
         games = []
