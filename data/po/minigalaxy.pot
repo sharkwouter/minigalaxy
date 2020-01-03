@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-31 12:39+0100\n"
+"POT-Creation-Date: 2020-01-03 14:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,12 @@ msgstr ""
 msgid "Chinese"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:199
+#: minigalaxy/window/window.py:81 minigalaxy/window/window.py:243
+#: minigalaxy/window/window.py:255
+msgid "Couldn't connect to GOG servers"
+msgstr ""
+
+#: minigalaxy/window/gametile.py:224
 msgid "Couldn't start subprocess"
 msgstr ""
 
@@ -62,7 +67,11 @@ msgstr ""
 msgid "English"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:208
+#: minigalaxy/window/window.py:79
+msgid "Failed to retrieve library"
+msgstr ""
+
+#: minigalaxy/window/gametile.py:233
 msgid "Failed to start {}:"
 msgstr ""
 
@@ -89,7 +98,7 @@ msgid "Hungarian"
 msgstr ""
 
 #. The place directory in which games are installed. Ends with ": ".
-#: data/ui/preferences.ui:94
+#: data/ui/preferences.ui:84
 msgctxt "install_path"
 msgid "Installation path: "
 msgstr ""
@@ -122,11 +131,15 @@ msgctxt "logout"
 msgid "Logout"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:206
+#: minigalaxy/window/window.py:245
+msgid "Minigalaxy is now running in offline mode"
+msgstr ""
+
+#: minigalaxy/window/gametile.py:231
 msgid "No error message was returned"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:191
+#: minigalaxy/window/gametile.py:216
 msgid "No executable was found in {}"
 msgstr ""
 
@@ -194,6 +207,10 @@ msgstr ""
 msgid "Swedish"
 msgstr ""
 
+#: minigalaxy/window/window.py:257
+msgid "Try again with an active internet connection"
+msgstr ""
+
 #: minigalaxy/window/preferences.py:27
 msgid "Turkish"
 msgstr ""
@@ -204,26 +221,26 @@ msgctxt "uninstall"
 msgid "Uninstall"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:168
+#: minigalaxy/window/gametile.py:193
 msgid "download"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:57
+#: minigalaxy/window/gametile.py:59
 msgid "downloading..."
 msgstr ""
 
-#: minigalaxy/window/gametile.py:107
+#: minigalaxy/window/gametile.py:122
 msgid "installing.."
 msgstr ""
 
-#: minigalaxy/window/gametile.py:164
+#: minigalaxy/window/gametile.py:189
 msgid "play"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:65
+#: minigalaxy/window/gametile.py:67
 msgid "uninstalling.."
 msgstr ""
 
-#: minigalaxy/window/preferences.py:105
+#: minigalaxy/window/preferences.py:112
 msgid "{} isn't a usable path"
 msgstr ""
