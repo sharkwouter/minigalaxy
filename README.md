@@ -84,7 +84,7 @@ sudo zypper in minigalaxy
 
 **Gentoo**
 
-Available in the [in the Metahax overlay](https://github.com/metafarion/metahax).
+Available in the [in the Metahax overlay](https://github.com/metafarion/metahax). Follow the instructions there to install Minigalaxy on Gentoo.
 
 **Other distributions**
 
