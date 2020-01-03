@@ -88,7 +88,8 @@ class Preferences(Gtk.Dialog):
         # Remove the old directory if it is empty
         old_dir = self.__config.get("install_dir")
         try:
-            os.rmdir(old_dir)
+            if old_dir != choice:
+                os.rmdir(old_dir)
         except OSError:
             pass
 
