@@ -34,6 +34,7 @@ Minigalaxy should work on the following distributions:
 - Manjaro
 - Fedora 31
 - openSUSE Tumbleweed
+- Gentoo
 
 Minigalaxy does **not** ship for the following distributions because they do not contain the required version of PyGObject:
 
@@ -56,7 +57,7 @@ Download the latest deb package from the [releases page](https://github.com/shar
 
 **Arch/Manjaro**
 
-Build the [AUR package](https://aur.archlinux.org/packages/minigalaxy). For this you can use an AUR helper, or use the following set of commands:
+Available the [AUR](https://aur.archlinux.org/packages/minigalaxy). You can use an AUR helper or use the following set of commands to install Minigalaxy on Arch:
 
 ```shell script
 git clone https://aur.archlinux.org/minigalaxy.git
@@ -66,7 +67,7 @@ makepkg -si
 
 **Fedora**
 
-Available in [Copr](https://copr.fedorainfracloud.org/coprs/atim/minigalaxy/)
+Available in [Copr](https://copr.fedorainfracloud.org/coprs/atim/minigalaxy/). You can use the following set of commands to install Minigalaxy on Fedora:
 
 ```shell script
 sudo dnf copr enable atim/minigalaxy -y && sudo dnf install minigalaxy
@@ -74,12 +75,16 @@ sudo dnf copr enable atim/minigalaxy -y && sudo dnf install minigalaxy
 
 **openSUSE**
 
-Minigalaxy can be found in the [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy).
+Available in the [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy). You can use the following set of commands to install Minigalaxy on openSUSE:
 ```shell script
 sudo zypper ar -f obs://games:tools gamestools
 sudo zypper ref
 sudo zypper in minigalaxy
 ```
+
+**Gentoo**
+
+Available in the [in the Metahax overlay](https://github.com/metafarion/metahax).
 
 **Other distributions**
 
@@ -119,6 +124,5 @@ Feel free to join the [Minigalaxy Discord](https://discord.gg/RC4cXVD) if you wo
 
 Expect to see the following issues:
 
-* Using Minigalaxy without an internet connection does not work
 * Changing the installation directory makes Minigalaxy unable to detect previously installed games
 * Updating games has not been implemented yet
