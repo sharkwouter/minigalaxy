@@ -42,7 +42,7 @@ class Preferences(Gtk.Dialog):
         self.__config = config
         self.parent = parent
         self.__set_language_list()
-        self.button_filechooser.set_current_folder(config.get("install_dir"))
+        self.button_filechooser.set_filename(config.get("install_dir"))
 
     def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)
@@ -70,7 +70,7 @@ class Preferences(Gtk.Dialog):
             self.__config.set("lang", lang)
 
     def __save_install_dir_choice(self) -> bool:
-        choice = self.button_filechooser.get_current_folder()
+        choice = self.button_filechooser.get_filename()
         if not os.path.exists(choice):
             try:
                 os.makedirs(choice)
