@@ -1,6 +1,6 @@
 import shutil
 import zipfile
-
+import glob
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, GLib
@@ -200,8 +200,8 @@ class GameTile(Gtk.Box):
             game = subprocess.Popen([self.__get_executable_path()], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except FileNotFoundError:
             # Try the goggame-*.info file to figure out what the binary is
-            info_file = os.path.join(self.__get_install_dir(), "game/goggame-{}.info".format(self.game.id))
-            if os.path.isfile(info_file):
+            try:
+                info_file = glob.glob(os.path.join(self.__get_install_dir(), "game/goggame-*.info"))[0]
                 with open(info_file, 'r') as file:
                     info = json.loads(file.read())
                     print(info)
@@ -212,7 +212,7 @@ class GameTile(Gtk.Box):
                     exec_command = "./{}".format(info["playTasks"][0]["path"])
                     game = subprocess.Popen([exec_command], stdout=subprocess.PIPE,
                                             stderr=subprocess.PIPE)
-            else:
+            except:
                 error_message = _("No executable was found in {}").format(self.__get_install_dir())
 
         if game:
@@ -235,6 +235,8 @@ class GameTile(Gtk.Box):
         print(error_message)
         dialog = Gtk.MessageDialog(
             message_type=Gtk.MessageType.ERROR,
+            parent=self.parent,
+            modal=True,
             buttons=Gtk.ButtonsType.CLOSE,
             text=error_text
         )
