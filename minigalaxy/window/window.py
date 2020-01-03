@@ -1,8 +1,10 @@
 import os
 import re
+import threading
+
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gtk, GdkPixbuf, GLib
 from minigalaxy.window.login import Login
 from minigalaxy.window.gametile import GameTile
 from minigalaxy.window.preferences import Preferences
@@ -52,9 +54,6 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_header_sync_clicked")
     def sync_library(self, button=None):
-        # Get installed games
-        installed_games = self.__get_installed_games()
-
         # Make a list with the game tiles which are already loaded
         current_tiles = []
         for child in self.library.get_children():
@@ -62,75 +61,12 @@ class Window(Gtk.ApplicationWindow):
             current_tiles.append(tile)
 
         # Recheck online status
-
         if button and self.offline:
             self.__authenticate()
 
-        # Refresh games list from API
-        games = []
-        if not self.offline:
-            try:
-                games = self.api.get_library()
-            except:
-                dialog = Gtk.MessageDialog(
-                    message_type=Gtk.MessageType.ERROR,
-                    parent=self,
-                    modal=True,
-                    buttons=Gtk.ButtonsType.CLOSE,
-                    text=_("Failed to retrieve library")
-                )
-                dialog.format_secondary_text(_("Couldn't connect to GOG servers"))
-                dialog.run()
-                dialog.destroy()
-                self.offline = True
-
-        # Only add games if they aren't already in the list. Otherwise just reload their state
-        if not self.offline:
-            for game in games:
-                not_found = True
-                for tile in current_tiles:
-                    if self.__games_match(tile.game.name, game.name):
-                        not_found = False
-                        tile.game = game
-                        break
-                if not_found:
-                    # Check if game is already installed
-                    install_dir = ""
-                    for installed_game in installed_games:
-                        if installed_game["name"] == game.name:
-                            print("Found game: {}".format(game.name))
-                            install_dir = installed_game["dir"]
-                            break
-                    # Create the game tile
-                    gametile = GameTile(
-                        parent=self,
-                        game=game,
-                        api=self.api,
-                        install_dir=install_dir,
-                    )
-                    gametile.load_state()
-                    self.library.add(gametile)
-        else:
-            for game in installed_games:
-                not_found = True
-                for tile in current_tiles:
-                    if tile.game.name == game["name"]:
-                        not_found = False
-                        break
-                if not_found:
-                    # Create the game tile
-                    gametile = GameTile(
-                        parent=self,
-                        game=Game(game["name"], 0, ""),
-                        api=self.api,
-                        install_dir=game["dir"],
-                    )
-                    gametile.load_state()
-                    self.library.add(gametile)
-
-        self.sort_library()
-        self.filter_library()
-        self.library.show_all()
+        add_tiles_thread = threading.Thread(target=self.__add_tiles, args=[current_tiles])
+        add_tiles_thread.daemon = True
+        add_tiles_thread.start()
 
     @Gtk.Template.Callback("on_header_installed_state_set")
     def show_installed_only_triggered(self, switch, state):
@@ -205,6 +141,91 @@ class Window(Gtk.ApplicationWindow):
         tile1 = child1.get_children()[0]
         tile2 = child2.get_children()[0]
         return tile2 < tile1
+
+    def __update_library_view(self):
+        self.sort_library()
+        self.filter_library()
+        self.library.show_all()
+
+    def __add_tiles(self, current_tiles):
+        # Refresh games list from API
+        games = []
+        if not self.offline:
+            try:
+                games = self.api.get_library()
+            except:
+                GLib.idle_add(self.__show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
+                self.offline = True
+
+        # Get installed games
+        installed_games = self.__get_installed_games()
+
+        # Only add games if they aren't already in the list. Otherwise just reload their state
+        if not self.offline:
+            for game in games:
+                not_found = True
+                for tile in current_tiles:
+                    if self.__games_match(tile.game.name, game.name):
+                        not_found = False
+                        tile.game = game
+                        break
+                if not_found:
+                    # Check if game is already installed
+                    install_dir = ""
+                    for installed_game in installed_games:
+                        if installed_game["name"] == game.name:
+                            print("Found game: {}".format(game.name))
+                            install_dir = installed_game["dir"]
+                            break
+                    # Create the game tile
+                    GLib.idle_add(
+                        self.__add_tile,
+                        game,
+                        install_dir
+                    )
+        else:
+            for game in installed_games:
+                not_found = True
+                for tile in current_tiles:
+                    if tile.game.name == game["name"]:
+                        not_found = False
+                        break
+                if not_found:
+                    # Create the game tile
+                    GLib.idle_add(
+                        self.__add_tile,
+                        Game(game["name"], 0, ""),
+                        game["dir"]
+                    )
+
+        GLib.idle_add(self.__update_library_view)
+
+    def __show_error(self, text, subtext):
+        dialog = Gtk.MessageDialog(
+            message_type=Gtk.MessageType.ERROR,
+            parent=self,
+            modal=True,
+            buttons=Gtk.ButtonsType.CLOSE,
+            text=text
+        )
+        dialog.format_secondary_text(subtext)
+        dialog.run()
+        dialog.destroy()
+
+    def __add_tile(self, game, install_dir):
+        # Create the game tile
+        gametile = GameTile(
+            parent=self,
+            game=game,
+            api=self.api,
+            install_dir=install_dir,
+        )
+        gametile.load_state()
+
+        # Update the library
+        self.library.add(gametile)
+        self.__update_library_view()
+
 
     def __get_installed_games(self) -> dict:
         games = []
