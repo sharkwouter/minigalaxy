@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# Jeff Huang <s8321414@gmail.com>, 2019.
+# Jeff Huang <s8321414@gmail.com>, 2019, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-03 14:48+0100\n"
-"PO-Revision-Date: 2019-12-31 12:45+0800\n"
+"PO-Revision-Date: 2020-01-04 12:15+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
 "Language: zh_TW\n"
@@ -49,7 +49,7 @@ msgstr "中文"
 #: minigalaxy/window/window.py:81 minigalaxy/window/window.py:243
 #: minigalaxy/window/window.py:255
 msgid "Couldn't connect to GOG servers"
-msgstr ""
+msgstr "無法連線至 GOG 伺服器"
 
 #: minigalaxy/window/gametile.py:224
 msgid "Couldn't start subprocess"
@@ -69,7 +69,7 @@ msgstr "英文"
 
 #: minigalaxy/window/window.py:79
 msgid "Failed to retrieve library"
-msgstr ""
+msgstr "擷取收藏庫失敗"
 
 #: minigalaxy/window/gametile.py:233
 msgid "Failed to start {}:"
@@ -123,7 +123,7 @@ msgstr "韓文"
 
 #: minigalaxy/window/login.py:23
 msgid "Login"
-msgstr ""
+msgstr "登入"
 
 #. Logs the users gog account out and returns to login page
 #: data/ui/application.ui:17
@@ -133,7 +133,7 @@ msgstr "登出"
 
 #: minigalaxy/window/window.py:245
 msgid "Minigalaxy is now running in offline mode"
-msgstr ""
+msgstr "Minigalaxy 目前以離線模式執行"
 
 #: minigalaxy/window/gametile.py:231
 msgid "No error message was returned"
@@ -209,7 +209,7 @@ msgstr "瑞典文"
 
 #: minigalaxy/window/window.py:257
 msgid "Try again with an active internet connection"
-msgstr ""
+msgstr "使用有效的網際網路連線重試"
 
 #: minigalaxy/window/preferences.py:27
 msgid "Turkish"
