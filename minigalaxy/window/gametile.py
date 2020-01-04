@@ -1,6 +1,7 @@
 import shutil
 import zipfile
 import glob
+import re
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, GLib
@@ -178,9 +179,6 @@ class GameTile(Gtk.Box):
             self.install_dir = os.path.join(self.api.config.get("install_dir"), self.game.name)
         return self.install_dir
 
-    def __get_executable_path(self):
-        return os.path.join(self.__get_install_dir(), "start.sh")
-
     def load_state(self) -> None:
         if self.busy:
             return
@@ -196,28 +194,17 @@ class GameTile(Gtk.Box):
     def __start_game(self) -> subprocess:
         error_message = ""
         process = None
+
+        # Change the directory to the install dir
+        working_dir = os.getcwd()
+        os.chdir(self.__get_install_dir())
         try:
-            process = subprocess.Popen([self.__get_executable_path()], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            process = subprocess.Popen(self.__get_execute_command(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except FileNotFoundError:
-            # Try the goggame-*.info file to figure out what the binary is
-            try:
-                info_file = glob.glob(os.path.join(self.__get_install_dir(), "game/goggame-*.info"))[0]
-            except IndexError:
-                error_message = _("No executable was found in {}").format(self.__get_install_dir())
-            # Run alternative binary found in goggame info file
-            if not error_message:
-                with open(info_file, 'r') as file:
-                    info = json.loads(file.read())
-                    file.close()
-                if info:
-                    binary_dir = os.path.join(self.__get_install_dir(), "game")
-                    os.chdir(binary_dir)
-                    exec_command = "./{}".format(info["playTasks"][0]["path"])
-                    process = subprocess.Popen(
-                        [exec_command],
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE
-                    )
+            error_message = _("No executable was found in {}").format(self.install_dir)
+
+        # restore the working directory
+        os.chdir(working_dir)
 
         # Check if the application has started and see if it is still runnning after a short timeout
         if process:
@@ -232,8 +219,12 @@ class GameTile(Gtk.Box):
         if not error_message:
             stdout, stderror = process.communicate()
             error_message = stderror.decode("utf-8")
+            stdout_message = stdout.decode("utf-8")
             if not error_message:
-                error_message = _("No error message was returned")
+                if stdout:
+                    error_message = stdout_message
+                else:
+                    error_message = _("No error message was returned")
 
         # Show the error as both a dialog and in the terminal
         error_text = _("Failed to start {}:").format(self.game.name)
@@ -249,6 +240,52 @@ class GameTile(Gtk.Box):
         dialog.format_secondary_text(error_message)
         dialog.run()
         dialog.destroy()
+
+    def __get_execute_command(self) -> list:
+        files = os.listdir(self.__get_install_dir())
+
+        # Dosbox
+        if "dosbox" in files and shutil.which("dosbox"):
+            for file in files:
+                if re.match(r'^dosbox_?([a-z]|[A-Z]|[0-9])+\.conf$', file):
+                    dosbox_config = file
+                if re.match(r'^dosbox_?([a-z]|[A-Z]|[0-9])+_single\.conf$', file):
+                    dosbox_config_single = file
+            if dosbox_config and dosbox_config_single:
+                print("Using system's dosbox to launch {}".format(self.game.name))
+                return ["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
+
+        # ScummVM
+        if "scummvm" in files and shutil.which("scummvm"):
+            for file in files:
+                if re.match(r'^.*\.ini$', file):
+                    scummvm_config = file
+                    break
+            if scummvm_config:
+                print("Using system's scrummvm to launch {}".format(self.game.name))
+                return ["scummvm", "-c", scummvm_config]
+
+        # Wine
+        if "prefix" in files and shutil.which("wine"):
+            # This still needs to be implemented
+            return["./start.sh"]
+
+        # None of the above, but there is a start script
+        if "start.sh" in files:
+            return ["./start.sh"]
+
+        # This is the final resort, applies to FTL
+        if "game" in files:
+            game_files = os.listdir("game")
+            for file in game_files:
+                if re.match(r'^goggame-[0-9]*\.info$', file):
+                    os.chdir(os.path.join(self.install_dir, "game"))
+                    with open(file, 'r') as info_file:
+                        info = json.loads(info_file.read())
+                        return ["./{}".format(info["playTasks"][0]["path"])]
+
+        # If no executable was found at all, raise an error
+        raise FileNotFoundError()
 
     def __lt__(self, other):
         names = [str(self), str(other)]
