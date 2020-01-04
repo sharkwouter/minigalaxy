@@ -33,16 +33,24 @@ class Preferences(Gtk.Dialog):
     __gtype_name__ = "Preferences"
 
     button_cancel = Gtk.Template.Child()
-    button_filechooser = Gtk.Template.Child()
+    button_file_chooser = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
     combobox_language = Gtk.Template.Child()
+    switch_install = Gtk.Template.Child()
 
     def __init__(self, parent, config):
         Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
         self.__config = config
         self.parent = parent
         self.__set_language_list()
-        self.button_filechooser.set_filename(config.get("install_dir"))
+        self.button_file_chooser.set_filename(config.get("install_dir"))
+        self.switch_install.set_active(self.__config.get("keep_installers"))
+
+    def __set_keep_installer(self):
+        if self.switch_install.get_active():
+            self.__config.set("keep_installers", True)
+        else:
+            self.__config.set("keep_installers", False)
 
     def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)
@@ -70,7 +78,7 @@ class Preferences(Gtk.Dialog):
             self.__config.set("lang", lang)
 
     def __save_install_dir_choice(self) -> bool:
-        choice = self.button_filechooser.get_filename()
+        choice = self.button_file_chooser.get_filename()
         if not os.path.exists(choice):
             try:
                 os.makedirs(choice)
@@ -99,6 +107,7 @@ class Preferences(Gtk.Dialog):
     @Gtk.Template.Callback("on_button_save_clicked")
     def save_pressed(self, button):
         self.__save_language_choice()
+        self.__set_keep_installer()
         if self.__save_install_dir_choice():
             self.response(Gtk.ResponseType.OK)
             self.parent.refresh_game_install_states(path_changed=True)

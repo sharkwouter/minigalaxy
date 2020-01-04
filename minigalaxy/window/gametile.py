@@ -34,8 +34,14 @@ class GameTile(Gtk.Box):
 
         self.image.set_tooltip_text(self.game.name)
 
+        # Set folder for download installer
         self.download_dir = os.path.join(CACHE_DIR, "download")
         self.download_path = os.path.join(self.download_dir, "{}.sh".format(self.game.name))
+
+        # Set folder if user wants to keep installer (disabled by default)
+        self.keep_dir = os.path.join(self.api.config.get("install_dir"), "installer")
+        self.keep_path = os.path.join(self.keep_dir, "{}.sh".format(self.game.name))
+
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
 
@@ -100,25 +106,27 @@ class GameTile(Gtk.Box):
     def __download_file(self) -> None:
         if not os.path.exists(self.download_dir):
             os.makedirs(self.download_dir)
-        download_info = self.api.get_download_info(self.game)
-        file_url = download_info["downlink"]
-        data = requests.get(file_url, stream=True)
-        handler = open(self.download_path, "wb")
+        if not os.path.exists(self.keep_path):
+            download_info = self.api.get_download_info(self.game)
+            file_url = download_info["downlink"]
+            data = requests.get(file_url, stream=True)
+            handler = open(self.download_path, "wb")
 
-        total_size = int(data.headers.get('content-length'))
-        downloaded_size = 0
-        chunk_count = 0
-        for chunk in data.iter_content(chunk_size=4096):
-            if chunk:
-                chunk_count += 1
-                handler.write(chunk)
-                downloaded_size += len(chunk)
-                # Only update the progress bar every 2 megabytes
-                if chunk_count == 4000:
-                    percentage = downloaded_size / total_size
-                    GLib.idle_add(self.progress_bar.set_fraction, percentage)
-                    chunk_count = 0
-        handler.close()
+            total_size = int(data.headers.get('content-length'))
+            downloaded_size = 0
+            chunk_count = 0
+            for chunk in data.iter_content(chunk_size=4096):
+                if chunk:
+                    chunk_count += 1
+                    handler.write(chunk)
+                    downloaded_size += len(chunk)
+                    # Only update the progress bar every 2 megabytes
+                    if chunk_count == 4000:
+                        percentage = downloaded_size / total_size
+                        GLib.idle_add(self.progress_bar.set_fraction, percentage)
+                        chunk_count = 0
+            handler.close()
+
         GLib.idle_add(self.progress_bar.destroy)
         GLib.idle_add(self.button.set_label, _("installing.."))
         self.__install_game()
@@ -135,7 +143,12 @@ class GameTile(Gtk.Box):
         os.makedirs(temp_dir)
 
         # Extract the installer
-        with zipfile.ZipFile(self.download_path) as archive:
+        if os.path.exists(self.download_path):
+            installer_path = self.download_path
+        else:
+            installer_path = self.keep_path
+
+        with zipfile.ZipFile(installer_path) as archive:
             for member in archive.namelist():
                 file = archive.getinfo(member)
                 archive.extract(file, temp_dir)
@@ -157,7 +170,13 @@ class GameTile(Gtk.Box):
 
         # Remove the temporary directory
         shutil.rmtree(temp_dir, ignore_errors=True)
-        os.remove(self.download_path)
+        if self.api.config.get("keep_installers"):
+            if not os.path.exists(self.keep_dir):
+                os.makedirs(self.keep_dir)
+            if not os.path.exists(self.keep_path):
+                os.rename(self.download_path,self.keep_path)
+        else:
+            os.remove(self.download_path)
 
     def __uninstall_game(self):
         shutil.rmtree(self.__get_install_dir(), ignore_errors=True)
@@ -186,6 +205,10 @@ class GameTile(Gtk.Box):
             self.installed = True
             self.button.set_label(_("play"))
             self.menu_button.show()
+        elif os.path.exists(self.keep_path):
+            self.installed = False
+            self.button.set_label(_("install"))
+            self.menu_button.hide()
         else:
             self.installed = False
             self.button.set_label(_("download"))

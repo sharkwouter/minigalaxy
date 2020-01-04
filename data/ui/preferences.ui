@@ -56,6 +56,7 @@
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="row_homogeneous">True</property>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
@@ -81,7 +82,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes" context="install_path" comments="The place directory in which games are installed. Ends with &quot;: &quot;.">Installation path: </property>
+                <property name="label" translatable="yes" context="install_path" comments="The place directory in which games are installed. Ends with &quot;: &quot;.">Install path: </property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -89,7 +90,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkFileChooserButton" id="button_filechooser">
+              <object class="GtkFileChooserButton" id="button_file_chooser">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="action">select-folder</property>
@@ -98,6 +99,28 @@
               <packing>
                 <property name="left_attach">1</property>
                 <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Enable this option if you want to keep the installer after the installation</property>
+                <property name="label" translatable="yes">Keep installers :</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSwitch" id="switch_install">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">2</property>
               </packing>
             </child>
           </object>
