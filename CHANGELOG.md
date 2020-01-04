@@ -6,6 +6,7 @@
     - Dutch
     - Taiwanese Mandarin (thanks to s8321414)
 - Added offline mode.
+- The system's Dosbox and Scummvm installations are now preferred over the ones bundled with games.
 - Improved game detection to check in all directories in the installation path.
 - The preferences menu now uses a file picker for setting the installation path (thanks to Odelpasso).
 - Startup time has been reduced.

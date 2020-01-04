@@ -12,6 +12,7 @@ Vcs-Browser: https://github.com/sharkwouter/minigalaxy
 Package: minigalaxy
 Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends}, python3-requests, python3-gi (>= 3.30), python3-gi-cairo, gir1.2-gtk-3.0, gir1.2-webkit2-4.0, xdg-utils
+Recommends: dosbox, scummvm, wine32 | wine32-development | wine-stable-i386 | wine-devel-i386 | wine-staging-i386
 Description: Simple GOG Linux client
  Allows you to download and play Linux games from the gog.com game store.
  .
