@@ -108,21 +108,10 @@ class Preferences(Gtk.Dialog):
     def save_pressed(self, button):
         self.__save_language_choice()
         self.__set_keep_installer()
-        if self.__save_install_dir_choice():
-            self.response(Gtk.ResponseType.OK)
-            self.parent.refresh_game_install_states(path_changed=True)
-            self.destroy()
-        else:
-            dialog = Gtk.MessageDialog(
-                parent=self,
-                modal=True,
-                destroy_with_parent=True,
-                message_type=Gtk.MessageType.ERROR,
-                buttons=Gtk.ButtonsType.OK,
-                text=_("{} isn't a usable path").format(self.entry_installpath.get_text())
-            )
-            dialog.run()
-            dialog.destroy()
+        self.__save_install_dir_choice()
+        self.response(Gtk.ResponseType.OK)
+        self.parent.refresh_game_install_states(path_changed=True)
+        self.destroy()
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def cancel_pressed(self, button):
