@@ -4,6 +4,7 @@
   <requires lib="gtk+" version="3.20"/>
   <template class="Preferences" parent="GtkDialog">
     <property name="can_focus">False</property>
+    <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
     <child>
       <placeholder/>
@@ -57,10 +58,13 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="row_homogeneous">True</property>
+            <property name="column_homogeneous">True</property>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
                 <property name="label" translatable="yes" context="preferred_language" comments="Prefered language to download games in. Ends with &quot;: &quot;.">Prefered language: </property>
               </object>
               <packing>
@@ -72,6 +76,7 @@
               <object class="GtkComboBox" id="combobox_language">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="valign">center</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -82,6 +87,8 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
                 <property name="label" translatable="yes" context="install_path" comments="The place directory in which games are installed. Ends with &quot;: &quot;.">Install path: </property>
               </object>
               <packing>
@@ -93,7 +100,9 @@
               <object class="GtkFileChooserButton" id="button_file_chooser">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="valign">center</property>
                 <property name="action">select-folder</property>
+                <property name="local_only">False</property>
                 <property name="title" translatable="yes"/>
               </object>
               <packing>
@@ -105,8 +114,10 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes">Enable this option if you want to keep the installer after the installation</property>
-                <property name="label" translatable="yes">Keep installers :</property>
+                <property name="tooltip_text" translatable="yes" context="keep_installers_tooltip">Enable this option if you want to keep the installer after the installation</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes" context="keep_installer" comments="Whether installer files are kept after download. Ends with &quot;: &quot;.">Keep installers: </property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -117,6 +128,7 @@
               <object class="GtkSwitch" id="switch_install">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="valign">center</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
