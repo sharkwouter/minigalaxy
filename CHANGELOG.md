@@ -11,6 +11,7 @@
 - Added the option to keep game installers (thanks to Odelpasso).
 - The preferences menu now uses a file picker for setting the installation path (thanks to Odelpasso).
 - Startup time has been reduced.
+- Games which aren't installed are now grayed out.
 - Fixed FTL not being able to start.
 - Fixed issue with thumbnails sometimes not fully loading.
 - Fixed potential crash after logging in the first time.
