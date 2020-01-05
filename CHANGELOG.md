@@ -2,7 +2,7 @@
 - Added a button to installed games which allow you to:
     - Uninstall a game.
     - Open the directory in which the game is installed.
-- Added translation support. The following languages are now supported:
+- Added translation support. The following additional languages are now supported:
     - Dutch
     - Taiwanese Mandarin (thanks to s8321414)
 - Added offline mode.
