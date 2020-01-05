@@ -203,14 +203,17 @@ class GameTile(Gtk.Box):
             return
         if os.path.isfile(os.path.join(self.__get_install_dir(), "gameinfo")):
             self.installed = True
+            self.image.set_sensitive(True)
             self.button.set_label(_("play"))
             self.menu_button.show()
         elif os.path.exists(self.keep_path):
             self.installed = False
+            self.image.set_sensitive(False)
             self.button.set_label(_("install"))
             self.menu_button.hide()
         else:
             self.installed = False
+            self.image.set_sensitive(False)
             self.button.set_label(_("download"))
             self.menu_button.hide()
 
