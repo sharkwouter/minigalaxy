@@ -9,6 +9,7 @@
 - The system's Dosbox and Scummvm installations are now preferred over the ones bundled with games.
 - Improved game detection to check in all directories in the installation path.
 - Added the option to keep game installers (thanks to Odelpasso).
+- Added the option to disable staying logged in (thanks to Odelpasso).
 - The preferences menu now uses a file picker for setting the installation path (thanks to Odelpasso).
 - Startup time has been reduced.
 - Fixed FTL not being able to start.
