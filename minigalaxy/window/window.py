@@ -44,7 +44,14 @@ class Window(Gtk.ApplicationWindow):
         if not os.path.exists(THUMBNAIL_DIR):
             os.makedirs(THUMBNAIL_DIR)
 
-        # Interact with the API
+        # Check if the user unset to stay logged in Preference and refresh token
+        if self.api.config.get("stay_logged_in") is None:
+            self.config.set("stay_logged_in", True)
+        elif not self.api.config.get("stay_logged_in"):
+            self.config.unset("username")
+            self.config.unset("refresh_token")
+
+            # Interact with the API
         self.__authenticate()
         self.HeaderBar.set_subtitle(self.api.get_user_info())
         self.sync_library()

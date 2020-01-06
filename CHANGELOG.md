@@ -2,7 +2,7 @@
 - Added a button to installed games which allow you to:
     - Uninstall a game.
     - Open the directory in which the game is installed.
-- Added translation support. The following languages are now supported:
+- Added translation support. The following additional languages are now supported:
     - Dutch
     - Taiwanese Mandarin (thanks to s8321414)
 - Added offline mode.
@@ -12,6 +12,7 @@
 - Added the option to disable staying logged in (thanks to Odelpasso).
 - The preferences menu now uses a file picker for setting the installation path (thanks to Odelpasso).
 - Startup time has been reduced.
+- Games which aren't installed are now grayed out.
 - Fixed FTL not being able to start.
 - Fixed issue with thumbnails sometimes not fully loading.
 - Fixed potential crash after logging in the first time.
