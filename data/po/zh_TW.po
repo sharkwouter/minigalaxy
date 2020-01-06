@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-03 14:48+0100\n"
+"POT-Creation-Date: 2020-01-06 17:56+0100\n"
 "PO-Revision-Date: 2020-01-04 12:15+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
@@ -37,7 +37,7 @@ msgstr "關於"
 msgid "Brazilian Portuguese"
 msgstr "葡萄牙文（巴西）"
 
-#: data/ui/preferences.ui:22
+#: data/ui/preferences.ui:23
 msgctxt "cancel"
 msgid "Cancel"
 msgstr "取消"
@@ -46,12 +46,12 @@ msgstr "取消"
 msgid "Chinese"
 msgstr "中文"
 
-#: minigalaxy/window/window.py:81 minigalaxy/window/window.py:243
-#: minigalaxy/window/window.py:255
+#: minigalaxy/window/window.py:163 minigalaxy/window/window.py:279
+#: minigalaxy/window/window.py:291
 msgid "Couldn't connect to GOG servers"
 msgstr "無法連線至 GOG 伺服器"
 
-#: minigalaxy/window/gametile.py:224
+#: minigalaxy/window/gametile.py:242
 msgid "Couldn't start subprocess"
 msgstr "無法啟動子行程"
 
@@ -67,11 +67,11 @@ msgstr "荷蘭文"
 msgid "English"
 msgstr "英文"
 
-#: minigalaxy/window/window.py:79
+#: minigalaxy/window/window.py:163
 msgid "Failed to retrieve library"
 msgstr "擷取收藏庫失敗"
 
-#: minigalaxy/window/gametile.py:233
+#: minigalaxy/window/gametile.py:256
 msgid "Failed to start {}:"
 msgstr "啟動 {} 失敗："
 
@@ -98,7 +98,7 @@ msgid "Hungarian"
 msgstr "匈牙利文"
 
 #. The place directory in which games are installed. Ends with ": ".
-#: data/ui/preferences.ui:84
+#: data/ui/preferences.ui:95
 msgctxt "install_path"
 msgid "Installation path: "
 msgstr "安裝路徑："
@@ -117,6 +117,18 @@ msgstr "義大利文"
 msgid "Japanese"
 msgstr "日文"
 
+#: minigalaxy/window/preferences.py:55
+msgid ""
+"Keep installers after downloading a game.\n"
+"Installers are stored in: {}"
+msgstr ""
+
+#. Whether installer files are kept after download. Ends with ": ".
+#: data/ui/preferences.ui:122
+msgctxt "keep_installer"
+msgid "Keep installers: "
+msgstr ""
+
 #: minigalaxy/window/preferences.py:20
 msgid "Korean"
 msgstr "韓文"
@@ -131,15 +143,15 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "登出"
 
-#: minigalaxy/window/window.py:245
+#: minigalaxy/window/window.py:281
 msgid "Minigalaxy is now running in offline mode"
 msgstr "Minigalaxy 目前以離線模式執行"
 
-#: minigalaxy/window/gametile.py:231
+#: minigalaxy/window/gametile.py:253
 msgid "No error message was returned"
 msgstr "未傳回錯誤訊息"
 
-#: minigalaxy/window/gametile.py:216
+#: minigalaxy/window/gametile.py:230
 msgid "No executable was found in {}"
 msgstr "在 {} 找不到可執行檔"
 
@@ -161,13 +173,7 @@ msgstr "波蘭文"
 msgid "Portuguese"
 msgstr "葡萄牙文"
 
-#. Prefered language to download games in. Ends with ": ".
-#: data/ui/preferences.ui:63
-msgctxt "preferred_language"
-msgid "Prefered language: "
-msgstr "偏好的語言："
-
-#: minigalaxy/window/preferences.py:41
+#: minigalaxy/window/preferences.py:44
 msgid "Preferences"
 msgstr "偏好設定"
 
@@ -176,6 +182,12 @@ msgstr "偏好設定"
 msgctxt "preferences"
 msgid "Preferences"
 msgstr "偏好設定"
+
+#. Prefered language to download games in. Ends with ": ".
+#: data/ui/preferences.ui:70
+msgctxt "preferred_language"
+msgid "Preferred language: "
+msgstr "偏好的語言："
 
 #. Tooltip for refresh button
 #: data/ui/application.ui:88
@@ -188,7 +200,7 @@ msgid "Russian"
 msgstr "俄文"
 
 #. Saves the preferences
-#: data/ui/preferences.ui:36
+#: data/ui/preferences.ui:37
 msgctxt "save"
 msgid "Save"
 msgstr "儲存"
@@ -203,11 +215,27 @@ msgstr "僅顯示已安裝的遊戲"
 msgid "Spanish"
 msgstr "西班牙文"
 
+#. Whether the user will stay logged in after closing Minigalaxy. Ends with ": ".
+#: data/ui/preferences.ui:148
+msgctxt "stay_logged_in"
+msgid "Stay logged in:"
+msgstr ""
+
 #: minigalaxy/window/preferences.py:26
 msgid "Swedish"
 msgstr "瑞典文"
 
-#: minigalaxy/window/window.py:257
+#: data/ui/preferences.ui:67
+msgctxt "preferred_language_tooltip"
+msgid "The preferred language for downloading games in"
+msgstr ""
+
+#: data/ui/preferences.ui:92
+msgctxt "install_path_tooltip"
+msgid "This is where games will be installed"
+msgstr ""
+
+#: minigalaxy/window/window.py:293
 msgid "Try again with an active internet connection"
 msgstr "使用有效的網際網路連線重試"
 
@@ -221,26 +249,35 @@ msgctxt "uninstall"
 msgid "Uninstall"
 msgstr "解除安裝"
 
-#: minigalaxy/window/gametile.py:193
+#: data/ui/preferences.ui:145
+msgctxt "stay_logged_in_tooltip"
+msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
+msgstr ""
+
+#: minigalaxy/window/gametile.py:217
 msgid "download"
 msgstr "下載"
 
-#: minigalaxy/window/gametile.py:59
+#: minigalaxy/window/gametile.py:66
 msgid "downloading..."
 msgstr "正在下載……"
 
-#: minigalaxy/window/gametile.py:122
+#: minigalaxy/window/gametile.py:212
+msgid "install"
+msgstr ""
+
+#: minigalaxy/window/gametile.py:131
 msgid "installing.."
 msgstr "正在安裝……"
 
-#: minigalaxy/window/gametile.py:189
+#: minigalaxy/window/gametile.py:207
 msgid "play"
 msgstr "遊玩"
 
-#: minigalaxy/window/gametile.py:67
+#: minigalaxy/window/gametile.py:74
 msgid "uninstalling.."
 msgstr "正在解除安裝……"
 
-#: minigalaxy/window/preferences.py:112
+#: minigalaxy/window/preferences.py:126
 msgid "{} isn't a usable path"
 msgstr "{} 不是可用的路徑"

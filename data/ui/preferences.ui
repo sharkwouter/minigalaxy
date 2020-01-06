@@ -92,7 +92,7 @@
                 <property name="tooltip_text" translatable="yes" context="install_path_tooltip">This is where games will be installed</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
-                <property name="label" translatable="yes" context="install_path" comments="The place directory in which games are installed. Ends with &quot;: &quot;.">Install path: </property>
+                <property name="label" translatable="yes" context="install_path" comments="The place directory in which games are installed. Ends with &quot;: &quot;.">Installation path: </property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -144,6 +144,7 @@
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes" context="stay_logged_in_tooltip">When disabled you'll be asked to log in each time Minigalaxy is started</property>
                 <property name="halign">start</property>
+                <property name="valign">center</property>
                 <property name="label" translatable="yes" context="stay_logged_in" comments="Whether the user will stay logged in after closing Minigalaxy. Ends with &quot;: &quot;.">Stay logged in:</property>
               </object>
               <packing>
