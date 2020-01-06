@@ -35,6 +35,7 @@ class Preferences(Gtk.Dialog):
     button_cancel = Gtk.Template.Child()
     button_file_chooser = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
+    button_stay_logged_in = Gtk.Template.Child()
     combobox_language = Gtk.Template.Child()
     switch_install = Gtk.Template.Child()
 
@@ -45,6 +46,13 @@ class Preferences(Gtk.Dialog):
         self.__set_language_list()
         self.button_file_chooser.set_filename(config.get("install_dir"))
         self.switch_install.set_active(self.__config.get("keep_installers"))
+        self.button_stay_logged_in.set_active(self.__config.get("stay_logged_in"))
+
+    def __set_stay_logged_in(self):
+        if self.switch_install.get_active():
+            self.__config.set("stay_logged_in", True)
+        else:
+            self.__config.set("stay_logged_in", False)
 
     def __set_keep_installer(self):
         if self.switch_install.get_active():
@@ -108,6 +116,7 @@ class Preferences(Gtk.Dialog):
     def save_pressed(self, button):
         self.__save_language_choice()
         self.__set_keep_installer()
+        self.__set_stay_logged_in()
         if self.__save_install_dir_choice():
             self.response(Gtk.ResponseType.OK)
             self.parent.refresh_game_install_states(path_changed=True)

@@ -5,7 +5,8 @@ from minigalaxy.paths import CONFIG_DIR, CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
 DEFAULT_CONFIG = {
             "lang": "en",
             "install_dir": DEFAULT_INSTALL_DIR,
-            "keep_installers": False
+            "keep_installers": False,
+            "stay_logged_in": True
         }
 
 
