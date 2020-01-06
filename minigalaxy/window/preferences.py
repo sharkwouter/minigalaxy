@@ -48,18 +48,6 @@ class Preferences(Gtk.Dialog):
         self.switch_install.set_active(self.__config.get("keep_installers"))
         self.button_stay_logged_in.set_active(self.__config.get("stay_logged_in"))
 
-    def __set_stay_logged_in(self):
-        if self.switch_install.get_active():
-            self.__config.set("stay_logged_in", True)
-        else:
-            self.__config.set("stay_logged_in", False)
-
-    def __set_keep_installer(self):
-        if self.switch_install.get_active():
-            self.__config.set("keep_installers", True)
-        else:
-            self.__config.set("keep_installers", False)
-
     def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)
         for lang in SUPPORTED_LANGUAGES:
@@ -115,8 +103,8 @@ class Preferences(Gtk.Dialog):
     @Gtk.Template.Callback("on_button_save_clicked")
     def save_pressed(self, button):
         self.__save_language_choice()
-        self.__set_keep_installer()
-        self.__set_stay_logged_in()
+        self.__config.set("keep_installers", self.switch_install.get_active())
+        self.__config.set("stay_logged_in", self.button_stay_logged_in.get_active())
         if self.__save_install_dir_choice():
             self.response(Gtk.ResponseType.OK)
             self.parent.refresh_game_install_states(path_changed=True)

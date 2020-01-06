@@ -45,12 +45,16 @@ class Config:
         self.__config[key] = value
         self.__update_config_file()
 
-    def get(self, key):
-        try:
-            self.__load_config_file()
-            return self.__config[key]
-        except KeyError:
-            return None
+    @staticmethod
+    def get(key):
+        if os.path.exists(CONFIG_FILE_PATH):
+            with open(CONFIG_FILE_PATH, "r") as file:
+                config = json.loads(file.read())
+                try:
+                    return config[key]
+                except KeyError:
+                    pass
+        return None
 
     def unset(self, key):
         try:
