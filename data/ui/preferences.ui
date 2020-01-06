@@ -57,6 +57,7 @@
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="row_spacing">2</property>
             <property name="row_homogeneous">True</property>
             <property name="column_homogeneous">True</property>
             <child>
@@ -125,9 +126,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSwitch" id="switch_install">
+              <object class="GtkSwitch" id="switch_keep_installers">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="halign">start</property>
                 <property name="valign">center</property>
               </object>
               <packing>
@@ -148,9 +150,11 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSwitch" id="button_stay_logged_in">
+              <object class="GtkSwitch" id="switch_stay_logged_in">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
                 <property name="active">True</property>
               </object>
               <packing>

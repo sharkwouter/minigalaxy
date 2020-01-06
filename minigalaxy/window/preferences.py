@@ -32,12 +32,12 @@ SUPPORTED_LANGUAGES = [
 class Preferences(Gtk.Dialog):
     __gtype_name__ = "Preferences"
 
-    button_cancel = Gtk.Template.Child()
-    button_file_chooser = Gtk.Template.Child()
-    button_save = Gtk.Template.Child()
-    button_stay_logged_in = Gtk.Template.Child()
     combobox_language = Gtk.Template.Child()
-    switch_install = Gtk.Template.Child()
+    button_file_chooser = Gtk.Template.Child()
+    switch_keep_installers = Gtk.Template.Child()
+    switch_stay_logged_in = Gtk.Template.Child()
+    button_cancel = Gtk.Template.Child()
+    button_save = Gtk.Template.Child()
 
     def __init__(self, parent, config):
         Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
@@ -45,8 +45,8 @@ class Preferences(Gtk.Dialog):
         self.parent = parent
         self.__set_language_list()
         self.button_file_chooser.set_filename(config.get("install_dir"))
-        self.switch_install.set_active(self.__config.get("keep_installers"))
-        self.button_stay_logged_in.set_active(self.__config.get("stay_logged_in"))
+        self.switch_keep_installers.set_active(self.__config.get("keep_installers"))
+        self.switch_stay_logged_in.set_active(self.__config.get("stay_logged_in"))
 
     def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)
@@ -103,8 +103,8 @@ class Preferences(Gtk.Dialog):
     @Gtk.Template.Callback("on_button_save_clicked")
     def save_pressed(self, button):
         self.__save_language_choice()
-        self.__config.set("keep_installers", self.switch_install.get_active())
-        self.__config.set("stay_logged_in", self.button_stay_logged_in.get_active())
+        self.__config.set("keep_installers", self.switch_keep_installers.get_active())
+        self.__config.set("stay_logged_in", self.switch_stay_logged_in.get_active())
         if self.__save_install_dir_choice():
             self.response(Gtk.ResponseType.OK)
             self.parent.refresh_game_install_states(path_changed=True)
