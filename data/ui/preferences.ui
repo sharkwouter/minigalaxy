@@ -64,9 +64,10 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes" context="preferred_language_tooltip">The preferred language for downloading games in</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
-                <property name="label" translatable="yes" context="preferred_language" comments="Prefered language to download games in. Ends with &quot;: &quot;.">Prefered language: </property>
+                <property name="label" translatable="yes" context="preferred_language" comments="Prefered language to download games in. Ends with &quot;: &quot;.">Preferred language: </property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -88,6 +89,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes" context="install_path_tooltip">This is where games will be installed</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
                 <property name="label" translatable="yes" context="install_path" comments="The place directory in which games are installed. Ends with &quot;: &quot;.">Install path: </property>
@@ -112,10 +114,9 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="label_keep_installers">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="tooltip_text" translatable="yes" context="keep_installers_tooltip">Enable this option if you want to keep the installer after the installation</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
                 <property name="label" translatable="yes" context="keep_installer" comments="Whether installer files are kept after download. Ends with &quot;: &quot;.">Keep installers: </property>
@@ -141,8 +142,9 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes" context="stay_logged_in_tooltip">When disabled you'll be asked to log in each time Minigalaxy is started</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Stay logged in:</property>
+                <property name="label" translatable="yes" context="stay_logged_in" comments="Whether the user will stay logged in after closing Minigalaxy. Ends with &quot;: &quot;.">Stay logged in:</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>

@@ -34,6 +34,7 @@ class Preferences(Gtk.Dialog):
 
     combobox_language = Gtk.Template.Child()
     button_file_chooser = Gtk.Template.Child()
+    label_keep_installers = Gtk.Template.Child()
     switch_keep_installers = Gtk.Template.Child()
     switch_stay_logged_in = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
@@ -47,6 +48,12 @@ class Preferences(Gtk.Dialog):
         self.button_file_chooser.set_filename(config.get("install_dir"))
         self.switch_keep_installers.set_active(self.__config.get("keep_installers"))
         self.switch_stay_logged_in.set_active(self.__config.get("stay_logged_in"))
+
+        # Set tooltip for keep installers label
+        installer_dir = os.path.join(self.button_file_chooser.get_filename(), "installer")
+        self.label_keep_installers.set_tooltip_text(
+            _("Keep installers after downloading a game.\nInstallers are stored in: {}").format(installer_dir)
+        )
 
     def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)
