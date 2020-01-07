@@ -1,10 +1,13 @@
-**0.9.2 (unreleased)**
+**0.9.3 (unreleased)**
+
+**0.9.2**
 - Added a button to installed games which allow you to:
     - Uninstall a game.
     - Open the directory in which the game is installed.
 - Added translation support. The following additional languages are now supported:
     - Dutch
     - Taiwanese Mandarin (thanks to s8321414)
+    - German (thanks to BlindJerobine)
 - Added offline mode.
 - The system's Dosbox and Scummvm installations are now preferred over the ones bundled with games.
 - Improved game detection to check in all directories in the installation path.
