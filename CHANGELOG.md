@@ -1,4 +1,6 @@
-**0.9.2 (unreleased)**
+**0.9.3 (unreleased)**
+
+**0.9.2**
 - Added a button to installed games which allow you to:
     - Uninstall a game.
     - Open the directory in which the game is installed.
