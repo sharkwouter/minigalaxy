@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-06 17:56+0100\n"
+"POT-Creation-Date: 2020-01-08 19:50+0100\n"
 "PO-Revision-Date: 2020-01-08 17:52+0300\n"
+"Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
+"Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.2.4\n"
-"Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: tr\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -33,6 +33,11 @@ msgstr "Hakkında"
 msgctxt "about"
 msgid "About"
 msgstr "Hakkında"
+
+#: minigalaxy/window/gametile.py:76
+#, python-format
+msgid "Are you sure to uninstall %s"
+msgstr ""
 
 #: minigalaxy/window/preferences.py:9
 msgid "Brazilian Portuguese"
@@ -52,7 +57,7 @@ msgstr "Çince"
 msgid "Couldn't connect to GOG servers"
 msgstr "GOG sunucularına bağlanılanamıyor"
 
-#: minigalaxy/window/gametile.py:242
+#: minigalaxy/window/gametile.py:253
 msgid "Couldn't start subprocess"
 msgstr "Alt işlem başlatılamadı"
 
@@ -72,7 +77,7 @@ msgstr "İngilzce"
 msgid "Failed to retrieve library"
 msgstr "Kütüphane alınamadı"
 
-#: minigalaxy/window/gametile.py:256
+#: minigalaxy/window/gametile.py:267
 msgid "Failed to start {}:"
 msgstr "{} başlatılamadı:"
 
@@ -150,11 +155,11 @@ msgstr "Çıkış Yap"
 msgid "Minigalaxy is now running in offline mode"
 msgstr "Minigalaxy şuan çevrimdışı modunda çalışıyor"
 
-#: minigalaxy/window/gametile.py:253
+#: minigalaxy/window/gametile.py:264
 msgid "No error message was returned"
 msgstr "Hata mesajı alınmadı"
 
-#: minigalaxy/window/gametile.py:230
+#: minigalaxy/window/gametile.py:241
 msgid "No executable was found in {}"
 msgstr "{} burada başlatma dosyası bulunamadı"
 
@@ -257,7 +262,7 @@ msgctxt "stay_logged_in_tooltip"
 msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
 msgstr "Etkin değilken her Minigalaxy açıldığında giriş yapılması istenir"
 
-#: minigalaxy/window/gametile.py:217
+#: minigalaxy/window/gametile.py:228
 msgid "download"
 msgstr "indir"
 
@@ -265,19 +270,19 @@ msgstr "indir"
 msgid "downloading..."
 msgstr "indirliyor…"
 
-#: minigalaxy/window/gametile.py:212
+#: minigalaxy/window/gametile.py:223
 msgid "install"
 msgstr "yükle"
 
-#: minigalaxy/window/gametile.py:131
+#: minigalaxy/window/gametile.py:142
 msgid "installing.."
 msgstr "yükleniyor.."
 
-#: minigalaxy/window/gametile.py:207
+#: minigalaxy/window/gametile.py:218
 msgid "play"
 msgstr "oyna"
 
-#: minigalaxy/window/gametile.py:74
+#: minigalaxy/window/gametile.py:82
 msgid "uninstalling.."
 msgstr "siliniyor.."
 
