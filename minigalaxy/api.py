@@ -105,7 +105,7 @@ class Api:
     def get_redirect_url(self) -> str:
         return self.redirect_uri
 
-    # Get a token based on the code returned by the login screen
+    # Get Extrainfo about a game
     def get_info(self, game: Game) -> tuple:
         request_url = "https://api.gog.com/products/" + str(game.id) + "?expand=downloads,expanded_dlcs,description," \
                                                                        "screenshots,videos,related_products,changelog "
