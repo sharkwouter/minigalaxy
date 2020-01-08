@@ -41,7 +41,7 @@ Minigalaxy should work on the following distributions:
 - Ubuntu 18.10 or newer
 - Arch Linux
 - Manjaro
-- Fedora 31
+- Fedora 31+
 - openSUSE Tumbleweed
 - Gentoo
 
@@ -76,10 +76,10 @@ makepkg -si
 
 **Fedora**
 
-Available in [Copr](https://copr.fedorainfracloud.org/coprs/atim/minigalaxy/). You can use the following set of commands to install Minigalaxy on Fedora:
+Available in [official repos](https://src.fedoraproject.org/rpms/minigalaxy) (F31+)
 
 ```shell script
-sudo dnf copr enable atim/minigalaxy -y && sudo dnf install minigalaxy
+sudo dnf install minigalaxy
 ```
 
 **openSUSE**
