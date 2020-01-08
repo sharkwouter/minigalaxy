@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-06 17:56+0100\n"
+"POT-Creation-Date: 2020-01-08 19:50+0100\n"
 "PO-Revision-Date: 2020-01-07 08:04+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
@@ -33,6 +33,11 @@ msgctxt "about"
 msgid "About"
 msgstr "關於"
 
+#: minigalaxy/window/gametile.py:76
+#, python-format
+msgid "Are you sure to uninstall %s"
+msgstr ""
+
 #: minigalaxy/window/preferences.py:9
 msgid "Brazilian Portuguese"
 msgstr "葡萄牙文（巴西）"
@@ -51,7 +56,7 @@ msgstr "中文"
 msgid "Couldn't connect to GOG servers"
 msgstr "無法連線至 GOG 伺服器"
 
-#: minigalaxy/window/gametile.py:242
+#: minigalaxy/window/gametile.py:253
 msgid "Couldn't start subprocess"
 msgstr "無法啟動子行程"
 
@@ -71,7 +76,7 @@ msgstr "英文"
 msgid "Failed to retrieve library"
 msgstr "擷取收藏庫失敗"
 
-#: minigalaxy/window/gametile.py:256
+#: minigalaxy/window/gametile.py:267
 msgid "Failed to start {}:"
 msgstr "啟動 {} 失敗："
 
@@ -149,11 +154,11 @@ msgstr "登出"
 msgid "Minigalaxy is now running in offline mode"
 msgstr "Minigalaxy 目前以離線模式執行"
 
-#: minigalaxy/window/gametile.py:253
+#: minigalaxy/window/gametile.py:264
 msgid "No error message was returned"
 msgstr "未傳回錯誤訊息"
 
-#: minigalaxy/window/gametile.py:230
+#: minigalaxy/window/gametile.py:241
 msgid "No executable was found in {}"
 msgstr "在 {} 找不到可執行檔"
 
@@ -256,7 +261,7 @@ msgctxt "stay_logged_in_tooltip"
 msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
 msgstr "若停用，您每次打開 Minigalaxy 時都會被要求登入"
 
-#: minigalaxy/window/gametile.py:217
+#: minigalaxy/window/gametile.py:228
 msgid "download"
 msgstr "下載"
 
@@ -264,19 +269,19 @@ msgstr "下載"
 msgid "downloading..."
 msgstr "正在下載……"
 
-#: minigalaxy/window/gametile.py:212
+#: minigalaxy/window/gametile.py:223
 msgid "install"
 msgstr "安裝"
 
-#: minigalaxy/window/gametile.py:131
+#: minigalaxy/window/gametile.py:142
 msgid "installing.."
 msgstr "正在安裝……"
 
-#: minigalaxy/window/gametile.py:207
+#: minigalaxy/window/gametile.py:218
 msgid "play"
 msgstr "遊玩"
 
-#: minigalaxy/window/gametile.py:74
+#: minigalaxy/window/gametile.py:82
 msgid "uninstalling.."
 msgstr "正在解除安裝……"
 
