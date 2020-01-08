@@ -1,5 +1,6 @@
 **0.9.3 (unreleased)**
 - Added the following translations:
+    - German (thanks to BlindJerobine)
     - Turkish (thanks to fuzunspm)
 
 **0.9.2**
