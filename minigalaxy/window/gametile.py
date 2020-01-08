@@ -82,7 +82,19 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_support_clicked")
     def on_menu_button_support(self, widget):
-        webbrowser.open(self.api.get_info(str(self.game.id)), new=2)
+        try:
+            webbrowser.open(self.api.get_info(self.game)['links']['support'], new=2)
+        except:
+            dialog = Gtk.MessageDialog(
+                message_type=Gtk.MessageType.ERROR,
+                parent=self.parent,
+                modal=True,
+                buttons=Gtk.ButtonsType.OK,
+                text=_("Connection error")
+            )
+            dialog.format_secondary_text(_("Minigalaxy is now running in offline mode"))
+            dialog.run()
+            dialog.destroy()
 
     def __load_image(self) -> None:
         image_thumbnail_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
