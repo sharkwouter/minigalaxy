@@ -1,4 +1,6 @@
 **0.9.3 (unreleased)**
+- Added the following translations:
+    - Turkish (thanks to fuzunspm)
 
 **0.9.2**
 - Added a button to installed games which allow you to:
