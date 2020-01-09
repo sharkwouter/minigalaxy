@@ -1,4 +1,8 @@
 **0.9.3 (unreleased)**
+- Added the following translations:
+    - German (thanks to BlindJerobine)
+    - Turkish (thanks to fuzunspm)
+    - Brazilian Portugese (thanks to EsdrasTarsis)
 
 **0.9.2**
 - Added a button to installed games which allow you to:

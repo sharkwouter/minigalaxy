@@ -29,7 +29,6 @@ Features **not** in Minigalaxy:
 
 Currently Minigalaxy can be displayed in the following languages:
 - English
-- German
 - Dutch
 - Taiwanese Mandarin
 
@@ -41,13 +40,15 @@ Minigalaxy should work on the following distributions:
 - Ubuntu 18.10 or newer
 - Arch Linux
 - Manjaro
-- Fedora 31
+- Fedora 31+
 - openSUSE Tumbleweed
 - Gentoo
+- MX Linux 19
 
 Minigalaxy does **not** ship for the following distributions because they do not contain the required version of PyGObject:
 
 - Ubuntu 18.04
+- Linux Mint 19.3
 - openSUSE 15.1
 
 Other Linux distributions may work as well. Minigalaxy requires the following dependencies:
@@ -76,10 +77,10 @@ makepkg -si
 
 **Fedora**
 
-Available in [Copr](https://copr.fedorainfracloud.org/coprs/atim/minigalaxy/). You can use the following set of commands to install Minigalaxy on Fedora:
+Available in [official repos](https://src.fedoraproject.org/rpms/minigalaxy) (F31+)
 
 ```shell script
-sudo dnf copr enable atim/minigalaxy -y && sudo dnf install minigalaxy
+sudo dnf install minigalaxy
 ```
 
 **openSUSE**
@@ -94,6 +95,10 @@ sudo zypper in minigalaxy
 **Gentoo**
 
 Available in the [in the Metahax overlay](https://github.com/metafarion/metahax). Follow the instructions in the link to install Minigalaxy on Gentoo.
+
+**MX Linux**
+
+Currently available in the [Test Repository](http://mxrepo.com/mx/testrepo/pool/test/m/minigalaxy/).  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
 
 **Other distributions**
 
@@ -138,3 +143,4 @@ Special thanks goes out to all contributors:
 - jubalh for packaging Minigalaxy for openSUSE
 - tim77 for packaging Minigalaxy for Fedora
 - metafarion for packaging Minigalaxy for Gentoo
+- SwampRabbit and Steven Pusser for packaging Minigalaxy for MX Linux

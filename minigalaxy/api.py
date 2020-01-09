@@ -105,10 +105,17 @@ class Api:
     def get_redirect_url(self) -> str:
         return self.redirect_uri
 
+    # Get Extrainfo about a game
+    def get_info(self, game: Game) -> tuple:
+        request_url = "https://api.gog.com/products/" + str(game.id) + "?expand=downloads,expanded_dlcs,description," \
+                                                                       "screenshots,videos,related_products,changelog "
+        response = self.__request(request_url)
+
+        return response
+
     # This returns a unique download url and a link to the checksum of the download
     def get_download_info(self, game: Game) -> tuple:
-        url = 'https://api.gog.com/products/{}?expand=downloads'.format(game.id)
-        response = self.__request(url)
+        response = self.get_info(game)
         possible_downloads = []
         for installer in response["downloads"]["installers"]:
             if installer["os"] == "linux":

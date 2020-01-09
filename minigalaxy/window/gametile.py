@@ -8,6 +8,7 @@ from gi.repository import Gtk, GdkPixbuf, GLib
 import requests
 import json
 import os
+import webbrowser
 import threading
 import subprocess
 from minigalaxy.translation import _
@@ -69,15 +70,42 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
-        self.menu_button.hide()
-        self.button.set_sensitive(False)
-        self.button.set_label(_("uninstalling.."))
-        uninstall_thread = threading.Thread(target=self.__uninstall_game)
-        uninstall_thread.start()
+        message_dialog = Gtk.MessageDialog(parent=self.parent,
+                                           flags=Gtk.DialogFlags.MODAL,
+                                           message_type=Gtk.MessageType.WARNING,
+                                           buttons=Gtk.ButtonsType.OK_CANCEL,
+                                           message_format=_("Are you sure to uninstall %s" % self.game.name))
+        response = message_dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            self.menu_button.hide()
+            self.button.set_sensitive(False)
+            self.button.set_label(_("uninstalling.."))
+            uninstall_thread = threading.Thread(target=self.__uninstall_game)
+            uninstall_thread.start()
+            message_dialog.destroy()
+        elif response == Gtk.ResponseType.CANCEL:
+            message_dialog.destroy()
 
     @Gtk.Template.Callback("on_menu_button_open_clicked")
     def on_menu_button_open_files(self, widget):
         subprocess.call(["xdg-open", self.__get_install_dir()])
+
+    @Gtk.Template.Callback("on_menu_button_support_clicked")
+    def on_menu_button_support(self, widget):
+        try:
+            webbrowser.open(self.api.get_info(self.game)['links']['support'], new=2)
+        except:
+            dialog = Gtk.MessageDialog(
+                message_type=Gtk.MessageType.ERROR,
+                parent=self.parent,
+                modal=True,
+                buttons=Gtk.ButtonsType.OK,
+                text=_("Couldn't open support page")
+            )
+            dialog.format_secondary_text(_("Please check your internet connection"))
+            dialog.run()
+            dialog.destroy()
 
     def __load_image(self) -> None:
         image_thumbnail_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
