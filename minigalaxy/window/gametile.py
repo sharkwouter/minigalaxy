@@ -90,9 +90,9 @@ class GameTile(Gtk.Box):
                 parent=self.parent,
                 modal=True,
                 buttons=Gtk.ButtonsType.OK,
-                text=_("Connection error")
+                text=_("Couldn't open support page")
             )
-            dialog.format_secondary_text(_("Minigalaxy is now running in offline mode"))
+            dialog.format_secondary_text(_("Please check your internet connection"))
             dialog.run()
             dialog.destroy()
 
