@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-06 17:56+0100\n"
+"POT-Creation-Date: 2020-01-08 19:50+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,6 +33,11 @@ msgctxt "about"
 msgid "About"
 msgstr ""
 
+#: minigalaxy/window/gametile.py:76
+#, python-format
+msgid "Are you sure to uninstall %s"
+msgstr ""
+
 #: minigalaxy/window/preferences.py:9
 msgid "Brazilian Portuguese"
 msgstr ""
@@ -51,7 +56,7 @@ msgstr ""
 msgid "Couldn't connect to GOG servers"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:242
+#: minigalaxy/window/gametile.py:253
 msgid "Couldn't start subprocess"
 msgstr ""
 
@@ -71,7 +76,7 @@ msgstr ""
 msgid "Failed to retrieve library"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:256
+#: minigalaxy/window/gametile.py:267
 msgid "Failed to start {}:"
 msgstr ""
 
@@ -147,11 +152,11 @@ msgstr ""
 msgid "Minigalaxy is now running in offline mode"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:253
+#: minigalaxy/window/gametile.py:264
 msgid "No error message was returned"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:230
+#: minigalaxy/window/gametile.py:241
 msgid "No executable was found in {}"
 msgstr ""
 
@@ -254,7 +259,7 @@ msgctxt "stay_logged_in_tooltip"
 msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:217
+#: minigalaxy/window/gametile.py:228
 msgid "download"
 msgstr ""
 
@@ -262,19 +267,19 @@ msgstr ""
 msgid "downloading..."
 msgstr ""
 
-#: minigalaxy/window/gametile.py:212
+#: minigalaxy/window/gametile.py:223
 msgid "install"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:131
+#: minigalaxy/window/gametile.py:142
 msgid "installing.."
 msgstr ""
 
-#: minigalaxy/window/gametile.py:207
+#: minigalaxy/window/gametile.py:218
 msgid "play"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:74
+#: minigalaxy/window/gametile.py:82
 msgid "uninstalling.."
 msgstr ""
 

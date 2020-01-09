@@ -70,11 +70,22 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
-        self.menu_button.hide()
-        self.button.set_sensitive(False)
-        self.button.set_label(_("uninstalling.."))
-        uninstall_thread = threading.Thread(target=self.__uninstall_game)
-        uninstall_thread.start()
+        message_dialog = Gtk.MessageDialog(parent=self.parent,
+                                           flags=Gtk.DialogFlags.MODAL,
+                                           message_type=Gtk.MessageType.WARNING,
+                                           buttons=Gtk.ButtonsType.OK_CANCEL,
+                                           message_format=_("Are you sure to uninstall %s" % self.game.name))
+        response = message_dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            self.menu_button.hide()
+            self.button.set_sensitive(False)
+            self.button.set_label(_("uninstalling.."))
+            uninstall_thread = threading.Thread(target=self.__uninstall_game)
+            uninstall_thread.start()
+            message_dialog.destroy()
+        elif response == Gtk.ResponseType.CANCEL:
+            message_dialog.destroy()
 
     @Gtk.Template.Callback("on_menu_button_open_clicked")
     def on_menu_button_open_files(self, widget):
