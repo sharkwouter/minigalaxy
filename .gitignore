@@ -6,6 +6,7 @@ dist/
 *.pyc
 *.egg-info/
 *.swp
+.eggs/
 
 # Files generated when building the deb package
 .pybuild/
