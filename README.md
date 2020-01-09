@@ -44,6 +44,7 @@ Minigalaxy should work on the following distributions:
 - Fedora 31+
 - openSUSE Tumbleweed
 - Gentoo
+- MX Linux 19
 
 Minigalaxy does **not** ship for the following distributions because they do not contain the required version of PyGObject:
 
@@ -94,6 +95,10 @@ sudo zypper in minigalaxy
 **Gentoo**
 
 Available in the [in the Metahax overlay](https://github.com/metafarion/metahax). Follow the instructions in the link to install Minigalaxy on Gentoo.
+
+**MX Linux**
+
+Currently available in the Test Repository.  Please use MX Package Installer or Synaptic. (http://mxrepo.com/mx/testrepo/pool/test/m/minigalaxy/).
 
 **Other distributions**
 
