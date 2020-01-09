@@ -29,7 +29,6 @@ Features **not** in Minigalaxy:
 
 Currently Minigalaxy can be displayed in the following languages:
 - English
-- German
 - Dutch
 - Taiwanese Mandarin
 
