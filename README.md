@@ -98,7 +98,7 @@ Available in the [in the Metahax overlay](https://github.com/metafarion/metahax)
 
 **MX Linux**
 
-Currently available in the Test Repository.  Please use MX Package Installer or Synaptic. (http://mxrepo.com/mx/testrepo/pool/test/m/minigalaxy/).
+Currently available in the [Test Repository](http://mxrepo.com/mx/testrepo/pool/test/m/minigalaxy/).  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
 
 **Other distributions**
 
