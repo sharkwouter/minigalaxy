@@ -48,6 +48,7 @@ Minigalaxy should work on the following distributions:
 Minigalaxy does **not** ship for the following distributions because they do not contain the required version of PyGObject:
 
 - Ubuntu 18.04
+- Linux Mint 19.3
 - openSUSE 15.1
 
 Other Linux distributions may work as well. Minigalaxy requires the following dependencies:
