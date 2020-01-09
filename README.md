@@ -143,3 +143,4 @@ Special thanks goes out to all contributors:
 - jubalh for packaging Minigalaxy for openSUSE
 - tim77 for packaging Minigalaxy for Fedora
 - metafarion for packaging Minigalaxy for Gentoo
+- SwampRabbit and Steven Pusser for packaging Minigalaxy for MX Linux
