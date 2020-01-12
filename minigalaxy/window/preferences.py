@@ -37,6 +37,7 @@ class Preferences(Gtk.Dialog):
     label_keep_installers = Gtk.Template.Child()
     switch_keep_installers = Gtk.Template.Child()
     switch_stay_logged_in = Gtk.Template.Child()
+    switch_show_fps = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
 
@@ -48,6 +49,7 @@ class Preferences(Gtk.Dialog):
         self.button_file_chooser.set_filename(config.get("install_dir"))
         self.switch_keep_installers.set_active(self.__config.get("keep_installers"))
         self.switch_stay_logged_in.set_active(self.__config.get("stay_logged_in"))
+        self.switch_show_fps.set_active(self.__config.get("show_fps"))
 
         # Set tooltip for keep installers label
         installer_dir = os.path.join(self.button_file_chooser.get_filename(), "installer")
@@ -112,6 +114,7 @@ class Preferences(Gtk.Dialog):
         self.__save_language_choice()
         self.__config.set("keep_installers", self.switch_keep_installers.get_active())
         self.__config.set("stay_logged_in", self.switch_stay_logged_in.get_active())
+        self.__config.set("show_fps", self.switch_show_fps.get_active())
         if self.__save_install_dir_choice():
             self.response(Gtk.ResponseType.OK)
             self.parent.refresh_game_install_states(path_changed=True)

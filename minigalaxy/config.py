@@ -6,7 +6,8 @@ DEFAULT_CONFIG = {
             "lang": "en",
             "install_dir": DEFAULT_INSTALL_DIR,
             "keep_installers": False,
-            "stay_logged_in": True
+            "stay_logged_in": True,
+            "show_fps": False
         }
 
 

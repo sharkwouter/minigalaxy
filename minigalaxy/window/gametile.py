@@ -106,7 +106,7 @@ class GameTile(Gtk.Box):
             dialog.format_secondary_text(_("Please check your internet connection"))
             dialog.run()
             dialog.destroy()
-
+            
     def __load_image(self) -> None:
         image_thumbnail_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
         image_install_dir = os.path.join(self.__get_install_dir(), "thumbnail.jpg")
@@ -248,7 +248,7 @@ class GameTile(Gtk.Box):
     def __start_game(self) -> subprocess:
         error_message = ""
         process = None
-
+        
         # Change the directory to the install dir
         working_dir = os.getcwd()
         os.chdir(self.__get_install_dir())
@@ -298,6 +298,14 @@ class GameTile(Gtk.Box):
     def __get_execute_command(self) -> list:
         files = os.listdir(self.__get_install_dir())
 
+        # Enable FPS Counter for Nvidia or AMD (Mesa) users
+        if self.api.config.get("show_fps"):
+            os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1" # For Nvidia users
+            os.environ["GALLIUM_HUD"] = "simple,fps" # For AMDGPU users
+        elif self.api.config.get("show_fps") is False:
+            os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0" # For Nvidia users
+            os.environ["GALLIUM_HUD"] = ""
+            
         # Dosbox
         if "dosbox" in files and shutil.which("dosbox"):
             for file in files:
