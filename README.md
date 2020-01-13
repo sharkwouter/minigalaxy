@@ -85,7 +85,7 @@ sudo dnf install minigalaxy
 
 **openSUSE**
 
-Available in the [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy). You can use the following set of commands to install Minigalaxy on openSUSE:
+Available in official repos for openSUSE Tumbleweed. You can use the following set of commands to install Minigalaxy on openSUSE from the devel project on [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy):
 ```shell script
 sudo zypper ar -f obs://games:tools gamestools
 sudo zypper ref
