@@ -6,6 +6,8 @@
     - Norwegian Bokmål (thanks to kimmalmo)
     - Polish (thanks to ArturWroblewski)
     - French (thanks to thomansb22)
+- Added support option to game specific menus which open the GOG support page (thanks to BlindJerobine)
+- Ask for confirmation before uninstalling (thanks to Odelpasso)
 
 **0.9.2**
 - Added a button to installed games which allow you to:
