@@ -55,7 +55,7 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 
 - GTK+
 - Python 3
-- PyGObject 3.30+
+- PyGObject 3.29.1+
 - Webkit2gtk with API version 4.0 support
 - Python Requests
 
