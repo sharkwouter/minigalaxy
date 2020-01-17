@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-08 19:50+0100\n"
+"POT-Creation-Date: 2020-01-17 08:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +33,7 @@ msgctxt "about"
 msgid "About"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:76
+#: minigalaxy/window/gametile.py:77
 #, python-format
 msgid "Are you sure to uninstall %s"
 msgstr ""
@@ -56,7 +56,11 @@ msgstr ""
 msgid "Couldn't connect to GOG servers"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:253
+#: minigalaxy/window/gametile.py:104
+msgid "Couldn't open support page"
+msgstr ""
+
+#: minigalaxy/window/gametile.py:270
 msgid "Couldn't start subprocess"
 msgstr ""
 
@@ -76,7 +80,7 @@ msgstr ""
 msgid "Failed to retrieve library"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:267
+#: minigalaxy/window/gametile.py:284
 msgid "Failed to start {}:"
 msgstr ""
 
@@ -152,11 +156,11 @@ msgstr ""
 msgid "Minigalaxy is now running in offline mode"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:264
+#: minigalaxy/window/gametile.py:281
 msgid "No error message was returned"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:241
+#: minigalaxy/window/gametile.py:258
 msgid "No executable was found in {}"
 msgstr ""
 
@@ -168,6 +172,10 @@ msgstr ""
 #: data/ui/gametile.ui:17
 msgctxt "open_files"
 msgid "Open Files"
+msgstr ""
+
+#: minigalaxy/window/gametile.py:106
+msgid "Please check your internet connection"
 msgstr ""
 
 #: minigalaxy/window/preferences.py:22
@@ -226,6 +234,12 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr ""
 
+#. Opens the official support webpage
+#: data/ui/gametile.ui:45
+msgctxt "support"
+msgid "Support"
+msgstr ""
+
 #: minigalaxy/window/preferences.py:26
 msgid "Swedish"
 msgstr ""
@@ -259,27 +273,27 @@ msgctxt "stay_logged_in_tooltip"
 msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:228
+#: minigalaxy/window/gametile.py:245
 msgid "download"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:66
+#: minigalaxy/window/gametile.py:67
 msgid "downloading..."
 msgstr ""
 
-#: minigalaxy/window/gametile.py:223
+#: minigalaxy/window/gametile.py:240
 msgid "install"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:142
+#: minigalaxy/window/gametile.py:159
 msgid "installing.."
 msgstr ""
 
-#: minigalaxy/window/gametile.py:218
+#: minigalaxy/window/gametile.py:235
 msgid "play"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:82
+#: minigalaxy/window/gametile.py:83
 msgid "uninstalling.."
 msgstr ""
 
