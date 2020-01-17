@@ -4,6 +4,8 @@
     - Turkish (thanks to fuzunspm)
     - Brazilian Portuguese (thanks to EsdrasTarsis)
     - Norwegian Bokmål (thanks to kimmalmo)
+    - Polish (thanks to ArturWroblewski)
+    - French (thanks to thomansb22)
 
 **0.9.2**
 - Added a button to installed games which allow you to:
