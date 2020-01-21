@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-17 08:21+0100\n"
-"PO-Revision-Date: 2020-01-09 08:42+0800\n"
+"PO-Revision-Date: 2020-01-18 09:30+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
 "Language: zh_TW\n"
@@ -58,7 +58,7 @@ msgstr "無法連線至 GOG 伺服器"
 
 #: minigalaxy/window/gametile.py:104
 msgid "Couldn't open support page"
-msgstr ""
+msgstr "無法開啟支援頁面"
 
 #: minigalaxy/window/gametile.py:270
 msgid "Couldn't start subprocess"
@@ -178,7 +178,7 @@ msgstr "開啟檔案"
 
 #: minigalaxy/window/gametile.py:106
 msgid "Please check your internet connection"
-msgstr ""
+msgstr "請檢查您的網際網路連線"
 
 #: minigalaxy/window/preferences.py:22
 msgid "Polish"
@@ -240,7 +240,7 @@ msgstr "保持登入："
 #: data/ui/gametile.ui:45
 msgctxt "support"
 msgid "Support"
-msgstr ""
+msgstr "支援"
 
 #: minigalaxy/window/preferences.py:26
 msgid "Swedish"
