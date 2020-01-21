@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-17 08:21+0100\n"
-"PO-Revision-Date: 2020-01-08 19:30-0300\n"
+"PO-Revision-Date: 2020-01-20 16:53-0300\n"
 "Last-Translator: Esdras Tarsis <esdrastarsis@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -59,7 +59,7 @@ msgstr "Não foi possível conectar aos servidores da GOG"
 
 #: minigalaxy/window/gametile.py:104
 msgid "Couldn't open support page"
-msgstr ""
+msgstr "Não foi possível abrir a página de suporte"
 
 #: minigalaxy/window/gametile.py:270
 msgid "Couldn't start subprocess"
@@ -179,7 +179,7 @@ msgstr "Abrir arquivos"
 
 #: minigalaxy/window/gametile.py:106
 msgid "Please check your internet connection"
-msgstr ""
+msgstr "Por favor, verifique sua conexão à internet"
 
 #: minigalaxy/window/preferences.py:22
 msgid "Polish"
@@ -241,7 +241,7 @@ msgstr "Permanecer conectado:"
 #: data/ui/gametile.ui:45
 msgctxt "support"
 msgid "Support"
-msgstr ""
+msgstr "Suporte"
 
 #: minigalaxy/window/preferences.py:26
 msgid "Swedish"
