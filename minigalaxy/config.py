@@ -14,6 +14,7 @@ class Config:
     def __init__(self):
         self.__config_file = CONFIG_FILE_PATH
         self.__config = self.__load_config_file()
+        self.__add_missing_config_entries()
 
     def __load_config_file(self) -> dict:
         if os.path.exists(self.__config_file):
@@ -40,6 +41,16 @@ class Config:
         with open(self.__config_file, "w") as file:
             file.write(json.dumps(self.__config))
             file.close()
+
+    def __add_missing_config_entries(self):
+        # Make sure all config values in the default configuration are available
+        added_value = False
+        for key in DEFAULT_CONFIG:
+            if self.get(key) is None:
+                self.set(key, DEFAULT_CONFIG[key])
+                added_value = True
+        if added_value:
+            self.__config = self.__load_config_file()
 
     def set(self, key, value):
         self.__config[key] = value
