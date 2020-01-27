@@ -13,7 +13,6 @@ import subprocess
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 
-
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
 class GameTile(Gtk.Box):
     __gtype_name__ = "GameTile"
@@ -21,6 +20,7 @@ class GameTile(Gtk.Box):
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
+    menu_button_os = Gtk.Template.Child()
 
     def __init__(self, parent, game=None, api=None, install_dir=""):
         Gtk.Frame.__init__(self)
@@ -32,15 +32,19 @@ class GameTile(Gtk.Box):
         self.install_dir = install_dir
         self.busy = False
 
+        # Set the os version for each games at launch
+        self.api.get_os_game(self.game)
+
         self.image.set_tooltip_text(self.game.name)
 
         # Set folder for download installer
         self.download_dir = os.path.join(CACHE_DIR, "download")
-        self.download_path = os.path.join(self.download_dir, "{}.sh".format(self.game.name))
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(self.api.config.get("install_dir"), "installer")
-        self.keep_path = os.path.join(self.keep_dir, "{}.sh".format(self.game.name))
+
+        # Set the prefix for Windows games
+        self.prefix_dir = os.path.join(self.api.config.get("install_dir"), "prefix")
 
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
@@ -106,6 +110,41 @@ class GameTile(Gtk.Box):
             dialog.run()
             dialog.destroy()
 
+    @Gtk.Template.Callback("on_menu_button_os_Windows_clicked")
+    def on_menu_button_os_version_Win(self, widget):
+        os_dialog_Win = Gtk.MessageDialog(
+                message_type=Gtk.MessageType.WARNING,
+                modal=True,
+                buttons=Gtk.ButtonsType.OK_CANCEL,
+                text=_("Install the Windows version for this game ?")
+        )
+
+        response = os_dialog_Win.run()
+
+        if response == Gtk.ResponseType.OK:
+            self.api.config.set("os_version_" + str(self.game.id), "windows")
+            if os.path.exists(self.__keep_install_path()):
+                self.button.set_label(_("install"))
+            os_dialog_Win.destroy()
+        elif response == Gtk.ResponseType.CANCEL:
+            os_dialog_Win.destroy()
+
+    def __keep_install_path(self):
+        if self.api.config.get('os_version_' + str(self.game.id)) == "linux":
+            self.keep_path = os.path.join(self.keep_dir, '{}.sh'.format(self.game.name))
+            return self.keep_path
+        elif self.api.config.get('os_version_' + str(self.game.id)) == "windows":
+            self.keep_path = os.path.join(self.keep_dir, "{}.exe".format(self.game.name))
+            return self.keep_path
+
+    def __download_path(self):
+        if self.api.config.get('os_version_' + str(self.game.id)) == "linux":
+            self.download_path = os.path.join(self.download_dir, '{}.sh'.format(self.game.name))
+            return self.download_path
+        elif self.api.config.get('os_version_' + str(self.game.id)) == "windows":
+            self.download_path = os.path.join(self.download_dir, "{}.exe".format(self.game.name))
+            return self.download_path
+
     def __load_image(self) -> None:
         image_thumbnail_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
         image_install_dir = os.path.join(self.__get_install_dir(), "thumbnail.jpg")
@@ -133,11 +172,11 @@ class GameTile(Gtk.Box):
     def __download_file(self) -> None:
         if not os.path.exists(self.download_dir):
             os.makedirs(self.download_dir)
-        if not os.path.exists(self.keep_path):
+        if not os.path.exists(self.__keep_install_path()):
             download_info = self.api.get_download_info(self.game)
             file_url = download_info["downlink"]
             data = requests.get(file_url, stream=True)
-            handler = open(self.download_path, "wb")
+            handler = open(self.__download_path(), "wb")
 
             total_size = int(data.headers.get('content-length'))
             downloaded_size = 0
@@ -170,26 +209,38 @@ class GameTile(Gtk.Box):
         os.makedirs(temp_dir)
 
         # Extract the installer
-        if os.path.exists(self.download_path):
-            installer_path = self.download_path
+        if os.path.exists(self.__download_path()):
+            installer_path = self.__download_path()
         else:
-            installer_path = self.keep_path
-
-        with zipfile.ZipFile(installer_path) as archive:
-            for member in archive.namelist():
-                file = archive.getinfo(member)
-                archive.extract(file, temp_dir)
-                # Set permissions
-                attr = file.external_attr >> 16
-                os.chmod(os.path.join(temp_dir, member), attr)
+            installer_path = self.__keep_install_path()
 
         # Make sure the install directory exists
         library_dir = self.api.config.get("install_dir")
         if not os.path.exists(library_dir):
             os.makedirs(library_dir)
 
-        # Copy the game files into the correct directory
-        shutil.move(os.path.join(temp_dir, "data/noarch"), self.__get_install_dir())
+        if installer_path.endswith('.sh'):
+            with zipfile.ZipFile(installer_path) as archive:
+                for member in archive.namelist():
+                    file = archive.getinfo(member)
+                    archive.extract(file, temp_dir)
+                    # Set permissions
+                    attr = file.external_attr >> 16
+                    os.chmod(os.path.join(temp_dir, member), attr)
+
+            shutil.move(os.path.join(temp_dir, "data/noarch"), self.__get_install_dir())
+        elif installer_path.endswith('.exe'):
+            if shutil.which("wine"):
+                if not os.path.exists(self.prefix_dir):
+                    os.makedirs(self.prefix_dir)
+
+                prefix = os.path.join(self.prefix_dir, self.game.name)
+                os.environ["WINEPREFIX"] = prefix
+
+                # It's possible to set install dir as argument before installation
+                command = [shutil.which("wine"), installer_path, "/dir=" + self.__get_install_dir(), "/verysilent", "/NORESTART", "/CLOSEAPPLICATIONS"]
+                subprocess.run(command)
+
         shutil.copyfile(
             os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id)),
             os.path.join(self.__get_install_dir(), "thumbnail.jpg"),
@@ -200,13 +251,16 @@ class GameTile(Gtk.Box):
         if self.api.config.get("keep_installers"):
             if not os.path.exists(self.keep_dir):
                 os.makedirs(self.keep_dir)
-            if not os.path.exists(self.keep_path):
-                os.rename(self.download_path,self.keep_path)
+            if not os.path.exists(self.__keep_install_path()):
+                os.rename(self.__download_path(),self.__keep_install_path())
         else:
-            os.remove(self.download_path)
+            os.remove(self.__download_path())
 
     def __uninstall_game(self):
         shutil.rmtree(self.__get_install_dir(), ignore_errors=True)
+        # Delete the prefix for the windows game
+        if os.path.join(self.prefix_dir, self.game.name):
+            shutil.rmtree(os.path.join(self.prefix_dir, self.game.name), ignore_errors=True)
         GLib.idle_add(self.load_state)
         GLib.idle_add(self.button.set_sensitive, True)
 
@@ -225,24 +279,31 @@ class GameTile(Gtk.Box):
             self.install_dir = os.path.join(self.api.config.get("install_dir"), self.game.name)
         return self.install_dir
 
+    def menu_os(self):
+        if self.api.config.get("os_version_" + str(self.game.id)) == "linux":
+            self.menu_button_os.show()
+
     def load_state(self) -> None:
         if self.busy:
             return
-        if os.path.isfile(os.path.join(self.__get_install_dir(), "gameinfo")):
+        if os.path.isfile(os.path.join(self.__get_install_dir(), "thumbnail.jpg")):
             self.installed = True
             self.image.set_sensitive(True)
             self.button.set_label(_("play"))
             self.menu_button.show()
-        elif os.path.exists(self.keep_path):
+            self.menu_button_os.hide()
+        elif os.path.exists(self.__keep_install_path()):
             self.installed = False
             self.image.set_sensitive(False)
             self.button.set_label(_("install"))
             self.menu_button.hide()
+            self.menu_button_os.show()
         else:
             self.installed = False
             self.image.set_sensitive(False)
             self.button.set_label(_("download"))
             self.menu_button.hide()
+            self.menu_os()
 
     def __start_game(self) -> subprocess:
         error_message = ""
@@ -319,9 +380,22 @@ class GameTile(Gtk.Box):
                 return ["scummvm", "-c", scummvm_config]
 
         # Wine
-        if "prefix" in files and shutil.which("wine"):
-            # This still needs to be implemented
-            return["./start.sh"]
+        if shutil.which("wine"):
+            prefix = os.path.join(self.prefix_dir, self.game.name)
+            os.environ["WINEPREFIX"] = prefix
+
+            # Find game executable file
+            goggame_info = os.path.join(self.__get_install_dir(), "goggame-" + str(self.game.id) + ".info")
+            if os.path.isfile(goggame_info):
+                with open(goggame_info) as info_data:
+                    info_dict = json.load(info_data)
+                    path_name = info_dict.get("playTasks")
+                    filename = path_name[0]["path"]
+                return ["wine", filename]
+            else:
+                filepath = glob.glob(self.__get_install_dir() + '/*.exe')[0]
+                filename = os.path.splitext(os.path.basename(filepath))[0] + '.exe'
+                return ["wine", filename]
 
         # None of the above, but there is a start script
         if "start.sh" in files:

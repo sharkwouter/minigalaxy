@@ -80,10 +80,10 @@ class Api:
 
             for product in response["products"]:
 
-                # Only add products which work on Linux
-                if product["worksOn"]["Linux"] and product["id"] not in IGNORE_GAME_IDS:
+                if product["id"] not in IGNORE_GAME_IDS:
                     game = Game(name=product["title"], game_id=product["id"], image_url=product["image"])
                     games.append(game)
+
             if current_page == total_pages:
                 all_pages_processed = True
             current_page += 1
@@ -115,7 +115,7 @@ class Api:
         response = self.get_info(game)
         possible_downloads = []
         for installer in response["downloads"]["installers"]:
-            if installer["os"] == "linux":
+            if installer["os"] == "windows" or installer["os"] == "linux":
                 if installer['language'] == self.config.get("lang"):
                     return self.__request(installer["files"][0]["downlink"])
                 if len(possible_downloads) == 0:
@@ -127,6 +127,17 @@ class Api:
         # Return last entry in possible_downloads. This will either be English or the first langauge in the list
         # This is just a backup, if the preferred language has been found, this part won't execute
         return self.__request(possible_downloads[-1]["files"][0]["downlink"])
+
+    def check_compatibility(self, game: Game):
+        response = self.get_info(game)
+        return response["downloads"]["installers"]
+
+    def get_os_game(self, game:Game):
+        for os_version in self.check_compatibility(game):
+            if os_version["os"] == "linux":
+                self.config.set("os_version_" + str(game.id), "linux")
+            elif "linux" not in os_version["os"]:
+                self.config.set("os_version_" + str(game.id), "windows")
 
     def get_user_info(self) -> str:
         username = self.config.get("username")
