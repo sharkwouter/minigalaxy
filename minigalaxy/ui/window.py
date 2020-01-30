@@ -4,10 +4,10 @@ import threading
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, GLib
-from minigalaxy.window.login import Login
-from minigalaxy.window.gametile import GameTile
-from minigalaxy.window.preferences import Preferences
-from minigalaxy.window.about import About
+from minigalaxy.ui.login import Login
+from minigalaxy.ui.gametile import GameTile
+from minigalaxy.ui.preferences import Preferences
+from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.translation import _
