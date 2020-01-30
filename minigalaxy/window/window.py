@@ -10,6 +10,7 @@ from minigalaxy.window.preferences import Preferences
 from minigalaxy.window.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
+from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
 from minigalaxy.game import Game
 
@@ -256,7 +257,12 @@ class Window(Gtk.ApplicationWindow):
     """
     def __authenticate(self):
         url = None
-        token = self.config.get("refresh_token")
+        if self.api.config.get("stay_logged_in"):
+            token = self.config.get("refresh_token")
+        else:
+            self.config.unset("username")
+            self.config.unset("refresh_token")
+            token = None
 
         # Make sure there is an internet connection, but only once
         if self.api.can_connect():
