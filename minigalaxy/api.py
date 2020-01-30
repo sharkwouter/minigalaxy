@@ -2,10 +2,7 @@ import time
 from urllib.parse import urlencode
 import requests
 from minigalaxy.game import Game
-
-IDS_TO_EXCLUDE = [
-    1424856371,  # Hotline Miami 2: Wrong Number - Digital Comics
-]
+from minigalaxy.constants import IGNORE_GAME_IDS
 
 
 class Api:
@@ -84,7 +81,7 @@ class Api:
             for product in response["products"]:
 
                 # Only add products which work on Linux
-                if product["worksOn"]["Linux"] and product["id"] not in IDS_TO_EXCLUDE:
+                if product["worksOn"]["Linux"] and product["id"] not in IGNORE_GAME_IDS:
                     game = Game(name=product["title"], game_id=product["id"], image_url=product["image"])
                     games.append(game)
             if current_page == total_pages:

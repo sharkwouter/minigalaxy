@@ -1,13 +1,7 @@
 import os
 import json
 from minigalaxy.paths import CONFIG_DIR, CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
-
-DEFAULT_CONFIG = {
-            "lang": "en",
-            "install_dir": DEFAULT_INSTALL_DIR,
-            "keep_installers": False,
-            "stay_logged_in": True
-        }
+from minigalaxy.constants import DEFAULT_CONFIGURATION
 
 
 class Config:
@@ -28,14 +22,14 @@ class Config:
         if not os.path.exists(CONFIG_DIR):
             os.makedirs(CONFIG_DIR)
         with open(self.__config_file, "w") as file:
-            file.write(json.dumps(DEFAULT_CONFIG))
+            file.write(json.dumps(DEFAULT_CONFIGURATION))
             file.close()
 
         # Make sure the default installation path exists
         if not os.path.isdir(DEFAULT_INSTALL_DIR):
             os.makedirs(DEFAULT_INSTALL_DIR)
 
-        return DEFAULT_CONFIG
+        return DEFAULT_CONFIGURATION
 
     def __update_config_file(self):
         with open(self.__config_file, "w") as file:
@@ -45,9 +39,9 @@ class Config:
     def __add_missing_config_entries(self):
         # Make sure all config values in the default configuration are available
         added_value = False
-        for key in DEFAULT_CONFIG:
+        for key in DEFAULT_CONFIGURATION:
             if self.get(key) is None:
-                self.set(key, DEFAULT_CONFIG[key])
+                self.set(key, DEFAULT_CONFIGURATION[key])
                 added_value = True
         if added_value:
             self.__config = self.__load_config_file()

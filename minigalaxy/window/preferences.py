@@ -4,28 +4,7 @@ from gi.repository import Gtk
 import os
 from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR
-
-SUPPORTED_LANGUAGES = [
-    ["br", _("Brazilian Portuguese")],
-    ["cn", _("Chinese")],
-    ["da", _("Danish")],
-    ["nl", _("Dutch")],
-    ["en", _("English")],
-    ["fi", _("Finnish")],
-    ["fr", _("French")],
-    ["de", _("German")],
-    ["hu", _("Hungarian")],
-    ["it", _("Italian")],
-    ["jp", _("Japanese")],
-    ["ko", _("Korean")],
-    ["no", _("Norwegian")],
-    ["pl", _("Polish")],
-    ["pt", _("Portuguese")],
-    ["ru", _("Russian")],
-    ["es", _("Spanish")],
-    ["sv", _("Swedish")],
-    ["tr", _("Turkish")],
-]
+from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "preferences.ui"))
@@ -57,7 +36,7 @@ class Preferences(Gtk.Dialog):
 
     def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)
-        for lang in SUPPORTED_LANGUAGES:
+        for lang in SUPPORTED_DOWNLOAD_LANGUAGES:
             languages.append(lang)
 
         self.combobox_language.set_model(languages)

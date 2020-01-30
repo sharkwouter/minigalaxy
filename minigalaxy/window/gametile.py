@@ -1,6 +1,5 @@
 import shutil
 import zipfile
-import glob
 import re
 import gi
 gi.require_version('Gtk', '3.0')
