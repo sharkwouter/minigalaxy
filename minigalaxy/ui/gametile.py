@@ -22,7 +22,7 @@ class GameTile(Gtk.Box):
     button = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
 
-    def __init__(self, parent, game=None, api=None, install_dir=""):
+    def __init__(self, parent, game, api, install_dir=""):
         Gtk.Frame.__init__(self)
         self.parent = parent
         self.game = game

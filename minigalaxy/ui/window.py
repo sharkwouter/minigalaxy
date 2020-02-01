@@ -13,6 +13,7 @@ from minigalaxy.config import Config
 from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
 from minigalaxy.game import Game
+from minigalaxy.ui.library import Library
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
@@ -27,7 +28,7 @@ class Window(Gtk.ApplicationWindow):
     menu_about = Gtk.Template.Child()
     menu_preferences = Gtk.Template.Child()
     menu_logout = Gtk.Template.Child()
-    library = Gtk.Template.Child()
+    window_library = Gtk.Template.Child()
 
     def __init__(self, name):
         Gtk.ApplicationWindow.__init__(self, title=name)
@@ -37,9 +38,16 @@ class Window(Gtk.ApplicationWindow):
         self.search_string = ""
         self.offline = False
 
+        # Set library
+        self.library = Library(self.api)
+        self.window_library.add(self.library)
+
         # Set the icon
         icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_IMAGE_PATH)
         self.set_default_icon_list([icon])
+
+        # Show the window
+        self.show_all()
 
         # Create the thumbnails directory
         if not os.path.exists(THUMBNAIL_DIR):
@@ -48,9 +56,7 @@ class Window(Gtk.ApplicationWindow):
         # Interact with the API
         self.__authenticate()
         self.HeaderBar.set_subtitle(self.api.get_user_info())
-        self.sync_library()
-
-        self.show_all()
+        self.library.update_library()
 
     @Gtk.Template.Callback("on_header_sync_clicked")
     def sync_library(self, button=None):
