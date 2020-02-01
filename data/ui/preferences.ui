@@ -181,9 +181,10 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes" context="show_fps_tooltip">Show the framerate while playing games. Only works with AMD and Nvidia graphics cards.</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
-                <property name="label" translatable="yes">Show FPS:</property>
+                <property name="label" translatable="yes" context="show_fps" comments="Has to end with &quot;: &quot;">Show FPS in games:</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
