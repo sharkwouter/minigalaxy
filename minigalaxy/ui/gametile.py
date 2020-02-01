@@ -297,6 +297,14 @@ class GameTile(Gtk.Box):
     def __get_execute_command(self) -> list:
         files = os.listdir(self.__get_install_dir())
 
+        # Enable FPS Counter for Nvidia or AMD (Mesa) users
+        if self.api.config.get("show_fps"):
+            os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1" # For Nvidia users
+            os.environ["GALLIUM_HUD"] = "simple,fps" # For AMDGPU users
+        elif self.api.config.get("show_fps") is False:
+            os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0" # For Nvidia users
+            os.environ["GALLIUM_HUD"] = ""
+            
         # Dosbox
         if "dosbox" in files and shutil.which("dosbox"):
             for file in files:
