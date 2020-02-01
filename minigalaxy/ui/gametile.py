@@ -131,8 +131,17 @@ class GameTile(Gtk.Box):
         elif response == Gtk.ResponseType.CANCEL:
             os_dialog_Win.destroy()
 
+    def os_game_version(self):
+        list = self.api.get_link_game(self.game)
+        for url in list:
+            if '3installer' in url and self.api.config.get('os_version_' + str(self.game.id)) == 'linux':
+                return self.api.request(url)
+            if '1installer' in url and self.api.config.get('os_version_' + str(self.game.id)) == 'windows':
+                    return self.api.request(url)
+
+
     def game_real_name(self):
-        download_info = self.api.get_download_info(self.game)
+        download_info = self.os_game_version()
         file_url = download_info["downlink"]
         exec_name = file_url.rsplit('/', 1)[1]
         real_name = exec_name.partition('?')[0]
@@ -166,7 +175,7 @@ class GameTile(Gtk.Box):
         if not os.path.exists(self.download_dir):
             os.makedirs(self.download_dir)
         if not os.path.exists(self.keep_path):
-            download_info = self.api.get_download_info(self.game)
+            download_info = self.os_game_version()
             file_url = download_info["downlink"]
             data = requests.get(file_url, stream=True)
             handler = open(self.download_path, "wb")
@@ -270,6 +279,8 @@ class GameTile(Gtk.Box):
     def __get_install_dir(self):
         if not self.install_dir or not os.path.isdir(self.install_dir):
             self.install_dir = os.path.join(self.api.config.get("install_dir"), self.game.name)
+            if ':' in self.install_dir:
+                self.install_dir = re.sub(':', '', self.install_dir)
         return self.install_dir
 
     def menu_os(self):
@@ -350,7 +361,6 @@ class GameTile(Gtk.Box):
 
     def __get_execute_command(self) -> list:
         files = os.listdir(self.__get_install_dir())
-
         # Dosbox
         if "dosbox" in files and shutil.which("dosbox"):
             for file in files:

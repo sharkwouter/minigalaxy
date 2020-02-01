@@ -75,7 +75,7 @@ class Api:
                 'mediaType': 1,  # 1 means game
                 'page': current_page,
             }
-            response = self.__request(url, params=params)
+            response = self.request(url, params=params)
             total_pages = response["totalPages"]
 
             for product in response["products"]:
@@ -106,27 +106,17 @@ class Api:
     def get_info(self, game: Game) -> tuple:
         request_url = "https://api.gog.com/products/" + str(game.id) + "?expand=downloads,expanded_dlcs,description," \
                                                                        "screenshots,videos,related_products,changelog "
-        response = self.__request(request_url)
+        response = self.request(request_url)
 
         return response
 
-    # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game) -> tuple:
+    def get_link_game(self, game: Game):
+        download_links = []
         response = self.get_info(game)
-        possible_downloads = []
         for installer in response["downloads"]["installers"]:
-            if installer["os"] == "windows" or installer["os"] == "linux":
-                if installer['language'] == self.config.get("lang"):
-                    return self.__request(installer["files"][0]["downlink"])
-                if len(possible_downloads) == 0:
-                    possible_downloads.append(installer)
-                    continue
-                if installer['language'] == "en":
-                    possible_downloads.append(installer)
-
-        # Return last entry in possible_downloads. This will either be English or the first langauge in the list
-        # This is just a backup, if the preferred language has been found, this part won't execute
-        return self.__request(possible_downloads[-1]["files"][0]["downlink"])
+            for url in installer['files']:
+                download_links.append(url['downlink'])
+        return download_links
 
     def check_compatibility(self, game: Game):
         response = self.get_info(game)
@@ -143,7 +133,7 @@ class Api:
         username = self.config.get("username")
         if not username:
             url = "https://embed.gog.com/userData.json"
-            response = self.__request(url)
+            response = self.request(url)
             username = response["username"]
             self.config.set("username", username)
         return username
@@ -157,7 +147,7 @@ class Api:
         return True
 
     # Make a request with the active token
-    def __request(self, url: str = None, params: dict = None) -> tuple:
+    def request(self, url: str = None, params: dict = None) -> tuple:
         # Refresh the token if needed
         if self.active_token_expiration_time < time.time():
             print("Refreshing token")
