@@ -42,9 +42,11 @@ class GameTile(Gtk.Box):
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(self.api.config.get("install_dir"), "installer")
+        self.keep_path = os.path.join(self.keep_dir, self.game_real_name())
 
         # Set the prefix for Windows games
         self.prefix_dir = os.path.join(self.api.config.get("install_dir"), "prefix")
+        self.download_path = os.path.join(self.download_dir, self.game_real_name())
 
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
@@ -123,27 +125,18 @@ class GameTile(Gtk.Box):
 
         if response == Gtk.ResponseType.OK:
             self.api.config.set("os_version_" + str(self.game.id), "windows")
-            if os.path.exists(self.__keep_install_path()):
+            if os.path.exists(self.keep_path):
                 self.button.set_label(_("install"))
             os_dialog_Win.destroy()
         elif response == Gtk.ResponseType.CANCEL:
             os_dialog_Win.destroy()
 
-    def __keep_install_path(self):
-        if self.api.config.get('os_version_' + str(self.game.id)) == "linux":
-            self.keep_path = os.path.join(self.keep_dir, '{}.sh'.format(self.game.name))
-            return self.keep_path
-        elif self.api.config.get('os_version_' + str(self.game.id)) == "windows":
-            self.keep_path = os.path.join(self.keep_dir, "{}.exe".format(self.game.name))
-            return self.keep_path
-
-    def __download_path(self):
-        if self.api.config.get('os_version_' + str(self.game.id)) == "linux":
-            self.download_path = os.path.join(self.download_dir, '{}.sh'.format(self.game.name))
-            return self.download_path
-        elif self.api.config.get('os_version_' + str(self.game.id)) == "windows":
-            self.download_path = os.path.join(self.download_dir, "{}.exe".format(self.game.name))
-            return self.download_path
+    def game_real_name(self):
+        download_info = self.api.get_download_info(self.game)
+        file_url = download_info["downlink"]
+        exec_name = file_url.rsplit('/', 1)[1]
+        real_name = exec_name.partition('?')[0]
+        return real_name
 
     def __load_image(self) -> None:
         image_thumbnail_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
@@ -172,11 +165,11 @@ class GameTile(Gtk.Box):
     def __download_file(self) -> None:
         if not os.path.exists(self.download_dir):
             os.makedirs(self.download_dir)
-        if not os.path.exists(self.__keep_install_path()):
+        if not os.path.exists(self.keep_path):
             download_info = self.api.get_download_info(self.game)
             file_url = download_info["downlink"]
             data = requests.get(file_url, stream=True)
-            handler = open(self.__download_path(), "wb")
+            handler = open(self.download_path, "wb")
 
             total_size = int(data.headers.get('content-length'))
             downloaded_size = 0
@@ -209,10 +202,10 @@ class GameTile(Gtk.Box):
         os.makedirs(temp_dir)
 
         # Extract the installer
-        if os.path.exists(self.__download_path()):
-            installer_path = self.__download_path()
+        if os.path.exists(self.download_path):
+            installer_path = self.download_path
         else:
-            installer_path = self.__keep_install_path()
+            installer_path = self.keep_path
 
         # Make sure the install directory exists
         library_dir = self.api.config.get("install_dir")
@@ -251,10 +244,10 @@ class GameTile(Gtk.Box):
         if self.api.config.get("keep_installers"):
             if not os.path.exists(self.keep_dir):
                 os.makedirs(self.keep_dir)
-            if not os.path.exists(self.__keep_install_path()):
-                os.rename(self.__download_path(),self.__keep_install_path())
+            if not os.path.exists(self.keep_path):
+                os.rename(self.download_path,self.keep_path)
         else:
-            os.remove(self.__download_path())
+            os.remove(self.download_path)
 
     def __uninstall_game(self):
         shutil.rmtree(self.__get_install_dir(), ignore_errors=True)
@@ -292,7 +285,7 @@ class GameTile(Gtk.Box):
             self.button.set_label(_("play"))
             self.menu_button.show()
             self.menu_button_os.hide()
-        elif os.path.exists(self.__keep_install_path()):
+        elif os.path.exists(self.keep_path):
             self.installed = False
             self.image.set_sensitive(False)
             self.button.set_label(_("install"))
