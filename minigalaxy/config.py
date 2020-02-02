@@ -1,14 +1,32 @@
 import os
+import threading
 import json
+import time
 from minigalaxy.paths import CONFIG_DIR, CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
 from minigalaxy.constants import DEFAULT_CONFIGURATION
 
 
+# Make sure you never spawn two instances of this class
+# If multiple instances go out of sync, they will overwrite each others changes
+# The config file is only read once upon starting up
 class Config:
     def __init__(self):
         self.__config_file = CONFIG_FILE_PATH
         self.__config = self.__load_config_file()
         self.__add_missing_config_entries()
+        self.__update_required = False
+
+        # Update the config file regularly to reflect the self.__config dictionary
+        keep_config_synced_thread = threading.Thread(target=self.__keep_config_synced)
+        keep_config_synced_thread.daemon = True
+        keep_config_synced_thread.start()
+
+    def __keep_config_synced(self):
+        while True:
+            if self.__update_required:
+                self.__update_config_file()
+                self.__update_required = False
+            time.sleep(0.1)
 
     def __load_config_file(self) -> dict:
         if os.path.exists(self.__config_file):
@@ -48,23 +66,17 @@ class Config:
 
     def set(self, key, value):
         self.__config[key] = value
-        self.__update_config_file()
+        self.__update_required = True
 
-    @staticmethod
-    def get(key):
-        if os.path.exists(CONFIG_FILE_PATH):
-            with open(CONFIG_FILE_PATH, "r") as file:
-                config = json.loads(file.read())
-                try:
-                    return config[key]
-                except KeyError:
-                    pass
-        return None
+    def get(self, key):
+        try:
+            return self.__config[key]
+        except KeyError:
+            return None
 
     def unset(self, key):
         try:
             del self.__config[key]
-            self.__update_config_file()
-            return True
+            self.__update_required = True
         except:
-            return False
+            pass
