@@ -1,6 +1,4 @@
-import os
 import re
-from minigalaxy.paths import THUMBNAIL_DIR
 
 
 class Game:

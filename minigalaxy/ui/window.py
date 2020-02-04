@@ -7,7 +7,6 @@ from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
-from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
 from minigalaxy.ui.library import Library
 
@@ -87,22 +86,12 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_header_sync_clicked")
     def sync_library(self, _=""):
+        if self.library.offline:
+            self.__authenticate()
         self.library.update_library()
 
     def reset_library(self):
         self.library.reset()
-
-    def __show_error(self, text, subtext):
-        dialog = Gtk.MessageDialog(
-            message_type=Gtk.MessageType.ERROR,
-            parent=self,
-            modal=True,
-            buttons=Gtk.ButtonsType.CLOSE,
-            text=text
-        )
-        dialog.format_secondary_text(subtext)
-        dialog.run()
-        dialog.destroy()
 
     """
     The API remembers the authentication token and uses it
@@ -117,36 +106,9 @@ class Window(Gtk.ApplicationWindow):
             self.config.unset("refresh_token")
             token = None
 
-        # Make sure there is an internet connection, but only once
-        if self.api.can_connect():
-            self.offline = False
-        else:
-            if token:
-                self.offline = True
-                dialog = Gtk.MessageDialog(
-                    message_type=Gtk.MessageType.ERROR,
-                    parent=self,
-                    modal=True,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=_("Couldn't connect to GOG servers")
-                )
-                dialog.format_secondary_text(_("Minigalaxy is now running in offline mode"))
-                dialog.run()
-                dialog.destroy()
-                return
-            else:
-                dialog = Gtk.MessageDialog(
-                    message_type=Gtk.MessageType.ERROR,
-                    parent=self,
-                    modal=True,
-                    buttons=Gtk.ButtonsType.CLOSE,
-                    text=_("Couldn't connect to GOG servers")
-                )
-                dialog.format_secondary_text(_("Try again with an active internet connection"))
-                dialog.run()
-                dialog.destroy()
-                exit(1)
-                return
+        # Make sure there is an internet connection
+        if not self.api.can_connect():
+            return
 
         authenticated = self.api.authenticate(refresh_token=token, login_code=url)
 
