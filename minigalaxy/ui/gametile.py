@@ -3,7 +3,7 @@ import zipfile
 import re
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf, GLib
+from gi.repository import Gtk, GLib
 import requests
 import json
 import os
@@ -199,7 +199,7 @@ class GameTile(Gtk.Box):
             if not os.path.exists(self.keep_dir):
                 os.makedirs(self.keep_dir)
             if not os.path.exists(self.keep_path):
-                os.rename(self.download_path,self.keep_path)
+                os.rename(self.download_path, self.keep_path)
         else:
             os.remove(self.download_path)
 
@@ -296,12 +296,12 @@ class GameTile(Gtk.Box):
 
         # Enable FPS Counter for Nvidia or AMD (Mesa) users
         if self.api.config.get("show_fps"):
-            os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1" # For Nvidia users
-            os.environ["GALLIUM_HUD"] = "simple,fps" # For AMDGPU users
+            os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users
+            os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users
         elif self.api.config.get("show_fps") is False:
-            os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0" # For Nvidia users
+            os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0"  # For Nvidia users
             os.environ["GALLIUM_HUD"] = ""
-            
+
         # Dosbox
         if "dosbox" in files and shutil.which("dosbox"):
             for file in files:

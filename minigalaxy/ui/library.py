@@ -3,7 +3,7 @@ import gi
 import threading
 from typing import List
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf, GLib
+from gi.repository import Gtk, GLib
 from minigalaxy.paths import UI_DIR
 from minigalaxy.api import Api
 from minigalaxy.config import Config
@@ -94,7 +94,7 @@ class Library(Gtk.Viewport):
 
     def __add_gametile(self, game):
         for child in self.flowbox.get_children():
-            if game  == child.get_children()[0].game:
+            if game == child.get_children()[0].game:
                 return
         self.flowbox.add(GameTile(self, game, self.api))
         self.sort_library()
