@@ -9,9 +9,6 @@ class Game:
         self.id = game_id
         self.install_dir = install_dir
 
-    def get_image_path(self) -> str:
-        return os.path.join(THUMBNAIL_DIR, "{}.png".format(self.get_stripped_name()))
-
     def get_stripped_name(self):
         return self.__strip_string(self.name)
 
