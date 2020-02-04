@@ -22,14 +22,12 @@ class GameTile(Gtk.Box):
     button = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
 
-    def __init__(self, parent, game=None, api=None, install_dir=""):
+    def __init__(self, parent, game, api):
         Gtk.Frame.__init__(self)
         self.parent = parent
         self.game = game
         self.api = api
         self.progress_bar = None
-        self.installed = False
-        self.install_dir = install_dir
         self.busy = False
 
         self.image.set_tooltip_text(self.game.name)
@@ -57,7 +55,7 @@ class GameTile(Gtk.Box):
     def on_button_click(self, widget) -> None:
         if self.busy:
             return
-        if self.installed:
+        if self.game.install_dir:
             self.__start_game()
         else:
             self.busy = True
@@ -69,7 +67,7 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
-        message_dialog = Gtk.MessageDialog(parent=self.parent,
+        message_dialog = Gtk.MessageDialog(parent=self.parent.parent,
                                            flags=Gtk.DialogFlags.MODAL,
                                            message_type=Gtk.MessageType.WARNING,
                                            buttons=Gtk.ButtonsType.OK_CANCEL,
@@ -97,7 +95,7 @@ class GameTile(Gtk.Box):
         except:
             dialog = Gtk.MessageDialog(
                 message_type=Gtk.MessageType.ERROR,
-                parent=self.parent,
+                parent=self.parent.parent,
                 modal=True,
                 buttons=Gtk.ButtonsType.OK,
                 text=_("Couldn't open support page")
@@ -209,6 +207,7 @@ class GameTile(Gtk.Box):
         shutil.rmtree(self.__get_install_dir(), ignore_errors=True)
         GLib.idle_add(self.load_state)
         GLib.idle_add(self.button.set_sensitive, True)
+        self.game.install_dir = ""
 
     def __create_progress_bar(self) -> None:
         self.progress_bar = Gtk.ProgressBar()
@@ -221,25 +220,23 @@ class GameTile(Gtk.Box):
         self.progress_bar.show_all()
 
     def __get_install_dir(self):
-        if not self.install_dir or not os.path.isdir(self.install_dir):
-            self.install_dir = os.path.join(self.api.config.get("install_dir"), self.game.name)
-        return self.install_dir
+        if self.game.install_dir:
+            return self.game.install_dir
+        return os.path.join(self.api.config.get("install_dir"), self.game.get_stripped_name())
 
     def load_state(self) -> None:
         if self.busy:
             return
         if os.path.isfile(os.path.join(self.__get_install_dir(), "gameinfo")):
-            self.installed = True
+            self.game.install_dir = self.__get_install_dir()
             self.image.set_sensitive(True)
             self.button.set_label(_("play"))
             self.menu_button.show()
         elif os.path.exists(self.keep_path):
-            self.installed = False
             self.image.set_sensitive(False)
             self.button.set_label(_("install"))
             self.menu_button.hide()
         else:
-            self.installed = False
             self.image.set_sensitive(False)
             self.button.set_label(_("download"))
             self.menu_button.hide()
@@ -285,7 +282,7 @@ class GameTile(Gtk.Box):
         print(error_message)
         dialog = Gtk.MessageDialog(
             message_type=Gtk.MessageType.ERROR,
-            parent=self.parent,
+            parent=self.parent.parent,
             modal=True,
             buttons=Gtk.ButtonsType.CLOSE,
             text=error_text
@@ -347,10 +344,3 @@ class GameTile(Gtk.Box):
 
         # If no executable was found at all, raise an error
         raise FileNotFoundError()
-
-    def __lt__(self, other):
-        names = [str(self), str(other)]
-        names.sort()
-        if names[0] == str(self):
-            return True
-        return False

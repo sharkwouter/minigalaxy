@@ -102,7 +102,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tooltip_text" translatable="yes" context="tooltil_installed" comments="Tooltip for the switch which allows only showing installed games or all games">Show only installed games</property>
-            <signal name="state-set" handler="on_header_installed_state_set" swapped="no"/>
+            <signal name="state-set" handler="filter_library" swapped="no"/>
           </object>
           <packing>
             <property name="position">2</property>
@@ -146,7 +146,7 @@
             <property name="primary_icon_name">edit-find-symbolic</property>
             <property name="primary_icon_activatable">False</property>
             <property name="primary_icon_sensitive">False</property>
-            <signal name="search-changed" handler="on_header_search_changed" swapped="no"/>
+            <signal name="search-changed" handler="filter_library" swapped="no"/>
           </object>
           <packing>
             <property name="pack_type">end</property>
@@ -156,29 +156,12 @@
       </object>
     </child>
     <child>
-      <object class="GtkScrolledWindow">
+      <object class="GtkScrolledWindow" id="window_library">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="shadow_type">in</property>
         <child>
-          <object class="GtkViewport">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <child>
-              <object class="GtkFlowBox" id="library">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="valign">start</property>
-                <property name="border_width">15</property>
-                <property name="homogeneous">True</property>
-                <property name="column_spacing">15</property>
-                <property name="row_spacing">10</property>
-                <property name="max_children_per_line">100</property>
-                <property name="selection_mode">none</property>
-                <property name="activate_on_single_click">False</property>
-              </object>
-            </child>
-          </object>
+          <placeholder/>
         </child>
       </object>
     </child>

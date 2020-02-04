@@ -1,4 +1,5 @@
 from minigalaxy.translation import _
+from minigalaxy.version import VERSION
 from minigalaxy.paths import DEFAULT_INSTALL_DIR
 
 SUPPORTED_DOWNLOAD_LANGUAGES = [
@@ -25,6 +26,7 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
 
 # The default values for new configuration files
 DEFAULT_CONFIGURATION = {
+    "config_version": VERSION,
     "lang": "en",
     "install_dir": DEFAULT_INSTALL_DIR,
     "keep_installers": False,
