@@ -1,18 +1,14 @@
 import os
-import re
-import threading
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, GLib
 from minigalaxy.ui.login import Login
-from minigalaxy.ui.gametile import GameTile
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
-from minigalaxy.game import Game
 from minigalaxy.ui.library import Library
 
 

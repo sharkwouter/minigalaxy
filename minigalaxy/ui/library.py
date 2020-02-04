@@ -9,6 +9,7 @@ from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.game import Game
 from minigalaxy.ui.gametile import GameTile
+from minigalaxy.translation import _
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "library.ui"))
@@ -24,6 +25,7 @@ class Library(Gtk.Viewport):
         self.config = config
         self.show_installed_only = False
         self.search_string = ""
+        self.offline = False
         self.games = []
 
     def reset(self):
@@ -47,6 +49,7 @@ class Library(Gtk.Viewport):
         # Get games from the API
         self.__add_games_from_api()
         self.__create_gametiles()
+        GLib.idle_add(self.filter_library)
 
     def __load_tile_states(self):
         for child in self.flowbox.get_children():
@@ -62,6 +65,9 @@ class Library(Gtk.Viewport):
 
     def __filter_library_func(self, child):
         tile = child.get_children()[0]
+        # Hide games which aren't installed while in offline mode
+        if not tile.game.install_dir and self.offline:
+            return False
         if tile.game.install_dir and self.show_installed_only or not self.show_installed_only:
             if self.search_string.lower() in str(tile).lower():
                 return True
@@ -87,6 +93,9 @@ class Library(Gtk.Viewport):
             GLib.idle_add(self.__add_gametile, game)
 
     def __add_gametile(self, game):
+        for child in self.flowbox.get_children():
+            if game  == child.get_children()[0].game:
+                return
         self.flowbox.add(GameTile(self, game, self.api))
         self.sort_library()
         self.flowbox.show_all()
@@ -110,10 +119,13 @@ class Library(Gtk.Viewport):
 
     def __add_games_from_api(self):
         try:
-            retreived_games = self.api.get_library()
+            retrieved_games = self.api.get_library()
+            self.offline = False
         except:
+            self.offline = True
+            GLib.idle_add(self.__show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
             return
-        for game in retreived_games:
+        for game in retrieved_games:
             if game not in self.games:
                 self.games.append(game)
             else:
@@ -123,3 +135,15 @@ class Library(Gtk.Viewport):
                         if not installed_game.id:
                             installed_game.id = game.id
                         break
+
+    def __show_error(self, text, subtext):
+        dialog = Gtk.MessageDialog(
+            message_type=Gtk.MessageType.ERROR,
+            parent=self.parent,
+            modal=True,
+            buttons=Gtk.ButtonsType.CLOSE,
+            text=text
+        )
+        dialog.format_secondary_text(subtext)
+        dialog.run()
+        dialog.destroy()
