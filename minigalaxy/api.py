@@ -1,3 +1,4 @@
+import os
 import time
 from urllib.parse import urlencode
 import requests
@@ -12,6 +13,7 @@ class Api:
         self.redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
         self.client_id = "46899977096215655"
         self.client_secret = "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
+        self.debug = os.environ.get("MG_DEBUG")
 
     # use a method to authenticate, based on the information we have
     # Returns an empty string if no information was entered
@@ -158,4 +160,8 @@ class Api:
             'Authorization': "Bearer " + self.active_token,
         }
         response = requests.get(url, headers=headers, params=params)
+        if self.debug:
+            print("Request: {}".format(url))
+            print("Response body: {}".format(response.text))
+            print("")
         return response.json()
