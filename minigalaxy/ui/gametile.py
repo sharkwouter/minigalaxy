@@ -109,9 +109,8 @@ class GameTile(Gtk.Box):
         image_install_dir = os.path.join(self.__get_install_dir(), "thumbnail.jpg")
 
         # Set the image to the one in the game directory in offline mode
-        if self.game.id == 0:
-            if os.path.isfile(image_install_dir):
-                GLib.idle_add(self.image.set_from_file, image_install_dir)
+        if os.path.isfile(image_install_dir):
+            GLib.idle_add(self.image.set_from_file, image_install_dir)
             return
 
         # Download the image if it doesn't exist yet

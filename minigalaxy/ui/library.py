@@ -113,8 +113,16 @@ class Library(Gtk.Viewport):
             if not os.path.isfile(gameinfo):
                 continue
             with open(gameinfo, 'r') as file:
-                name = file.readline()
-                games.append(Game(name=name.strip(), install_dir=full_path))
+                name = file.readline().strip()
+                version = file.readline().strip()
+                version_dev = file.readline().strip()
+                language = file.readline().strip()
+                game_id = file.readline().strip()
+                if not game_id:
+                    game_id = 0
+                else:
+                    game_id = int(game_id)
+                games.append(Game(name=name, game_id=game_id, install_dir=full_path))
         return games
 
     def __add_games_from_api(self):

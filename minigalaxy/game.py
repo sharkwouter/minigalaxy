@@ -6,6 +6,7 @@ class Game:
         self.name = name
         self.id = game_id
         self.install_dir = install_dir
+        self.image_url = image_url
 
     def get_stripped_name(self):
         return self.__strip_string(self.name)
@@ -17,8 +18,16 @@ class Game:
         return self.name
 
     def __eq__(self, other):
-        if self.id and other.id and self.id == other.id:
-            return True
+        if self.id > 0 and other.id > 0:
+            if self.id == other.id:
+                # Exchange images urls
+                if self.image_url:
+                    other.image_url = self.image_url
+                else:
+                    self.image_url = other.image_url
+                return True
+            else:
+                return False
         if self.name == other.name:
             return True
         # Compare names with special characters and capital letters removed
