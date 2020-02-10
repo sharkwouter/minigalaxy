@@ -4,6 +4,9 @@ A simple GOG client for Linux that lets you download and play your GOG Linux gam
 
 ![screenshot](screenshot.jpg?raw=true)
 
+See how easy it is
+https://youtu.be/6ey3mO1QhZ4
+
 ## Features
 
 The most important features of Minigalaxy:
