@@ -2,7 +2,7 @@ import os
 import threading
 import json
 import time
-from minigalaxy.paths import CONFIG_DIR, CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
+from minigalaxy.paths import CONFIG_DIR, CONFIG_FILE_PATH
 from minigalaxy.constants import DEFAULT_CONFIGURATION
 
 
@@ -44,8 +44,8 @@ class Config:
             file.close()
 
         # Make sure the default installation path exists
-        if not os.path.isdir(DEFAULT_INSTALL_DIR):
-            os.makedirs(DEFAULT_INSTALL_DIR)
+        if not os.path.isdir(DEFAULT_CONFIGURATION['install_dir']):
+            os.makedirs(DEFAULT_CONFIGURATION['install_dir'])
 
         return DEFAULT_CONFIGURATION
 
