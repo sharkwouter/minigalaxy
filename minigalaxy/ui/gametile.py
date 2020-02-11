@@ -32,6 +32,7 @@ class GameTile(Gtk.Box):
         self.api = api
         self.progress_bar = None
         self.busy = False
+        self.thumbnail_set = False
 
         self.image.set_tooltip_text(self.game.name)
 
@@ -47,9 +48,6 @@ class GameTile(Gtk.Box):
             os.makedirs(CACHE_DIR)
 
         self.load_state()
-
-        image_thread = threading.Thread(target=self.__load_image)
-        image_thread.start()
 
     def __str__(self):
         return self.game.name
@@ -107,28 +105,33 @@ class GameTile(Gtk.Box):
             dialog.run()
             dialog.destroy()
 
-    def __load_image(self) -> None:
-        image_thumbnail_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
-        image_install_dir = os.path.join(self.__get_install_dir(), "thumbnail.jpg")
+    def load_thumbnail(self):
+        if self.__set_image():
+            return True
+        if not self.game.image_url or not self.game.id:
+            return False
 
-        # Set the image to the one in the game directory in offline mode
-        if os.path.isfile(image_install_dir):
-            GLib.idle_add(self.image.set_from_file, image_install_dir)
-            return
+        # Download the thumbnail
+        image_url = "https:{}_196.jpg".format(self.game.image_url)
+        thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
 
-        # Download the image if it doesn't exist yet
-        if not os.path.isfile(image_thumbnail_dir):
-            image_url = "https:{}_196.jpg".format(self.game.image_url)
-            download = requests.get(image_url)
-            with open(image_thumbnail_dir, "wb") as writer:
-                writer.write(download.content)
-                writer.close()
+        download = Download(image_url, thumbnail, finish_func=self.__set_image)
+        DownloadManager.download_now(download)
+        return True
 
-        # Copy the image to the game directory if not there yet
-        if not os.path.isfile(image_install_dir) and os.path.isdir(self.__get_install_dir()):
-            shutil.copy2(image_thumbnail_dir, image_install_dir)
-
-        GLib.idle_add(self.image.set_from_file, image_thumbnail_dir)
+    def __set_image(self):
+        thumbnail_install_dir = os.path.join(self.__get_install_dir(), "thumbnail.jpg")
+        thumbnail_cache_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
+        if os.path.isfile(thumbnail_install_dir):
+            GLib.idle_add(self.image.set_from_file, thumbnail_install_dir)
+            return True
+        elif os.path.isfile(thumbnail_cache_dir):
+            GLib.idle_add(self.image.set_from_file, thumbnail_cache_dir)
+            # Copy image to
+            if os.path.isdir(os.path.dirname(thumbnail_install_dir)):
+                shutil.copy2(thumbnail_cache_dir, thumbnail_install_dir)
+            return True
+        return False
 
     def __download_file(self) -> None:
         download_info = self.api.get_download_info(self.game)
@@ -221,6 +224,8 @@ class GameTile(Gtk.Box):
     def load_state(self) -> None:
         if self.busy:
             return
+        if not self.thumbnail_set:
+            self.thumbnail_set = self.load_thumbnail()
         if os.path.isfile(os.path.join(self.__get_install_dir(), "gameinfo")):
             self.game.install_dir = self.__get_install_dir()
             self.image.set_sensitive(True)

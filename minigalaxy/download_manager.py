@@ -19,6 +19,11 @@ class __DownloadManger:
     def download(self, download):
         self.__queue.put(download)
 
+    def download_now(self, download):
+        download_file_thread = threading.Thread(target=self.__download_file, args=download)
+        download_file_thread.daemon = True
+        download_file_thread.start()
+
     def cancel_current_download(self):
         self.__cancel = True
 
