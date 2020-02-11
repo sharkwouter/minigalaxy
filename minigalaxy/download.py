@@ -1,6 +1,3 @@
-from typing import List
-
-
 class Download:
     def __init__(self, url, save_location, finish_func=None, progress_func=None, cancel_func=None, number=1, out_of_amount=1):
         self.url = url
