@@ -38,3 +38,5 @@ DEFAULT_CONFIGURATION = {
 IGNORE_GAME_IDS = [
     1424856371,  # Hotline Miami 2: Wrong Number - Digital Comics
 ]
+
+DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB

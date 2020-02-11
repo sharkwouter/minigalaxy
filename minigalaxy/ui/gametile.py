@@ -13,6 +13,8 @@ import subprocess
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 from minigalaxy.config import Config
+from minigalaxy.download import Download
+from minigalaxy.download_manager import DownloadManager
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -129,29 +131,12 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.image.set_from_file, image_thumbnail_dir)
 
     def __download_file(self) -> None:
-        if not os.path.exists(self.download_dir):
-            os.makedirs(self.download_dir)
-        if not os.path.exists(self.keep_path):
-            download_info = self.api.get_download_info(self.game)
-            file_url = download_info["downlink"]
-            data = requests.get(file_url, stream=True)
-            handler = open(self.download_path, "wb")
+        download_info = self.api.get_download_info(self.game)
+        file_url = download_info["downlink"]
+        download = Download(file_url, self.download_path, self.__finish_download, progress_func=self.set_progress, cancel_func=self.__cancel_download)
+        DownloadManager.download(download)
 
-            total_size = int(data.headers.get('content-length'))
-            downloaded_size = 0
-            chunk_count = 0
-            for chunk in data.iter_content(chunk_size=4096):
-                if chunk:
-                    chunk_count += 1
-                    handler.write(chunk)
-                    downloaded_size += len(chunk)
-                    # Only update the progress bar every 2 megabytes
-                    if chunk_count == 4000:
-                        percentage = downloaded_size / total_size
-                        GLib.idle_add(self.progress_bar.set_fraction, percentage)
-                        chunk_count = 0
-            handler.close()
-
+    def __finish_download(self):
         GLib.idle_add(self.progress_bar.destroy)
         GLib.idle_add(self.button.set_label, _("installing.."))
         self.__install_game()
@@ -159,6 +144,15 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.load_state)
         GLib.idle_add(self.button.set_sensitive, True)
         GLib.idle_add(self.parent.filter_library)
+
+    def __cancel_download(self):
+        GLib.idle_add(self.progress_bar.destroy)
+        self.busy = False
+        GLib.idle_add(self.load_state)
+        GLib.idle_add(self.button.set_sensitive, True)
+
+    def set_progress(self, percentage: int):
+        GLib.idle_add(self.progress_bar.set_fraction, percentage/100)
 
     def __install_game(self) -> None:
         # Make a temporary empty directory for extracting the installer
