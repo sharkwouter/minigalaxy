@@ -18,11 +18,10 @@ class Library(Gtk.Viewport):
 
     flowbox = Gtk.Template.Child()
 
-    def __init__(self, parent, api: Api, config: Config):
+    def __init__(self, parent, api: Api):
         Gtk.Viewport.__init__(self)
         self.parent = parent
         self.api = api
-        self.config = config
         self.show_installed_only = False
         self.search_string = ""
         self.offline = False
@@ -102,9 +101,9 @@ class Library(Gtk.Viewport):
 
     def __get_installed_games(self) -> List[Game]:
         games = []
-        directories = os.listdir(self.config.get("install_dir"))
+        directories = os.listdir(Config.get("install_dir"))
         for directory in directories:
-            full_path = os.path.join(self.config.get("install_dir"), directory)
+            full_path = os.path.join(Config.get("install_dir"), directory)
             # Only scan directories
             if not os.path.isdir(full_path):
                 continue

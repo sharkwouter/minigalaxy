@@ -12,6 +12,7 @@ import threading
 import subprocess
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
+from minigalaxy.config import Config
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -37,7 +38,7 @@ class GameTile(Gtk.Box):
         self.download_path = os.path.join(self.download_dir, "{}.sh".format(self.game.name))
 
         # Set folder if user wants to keep installer (disabled by default)
-        self.keep_dir = os.path.join(self.api.config.get("install_dir"), "installer")
+        self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
         self.keep_path = os.path.join(self.keep_dir, "{}.sh".format(self.game.name))
 
         if not os.path.exists(CACHE_DIR):
@@ -181,7 +182,7 @@ class GameTile(Gtk.Box):
                 os.chmod(os.path.join(temp_dir, member), attr)
 
         # Make sure the install directory exists
-        library_dir = self.api.config.get("install_dir")
+        library_dir = Config.get("install_dir")
         if not os.path.exists(library_dir):
             os.makedirs(library_dir)
 
@@ -194,7 +195,7 @@ class GameTile(Gtk.Box):
 
         # Remove the temporary directory
         shutil.rmtree(temp_dir, ignore_errors=True)
-        if self.api.config.get("keep_installers"):
+        if Config.get("keep_installers"):
             if not os.path.exists(self.keep_dir):
                 os.makedirs(self.keep_dir)
             if not os.path.exists(self.keep_path):
@@ -221,7 +222,7 @@ class GameTile(Gtk.Box):
     def __get_install_dir(self):
         if self.game.install_dir:
             return self.game.install_dir
-        return os.path.join(self.api.config.get("install_dir"), self.game.get_stripped_name())
+        return os.path.join(Config.get("install_dir"), self.game.get_stripped_name())
 
     def load_state(self) -> None:
         if self.busy:
@@ -294,10 +295,10 @@ class GameTile(Gtk.Box):
         files = os.listdir(self.__get_install_dir())
 
         # Enable FPS Counter for Nvidia or AMD (Mesa) users
-        if self.api.config.get("show_fps"):
+        if Config.get("show_fps"):
             os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users
             os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users
-        elif self.api.config.get("show_fps") is False:
+        elif Config.get("show_fps") is False:
             os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0"  # For Nvidia users
             os.environ["GALLIUM_HUD"] = ""
 

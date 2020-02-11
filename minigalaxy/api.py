@@ -4,11 +4,11 @@ from urllib.parse import urlencode
 import requests
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS
+from minigalaxy.config import Config
 
 
 class Api:
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
         self.login_success_url = "https://embed.gog.com/on_login_success"
         self.redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
         self.client_id = "46899977096215655"
@@ -118,7 +118,7 @@ class Api:
         possible_downloads = []
         for installer in response["downloads"]["installers"]:
             if installer["os"] == "linux":
-                if installer['language'] == self.config.get("lang"):
+                if installer['language'] == Config.get("lang"):
                     return self.__request(installer["files"][0]["downlink"])
                 if len(possible_downloads) == 0:
                     possible_downloads.append(installer)
@@ -131,12 +131,12 @@ class Api:
         return self.__request(possible_downloads[-1]["files"][0]["downlink"])
 
     def get_user_info(self) -> str:
-        username = self.config.get("username")
+        username = Config.get("username")
         if not username:
             url = "https://embed.gog.com/userData.json"
             response = self.__request(url)
             username = response["username"]
-            self.config.set("username", username)
+            Config.set("username", username)
         return username
 
     def can_connect(self) -> bool:
@@ -152,8 +152,8 @@ class Api:
         # Refresh the token if needed
         if self.active_token_expiration_time < time.time():
             print("Refreshing token")
-            refresh_token = self.config.get("refresh_token")
-            self.config.set("refresh_token", self.__refresh_token(refresh_token))
+            refresh_token = Config.get("refresh_token")
+            Config.set("refresh_token", self.__refresh_token(refresh_token))
 
         # Make the request
         headers = {

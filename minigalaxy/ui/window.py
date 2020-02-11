@@ -27,14 +27,13 @@ class Window(Gtk.ApplicationWindow):
 
     def __init__(self, name):
         Gtk.ApplicationWindow.__init__(self, title=name)
-        self.config = Config()
-        self.api = Api(self.config)
+        self.api = Api()
         self.show_installed_only = False
         self.search_string = ""
         self.offline = False
 
         # Set library
-        self.library = Library(self, self.api, self.config)
+        self.library = Library(self, self.api)
         self.window_library.add(self.library)
 
         # Set the icon
@@ -59,7 +58,7 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
-        preferences_window = Preferences(self, self.config)
+        preferences_window = Preferences(self)
         preferences_window.run()
         preferences_window.destroy()
 
@@ -73,8 +72,8 @@ class Window(Gtk.ApplicationWindow):
     def logout(self, button):
         # Unset everything which is specific to this user
         self.HeaderBar.set_subtitle("")
-        self.config.unset("username")
-        self.config.unset("refresh_token")
+        Config.unset("username")
+        Config.unset("refresh_token")
         self.hide()
 
         # Show the login screen
@@ -99,11 +98,11 @@ class Window(Gtk.ApplicationWindow):
     """
     def __authenticate(self):
         url = None
-        if self.api.config.get("stay_logged_in"):
-            token = self.config.get("refresh_token")
+        if Config.get("stay_logged_in"):
+            token = Config.get("refresh_token")
         else:
-            self.config.unset("username")
-            self.config.unset("refresh_token")
+            Config.unset("username")
+            Config.unset("refresh_token")
             token = None
 
         # Make sure there is an internet connection
@@ -125,4 +124,4 @@ class Window(Gtk.ApplicationWindow):
                 result = login.get_result()
                 authenticated = self.api.authenticate(refresh_token=token, login_code=result)
 
-        self.config.set("refresh_token", authenticated)
+        Config.set("refresh_token", authenticated)

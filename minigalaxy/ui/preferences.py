@@ -5,6 +5,7 @@ import os
 from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES
+from minigalaxy.config import Config
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "preferences.ui"))
@@ -20,15 +21,14 @@ class Preferences(Gtk.Dialog):
     button_cancel = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
 
-    def __init__(self, parent, config):
+    def __init__(self, parent):
         Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
-        self.__config = config
         self.parent = parent
         self.__set_language_list()
-        self.button_file_chooser.set_filename(config.get("install_dir"))
-        self.switch_keep_installers.set_active(self.__config.get("keep_installers"))
-        self.switch_stay_logged_in.set_active(self.__config.get("stay_logged_in"))
-        self.switch_show_fps.set_active(self.__config.get("show_fps"))
+        self.button_file_chooser.set_filename(Config.get("install_dir"))
+        self.switch_keep_installers.set_active(Config.get("keep_installers"))
+        self.switch_stay_logged_in.set_active(Config.get("stay_logged_in"))
+        self.switch_show_fps.set_active(Config.get("show_fps"))
 
         # Set tooltip for keep installers label
         installer_dir = os.path.join(self.button_file_chooser.get_filename(), "installer")
@@ -48,7 +48,7 @@ class Preferences(Gtk.Dialog):
         self.combobox_language.add_attribute(self.renderer_text, "text", 1)
 
         # Set the active option
-        current_lang = self.__config.get("lang")
+        current_lang = Config.get("lang")
         for key in range(len(languages)):
             if languages[key][:1][0] == current_lang:
                 self.combobox_language.set_active(key)
@@ -59,7 +59,7 @@ class Preferences(Gtk.Dialog):
         if lang_choice is not None:
             model = self.combobox_language.get_model()
             lang, _ = model[lang_choice][:2]
-            self.__config.set("lang", lang)
+            Config.set("lang", lang)
 
     def __save_install_dir_choice(self) -> bool:
         choice = self.button_file_chooser.get_filename()
@@ -78,22 +78,22 @@ class Preferences(Gtk.Dialog):
             except:
                 return False
         # Remove the old directory if it is empty
-        old_dir = self.__config.get("install_dir")
+        old_dir = Config.get("install_dir")
         try:
             if old_dir != choice:
                 os.rmdir(old_dir)
         except OSError:
             pass
 
-        self.__config.set("install_dir", choice)
+        Config.set("install_dir", choice)
         return True
 
     @Gtk.Template.Callback("on_button_save_clicked")
     def save_pressed(self, button):
         self.__save_language_choice()
-        self.__config.set("keep_installers", self.switch_keep_installers.get_active())
-        self.__config.set("stay_logged_in", self.switch_stay_logged_in.get_active())
-        self.__config.set("show_fps", self.switch_show_fps.get_active())
+        Config.set("keep_installers", self.switch_keep_installers.get_active())
+        Config.set("stay_logged_in", self.switch_stay_logged_in.get_active())
+        Config.set("show_fps", self.switch_show_fps.get_active())
         if self.__save_install_dir_choice():
             self.response(Gtk.ResponseType.OK)
             self.parent.reset_library()

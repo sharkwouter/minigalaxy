@@ -9,7 +9,7 @@ from minigalaxy.constants import DEFAULT_CONFIGURATION
 # Make sure you never spawn two instances of this class
 # If multiple instances go out of sync, they will overwrite each others changes
 # The config file is only read once upon starting up
-class Config:
+class __Config:
     def __init__(self):
         self.__config_file = CONFIG_FILE_PATH
         self.__config = self.__load_config_file()
@@ -80,3 +80,6 @@ class Config:
             self.__update_required = True
         except:
             pass
+
+
+Config = __Config()
