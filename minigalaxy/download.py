@@ -2,7 +2,7 @@ from typing import List
 
 
 class Download:
-    def __init__(self, url, save_location, finish_func, progress_func=None, cancel_func=None, number=1, out_of_amount=1):
+    def __init__(self, url, save_location, finish_func=None, progress_func=None, cancel_func=None, number=1, out_of_amount=1):
         self.url = url
         self.save_location = save_location
         self.__finish_func = finish_func
@@ -22,7 +22,8 @@ class Download:
 
     def finish(self):
         self.done = True
-        self.__finish_func()
+        if self.__finish_func:
+            self.__finish_func()
 
     def cancel(self):
         self.done = True
