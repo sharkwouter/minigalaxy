@@ -147,6 +147,13 @@ class Api:
             return False
         return True
 
+    def game_real_name(self, game: Game):
+        download_info = self.get_download_info(game)
+        file_url = download_info["downlink"]
+        exec_name = file_url.rsplit('/', 1)[1]
+        real_name = exec_name.partition('?')[0]
+        return real_name
+
     # Make a request with the active token
     def __request(self, url: str = None, params: dict = None) -> tuple:
         # Refresh the token if needed
