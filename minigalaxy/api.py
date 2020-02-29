@@ -162,6 +162,7 @@ class Api:
         response = requests.get(url, headers=headers, params=params)
         if self.debug:
             print("Request: {}".format(url))
+            print("Return code: {}".format(response.status_code))
             print("Response body: {}".format(response.text))
             print("")
         return response.json()
