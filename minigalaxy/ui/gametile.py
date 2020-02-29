@@ -30,6 +30,7 @@ class GameTile(Gtk.Box):
         self.api = api
         self.progress_bar = None
         self.busy = False
+        self.downloading = False
         self.thumbnail_set = False
 
         self.image.set_tooltip_text(self.game.name)
@@ -58,9 +59,10 @@ class GameTile(Gtk.Box):
             start_game(self.game, self.parent)
         else:
             self.busy = True
+            self.downloading = False
             self.__create_progress_bar()
             widget.set_sensitive(False)
-            widget.set_label(_("downloading..."))
+            widget.set_label(_("in queue..."))
             download_thread = threading.Thread(target=self.__download_file)
             download_thread.start()
 
@@ -154,6 +156,9 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.button.set_sensitive, True)
 
     def set_progress(self, percentage: int):
+        if not self.downloading:
+            GLib.idle_add(self.button.set_label, _("downloading.."))
+            self.downloading = True
         GLib.idle_add(self.progress_bar.set_fraction, percentage/100)
 
     def __uninstall_game(self):

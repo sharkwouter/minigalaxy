@@ -61,7 +61,8 @@ class __DownloadManger:
                     progress = int(downloaded_size / file_size * 100)
                     download.set_progress(progress)
             save_file.close()
-        download.finish()
+        finish_thread = threading.Thread(target=download.finish)
+        finish_thread.start()
 
 
 DownloadManager = __DownloadManger()
