@@ -1,10 +1,7 @@
 import shutil
-import zipfile
-import re
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
-import json
 import os
 import webbrowser
 import threading
@@ -15,6 +12,7 @@ from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game
+from minigalaxy.installer import uninstall_game, install_game
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -142,7 +140,8 @@ class GameTile(Gtk.Box):
     def __finish_download(self):
         GLib.idle_add(self.progress_bar.destroy)
         GLib.idle_add(self.button.set_label, _("installing.."))
-        self.__install_game()
+        self.game.install_dir = self.__get_install_dir()
+        install_game(self.game, self.download_path)
         self.busy = False
         GLib.idle_add(self.load_state)
         GLib.idle_add(self.button.set_sensitive, True)
@@ -157,51 +156,8 @@ class GameTile(Gtk.Box):
     def set_progress(self, percentage: int):
         GLib.idle_add(self.progress_bar.set_fraction, percentage/100)
 
-    def __install_game(self) -> None:
-        # Make a temporary empty directory for extracting the installer
-        temp_dir = os.path.join(CACHE_DIR, "extract/{}".format(self.game.id))
-        if os.path.exists(temp_dir):
-            shutil.rmtree(temp_dir, ignore_errors=True)
-        os.makedirs(temp_dir)
-
-        # Extract the installer
-        if os.path.exists(self.download_path):
-            installer_path = self.download_path
-        else:
-            installer_path = self.keep_path
-
-        with zipfile.ZipFile(installer_path) as archive:
-            for member in archive.namelist():
-                file = archive.getinfo(member)
-                archive.extract(file, temp_dir)
-                # Set permissions
-                attr = file.external_attr >> 16
-                os.chmod(os.path.join(temp_dir, member), attr)
-
-        # Make sure the install directory exists
-        library_dir = Config.get("install_dir")
-        if not os.path.exists(library_dir):
-            os.makedirs(library_dir)
-
-        # Copy the game files into the correct directory
-        shutil.move(os.path.join(temp_dir, "data/noarch"), self.__get_install_dir())
-        shutil.copyfile(
-            os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id)),
-            os.path.join(self.__get_install_dir(), "thumbnail.jpg"),
-        )
-
-        # Remove the temporary directory
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        if Config.get("keep_installers"):
-            if not os.path.exists(self.keep_dir):
-                os.makedirs(self.keep_dir)
-            if not os.path.exists(self.keep_path):
-                os.rename(self.download_path, self.keep_path)
-        else:
-            os.remove(self.download_path)
-
     def __uninstall_game(self):
-        shutil.rmtree(self.__get_install_dir(), ignore_errors=True)
+        uninstall_game(self.game)
         GLib.idle_add(self.load_state)
         GLib.idle_add(self.button.set_sensitive, True)
         self.game.install_dir = ""

@@ -2,8 +2,7 @@ import os
 import time
 import threading
 import queue
-import requests
-from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE
+from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, SESSION
 
 
 class __DownloadManger:
@@ -46,7 +45,7 @@ class __DownloadManger:
             os.remove(download.save_location)
 
         # Download the file
-        download_request = requests.get(download.url, stream=True)
+        download_request = SESSION.get(download.url, stream=True)
         downloaded_size = 0
         file_size = int(download_request.headers.get('content-length'))
         with open(download.save_location, 'wb') as save_file:

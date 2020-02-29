@@ -1,3 +1,6 @@
+import requests
+import platform
+import sys
 from minigalaxy.translation import _
 from minigalaxy.version import VERSION
 from minigalaxy.paths import DEFAULT_INSTALL_DIR
@@ -40,3 +43,6 @@ IGNORE_GAME_IDS = [
 ]
 
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
+
+SESSION = requests.Session()
+SESSION.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {}) Python 3 Requests library'.format(VERSION, platform.machine())})

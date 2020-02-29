@@ -3,7 +3,7 @@ import time
 from urllib.parse import urlencode
 import requests
 from minigalaxy.game import Game
-from minigalaxy.constants import IGNORE_GAME_IDS
+from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
 from minigalaxy.config import Config
 
 
@@ -34,7 +34,7 @@ class Api:
             'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
         }
-        response = requests.get(request_url, params=params)
+        response = SESSION.get(request_url, params=params)
 
         response_params = response.json()
         self.active_token = response_params['access_token']
@@ -53,7 +53,7 @@ class Api:
             'code': login_code,
             'redirect_uri': self.redirect_uri,
         }
-        response = requests.get(request_url, params=params)
+        response = SESSION.get(request_url, params=params)
 
         response_params = response.json()
         self.active_token = response_params['access_token']
@@ -142,7 +142,7 @@ class Api:
     def can_connect(self) -> bool:
         url = "https://embed.gog.com"
         try:
-            requests.get(url, timeout=5)
+            SESSION.get(url, timeout=5)
         except requests.exceptions.ConnectionError:
             return False
         return True
@@ -159,7 +159,7 @@ class Api:
         headers = {
             'Authorization': "Bearer " + self.active_token,
         }
-        response = requests.get(url, headers=headers, params=params)
+        response = SESSION.get(url, headers=headers, params=params)
         if self.debug:
             print("Request: {}".format(url))
             print("Return code: {}".format(response.status_code))
