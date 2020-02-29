@@ -4,7 +4,6 @@ import re
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
-import requests
 import json
 import os
 import webbrowser
@@ -15,6 +14,7 @@ from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
+from minigalaxy.launcher import start_game
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -57,7 +57,7 @@ class GameTile(Gtk.Box):
         if self.busy:
             return
         if self.game.install_dir:
-            self.__start_game()
+            start_game(self.game, self.parent)
         else:
             self.busy = True
             self.__create_progress_bar()
@@ -239,107 +239,3 @@ class GameTile(Gtk.Box):
             self.image.set_sensitive(False)
             self.button.set_label(_("download"))
             self.menu_button.hide()
-
-    def __start_game(self) -> subprocess:
-        error_message = ""
-        process = None
-
-        # Change the directory to the install dir
-        working_dir = os.getcwd()
-        os.chdir(self.__get_install_dir())
-        try:
-            process = subprocess.Popen(self.__get_execute_command(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except FileNotFoundError:
-            error_message = _("No executable was found in {}").format(self.install_dir)
-
-        # restore the working directory
-        os.chdir(working_dir)
-
-        # Check if the application has started and see if it is still runnning after a short timeout
-        if process:
-            try:
-                process.wait(timeout=float(3))
-            except subprocess.TimeoutExpired:
-                return process
-        elif not error_message:
-            error_message = _("Couldn't start subprocess")
-
-        # Set the error message to what's been received in std error if not yet set
-        if not error_message:
-            stdout, stderror = process.communicate()
-            error_message = stderror.decode("utf-8")
-            stdout_message = stdout.decode("utf-8")
-            if not error_message:
-                if stdout:
-                    error_message = stdout_message
-                else:
-                    error_message = _("No error message was returned")
-
-        # Show the error as both a dialog and in the terminal
-        error_text = _("Failed to start {}:").format(self.game.name)
-        print(error_text)
-        print(error_message)
-        dialog = Gtk.MessageDialog(
-            message_type=Gtk.MessageType.ERROR,
-            parent=self.parent.parent,
-            modal=True,
-            buttons=Gtk.ButtonsType.CLOSE,
-            text=error_text
-        )
-        dialog.format_secondary_text(error_message)
-        dialog.run()
-        dialog.destroy()
-
-    def __get_execute_command(self) -> list:
-        files = os.listdir(self.__get_install_dir())
-
-        # Enable FPS Counter for Nvidia or AMD (Mesa) users
-        if Config.get("show_fps"):
-            os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users
-            os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users
-        elif Config.get("show_fps") is False:
-            os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0"  # For Nvidia users
-            os.environ["GALLIUM_HUD"] = ""
-
-        # Dosbox
-        if "dosbox" in files and shutil.which("dosbox"):
-            for file in files:
-                if re.match(r'^dosbox_?([a-z]|[A-Z]|[0-9])+\.conf$', file):
-                    dosbox_config = file
-                if re.match(r'^dosbox_?([a-z]|[A-Z]|[0-9])+_single\.conf$', file):
-                    dosbox_config_single = file
-            if dosbox_config and dosbox_config_single:
-                print("Using system's dosbox to launch {}".format(self.game.name))
-                return ["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
-
-        # ScummVM
-        if "scummvm" in files and shutil.which("scummvm"):
-            for file in files:
-                if re.match(r'^.*\.ini$', file):
-                    scummvm_config = file
-                    break
-            if scummvm_config:
-                print("Using system's scrummvm to launch {}".format(self.game.name))
-                return ["scummvm", "-c", scummvm_config]
-
-        # Wine
-        if "prefix" in files and shutil.which("wine"):
-            # This still needs to be implemented
-            return["./start.sh"]
-
-        # None of the above, but there is a start script
-        if "start.sh" in files:
-            return ["./start.sh"]
-
-        # This is the final resort, applies to FTL
-        if "game" in files:
-            game_files = os.listdir("game")
-            for file in game_files:
-                if re.match(r'^goggame-[0-9]*\.info$', file):
-                    os.chdir(os.path.join(self.install_dir, "game"))
-                    with open(file, 'r') as info_file:
-                        info = json.loads(info_file.read())
-                        return ["./{}".format(info["playTasks"][0]["path"])]
-
-        # If no executable was found at all, raise an error
-        raise FileNotFoundError()
