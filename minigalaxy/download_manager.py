@@ -20,7 +20,7 @@ class __DownloadManger:
         self.__queue.put(download)
 
     def download_now(self, download):
-        download_file_thread = threading.Thread(target=self.__download_file, args=download)
+        download_file_thread = threading.Thread(target=self.__download_file, args=(download,))
         download_file_thread.daemon = True
         download_file_thread.start()
 
