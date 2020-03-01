@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-23 16:18+0100\n"
-"PO-Revision-Date: 2020-01-18 09:30+0800\n"
+"PO-Revision-Date: 2020-03-01 11:32+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
 "Language: zh_TW\n"
@@ -219,7 +219,7 @@ msgstr "儲存"
 #: data/ui/preferences.ui:187
 msgctxt "show_fps"
 msgid "Show FPS in games:"
-msgstr ""
+msgstr "在遊戲中顯示 FPS："
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -232,7 +232,7 @@ msgctxt "show_fps_tooltip"
 msgid ""
 "Show the framerate while playing games. Only works with AMD and Nvidia "
 "graphics cards."
-msgstr ""
+msgstr "在遊玩遊戲時顯示畫面率。僅可與 AMD 及 Nvidia 的顯示卡一同運作。"
 
 #: minigalaxy/constants.py:22
 msgid "Spanish"
