@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-23 16:18+0100\n"
+"POT-Creation-Date: 2020-03-02 12:32+0100\n"
 "PO-Revision-Date: 2020-01-13 11:23+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -35,12 +35,16 @@ msgctxt "about"
 msgid "About"
 msgstr "O programie"
 
-#: minigalaxy/ui/gametile.py:75
+#: minigalaxy/ui/gametile.py:95
 #, python-format
 msgid "Are you sure to uninstall %s"
 msgstr "Czy na pewno chcesz odinstalować %s"
 
-#: minigalaxy/constants.py:6
+#: minigalaxy/ui/gametile.py:78
+msgid "Are you sure you want to cancel downloading {}?"
+msgstr ""
+
+#: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
 msgstr "Portugalski brazylijski"
 
@@ -49,7 +53,7 @@ msgctxt "cancel"
 msgid "Cancel"
 msgstr "Anuluj"
 
-#: minigalaxy/constants.py:7
+#: minigalaxy/constants.py:9
 msgid "Chinese"
 msgstr "Chiński"
 
@@ -57,23 +61,23 @@ msgstr "Chiński"
 msgid "Couldn't connect to GOG servers"
 msgstr "Nie można połączyć się z serwerami GOG"
 
-#: minigalaxy/ui/gametile.py:102
+#: minigalaxy/ui/gametile.py:122
 msgid "Couldn't open support page"
 msgstr ""
 
-#: minigalaxy/ui/gametile.py:265
+#: minigalaxy/launcher.py:37
 msgid "Couldn't start subprocess"
 msgstr "Nie można uruchomić podprocesu"
 
-#: minigalaxy/constants.py:8
+#: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr "Duński"
 
-#: minigalaxy/constants.py:9
+#: minigalaxy/constants.py:11
 msgid "Dutch"
 msgstr "Holenderski"
 
-#: minigalaxy/constants.py:10
+#: minigalaxy/constants.py:12
 msgid "English"
 msgstr "Angielski"
 
@@ -81,19 +85,19 @@ msgstr "Angielski"
 msgid "Failed to retrieve library"
 msgstr "Nie można pobrać biblioteki"
 
-#: minigalaxy/ui/gametile.py:279
+#: minigalaxy/launcher.py:51
 msgid "Failed to start {}:"
 msgstr "Nie można uruchomić {}:"
 
-#: minigalaxy/constants.py:11
+#: minigalaxy/constants.py:13
 msgid "Finnish"
 msgstr "Fiński"
 
-#: minigalaxy/constants.py:12
+#: minigalaxy/constants.py:14
 msgid "French"
 msgstr "Francuski"
 
-#: minigalaxy/constants.py:13
+#: minigalaxy/constants.py:15
 msgid "German"
 msgstr "Niemiecki"
 
@@ -103,7 +107,7 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "Strona GitHub"
 
-#: minigalaxy/constants.py:14
+#: minigalaxy/constants.py:16
 msgid "Hungarian"
 msgstr "Węgierski"
 
@@ -119,11 +123,11 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "Zainstalowane"
 
-#: minigalaxy/constants.py:15
+#: minigalaxy/constants.py:17
 msgid "Italian"
 msgstr "Włoski"
 
-#: minigalaxy/constants.py:16
+#: minigalaxy/constants.py:18
 msgid "Japanese"
 msgstr "Japoński"
 
@@ -141,7 +145,7 @@ msgctxt "keep_installer"
 msgid "Keep installers: "
 msgstr "Zachowaj pliki instalacyjne:"
 
-#: minigalaxy/constants.py:17
+#: minigalaxy/constants.py:19
 msgid "Korean"
 msgstr "Koreański"
 
@@ -155,33 +159,33 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "Wyloguj"
 
-#: minigalaxy/ui/gametile.py:276
+#: minigalaxy/launcher.py:48
 msgid "No error message was returned"
 msgstr "Nie został zwrócony żaden komunikat o błędzie"
 
-#: minigalaxy/ui/gametile.py:253
+#: minigalaxy/launcher.py:25
 msgid "No executable was found in {}"
 msgstr "Nie znaleziono pliku wykonywalnego w {}"
 
-#: minigalaxy/constants.py:18
+#: minigalaxy/constants.py:20
 msgid "Norwegian"
 msgstr "Norweski"
 
 #. Opens the directory the game is installed in
-#: data/ui/gametile.ui:17
+#: data/ui/gametile.ui:31
 msgctxt "open_files"
 msgid "Open Files"
 msgstr "Otwórz pliki"
 
-#: minigalaxy/ui/gametile.py:104
+#: minigalaxy/ui/gametile.py:124
 msgid "Please check your internet connection"
 msgstr ""
 
-#: minigalaxy/constants.py:19
+#: minigalaxy/constants.py:21
 msgid "Polish"
 msgstr "Polski"
 
-#: minigalaxy/constants.py:20
+#: minigalaxy/constants.py:22
 msgid "Portuguese"
 msgstr "Portugalski"
 
@@ -207,7 +211,7 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Odśwież listę gier"
 
-#: minigalaxy/constants.py:21
+#: minigalaxy/constants.py:23
 msgid "Russian"
 msgstr "Rosyjski"
 
@@ -236,7 +240,7 @@ msgid ""
 "graphics cards."
 msgstr ""
 
-#: minigalaxy/constants.py:22
+#: minigalaxy/constants.py:24
 msgid "Spanish"
 msgstr "Hiszpański"
 
@@ -247,12 +251,12 @@ msgid "Stay logged in:"
 msgstr "Pozostań zalogowany:"
 
 #. Opens the official support webpage
-#: data/ui/gametile.ui:45
+#: data/ui/gametile.ui:17
 msgctxt "support"
 msgid "Support"
 msgstr ""
 
-#: minigalaxy/constants.py:23
+#: minigalaxy/constants.py:25
 msgid "Swedish"
 msgstr "Szwedzki"
 
@@ -266,12 +270,12 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "W tym miejscu zostaną zainstalowane gry"
 
-#: minigalaxy/constants.py:24
+#: minigalaxy/constants.py:26
 msgid "Turkish"
 msgstr "Turecki"
 
 #. Removes the game files from the local machine
-#: data/ui/gametile.ui:31
+#: data/ui/gametile.ui:45
 msgctxt "uninstall"
 msgid "Uninstall"
 msgstr "Odinstaluj"
@@ -283,27 +287,32 @@ msgstr ""
 "Po wyłączeniu zostanie wyświetlony monit o zalogowanie się przy każdym "
 "uruchomieniu Minigalaxy"
 
-#: minigalaxy/ui/gametile.py:240
+#: minigalaxy/ui/gametile.py:226
 msgid "download"
 msgstr "pobierz"
 
-#: minigalaxy/ui/gametile.py:65
-msgid "downloading..."
+#: minigalaxy/ui/gametile.py:185
+#, fuzzy
+msgid "downloading.."
 msgstr "pobieranie..."
 
-#: minigalaxy/ui/gametile.py:236
+#: minigalaxy/ui/gametile.py:67
+msgid "in queue..."
+msgstr ""
+
+#: minigalaxy/ui/gametile.py:222
 msgid "install"
 msgstr "zainstaluj"
 
-#: minigalaxy/ui/gametile.py:144
+#: minigalaxy/ui/gametile.py:165
 msgid "installing.."
 msgstr "instalowanie.."
 
-#: minigalaxy/ui/gametile.py:232
+#: minigalaxy/ui/gametile.py:218
 msgid "play"
 msgstr "graj"
 
-#: minigalaxy/ui/gametile.py:81
+#: minigalaxy/ui/gametile.py:101
 msgid "uninstalling.."
 msgstr "odinstalowywanie.."
 
