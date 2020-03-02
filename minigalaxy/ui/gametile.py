@@ -164,7 +164,7 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.progress_bar.destroy)
         GLib.idle_add(self.button.set_label, _("installing.."))
         self.game.install_dir = self.__get_install_dir()
-        install_game(self.game, self.download_path)
+        install_game(self.game, self.download_path, parent_window=self.parent)
         self.busy = False
         self.downloading = False
         GLib.idle_add(self.load_state)

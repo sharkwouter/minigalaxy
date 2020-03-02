@@ -1,3 +1,6 @@
+from zipfile import BadZipFile
+
+
 class Download:
     def __init__(self, url, save_location, finish_func=None, progress_func=None, cancel_func=None, number=1, out_of_amount=1):
         self.url = url
@@ -18,7 +21,10 @@ class Download:
 
     def finish(self):
         if self.__finish_func:
-            self.__finish_func()
+            try:
+                self.__finish_func()
+            except (FileNotFoundError, BadZipFile):
+                self.cancel()
 
     def cancel(self):
         if self.__cancel_func:
