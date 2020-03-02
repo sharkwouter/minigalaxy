@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-02 12:32+0100\n"
+"POT-Creation-Date: 2020-03-02 12:35+0100\n"
 "PO-Revision-Date: 2020-01-08 17:52+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
@@ -34,13 +34,13 @@ msgctxt "about"
 msgid "About"
 msgstr "Hakkında"
 
-#: minigalaxy/ui/gametile.py:95
-#, python-format
-msgid "Are you sure to uninstall %s"
-msgstr ""
-
 #: minigalaxy/ui/gametile.py:78
 msgid "Are you sure you want to cancel downloading {}?"
+msgstr ""
+
+#: minigalaxy/ui/gametile.py:95
+#, python-format
+msgid "Are you sure you want to uninstall %s?"
 msgstr ""
 
 #: minigalaxy/constants.py:8

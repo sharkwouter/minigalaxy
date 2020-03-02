@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-02 12:32+0100\n"
+"POT-Creation-Date: 2020-03-02 12:35+0100\n"
 "PO-Revision-Date: 2020-01-06 19:14+0100\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch\n"
@@ -34,14 +34,14 @@ msgctxt "about"
 msgid "About"
 msgstr "Over Minigalaxy"
 
-#: minigalaxy/ui/gametile.py:95
-#, python-format
-msgid "Are you sure to uninstall %s"
-msgstr "Weet je zeker dat je %s wilt verwijderen?"
-
 #: minigalaxy/ui/gametile.py:78
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Weet zeker dat je je de download voor {} wilt stoppen?"
+
+#: minigalaxy/ui/gametile.py:95
+#, fuzzy, python-format
+msgid "Are you sure you want to uninstall %s?"
+msgstr "Weet je zeker dat je %s wilt verwijderen?"
 
 #: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"

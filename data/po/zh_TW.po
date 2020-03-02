@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-02 12:32+0100\n"
+"POT-Creation-Date: 2020-03-02 12:35+0100\n"
 "PO-Revision-Date: 2020-03-01 11:32+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
@@ -33,14 +33,14 @@ msgctxt "about"
 msgid "About"
 msgstr "關於"
 
-#: minigalaxy/ui/gametile.py:95
-#, python-format
-msgid "Are you sure to uninstall %s"
-msgstr "您確定要解除安裝 %s 嗎"
-
 #: minigalaxy/ui/gametile.py:78
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr ""
+
+#: minigalaxy/ui/gametile.py:95
+#, fuzzy, python-format
+msgid "Are you sure you want to uninstall %s?"
+msgstr "您確定要解除安裝 %s 嗎"
 
 #: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"

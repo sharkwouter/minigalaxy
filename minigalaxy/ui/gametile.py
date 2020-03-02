@@ -92,7 +92,7 @@ class GameTile(Gtk.Box):
                                            flags=Gtk.DialogFlags.MODAL,
                                            message_type=Gtk.MessageType.WARNING,
                                            buttons=Gtk.ButtonsType.OK_CANCEL,
-                                           message_format=_("Are you sure to uninstall %s" % self.game.name))
+                                           message_format=_("Are you sure you want to uninstall %s?" % self.game.name))
         response = message_dialog.run()
 
         if response == Gtk.ResponseType.OK:
