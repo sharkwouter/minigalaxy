@@ -59,8 +59,8 @@ def install_game(game, installer, parent_window=None) -> None:
             os.makedirs(keep_dir)
         try:
             os.rename(installer, os.path.join(keep_dir, "{}.sh".format(game.name)))
-        except Exception:
-            os.remove(installer)
+        except Exception as ex:
+            print("Encountered error while copying {} to {}. Got error: {}".format(installer, keep_dir, ex))
     else:
         os.remove(installer)
 
