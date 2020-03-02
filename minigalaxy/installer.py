@@ -52,7 +52,7 @@ def install_game(game, installer, parent_window=None) -> None:
         if not os.path.exists(keep_dir):
             os.makedirs(keep_dir)
         try:
-            os.rename(installer, keep_dir)
+            os.rename(installer, os.path.join(keep_dir, "{}.sh".format(game.name)))
         except Exception:
             os.remove(installer)
     else:
