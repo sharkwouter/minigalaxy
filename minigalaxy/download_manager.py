@@ -2,7 +2,7 @@ import os
 import time
 import threading
 import queue
-from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, SESSION
+from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION
 from minigalaxy.download import Download
 
 
@@ -64,14 +64,24 @@ class __DownloadManger:
         # Fail if the file already exists
         if os.path.isdir(download.save_location):
             raise IsADirectoryError("{} is a directory".format(download.save_location))
+
+        # Resume the previous download if possible
+        start_point = 0
+        download_mode = 'wb'
         if os.path.isfile(download.save_location):
-            os.remove(download.save_location)
+            if self.__is_same_download_as_before(download):
+                print("Resuming download {}".format(download.save_location))
+                download_mode = 'ab'
+                start_point = os.stat(download.save_location).st_size
+            else:
+                os.remove(download.save_location)
 
         # Download the file
-        download_request = SESSION.get(download.url, stream=True)
-        downloaded_size = 0
+        resume_header = {'Range': 'bytes={}-'.format(start_point)}
+        download_request = SESSION.get(download.url, headers=resume_header, stream=True)
+        downloaded_size = start_point
         file_size = int(download_request.headers.get('content-length'))
-        with open(download.save_location, 'wb') as save_file:
+        with open(download.save_location, download_mode) as save_file:
             for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
                 # Pause if needed
                 while self.__paused:
@@ -89,6 +99,20 @@ class __DownloadManger:
             save_file.close()
         finish_thread = threading.Thread(target=download.finish)
         finish_thread.start()
+
+    def __is_same_download_as_before(self, download):
+        file_stats = os.stat(download.save_location)
+        # Don't resume for very small files
+        if file_stats.st_size < MINIMUM_RESUME_SIZE:
+            return False
+
+        # Check if the first part of the file
+        download_request = SESSION.get(download.url, stream=True)
+        size_to_check = DOWNLOAD_CHUNK_SIZE*5
+        for chunk in download_request.iter_content(chunk_size=size_to_check):
+            with open(download.save_location, "rb") as file:
+                file_content = file.read(size_to_check)
+                return file_content == chunk
 
 
 DownloadManager = __DownloadManger()

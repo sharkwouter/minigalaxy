@@ -1,6 +1,7 @@
 import os
 import shutil
 import zipfile
+import subprocess
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
@@ -11,8 +12,13 @@ from minigalaxy.config import Config
 
 def install_game(game, installer, parent_window=None) -> None:
     if not os.path.exists(installer):
-        GLib.idle_add(__show_installation_error, game, _("{} failed to download".format(installer)), parent_window)
+        GLib.idle_add(__show_installation_error, game, _("{} failed to download.".format(installer)), parent_window)
         raise FileNotFoundError("The installer {} does not exist".format(installer))
+
+    if not __verify_installer_integrity(""):
+        GLib.idle_add(__show_installation_error, game, _("{} was corrupted. Please download it again.".format(installer)), parent_window)
+        os.remove(installer)
+        raise FileNotFoundError("The installer {} was corrupted".format(installer))
 
     # Make a temporary empty directory for extracting the installer
     temp_dir = os.path.join(CACHE_DIR, "extract/{}".format(game.id))
@@ -30,7 +36,7 @@ def install_game(game, installer, parent_window=None) -> None:
                 attr = file.external_attr >> 16
                 os.chmod(os.path.join(temp_dir, member), attr)
     except zipfile.BadZipFile as e:
-        GLib.idle_add(__show_installation_error, game, _("{} could not be unzipped".format(installer)), parent_window)
+        GLib.idle_add(__show_installation_error, game, _("{} could not be unzipped.".format(installer)), parent_window)
         raise e
 
     # Make sure the install directory exists
@@ -72,6 +78,19 @@ def __show_installation_error(game, message, parent_window=None):
     dialog.run()
     dialog.destroy()
     print("{}: {}".format(error_message[0], error_message[1]))
+
+
+def __verify_installer_integrity(installer):
+    try:
+        os.chmod(installer, 0o744)
+        result = subprocess.run([installer, "--check"])
+        if result.returncode == 0:
+            return True
+        else:
+            return False
+    except:
+        # Any exception means the archive doesn't work, so we don't care with the error is
+        return False
 
 
 def uninstall_game(game):
