@@ -10,6 +10,7 @@ class __DownloadManger:
         self.__queue = queue.Queue()
         self.__current_download = None
         self.__cancel = False
+        self.__paused = False
 
         download_thread = threading.Thread(target=self.__download_thread)
         download_thread.daemon = True
@@ -23,13 +24,29 @@ class __DownloadManger:
         download_file_thread.daemon = True
         download_file_thread.start()
 
+    def cancel_download(self, download):
+        if download == self.__current_download:
+            self.cancel_current_download()
+        else:
+            self.__paused = True
+            new_queue = queue.Queue()
+            while not self.__queue.empty():
+                queued_download = self.__queue.get()
+                if download == queued_download:
+                    download.cancel()
+                else:
+                    new_queue.put(queued_download)
+            self.__queue = new_queue
+            self.__paused = False
+
     def cancel_current_download(self):
         self.__cancel = True
 
     def __download_thread(self):
         while True:
             if not self.__queue.empty():
-                self.__download_file(self.__queue.get())
+                self.__current_download = self.__queue.get()
+                self.__download_file(self.__current_download)
             time.sleep(0.1)
 
     def __download_file(self, download):
@@ -50,6 +67,9 @@ class __DownloadManger:
         file_size = int(download_request.headers.get('content-length'))
         with open(download.save_location, 'wb') as save_file:
             for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                # Pause if needed
+                while self.__paused:
+                    time.sleep(0.1)
                 save_file.write(chunk)
                 downloaded_size += len(chunk)
                 if self.__cancel:

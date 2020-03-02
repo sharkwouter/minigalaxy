@@ -10,6 +10,20 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
+          <object class="GtkModelButton" id="menu_button_support">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes" context="support" comments="Opens the official support webpage">Support</property>
+            <signal name="clicked" handler="on_menu_button_support_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkModelButton" id="menu_button_open">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -35,20 +49,6 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkModelButton" id="menu_button_support">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="text" translatable="yes" context="support" comments="Opens the official support webpage">Support</property>
-            <signal name="clicked" handler="on_menu_button_support_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
           </packing>
         </child>
       </object>
@@ -106,6 +106,29 @@
           </object>
           <packing>
             <property name="index">2</property>
+          </packing>
+        </child>
+        <child type="overlay">
+          <object class="GtkButton" id="button_cancel">
+            <property name="can_focus">True</property>
+            <property name="has_focus">True</property>
+            <property name="focus_on_click">False</property>
+            <property name="receives_default">True</property>
+            <property name="no_show_all">True</property>
+            <property name="halign">end</property>
+            <property name="valign">start</property>
+            <property name="relief">none</property>
+            <signal name="clicked" handler="on_button_cancel_clicked" swapped="no"/>
+            <child>
+              <object class="GtkImage" id="cancel_icon">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="stock">gtk-cancel</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="index">1</property>
           </packing>
         </child>
       </object>

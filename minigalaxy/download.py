@@ -7,7 +7,6 @@ class Download:
         self.__cancel_func = cancel_func
         self.number = number
         self.out_of_amount = out_of_amount
-        self.done = False
 
     def set_progress(self, percentage: int) -> None:
         if self.__progress_func:
@@ -18,11 +17,9 @@ class Download:
             self.__progress_func(percentage)
 
     def finish(self):
-        self.done = True
         if self.__finish_func:
             self.__finish_func()
 
     def cancel(self):
-        self.done = True
         if self.__cancel_func:
             self.__cancel_func()

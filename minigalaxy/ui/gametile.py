@@ -21,6 +21,7 @@ class GameTile(Gtk.Box):
 
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
+    button_cancel = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
@@ -32,6 +33,7 @@ class GameTile(Gtk.Box):
         self.busy = False
         self.downloading = False
         self.thumbnail_set = False
+        self.download = None
 
         self.image.set_tooltip_text(self.game.name)
 
@@ -63,8 +65,26 @@ class GameTile(Gtk.Box):
             self.__create_progress_bar()
             widget.set_sensitive(False)
             widget.set_label(_("in queue..."))
+            self.button_cancel.show()
             download_thread = threading.Thread(target=self.__download_file)
             download_thread.start()
+
+    @Gtk.Template.Callback("on_button_cancel_clicked")
+    def on_button_cancel(self, widget):
+        message_dialog = Gtk.MessageDialog(parent=self.parent.parent,
+                                           flags=Gtk.DialogFlags.MODAL,
+                                           message_type=Gtk.MessageType.WARNING,
+                                           buttons=Gtk.ButtonsType.OK_CANCEL,
+                                           message_format=_("Are you sure you want to cancel downloading {}?".format(self.game.name)))
+        response = message_dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            DownloadManager.cancel_download(self.download)
+            self.busy = False
+            self.downloading = False
+            self.button_cancel.hide()
+            self.load_state()
+        message_dialog.destroy()
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
@@ -136,15 +156,17 @@ class GameTile(Gtk.Box):
     def __download_file(self) -> None:
         download_info = self.api.get_download_info(self.game)
         file_url = download_info["downlink"]
-        download = Download(file_url, self.download_path, self.__finish_download, progress_func=self.set_progress, cancel_func=self.__cancel_download)
-        DownloadManager.download(download)
+        self.download = Download(file_url, self.download_path, self.__finish_download, progress_func=self.set_progress, cancel_func=self.__cancel_download)
+        DownloadManager.download(self.download)
 
     def __finish_download(self):
+        GLib.idle_add(self.button_cancel.hide)
         GLib.idle_add(self.progress_bar.destroy)
         GLib.idle_add(self.button.set_label, _("installing.."))
         self.game.install_dir = self.__get_install_dir()
         install_game(self.game, self.download_path)
         self.busy = False
+        self.downloading = False
         GLib.idle_add(self.load_state)
         GLib.idle_add(self.button.set_sensitive, True)
         GLib.idle_add(self.parent.filter_library)
@@ -152,8 +174,11 @@ class GameTile(Gtk.Box):
     def __cancel_download(self):
         GLib.idle_add(self.progress_bar.destroy)
         self.busy = False
+        self.downloading = False
+        self.game.install_dir = ""
         GLib.idle_add(self.load_state)
         GLib.idle_add(self.button.set_sensitive, True)
+        GLib.idle_add(self.button_cancel.hide)
 
     def set_progress(self, percentage: int):
         if not self.downloading:
