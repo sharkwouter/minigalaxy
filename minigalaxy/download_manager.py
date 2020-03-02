@@ -3,6 +3,7 @@ import time
 import threading
 import queue
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, SESSION
+from minigalaxy.download import Download
 
 
 class __DownloadManger:
@@ -17,7 +18,12 @@ class __DownloadManger:
         download_thread.start()
 
     def download(self, download):
-        self.__queue.put(download)
+        if isinstance(download, Download):
+            self.__queue.put(download)
+        else:
+            # Assume we've received a list of downloads
+            for d in download:
+                self.__queue.put(d)
 
     def download_now(self, download):
         download_file_thread = threading.Thread(target=self.__download_file, args=(download,))
