@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-02 12:35+0100\n"
+"POT-Creation-Date: 2020-03-02 21:31+0100\n"
 "PO-Revision-Date: 2020-01-17 18:05+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,12 +34,11 @@ msgctxt "about"
 msgid "About"
 msgstr "À propos"
 
-#: minigalaxy/ui/gametile.py:78
+#: minigalaxy/ui/gametile.py:80
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr ""
 
-#: minigalaxy/ui/gametile.py:95
-#, fuzzy, python-format
+#: minigalaxy/ui/gametile.py:93
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Êtes-vous sûr de vouloir désinstaller %s"
 
@@ -60,7 +59,7 @@ msgstr "Chinois"
 msgid "Couldn't connect to GOG servers"
 msgstr "Impossible de se connecter aux serveurs de GOG"
 
-#: minigalaxy/ui/gametile.py:122
+#: minigalaxy/ui/gametile.py:117
 msgid "Couldn't open support page"
 msgstr "Impossible d'ouvrir la page de support"
 
@@ -79,6 +78,10 @@ msgstr "Néerlandais"
 #: minigalaxy/constants.py:12
 msgid "English"
 msgstr "Anglais"
+
+#: minigalaxy/installer.py:69
+msgid "Failed to install {}"
+msgstr "Impossible de démarrer {}:"
 
 #: minigalaxy/ui/library.py:134
 msgid "Failed to retrieve library"
@@ -176,7 +179,7 @@ msgctxt "open_files"
 msgid "Open Files"
 msgstr "Ouvrir le dossier"
 
-#: minigalaxy/ui/gametile.py:124
+#: minigalaxy/ui/gametile.py:119
 msgid "Please check your internet connection"
 msgstr "Veuillez vérifier votre connexion Internet"
 
@@ -286,38 +289,49 @@ msgstr ""
 "Lorsque cette option est désactivée, il vous sera demandé de vous connecter "
 "à chaque démarrage de Minigalaxy"
 
-#: minigalaxy/ui/gametile.py:226
+#: minigalaxy/ui/gametile.py:215
 msgid "download"
 msgstr "télécharger"
 
-#: minigalaxy/ui/gametile.py:185
-#, fuzzy
+#: minigalaxy/ui/gametile.py:247
 msgid "downloading.."
 msgstr "téléchargement…"
 
-#: minigalaxy/ui/gametile.py:67
-msgid "in queue..."
+#: minigalaxy/ui/gametile.py:239
+msgid "in queue.."
 msgstr ""
 
-#: minigalaxy/ui/gametile.py:222
+#: minigalaxy/ui/gametile.py:227
 msgid "install"
 msgstr "installer"
 
-#: minigalaxy/ui/gametile.py:165
+#: minigalaxy/ui/gametile.py:257
 msgid "installing.."
 msgstr "installation…"
 
-#: minigalaxy/ui/gametile.py:218
+#: minigalaxy/ui/gametile.py:271
 msgid "play"
 msgstr "jouer"
 
-#: minigalaxy/ui/gametile.py:101
+#: minigalaxy/ui/gametile.py:283
 msgid "uninstalling.."
 msgstr "désinstallation…"
 
-#: minigalaxy/ui/preferences.py:108
+#: minigalaxy/installer.py:39
+msgid "{} could not be unzipped."
+msgstr ""
+
+#: minigalaxy/installer.py:15
+msgid "{} failed to download."
+msgstr ""
+
+#: minigalaxy/ui/preferences.py:111
 msgid "{} isn't a usable path"
 msgstr "{} n'est pas un chemin utilisable"
+
+#: minigalaxy/installer.py:19
+msgid "{} was corrupted. Please download it again."
+msgstr ""
 
 #~ msgid "Minigalaxy is now running in offline mode"
 #~ msgstr "Minigalaxy fonctionne maintenant en mode hors ligne"

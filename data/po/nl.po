@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-02 12:35+0100\n"
+"POT-Creation-Date: 2020-03-02 21:31+0100\n"
 "PO-Revision-Date: 2020-01-06 19:14+0100\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch\n"
@@ -34,12 +34,11 @@ msgctxt "about"
 msgid "About"
 msgstr "Over Minigalaxy"
 
-#: minigalaxy/ui/gametile.py:78
+#: minigalaxy/ui/gametile.py:80
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Weet zeker dat je je de download voor {} wilt stoppen?"
 
-#: minigalaxy/ui/gametile.py:95
-#, fuzzy, python-format
+#: minigalaxy/ui/gametile.py:93
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Weet je zeker dat je %s wilt verwijderen?"
 
@@ -60,7 +59,7 @@ msgstr "Chinees"
 msgid "Couldn't connect to GOG servers"
 msgstr "Er kon geen verbinding gemaakt worden met de GOG servers"
 
-#: minigalaxy/ui/gametile.py:122
+#: minigalaxy/ui/gametile.py:117
 msgid "Couldn't open support page"
 msgstr "De ondersteuningspagina kon niet worden geopend"
 
@@ -79,6 +78,10 @@ msgstr "Nederlands"
 #: minigalaxy/constants.py:12
 msgid "English"
 msgstr "Engels"
+
+#: minigalaxy/installer.py:69
+msgid "Failed to install {}"
+msgstr "Kon {} niet starten:"
 
 #: minigalaxy/ui/library.py:134
 msgid "Failed to retrieve library"
@@ -176,7 +179,7 @@ msgctxt "open_files"
 msgid "Open Files"
 msgstr "Bestanden openen"
 
-#: minigalaxy/ui/gametile.py:124
+#: minigalaxy/ui/gametile.py:119
 msgid "Please check your internet connection"
 msgstr "Controleer je internetverbinding"
 
@@ -288,38 +291,49 @@ msgstr ""
 "Als deze optie uitgeschakeld is, zal Minigalaxy altijd het inlogscherm tonen "
 "bij het opstarten"
 
-#: minigalaxy/ui/gametile.py:226
+#: minigalaxy/ui/gametile.py:215
 msgid "download"
 msgstr "download"
 
-#: minigalaxy/ui/gametile.py:185
-#, fuzzy
+#: minigalaxy/ui/gametile.py:247
 msgid "downloading.."
 msgstr "downloaden.."
 
-#: minigalaxy/ui/gametile.py:67
-msgid "in queue..."
+#: minigalaxy/ui/gametile.py:239
+msgid "in queue.."
 msgstr ""
 
-#: minigalaxy/ui/gametile.py:222
+#: minigalaxy/ui/gametile.py:227
 msgid "install"
 msgstr "installeren"
 
-#: minigalaxy/ui/gametile.py:165
+#: minigalaxy/ui/gametile.py:257
 msgid "installing.."
 msgstr "installeren.."
 
-#: minigalaxy/ui/gametile.py:218
+#: minigalaxy/ui/gametile.py:271
 msgid "play"
 msgstr "spelen"
 
-#: minigalaxy/ui/gametile.py:101
+#: minigalaxy/ui/gametile.py:283
 msgid "uninstalling.."
 msgstr "verwijderen.."
 
-#: minigalaxy/ui/preferences.py:108
+#: minigalaxy/installer.py:39
+msgid "{} could not be unzipped."
+msgstr ""
+
+#: minigalaxy/installer.py:15
+msgid "{} failed to download."
+msgstr ""
+
+#: minigalaxy/ui/preferences.py:111
 msgid "{} isn't a usable path"
 msgstr "{} is geen bruikbaar pad"
+
+#: minigalaxy/installer.py:19
+msgid "{} was corrupted. Please download it again."
+msgstr ""
 
 #~ msgid "Minigalaxy is now running in offline mode"
 #~ msgstr "Minigalaxy is nu in offline modus"
