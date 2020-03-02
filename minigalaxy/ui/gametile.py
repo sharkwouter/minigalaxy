@@ -6,6 +6,8 @@ import os
 import webbrowser
 import threading
 import subprocess
+from enum import Enum
+from zipfile import BadZipFile
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 from minigalaxy.config import Config
@@ -24,16 +26,17 @@ class GameTile(Gtk.Box):
     button_cancel = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
 
+    state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED UNINSTALLING')
+
     def __init__(self, parent, game, api):
         Gtk.Frame.__init__(self)
         self.parent = parent
         self.game = game
         self.api = api
         self.progress_bar = None
-        self.busy = False
-        self.downloading = False
         self.thumbnail_set = False
         self.download = None
+        self.current_state = self.state.DOWNLOADABLE
 
         self.image.set_tooltip_text(self.game.name)
 
@@ -48,24 +51,23 @@ class GameTile(Gtk.Box):
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
 
-        self.load_state()
+        self.reload_state()
+        self.load_thumbnail()
 
     def __str__(self):
         return self.game.name
 
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget) -> None:
-        if self.busy:
+        dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING]
+        if self.current_state in dont_act_in_states:
             return
-        if self.game.install_dir:
+        elif self.current_state == self.state.INSTALLED:
             start_game(self.game, self.parent)
-        else:
-            self.busy = True
-            self.downloading = False
-            self.__create_progress_bar()
-            widget.set_sensitive(False)
-            widget.set_label(_("in queue..."))
-            self.button_cancel.show()
+        elif self.current_state == self.state.INSTALLABLE:
+            install_thread = threading.Thread(target=self.__install)
+            install_thread.start()
+        elif self.current_state == self.state.DOWNLOADABLE:
             download_thread = threading.Thread(target=self.__download_file)
             download_thread.start()
 
@@ -80,10 +82,6 @@ class GameTile(Gtk.Box):
 
         if response == Gtk.ResponseType.OK:
             DownloadManager.cancel_download(self.download)
-            self.busy = False
-            self.downloading = False
-            self.button_cancel.hide()
-            self.load_state()
         message_dialog.destroy()
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
@@ -96,9 +94,6 @@ class GameTile(Gtk.Box):
         response = message_dialog.run()
 
         if response == Gtk.ResponseType.OK:
-            self.menu_button.hide()
-            self.button.set_sensitive(False)
-            self.button.set_label(_("uninstalling.."))
             uninstall_thread = threading.Thread(target=self.__uninstall_game)
             uninstall_thread.start()
             message_dialog.destroy()
@@ -154,43 +149,40 @@ class GameTile(Gtk.Box):
         return False
 
     def __download_file(self) -> None:
+        GLib.idle_add(self.update_to_state, self.state.QUEUED)
         download_info = self.api.get_download_info(self.game)
         file_url = download_info["downlink"]
-        self.download = Download(file_url, self.download_path, self.__finish_download, progress_func=self.set_progress, cancel_func=self.__cancel_download)
+        self.download = Download(file_url, self.download_path, self.__install, progress_func=self.set_progress, cancel_func=self.__cancel_download)
         DownloadManager.download(self.download)
 
-    def __finish_download(self):
-        GLib.idle_add(self.button_cancel.hide)
-        GLib.idle_add(self.progress_bar.destroy)
-        GLib.idle_add(self.button.set_label, _("installing.."))
+    def __install(self):
+        GLib.idle_add(self.update_to_state, self.state.INSTALLING)
         self.game.install_dir = self.__get_install_dir()
-        install_game(self.game, self.download_path, parent_window=self.parent)
-        self.busy = False
-        self.downloading = False
-        GLib.idle_add(self.load_state)
-        GLib.idle_add(self.button.set_sensitive, True)
-        GLib.idle_add(self.parent.filter_library)
+        try:
+            if os.path.exists(self.keep_path):
+                install_game(self.game, self.keep_path, parent_window=self.parent)
+            else:
+                install_game(self.game, self.download_path, parent_window=self.parent)
+        except (FileNotFoundError, BadZipFile):
+            GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
+            return
+        GLib.idle_add(self.update_to_state, self.state.INSTALLED)
 
     def __cancel_download(self):
-        GLib.idle_add(self.progress_bar.destroy)
-        self.busy = False
-        self.downloading = False
-        self.game.install_dir = ""
-        GLib.idle_add(self.load_state)
-        GLib.idle_add(self.button.set_sensitive, True)
-        GLib.idle_add(self.button_cancel.hide)
+        GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
+        GLib.idle_add(self.reload_state)
 
     def set_progress(self, percentage: int):
-        if not self.downloading:
-            GLib.idle_add(self.button.set_label, _("downloading.."))
-            self.downloading = True
-        GLib.idle_add(self.progress_bar.set_fraction, percentage/100)
+        if self.current_state == self.state.QUEUED:
+            GLib.idle_add(self.update_to_state, self.state.DOWNLOADING)
+        if self.progress_bar:
+            GLib.idle_add(self.progress_bar.set_fraction, percentage/100)
 
     def __uninstall_game(self):
+        GLib.idle_add(self.update_to_state, self.state.UNINSTALLING)
         uninstall_game(self.game)
-        GLib.idle_add(self.load_state)
-        GLib.idle_add(self.button.set_sensitive, True)
-        self.game.install_dir = ""
+        GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
+        GLib.idle_add(self.reload_state)
 
     def __create_progress_bar(self) -> None:
         self.progress_bar = Gtk.ProgressBar()
@@ -200,28 +192,100 @@ class GameTile(Gtk.Box):
         self.progress_bar.set_vexpand(False)
         self.set_center_widget(self.progress_bar)
         self.progress_bar.set_fraction(0.0)
-        self.progress_bar.show_all()
 
     def __get_install_dir(self):
         if self.game.install_dir:
             return self.game.install_dir
         return os.path.join(Config.get("install_dir"), self.game.get_stripped_name())
 
-    def load_state(self) -> None:
-        if self.busy:
+    def reload_state(self):
+        dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING]
+        if self.current_state in dont_act_in_states:
             return
-        if not self.thumbnail_set:
-            self.thumbnail_set = self.load_thumbnail()
-        if os.path.isfile(os.path.join(self.__get_install_dir(), "gameinfo")):
-            self.game.install_dir = self.__get_install_dir()
-            self.image.set_sensitive(True)
-            self.button.set_label(_("play"))
-            self.menu_button.show()
+        if self.game.install_dir and os.path.exists(self.game.install_dir):
+            self.update_to_state(self.state.INSTALLED)
         elif os.path.exists(self.keep_path):
-            self.image.set_sensitive(False)
-            self.button.set_label(_("install"))
-            self.menu_button.hide()
+            self.update_to_state(self.state.INSTALLABLE)
         else:
-            self.image.set_sensitive(False)
+            self.update_to_state(self.state.DOWNLOADABLE)
+
+    def update_to_state(self, state):
+        self.current_state = state
+        if state == self.state.DOWNLOADABLE:
             self.button.set_label(_("download"))
+            self.button.set_sensitive(True)
+            self.image.set_sensitive(False)
             self.menu_button.hide()
+            self.button_cancel.hide()
+
+            self.game.install_dir = ""
+
+            if self.progress_bar:
+                self.progress_bar.destroy()
+
+        elif state == self.state.INSTALLABLE:
+            self.button.set_label(_("install"))
+            self.button.set_sensitive(True)
+            self.image.set_sensitive(False)
+            self.menu_button.hide()
+            self.button_cancel.hide()
+
+            self.game.install_dir = ""
+
+            if self.progress_bar:
+                self.progress_bar.destroy()
+
+        elif state == self.state.QUEUED:
+            self.button.set_label(_("in queue.."))
+            self.button.set_sensitive(False)
+            self.image.set_sensitive(False)
+            self.menu_button.hide()
+            self.button_cancel.show()
+            self.__create_progress_bar()
+
+        elif state == self.state.DOWNLOADING:
+            self.button.set_label(_("downloading.."))
+            self.button.set_sensitive(False)
+            self.image.set_sensitive(False)
+            self.menu_button.hide()
+            self.button_cancel.show()
+            if not self.progress_bar:
+                self.__create_progress_bar()
+            self.progress_bar.show_all()
+
+        elif state == self.state.INSTALLING:
+            self.button.set_label(_("installing.."))
+            self.button.set_sensitive(False)
+            self.image.set_sensitive(True)
+            self.menu_button.hide()
+            self.button_cancel.hide()
+
+            self.game.install_dir = self.__get_install_dir()
+
+            if self.progress_bar:
+                self.progress_bar.destroy()
+
+            self.parent.filter_library()
+
+        elif state == self.state.INSTALLED:
+            self.button.set_label(_("play"))
+            self.button.set_sensitive(True)
+            self.image.set_sensitive(True)
+            self.menu_button.show()
+            self.button_cancel.hide()
+            self.menu_button.show()
+            self.game.install_dir = self.__get_install_dir()
+
+            if self.progress_bar:
+                self.progress_bar.destroy()
+
+        elif state == self.state.UNINSTALLING:
+            self.button.set_label(_("uninstalling.."))
+            self.button.set_sensitive(False)
+            self.image.set_sensitive(False)
+            self.menu_button.hide()
+            self.button_cancel.hide()
+
+            self.game.install_dir = ""
+
+            self.parent.filter_library()

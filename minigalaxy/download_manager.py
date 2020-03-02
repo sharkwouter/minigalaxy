@@ -81,22 +81,23 @@ class __DownloadManger:
         download_request = SESSION.get(download.url, headers=resume_header, stream=True)
         downloaded_size = start_point
         file_size = int(download_request.headers.get('content-length'))
-        with open(download.save_location, download_mode) as save_file:
-            for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-                # Pause if needed
-                while self.__paused:
-                    time.sleep(0.1)
-                save_file.write(chunk)
-                downloaded_size += len(chunk)
-                if self.__cancel:
-                    self.__cancel = False
-                    save_file.close()
-                    download.cancel()
-                    return
-                if file_size > 0:
-                    progress = int(downloaded_size / file_size * 100)
-                    download.set_progress(progress)
-            save_file.close()
+        if downloaded_size < file_size:
+            with open(download.save_location, download_mode) as save_file:
+                for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                    # Pause if needed
+                    while self.__paused:
+                        time.sleep(0.1)
+                    save_file.write(chunk)
+                    downloaded_size += len(chunk)
+                    if self.__cancel:
+                        self.__cancel = False
+                        save_file.close()
+                        download.cancel()
+                        return
+                    if file_size > 0:
+                        progress = int(downloaded_size / file_size * 100)
+                        download.set_progress(progress)
+                save_file.close()
         finish_thread = threading.Thread(target=download.finish)
         finish_thread.start()
 

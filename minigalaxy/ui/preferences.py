@@ -63,6 +63,10 @@ class Preferences(Gtk.Dialog):
 
     def __save_install_dir_choice(self) -> bool:
         choice = self.button_file_chooser.get_filename()
+        old_dir = Config.get("install_dir")
+        if choice == old_dir:
+            return True
+
         if not os.path.exists(choice):
             try:
                 os.makedirs(choice)
@@ -78,10 +82,8 @@ class Preferences(Gtk.Dialog):
             except:
                 return False
         # Remove the old directory if it is empty
-        old_dir = Config.get("install_dir")
         try:
-            if old_dir != choice:
-                os.rmdir(old_dir)
+            os.rmdir(old_dir)
         except OSError:
             pass
 
@@ -94,21 +96,23 @@ class Preferences(Gtk.Dialog):
         Config.set("keep_installers", self.switch_keep_installers.get_active())
         Config.set("stay_logged_in", self.switch_stay_logged_in.get_active())
         Config.set("show_fps", self.switch_show_fps.get_active())
-        if self.__save_install_dir_choice():
-            self.response(Gtk.ResponseType.OK)
-            self.parent.reset_library()
-            self.destroy()
-        else:
-            dialog = Gtk.MessageDialog(
-                parent=self,
-                modal=True,
-                destroy_with_parent=True,
-                message_type=Gtk.MessageType.ERROR,
-                buttons=Gtk.ButtonsType.OK,
-                text=_("{} isn't a usable path").format(self.entry_installpath.get_text())
-            )
-            dialog.run()
-            dialog.destroy()
+
+        # Only change the install_dir is it was actually changed
+        if self.button_file_chooser.get_filename() != Config.get("install_dir"):
+            if self.__save_install_dir_choice():
+                self.parent.reset_library()
+            else:
+                dialog = Gtk.MessageDialog(
+                    parent=self,
+                    modal=True,
+                    destroy_with_parent=True,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=_("{} isn't a usable path").format(self.entry_installpath.get_text())
+                )
+                dialog.run()
+                dialog.destroy()
+        self.destroy()
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def cancel_pressed(self, button):

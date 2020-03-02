@@ -15,7 +15,7 @@ def install_game(game, installer, parent_window=None) -> None:
         GLib.idle_add(__show_installation_error, game, _("{} failed to download.".format(installer)), parent_window)
         raise FileNotFoundError("The installer {} does not exist".format(installer))
 
-    if not __verify_installer_integrity(""):
+    if not __verify_installer_integrity(installer):
         GLib.idle_add(__show_installation_error, game, _("{} was corrupted. Please download it again.".format(installer)), parent_window)
         os.remove(installer)
         raise FileNotFoundError("The installer {} was corrupted".format(installer))
@@ -67,6 +67,7 @@ def install_game(game, installer, parent_window=None) -> None:
 
 def __show_installation_error(game, message, parent_window=None):
     error_message = [_("Failed to install {}".format(game.name)), message]
+    print("{}: {}".format(error_message[0], error_message[1]))
     dialog = Gtk.MessageDialog(
         message_type=Gtk.MessageType.ERROR,
         parent=parent_window.parent,
@@ -77,19 +78,20 @@ def __show_installation_error(game, message, parent_window=None):
     dialog.format_secondary_text(error_message[1])
     dialog.run()
     dialog.destroy()
-    print("{}: {}".format(error_message[0], error_message[1]))
 
 
 def __verify_installer_integrity(installer):
     try:
+        print("Executing integrity check for {}".format(installer))
         os.chmod(installer, 0o744)
         result = subprocess.run([installer, "--check"])
         if result.returncode == 0:
             return True
         else:
             return False
-    except:
+    except Exception as ex:
         # Any exception means the archive doesn't work, so we don't care with the error is
+        print("Error, exception encountered: {}".format(ex))
         return False
 
 

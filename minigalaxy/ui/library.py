@@ -53,7 +53,7 @@ class Library(Gtk.Viewport):
     def __load_tile_states(self):
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
-            tile.load_state()
+            tile.reload_state()
 
     def filter_library(self, widget: Gtk.Widget = None):
         self.__load_tile_states()
