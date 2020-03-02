@@ -6,8 +6,11 @@
     - Norwegian Bokmål (thanks to kimmalmo)
     - Polish (thanks to ArturWroblewski)
     - French (thanks to thomansb22)
+- Added option to cancel downloads
+- Changed the way games are downloaded to a queue instead of trying to download everything at once.
 - Added support option to game specific menus which open the GOG support page (thanks to BlindJerobine)
 - Ask for confirmation before uninstalling (thanks to Odelpasso)
+- Fixed issue with games not downloading
 
 **0.9.2**
 - Added a button to installed games which allow you to:
