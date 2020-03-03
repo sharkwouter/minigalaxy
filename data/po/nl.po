@@ -301,7 +301,7 @@ msgstr "downloaden.."
 
 #: minigalaxy/ui/gametile.py:239
 msgid "in queue.."
-msgstr ""
+msgstr "in de wachtrij.."
 
 #: minigalaxy/ui/gametile.py:227
 msgid "install"
@@ -321,11 +321,11 @@ msgstr "verwijderen.."
 
 #: minigalaxy/installer.py:39
 msgid "{} could not be unzipped."
-msgstr ""
+msgstr "{} kan niet uitgepakt worden"
 
 #: minigalaxy/installer.py:15
 msgid "{} failed to download."
-msgstr ""
+msgstr "{} kon niet worden gedownload"
 
 #: minigalaxy/ui/preferences.py:111
 msgid "{} isn't a usable path"
@@ -333,7 +333,7 @@ msgstr "{} is geen bruikbaar pad"
 
 #: minigalaxy/installer.py:19
 msgid "{} was corrupted. Please download it again."
-msgstr ""
+msgstr "{} is beschadigd. Download het opnieuw."
 
 #~ msgid "Minigalaxy is now running in offline mode"
 #~ msgstr "Minigalaxy is nu in offline modus"
