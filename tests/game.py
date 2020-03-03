@@ -32,7 +32,6 @@ class MyTestCase(unittest.TestCase):
         self.assertNotEqual(larry2_local_gog, larry1_local_gog)
         self.assertNotEqual(larry2_local_gog, larry1_local_minigalaxy)
         self.assertNotEqual(larry2_local_minigalaxy, larry1_api)
-        self.assertNotEqual(larry1_local_minigalaxy, larry1_local_gog)
         self.assertNotEqual(larry2_local_minigalaxy, larry1_local_minigalaxy)
 
     def test_local_comparison(self):
