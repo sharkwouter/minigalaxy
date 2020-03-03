@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-02 21:31+0100\n"
-"PO-Revision-Date: 2020-01-08 17:52+0300\n"
+"PO-Revision-Date: 2020-03-03 13:59+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
@@ -36,12 +36,12 @@ msgstr "Hakkında"
 
 #: minigalaxy/ui/gametile.py:80
 msgid "Are you sure you want to cancel downloading {}?"
-msgstr ""
+msgstr "{} indirmesini iptal etmek istediğine emin misin?"
 
 #: minigalaxy/ui/gametile.py:93
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
-msgstr ""
+msgstr "%s silmek istediğine emin misin?"
 
 #: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
@@ -62,7 +62,7 @@ msgstr "GOG sunucularına bağlanılanamıyor"
 
 #: minigalaxy/ui/gametile.py:117
 msgid "Couldn't open support page"
-msgstr ""
+msgstr "Destek sayfası açılamadı"
 
 #: minigalaxy/launcher.py:37
 msgid "Couldn't start subprocess"
@@ -182,7 +182,7 @@ msgstr "Dosyaları Aç"
 
 #: minigalaxy/ui/gametile.py:119
 msgid "Please check your internet connection"
-msgstr ""
+msgstr "Lütfen internet bağlantınızı kontrol ediniz"
 
 #: minigalaxy/constants.py:21
 msgid "Polish"
@@ -228,7 +228,7 @@ msgstr "Kaydet"
 #: data/ui/preferences.ui:187
 msgctxt "show_fps"
 msgid "Show FPS in games:"
-msgstr ""
+msgstr "Oyunlarda FPS göster:"
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -242,6 +242,8 @@ msgid ""
 "Show the framerate while playing games. Only works with AMD and Nvidia "
 "graphics cards."
 msgstr ""
+"Oyun oynarken kare hızını göster. Sadece AMD ve Nvidia ekran kartlarında "
+"çalışır."
 
 #: minigalaxy/constants.py:24
 msgid "Spanish"
@@ -257,7 +259,7 @@ msgstr "Çevrimci tut:"
 #: data/ui/gametile.ui:17
 msgctxt "support"
 msgid "Support"
-msgstr ""
+msgstr "Destek"
 
 #: minigalaxy/constants.py:25
 msgid "Swedish"
@@ -271,7 +273,7 @@ msgstr "İndirilen oyunlar için tercih edilen dil"
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
-msgstr "Burası oyunların indirleceği yerdir"
+msgstr "Burası oyunların indireleceği yerdir"
 
 #: minigalaxy/constants.py:26
 msgid "Turkish"
@@ -294,11 +296,11 @@ msgstr "indir"
 
 #: minigalaxy/ui/gametile.py:247
 msgid "downloading.."
-msgstr "indirliyor…"
+msgstr "indirliyor.."
 
 #: minigalaxy/ui/gametile.py:239
 msgid "in queue.."
-msgstr ""
+msgstr "sırada.."
 
 #: minigalaxy/ui/gametile.py:227
 msgid "install"
@@ -318,11 +320,11 @@ msgstr "siliniyor.."
 
 #: minigalaxy/installer.py:39
 msgid "{} could not be unzipped."
-msgstr ""
+msgstr "{} arşivden çıkartılamadı."
 
 #: minigalaxy/installer.py:15
 msgid "{} failed to download."
-msgstr ""
+msgstr "{} indirirken hata."
 
 #: minigalaxy/ui/preferences.py:111
 msgid "{} isn't a usable path"
@@ -330,7 +332,7 @@ msgstr "{} kullanılabilinir bir yol değil"
 
 #: minigalaxy/installer.py:19
 msgid "{} was corrupted. Please download it again."
-msgstr ""
+msgstr "{} bozuk. Lütfen yeniden indirin."
 
 #~ msgid "Minigalaxy is now running in offline mode"
 #~ msgstr "Minigalaxy şuan çevrimdışı modunda çalışıyor"
