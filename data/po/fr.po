@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-02 21:31+0100\n"
-"PO-Revision-Date: 2020-03-03 12:33+0100\n"
+"PO-Revision-Date: 2020-03-03 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -36,7 +36,7 @@ msgstr "À propos"
 
 #: minigalaxy/ui/gametile.py:80
 msgid "Are you sure you want to cancel downloading {}?"
-msgstr "Êtes-vous sûr de vouloir annuler le téléchargement {}?"
+msgstr "Êtes-vous sûr de vouloir annuler le téléchargement {} ?"
 
 #: minigalaxy/ui/gametile.py:93
 msgid "Are you sure you want to uninstall %s?"
@@ -81,7 +81,7 @@ msgstr "Anglais"
 
 #: minigalaxy/installer.py:69
 msgid "Failed to install {}"
-msgstr "Impossible de démarrer {}:"
+msgstr "Impossible de démarrer {} :"
 
 #: minigalaxy/ui/library.py:134
 msgid "Failed to retrieve library"
@@ -89,7 +89,7 @@ msgstr "Impossible de récupérer la bibliothèque"
 
 #: minigalaxy/launcher.py:51
 msgid "Failed to start {}:"
-msgstr "Impossible de démarrer {}:"
+msgstr "Impossible de démarrer {} :"
 
 #: minigalaxy/constants.py:13
 msgid "Finnish"
