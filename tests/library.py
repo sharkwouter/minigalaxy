@@ -6,11 +6,11 @@ from minigalaxy.config import Config
 from minigalaxy.game import Game
 
 test_local_games = [
-    Game("Leisure Suit Larry VGA", install_dir="/home/user/Games/Leisure Suit Larry VGA"),
-    Game("Leisure Suit Larry", install_dir="/home/user/Games/Leisure Suit Larry"),
-    Game("Leisure Suit Larry 3", install_dir="/home/user/Games/Leisure Suit Larry 3 - Passionate Patti in Pursuit of the Pulsating Pectorals!"),
-    Game("Leisure Suit Larry 2", install_dir="/home/user/Games/Leisure Suit Larry 2 - Looking For Love (In Several Wrong Places)"),
-    Game("Leisure Suit Larry 6 VGA", install_dir="/home/user/Games/Leisure Suit Larry 6 (VGA) - Shape Up Or Slip Out")
+    Game("Leisure Suit Larry VGA", install_dir="/home/user/Games/Leisure Suit Larry VGA", game_id=1207662043),
+    Game("Leisure Suit Larry", install_dir="/home/user/Games/Leisure Suit Larry", game_id=1207662033),
+    Game("Leisure Suit Larry 3", install_dir="/home/user/Games/Leisure Suit Larry 3 - Passionate Patti in Pursuit of the Pulsating Pectorals!", game_id=1207662063),
+    Game("Leisure Suit Larry 2", install_dir="/home/user/Games/Leisure Suit Larry 2 - Looking For Love (In Several Wrong Places)", game_id=1207662053),
+    Game("Leisure Suit Larry 6 VGA", install_dir="/home/user/Games/Leisure Suit Larry 6 (VGA) - Shape Up Or Slip Out", game_id=1207662093)
 ]
 
 test_api_games = [
