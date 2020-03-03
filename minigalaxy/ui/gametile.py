@@ -77,7 +77,7 @@ class GameTile(Gtk.Box):
                                            flags=Gtk.DialogFlags.MODAL,
                                            message_type=Gtk.MessageType.WARNING,
                                            buttons=Gtk.ButtonsType.OK_CANCEL,
-                                           message_format=_("Are you sure you want to cancel downloading {}?".format(self.game.name)))
+                                           message_format=_("Are you sure you want to cancel downloading {}?").format(self.game.name))
         response = message_dialog.run()
 
         if response == Gtk.ResponseType.OK:

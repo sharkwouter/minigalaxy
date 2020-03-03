@@ -12,11 +12,11 @@ from minigalaxy.config import Config
 
 def install_game(game, installer, parent_window=None) -> None:
     if not os.path.exists(installer):
-        GLib.idle_add(__show_installation_error, game, _("{} failed to download.".format(installer)), parent_window)
+        GLib.idle_add(__show_installation_error, game, _("{} failed to download.").format(installer), parent_window)
         raise FileNotFoundError("The installer {} does not exist".format(installer))
 
     if not __verify_installer_integrity(installer):
-        GLib.idle_add(__show_installation_error, game, _("{} was corrupted. Please download it again.".format(installer)), parent_window)
+        GLib.idle_add(__show_installation_error, game, _("{} was corrupted. Please download it again.").format(installer), parent_window)
         os.remove(installer)
         raise FileNotFoundError("The installer {} was corrupted".format(installer))
 
@@ -36,7 +36,7 @@ def install_game(game, installer, parent_window=None) -> None:
                 attr = file.external_attr >> 16
                 os.chmod(os.path.join(temp_dir, member), attr)
     except zipfile.BadZipFile as e:
-        GLib.idle_add(__show_installation_error, game, _("{} could not be unzipped.".format(installer)), parent_window)
+        GLib.idle_add(__show_installation_error, game, _("{} could not be unzipped.").format(installer), parent_window)
         raise e
 
     # Make sure the install directory exists
@@ -66,7 +66,7 @@ def install_game(game, installer, parent_window=None) -> None:
 
 
 def __show_installation_error(game, message, parent_window=None):
-    error_message = [_("Failed to install {}".format(game.name)), message]
+    error_message = [_("Failed to install {}").format(game.name), message]
     print("{}: {}".format(error_message[0], error_message[1]))
     dialog = Gtk.MessageDialog(
         message_type=Gtk.MessageType.ERROR,
