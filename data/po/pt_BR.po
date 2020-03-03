@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-02 21:31+0100\n"
+"POT-Creation-Date: 2020-03-03 21:06+0100\n"
 "PO-Revision-Date: 2020-01-20 16:53-0300\n"
 "Last-Translator: Esdras Tarsis <esdrastarsis@gmail.com>\n"
 "Language-Team: \n"
@@ -39,6 +39,7 @@ msgid "Are you sure you want to cancel downloading {}?"
 msgstr ""
 
 #: minigalaxy/ui/gametile.py:93
+#, python-format
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Você tem certeza de que deseja desinstalar %s"
 
