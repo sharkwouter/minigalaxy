@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-02 21:31+0100\n"
-"PO-Revision-Date: 2020-03-01 11:32+0800\n"
+"PO-Revision-Date: 2020-03-03 08:56+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
 "Language: zh_TW\n"
@@ -35,12 +35,12 @@ msgstr "關於"
 
 #: minigalaxy/ui/gametile.py:80
 msgid "Are you sure you want to cancel downloading {}?"
-msgstr ""
+msgstr "您確定您想要取消下載 {} 嗎？"
 
 #: minigalaxy/ui/gametile.py:93
-#, fuzzy, python-format
+#, python-format
 msgid "Are you sure you want to uninstall %s?"
-msgstr "您確定要解除安裝 %s 嗎"
+msgstr "您確定要解除安裝 %s 嗎？"
 
 #: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
@@ -80,9 +80,8 @@ msgid "English"
 msgstr "英文"
 
 #: minigalaxy/installer.py:69
-#, fuzzy
 msgid "Failed to install {}"
-msgstr "啟動 {} 失敗："
+msgstr "安裝 {} 失敗"
 
 #: minigalaxy/ui/library.py:134
 msgid "Failed to retrieve library"
@@ -293,13 +292,12 @@ msgid "download"
 msgstr "下載"
 
 #: minigalaxy/ui/gametile.py:247
-#, fuzzy
 msgid "downloading.."
 msgstr "正在下載……"
 
 #: minigalaxy/ui/gametile.py:239
 msgid "in queue.."
-msgstr ""
+msgstr "在佇列中……"
 
 #: minigalaxy/ui/gametile.py:227
 msgid "install"
@@ -319,11 +317,11 @@ msgstr "正在解除安裝……"
 
 #: minigalaxy/installer.py:39
 msgid "{} could not be unzipped."
-msgstr ""
+msgstr "無法解壓縮 {}。"
 
 #: minigalaxy/installer.py:15
 msgid "{} failed to download."
-msgstr ""
+msgstr "{} 下載失敗。"
 
 #: minigalaxy/ui/preferences.py:111
 msgid "{} isn't a usable path"
@@ -331,7 +329,7 @@ msgstr "{} 不是可用的路徑"
 
 #: minigalaxy/installer.py:19
 msgid "{} was corrupted. Please download it again."
-msgstr ""
+msgstr "{} 已損毀。請再下載一次。"
 
 #~ msgid "Minigalaxy is now running in offline mode"
 #~ msgstr "Minigalaxy 目前以離線模式執行"
