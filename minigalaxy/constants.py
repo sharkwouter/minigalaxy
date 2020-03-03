@@ -28,7 +28,6 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
 
 # The default values for new configuration files
 DEFAULT_CONFIGURATION = {
-    "config_version": VERSION,
     "lang": "en",
     "install_dir": DEFAULT_INSTALL_DIR,
     "keep_installers": False,
