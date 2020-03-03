@@ -55,7 +55,7 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 
 - GTK+
 - Python 3
-- PyGObject 3.30+
+- PyGObject 3.29.1+
 - Webkit2gtk with API version 4.0 support
 - Python Requests
 
@@ -85,7 +85,7 @@ sudo dnf install minigalaxy
 
 **openSUSE**
 
-Available in the [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy). You can use the following set of commands to install Minigalaxy on openSUSE:
+Available in official repos for openSUSE Tumbleweed. You can use the following set of commands to install Minigalaxy on openSUSE from the devel project on [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy):
 ```shell script
 sudo zypper ar -f obs://games:tools gamestools
 sudo zypper ref

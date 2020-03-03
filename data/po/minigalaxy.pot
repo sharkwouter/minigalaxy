@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-08 19:50+0100\n"
+"POT-Creation-Date: 2020-03-02 21:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +23,7 @@ msgctxt "short_description"
 msgid "A simple GOG client for Linux"
 msgstr ""
 
-#: minigalaxy/window/about.py:15
+#: minigalaxy/ui/about.py:15
 msgid "About"
 msgstr ""
 
@@ -33,12 +33,16 @@ msgctxt "about"
 msgid "About"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:76
-#, python-format
-msgid "Are you sure to uninstall %s"
+#: minigalaxy/ui/gametile.py:80
+msgid "Are you sure you want to cancel downloading {}?"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:9
+#: minigalaxy/ui/gametile.py:93
+#, python-format
+msgid "Are you sure you want to uninstall %s?"
+msgstr ""
+
+#: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
 msgstr ""
 
@@ -47,48 +51,55 @@ msgctxt "cancel"
 msgid "Cancel"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:10
+#: minigalaxy/constants.py:9
 msgid "Chinese"
 msgstr ""
 
-#: minigalaxy/window/window.py:163 minigalaxy/window/window.py:279
-#: minigalaxy/window/window.py:291
+#: minigalaxy/ui/library.py:134
 msgid "Couldn't connect to GOG servers"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:253
+#: minigalaxy/ui/gametile.py:117
+msgid "Couldn't open support page"
+msgstr ""
+
+#: minigalaxy/launcher.py:37
 msgid "Couldn't start subprocess"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:11
+#: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:12
+#: minigalaxy/constants.py:11
 msgid "Dutch"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:13
+#: minigalaxy/constants.py:12
 msgid "English"
 msgstr ""
 
-#: minigalaxy/window/window.py:163
+#: minigalaxy/installer.py:69
+msgid "Failed to install {}"
+msgstr ""
+
+#: minigalaxy/ui/library.py:134
 msgid "Failed to retrieve library"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:267
+#: minigalaxy/launcher.py:51
 msgid "Failed to start {}:"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:14
+#: minigalaxy/constants.py:13
 msgid "Finnish"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:15
+#: minigalaxy/constants.py:14
 msgid "French"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:16
+#: minigalaxy/constants.py:15
 msgid "German"
 msgstr ""
 
@@ -98,7 +109,7 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:17
+#: minigalaxy/constants.py:16
 msgid "Hungarian"
 msgstr ""
 
@@ -114,15 +125,15 @@ msgctxt "installed"
 msgid "Installed"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:18
+#: minigalaxy/constants.py:17
 msgid "Italian"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:19
+#: minigalaxy/constants.py:18
 msgid "Japanese"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:55
+#: minigalaxy/ui/preferences.py:36
 msgid ""
 "Keep installers after downloading a game.\n"
 "Installers are stored in: {}"
@@ -134,11 +145,11 @@ msgctxt "keep_installer"
 msgid "Keep installers: "
 msgstr ""
 
-#: minigalaxy/window/preferences.py:20
+#: minigalaxy/constants.py:19
 msgid "Korean"
 msgstr ""
 
-#: minigalaxy/window/login.py:23
+#: minigalaxy/ui/login.py:23
 msgid "Login"
 msgstr ""
 
@@ -148,37 +159,37 @@ msgctxt "logout"
 msgid "Logout"
 msgstr ""
 
-#: minigalaxy/window/window.py:281
-msgid "Minigalaxy is now running in offline mode"
-msgstr ""
-
-#: minigalaxy/window/gametile.py:264
+#: minigalaxy/launcher.py:48
 msgid "No error message was returned"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:241
+#: minigalaxy/launcher.py:25
 msgid "No executable was found in {}"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:21
+#: minigalaxy/constants.py:20
 msgid "Norwegian"
 msgstr ""
 
 #. Opens the directory the game is installed in
-#: data/ui/gametile.ui:17
+#: data/ui/gametile.ui:31
 msgctxt "open_files"
 msgid "Open Files"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:22
+#: minigalaxy/ui/gametile.py:119
+msgid "Please check your internet connection"
+msgstr ""
+
+#: minigalaxy/constants.py:21
 msgid "Polish"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:23
+#: minigalaxy/constants.py:22
 msgid "Portuguese"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:44
+#: minigalaxy/ui/preferences.py:25
 msgid "Preferences"
 msgstr ""
 
@@ -200,7 +211,7 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:24
+#: minigalaxy/constants.py:23
 msgid "Russian"
 msgstr ""
 
@@ -210,13 +221,26 @@ msgctxt "save"
 msgid "Save"
 msgstr ""
 
+#. Has to end with ": "
+#: data/ui/preferences.ui:187
+msgctxt "show_fps"
+msgid "Show FPS in games:"
+msgstr ""
+
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
 msgctxt "tooltil_installed"
 msgid "Show only installed games"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:25
+#: data/ui/preferences.ui:184
+msgctxt "show_fps_tooltip"
+msgid ""
+"Show the framerate while playing games. Only works with AMD and Nvidia "
+"graphics cards."
+msgstr ""
+
+#: minigalaxy/constants.py:24
 msgid "Spanish"
 msgstr ""
 
@@ -226,7 +250,13 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr ""
 
-#: minigalaxy/window/preferences.py:26
+#. Opens the official support webpage
+#: data/ui/gametile.ui:17
+msgctxt "support"
+msgid "Support"
+msgstr ""
+
+#: minigalaxy/constants.py:25
 msgid "Swedish"
 msgstr ""
 
@@ -240,16 +270,12 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr ""
 
-#: minigalaxy/window/window.py:293
-msgid "Try again with an active internet connection"
-msgstr ""
-
-#: minigalaxy/window/preferences.py:27
+#: minigalaxy/constants.py:26
 msgid "Turkish"
 msgstr ""
 
 #. Removes the game files from the local machine
-#: data/ui/gametile.ui:31
+#: data/ui/gametile.ui:45
 msgctxt "uninstall"
 msgid "Uninstall"
 msgstr ""
@@ -259,30 +285,46 @@ msgctxt "stay_logged_in_tooltip"
 msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:228
+#: minigalaxy/ui/gametile.py:215
 msgid "download"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:66
-msgid "downloading..."
+#: minigalaxy/ui/gametile.py:247
+msgid "downloading.."
 msgstr ""
 
-#: minigalaxy/window/gametile.py:223
+#: minigalaxy/ui/gametile.py:239
+msgid "in queue.."
+msgstr ""
+
+#: minigalaxy/ui/gametile.py:227
 msgid "install"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:142
+#: minigalaxy/ui/gametile.py:257
 msgid "installing.."
 msgstr ""
 
-#: minigalaxy/window/gametile.py:218
+#: minigalaxy/ui/gametile.py:271
 msgid "play"
 msgstr ""
 
-#: minigalaxy/window/gametile.py:82
+#: minigalaxy/ui/gametile.py:283
 msgid "uninstalling.."
 msgstr ""
 
-#: minigalaxy/window/preferences.py:126
+#: minigalaxy/installer.py:39
+msgid "{} could not be unzipped."
+msgstr ""
+
+#: minigalaxy/installer.py:15
+msgid "{} failed to download."
+msgstr ""
+
+#: minigalaxy/ui/preferences.py:111
 msgid "{} isn't a usable path"
+msgstr ""
+
+#: minigalaxy/installer.py:19
+msgid "{} was corrupted. Please download it again."
 msgstr ""
