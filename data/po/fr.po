@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-02 21:31+0100\n"
-"PO-Revision-Date: 2020-01-17 18:05+0100\n"
+"PO-Revision-Date: 2020-03-03 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -36,7 +36,7 @@ msgstr "À propos"
 
 #: minigalaxy/ui/gametile.py:80
 msgid "Are you sure you want to cancel downloading {}?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir annuler le téléchargement {} ?"
 
 #: minigalaxy/ui/gametile.py:93
 msgid "Are you sure you want to uninstall %s?"
@@ -81,7 +81,7 @@ msgstr "Anglais"
 
 #: minigalaxy/installer.py:69
 msgid "Failed to install {}"
-msgstr "Impossible de démarrer {}:"
+msgstr "Impossible de démarrer {} :"
 
 #: minigalaxy/ui/library.py:134
 msgid "Failed to retrieve library"
@@ -89,7 +89,7 @@ msgstr "Impossible de récupérer la bibliothèque"
 
 #: minigalaxy/launcher.py:51
 msgid "Failed to start {}:"
-msgstr "Impossible de démarrer {}:"
+msgstr "Impossible de démarrer {} :"
 
 #: minigalaxy/constants.py:13
 msgid "Finnish"
@@ -227,7 +227,7 @@ msgstr "Sauvegarder"
 #: data/ui/preferences.ui:187
 msgctxt "show_fps"
 msgid "Show FPS in games:"
-msgstr ""
+msgstr "Montrer les IPS dans les jeux :"
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -241,6 +241,8 @@ msgid ""
 "Show the framerate while playing games. Only works with AMD and Nvidia "
 "graphics cards."
 msgstr ""
+"Montrez le framerate en jouant. Ne fonctionne qu'avec les cartes graphiques "
+"AMD et Nvidia."
 
 #: minigalaxy/constants.py:24
 msgid "Spanish"
@@ -299,7 +301,7 @@ msgstr "téléchargement…"
 
 #: minigalaxy/ui/gametile.py:239
 msgid "in queue.."
-msgstr ""
+msgstr "dans la file d'attente…"
 
 #: minigalaxy/ui/gametile.py:227
 msgid "install"
@@ -319,11 +321,11 @@ msgstr "désinstallation…"
 
 #: minigalaxy/installer.py:39
 msgid "{} could not be unzipped."
-msgstr ""
+msgstr "{} n'a pas pu être décompressé."
 
 #: minigalaxy/installer.py:15
 msgid "{} failed to download."
-msgstr ""
+msgstr "{} n'a pas pu être téléchargé."
 
 #: minigalaxy/ui/preferences.py:111
 msgid "{} isn't a usable path"
@@ -331,7 +333,7 @@ msgstr "{} n'est pas un chemin utilisable"
 
 #: minigalaxy/installer.py:19
 msgid "{} was corrupted. Please download it again."
-msgstr ""
+msgstr "{} a été corrompu. Veuillez le télécharger à nouveau."
 
 #~ msgid "Minigalaxy is now running in offline mode"
 #~ msgstr "Minigalaxy fonctionne maintenant en mode hors ligne"
