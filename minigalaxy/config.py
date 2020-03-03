@@ -62,6 +62,7 @@ class __Config:
                 self.set(key, DEFAULT_CONFIGURATION[key])
                 added_value = True
         if added_value:
+            self.__update_config_file()
             self.__config = self.__load_config_file()
 
     def set(self, key, value):
