@@ -12,6 +12,7 @@
 - Ask for confirmation before uninstalling (thanks to Odelpasso).
 - Downloads can now be resumed after having been cancelled before.
 - Installers are now verified before installing.
+- The active download is now resumed when restarting Minigalaxy.
 - Fixed issue with games not downloading.
 
 **0.9.2**
