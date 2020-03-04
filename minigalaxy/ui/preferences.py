@@ -6,6 +6,7 @@ from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES
 from minigalaxy.config import Config
+from minigalaxy.download_manager import DownloadManager
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "preferences.ui"))
@@ -99,6 +100,7 @@ class Preferences(Gtk.Dialog):
 
         # Only change the install_dir is it was actually changed
         if self.button_file_chooser.get_filename() != Config.get("install_dir"):
+            DownloadManager.cancel_all_downloads()
             if self.__save_install_dir_choice():
                 self.parent.reset_library()
             else:

@@ -48,6 +48,15 @@ class __DownloadManger:
     def cancel_current_download(self):
         self.__cancel = True
 
+    def cancel_all_downloads(self):
+        while not self.__queue.empty():
+            self.__queue.get()
+        self.cancel_current_download()
+
+        # wait for the download to be fully cancelled
+        while self.__current_download:
+            time.sleep(0.1)
+
     def __download_thread(self):
         while True:
             if not self.__queue.empty():
@@ -93,6 +102,7 @@ class __DownloadManger:
                         self.__cancel = False
                         save_file.close()
                         download.cancel()
+                        self.__current_download = None
                         return
                     if file_size > 0:
                         progress = int(downloaded_size / file_size * 100)
