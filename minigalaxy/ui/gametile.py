@@ -54,6 +54,22 @@ class GameTile(Gtk.Box):
         self.reload_state()
         self.load_thumbnail()
 
+        # Start download if Minigalaxy was closed while downloading this game
+        self.resume_download_if_expected()
+
+    # Downloads if Minigalaxy was closed with this game downloading
+    def resume_download_if_expected(self):
+        download_id = Config.get("current_download")
+        if download_id and download_id == self.game.id and self.current_state == self.state.DOWNLOADABLE:
+            download_thread = threading.Thread(target=self.__download_file)
+            download_thread.start()
+
+    # Do not restart the download if Minigalaxy is restarted
+    def prevent_resume_on_startup(self):
+        download_id = Config.get("current_download")
+        if download_id and download_id == self.game.id:
+            Config.unset("current_download")
+
     def __str__(self):
         return self.game.name
 
@@ -81,6 +97,7 @@ class GameTile(Gtk.Box):
         response = message_dialog.run()
 
         if response == Gtk.ResponseType.OK:
+            self.prevent_resume_on_startup()
             DownloadManager.cancel_download(self.download)
         message_dialog.destroy()
 
@@ -149,6 +166,7 @@ class GameTile(Gtk.Box):
         return False
 
     def __download_file(self) -> None:
+        Config.set("current_download", self.game.id)
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
         download_info = self.api.get_download_info(self.game)
         file_url = download_info["downlink"]
