@@ -19,14 +19,14 @@ setup(
         ('share/metainfo', ['data/minigalaxy.metainfo.xml']),
 
         # Add translations
-        ('share/minigalaxy/translations/nl/LC_MESSAGES/', ['data/mo/nl/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/de/LC_MESSAGES/', ['data/mo/de/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/tr/LC_MESSAGES/', ['data/mo/tr/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/fr/LC_MESSAGES/', ['data/mo/fr/LC_MESSAGES/minigalaxy.mo']),
+        ('share/minigalaxy/translations/nb_NO/LC_MESSAGES/', ['data/mo/nb_NO/LC_MESSAGES/minigalaxy.mo']),
+        ('share/minigalaxy/translations/nl/LC_MESSAGES/', ['data/mo/nl/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/pl/LC_MESSAGES/', ['data/mo/pl/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/pt_BR/LC_MESSAGES/', ['data/mo/pt_BR/LC_MESSAGES/minigalaxy.mo']),
+        ('share/minigalaxy/translations/tr/LC_MESSAGES/', ['data/mo/tr/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/zh_TW/LC_MESSAGES/', ['data/mo/zh_TW/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/nb_NO/LC_MESSAGES/', ['data/mo/nb_NO/LC_MESSAGES/minigalaxy.mo']),
     ],
 
     # Project uses reStructuredText, so ensure that the docutils get
