@@ -1,3 +1,22 @@
+minigalaxy (0.9.3) buster; urgency=medium
+  * Added the following translations:
+    * German (thanks to BlindJerobine)
+    * Turkish (thanks to fuzunspm)
+    * Brazilian Portuguese (thanks to EsdrasTarsis)
+    * Norwegian Bokmål (thanks to kimmalmo)
+    * Polish (thanks to ArturWroblewski)
+    * French (thanks to thomansb22)
+  * Added option to cancel downloads.
+  * Changed the way games are downloaded to a queue instead of trying to download everything at once.
+  * Added support option to game specific menus which open the GOG support page (thanks to BlindJerobine).
+  * Ask for confirmation before uninstalling (thanks to Odelpasso).
+  * Downloads can now be resumed after having been cancelled before.
+  * Installers are now verified before installing.
+  * The active download is now resumed when restarting Minigalaxy.
+  * Fixed issue with games not downloading.
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Wed, 04 Mar 2020 21:15:37 +0100
+
 minigalaxy (0.9.2) buster; urgency=medium
 
   * Added a button to installed games which allow you to:
