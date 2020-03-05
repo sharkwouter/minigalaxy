@@ -102,7 +102,7 @@ Available in the [in the Metahax overlay](https://github.com/metafarion/metahax)
 
 <details><summary>MX Linux</summary>
 
-Currently available in the [official repository](http://mxrepo.com/mx/repo/pool/test/m/minigalaxy/).  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
+Currently available in the [official repository](http://mxrepo.com/mx/repo/pool/main/m/minigalaxy/).  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
 </details>
 
 <details><summary>Other distributions</summary>
