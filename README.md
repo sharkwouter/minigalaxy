@@ -61,55 +61,61 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 
 ## Installation
 
-**Ubuntu/Debian**
-
+<details><summary>Ubuntu/Debian</summary>
 Download the latest deb package from the [releases page](https://github.com/sharkwouter/minigalaxy/releases) and install it.
+</details>
 
-**Arch/Manjaro**
+<details><summary>Arch/Manjaro</summary>
 
 Available the [AUR](https://aur.archlinux.org/packages/minigalaxy). You can use an AUR helper or use the following set of commands to install Minigalaxy on Arch:
 
-```shell script
+```
 git clone https://aur.archlinux.org/minigalaxy.git
 cd minigalaxy
 makepkg -si
 ```
+</details>
 
-**Fedora**
+<details><summary>Fedora</summary>
 
 Available in [official repos](https://src.fedoraproject.org/rpms/minigalaxy) (F31+)
 
-```shell script
+```
 sudo dnf install minigalaxy
 ```
+</details>
 
-**openSUSE**
+<details><summary>openSUSE</summary>
 
 Available in official repos for openSUSE Tumbleweed. You can use the following set of commands to install Minigalaxy on openSUSE from the devel project on [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy):
-```shell script
+```
 sudo zypper ar -f obs://games:tools gamestools
 sudo zypper ref
 sudo zypper in minigalaxy
 ```
+</details>
 
-**Gentoo**
+<details><summary>Gentoo</summary>
 
 Available in the [in the Metahax overlay](https://github.com/metafarion/metahax). Follow the instructions in the link to install Minigalaxy on Gentoo.
+</details>
 
-**MX Linux**
+<details><summary>MX Linux</summary>
 
-Currently available in the [Test Repository](http://mxrepo.com/mx/testrepo/pool/test/m/minigalaxy/).  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
+Currently available in the [official repository](http://mxrepo.com/mx/repo/pool/test/m/minigalaxy/).  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
+</details>
 
-**Other distributions**
+<details><summary>Other distributions</summary>
 
 On other distributions Minigalaxy can be downloaded and started with the following commands:
-```shell script
+```
 git clone https://github.com/sharkwouter/minigalaxy.git
 cd minigalaxy
 bin/minigalaxy
 ```
 
 This will be the development version. Alternatively a tarball of a specific release can be downloaded from the [releases page](https://github.com/sharkwouter/minigalaxy/releases).
+</details>
 
 ## Support
 If you need any help using Minigalaxy, feel free to join the [Minigalaxy Discord server](https://discord.gg/RC4cXVD).
