@@ -9,7 +9,7 @@ subprocess.run(['scripts/compile-translations.sh'])
 setup(
     name="Minigalaxy",
     version=VERSION,
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     scripts=['bin/minigalaxy'],
 
     data_files=[
