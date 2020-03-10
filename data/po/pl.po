@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-03 21:06+0100\n"
-"PO-Revision-Date: 2020-01-13 11:23+0100\n"
+"PO-Revision-Date: 2020-03-10 09:31+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl_PL\n"
@@ -37,7 +37,7 @@ msgstr "O programie"
 
 #: minigalaxy/ui/gametile.py:80
 msgid "Are you sure you want to cancel downloading {}?"
-msgstr ""
+msgstr "Czy na pewno chcesz anulować pobieranie {}?"
 
 #: minigalaxy/ui/gametile.py:93
 #, python-format
@@ -63,7 +63,7 @@ msgstr "Nie można połączyć się z serwerami GOG"
 
 #: minigalaxy/ui/gametile.py:117
 msgid "Couldn't open support page"
-msgstr ""
+msgstr "Nie można otworzyć strony pomocy technicznej"
 
 #: minigalaxy/launcher.py:37
 msgid "Couldn't start subprocess"
@@ -119,7 +119,7 @@ msgstr "Węgierski"
 #: data/ui/preferences.ui:95
 msgctxt "install_path"
 msgid "Installation path: "
-msgstr "Ścieżka instalacji:"
+msgstr "Ścieżka instalacji: "
 
 #. Used next to a checkbox which switches between showing all games and only installed ones
 #: data/ui/application.ui:115
@@ -147,7 +147,7 @@ msgstr ""
 #: data/ui/preferences.ui:122
 msgctxt "keep_installer"
 msgid "Keep installers: "
-msgstr "Zachowaj pliki instalacyjne:"
+msgstr "Zachowaj pliki instalacyjne: "
 
 #: minigalaxy/constants.py:19
 msgid "Korean"
@@ -183,7 +183,7 @@ msgstr "Otwórz pliki"
 
 #: minigalaxy/ui/gametile.py:119
 msgid "Please check your internet connection"
-msgstr ""
+msgstr "Sprawdź swoje połączenie internetowe"
 
 #: minigalaxy/constants.py:21
 msgid "Polish"
@@ -207,7 +207,7 @@ msgstr "Ustawienia"
 #: data/ui/preferences.ui:70
 msgctxt "preferred_language"
 msgid "Preferred language: "
-msgstr "Preferowany język:"
+msgstr "Preferowany język: "
 
 #. Tooltip for refresh button
 #: data/ui/application.ui:88
@@ -229,7 +229,7 @@ msgstr "Zapis"
 #: data/ui/preferences.ui:187
 msgctxt "show_fps"
 msgid "Show FPS in games:"
-msgstr ""
+msgstr "Pokaż FPS w grach:"
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -243,6 +243,8 @@ msgid ""
 "Show the framerate while playing games. Only works with AMD and Nvidia "
 "graphics cards."
 msgstr ""
+"Pokaż ilość klatek na sekundę FPS w trakcie gry. Działa tylko z kartami "
+"graficznymi AMD i Nvidia."
 
 #: minigalaxy/constants.py:24
 msgid "Spanish"
@@ -258,7 +260,7 @@ msgstr "Pozostań zalogowany:"
 #: data/ui/gametile.ui:17
 msgctxt "support"
 msgid "Support"
-msgstr ""
+msgstr "Wsparcie"
 
 #: minigalaxy/constants.py:25
 msgid "Swedish"
@@ -301,7 +303,7 @@ msgstr "pobieranie..."
 
 #: minigalaxy/ui/gametile.py:239
 msgid "in queue.."
-msgstr ""
+msgstr "w kolejce.."
 
 #: minigalaxy/ui/gametile.py:227
 msgid "install"
@@ -321,11 +323,11 @@ msgstr "odinstalowywanie.."
 
 #: minigalaxy/installer.py:39
 msgid "{} could not be unzipped."
-msgstr ""
+msgstr "{} nie można rozpakować."
 
 #: minigalaxy/installer.py:15
 msgid "{} failed to download."
-msgstr ""
+msgstr "{} nie udało się pobrać."
 
 #: minigalaxy/ui/preferences.py:111
 msgid "{} isn't a usable path"
@@ -333,7 +335,7 @@ msgstr "{} nie jest poprawną ścieżką"
 
 #: minigalaxy/installer.py:19
 msgid "{} was corrupted. Please download it again."
-msgstr ""
+msgstr "{} został uszkodzony. Pobierz go ponownie."
 
 #~ msgid "Minigalaxy is now running in offline mode"
 #~ msgstr "Minigalaxy jest teraz uruchomiony w trybie offline"
