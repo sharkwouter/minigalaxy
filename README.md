@@ -62,9 +62,9 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 ## Installation
 
 <details><summary>Ubuntu/Debian</summary>
+
 Download the latest deb package from the [releases page](https://github.com/sharkwouter/minigalaxy/releases) and install it.
 </details>
-
 <details><summary>Arch/Manjaro</summary>
 
 Available the [AUR](https://aur.archlinux.org/packages/minigalaxy). You can use an AUR helper or use the following set of commands to install Minigalaxy on Arch:
