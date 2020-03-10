@@ -19,6 +19,7 @@ In addition to that, Minigalaxy also allows you to:
 - Search your GOG Linux library
 - Show all games or just the ones you've installed
 - View the error message if a game fails to launch
+- Enable displaying the FPS in games
 - Use the system's Scummvm or Dosbox installation
 
 Features **not** in Minigalaxy:
@@ -30,7 +31,13 @@ Features **not** in Minigalaxy:
 Currently Minigalaxy can be displayed in the following languages:
 - English
 - Dutch
+- French
+- German
+- Polish
 - Taiwanese Mandarin
+- Turkish
+- Brazilian Portuguese (incomplete)
+- Norwegian Bokmål (incomplete)
 
 ## System requirements
 
@@ -144,8 +151,13 @@ Expect to see the following issues:
 Special thanks goes out to all contributors:
 
 - Odelpasso for multiple code contributions
+- BlindJerobine for translating to German and adding the support option
 - s8321414 for translating to Taiwanese Mandarin
-- BlindJerobine for translating to German
+- fuzunspm for translating to Turkish
+- thomansb22 for translating to French
+- ArturWroblewski for translating to Polish
+- kimmalmo for translating to Norwegian Bokmål
+- EsdrasTarsis for translating to Brazilian Portuguese
 - jubalh for packaging Minigalaxy for openSUSE
 - tim77 for packaging Minigalaxy for Fedora
 - metafarion for packaging Minigalaxy for Gentoo
