@@ -1,3 +1,7 @@
+**0.9.4 (unreleased)**
+- Added the following translations:
+    - Norwegian Nynorsk (thanks to LordPilum)
+
 **0.9.3**
 - Added the following translations:
     - German (thanks to BlindJerobine)
