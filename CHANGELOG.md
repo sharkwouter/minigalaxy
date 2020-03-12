@@ -1,6 +1,8 @@
 **0.9.4 (unreleased)**
 - Added the following translations:
     - Norwegian Nynorsk (thanks to LordPilum)
+- Updated the following translations:
+    - Brazilian Portuguese (thanks to EsdrasTarsis)
 
 **0.9.3**
 - Added the following translations:
