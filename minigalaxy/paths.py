@@ -14,7 +14,7 @@ UI_DIR = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/ui"))
 if not os.path.exists(UI_DIR):
     UI_DIR = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/ui"))
 
-LOGO_IMAGE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/minigalaxy.png"))
+LOGO_IMAGE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/icons/192x192/com.github.sharkwouter.minigalaxy.png"))
 if not os.path.exists(LOGO_IMAGE_PATH):
     LOGO_IMAGE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/icons/hicolor/192x192/apps/com.github.sharkwouter.minigalaxy.png"))
 
