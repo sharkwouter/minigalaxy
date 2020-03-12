@@ -7,14 +7,15 @@ from minigalaxy.version import VERSION
 subprocess.run(['scripts/compile-translations.sh'])
 
 setup(
-    name="Minigalaxy",
+    name="minigalaxy",
     version=VERSION,
     packages=find_packages(exclude=['tests']),
     scripts=['bin/minigalaxy'],
 
     data_files=[
         ('share/applications', ['data/com.github.sharkwouter.minigalaxy.desktop']),
-        ('share/icons/hicolor/128x128/apps', ['data/com.github.sharkwouter.minigalaxy.png']),
+        ('share/icons/hicolor/128x128/apps', ['data/icons/128x128/com.github.sharkwouter.minigalaxy.png']),
+        ('share/icons/hicolor/192x192/apps', ['data/icons/192x192/com.github.sharkwouter.minigalaxy.png']),
         ('share/minigalaxy/ui', glob('data/ui/*.ui')),
         ('share/metainfo', ['data/com.github.sharkwouter.minigalaxy.metainfo.xml']),
 
