@@ -14,7 +14,7 @@ setup(
 
     data_files=[
         ('share/applications', ['data/minigalaxy.desktop']),
-        ('share/icons/hicolor/192x192/apps', ['data/minigalaxy.png']),
+        ('share/icons/hicolor/128x128/apps', ['data/minigalaxy.png']),
         ('share/minigalaxy/ui', glob('data/ui/*.ui')),
         ('share/metainfo', ['data/minigalaxy.metainfo.xml']),
 
