@@ -90,11 +90,11 @@ def __get_execute_command(game) -> list:
     # Wine
     if "prefix" in files and shutil.which("wine"):
         # This still needs to be implemented
-        return ["./start.sh"]
+        return [os.path.join(game.install_dir, "start.sh")]
 
     # None of the above, but there is a start script
     if "start.sh" in files:
-        return ["./start.sh"]
+        return [os.path.join(game.install_dir, "start.sh")]
 
     # This is the final resort, applies to FTL
     if "game" in files:
