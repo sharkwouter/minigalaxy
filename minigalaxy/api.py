@@ -7,6 +7,10 @@ from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
 from minigalaxy.config import Config
 
 
+class NoDownloadLinkFound(BaseException):
+    pass
+
+
 class Api:
     def __init__(self):
         self.login_success_url = "https://embed.gog.com/on_login_success"
@@ -83,9 +87,11 @@ class Api:
             for product in response["products"]:
 
                 # Only add products which work on Linux
-                if product["worksOn"]["Linux"] and product["id"] not in IGNORE_GAME_IDS:
-                    game = Game(name=product["title"], game_id=product["id"], image_url=product["image"])
-                    games.append(game)
+                # if product["worksOn"]["Linux"] and product["id"] not in IGNORE_GAME_IDS:
+                if product["id"] not in IGNORE_GAME_IDS:
+                    if product["worksOn"]["Linux"] or Config.get("show_windows_games"):
+                        game = Game(name=product["title"], game_id=product["id"], image_url=product["image"])
+                        games.append(game)
             if current_page == total_pages:
                 all_pages_processed = True
             current_page += 1
@@ -113,22 +119,32 @@ class Api:
         return response
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game) -> tuple:
+    def get_download_info(self, game: Game, operating_system="linux") -> tuple:
         response = self.get_info(game)
         possible_downloads = []
         for installer in response["downloads"]["installers"]:
-            if installer["os"] == "linux":
-                if installer['language'] == Config.get("lang"):
-                    return self.__request(installer["files"][0]["downlink"])
-                if len(possible_downloads) == 0:
-                    possible_downloads.append(installer)
-                    continue
-                if installer['language'] == "en":
-                    possible_downloads.append(installer)
+            if installer["os"] == operating_system:
+                possible_downloads.append(installer)
+        if not possible_downloads:
+            if operating_system == "linux":
+                return self.get_download_info(game, "windows")
+            else:
+                raise NoDownloadLinkFound()
+
+        download_info = possible_downloads[0]
+        for installer in possible_downloads:
+            if installer['language'] == Config.get("lang"):
+                download_info = installer
+                break
+            if installer['language'] == "en":
+                download_info = installer
 
         # Return last entry in possible_downloads. This will either be English or the first langauge in the list
         # This is just a backup, if the preferred language has been found, this part won't execute
-        return self.__request(possible_downloads[-1]["files"][0]["downlink"])
+        return download_info
+
+    def get_real_download_link(self, url):
+        return self.__request(url)['downlink']
 
     def get_user_info(self) -> str:
         username = Config.get("username")

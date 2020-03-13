@@ -1,7 +1,8 @@
 import shutil
+import json
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Gdk
 import os
 import webbrowser
 import threading
@@ -15,6 +16,7 @@ from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game
 from minigalaxy.installer import uninstall_game, install_game
+from minigalaxy.css import CSS_PROVIDER
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -30,6 +32,9 @@ class GameTile(Gtk.Box):
 
     def __init__(self, parent, game, api):
         Gtk.Frame.__init__(self)
+        Gtk.StyleContext.add_provider(self.button.get_style_context(),
+                                      CSS_PROVIDER,
+                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         self.parent = parent
         self.game = game
         self.api = api
@@ -169,8 +174,27 @@ class GameTile(Gtk.Box):
         Config.set("current_download", self.game.id)
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
         download_info = self.api.get_download_info(self.game)
-        file_url = download_info["downlink"]
-        self.download = Download(file_url, self.download_path, self.__install, progress_func=self.set_progress, cancel_func=self.__cancel_download)
+
+        # Start the download for all files
+        self.download = []
+        download_path = self.download_path
+        finish_func = self.__end_download
+        if download_info["os"] == "linux":
+            finish_func = self.__install
+        for key, file_info in enumerate(download_info['files']):
+            if key > 0:
+                download_path = "{}.{}".format(self.download_path, key)
+            download = Download(
+                url=self.api.get_real_download_link(file_info["downlink"]),
+                save_location=download_path,
+                finish_func=finish_func,
+                progress_func=self.set_progress,
+                cancel_func=self.__cancel_download,
+                number=key+1,
+                out_of_amount=len(download_info['files'])
+            )
+            self.download.append(download)
+
         DownloadManager.download(self.download)
 
     def __install(self):
@@ -185,6 +209,10 @@ class GameTile(Gtk.Box):
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
             return
         GLib.idle_add(self.update_to_state, self.state.INSTALLED)
+
+    def __end_download(self):
+        self.game.install_dir = self.__get_install_dir()
+        GLib.idle_add(self.update_to_state, self.state.INSTALLABLE)
 
     def __cancel_download(self):
         GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
@@ -287,6 +315,7 @@ class GameTile(Gtk.Box):
 
         elif state == self.state.INSTALLED:
             self.button.set_label(_("play"))
+            # self.button.get_style_context().add_class("suggested-action")
             self.button.set_sensitive(True)
             self.image.set_sensitive(True)
             self.menu_button.show()

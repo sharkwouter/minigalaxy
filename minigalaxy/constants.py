@@ -32,7 +32,8 @@ DEFAULT_CONFIGURATION = {
     "install_dir": DEFAULT_INSTALL_DIR,
     "keep_installers": False,
     "stay_logged_in": True,
-    "show_fps": False
+    "show_fps": False,
+    "show_windows_games": False
 }
 
 # Game IDs to ignore when received by the API
