@@ -70,56 +70,54 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 
 <details><summary>Ubuntu/Debian</summary>
 
-Download the latest deb package from the [releases page](https://github.com/sharkwouter/minigalaxy/releases) and install it.
+Download the latest deb package from the <a href="https://github.com/sharkwouter/minigalaxy/releases">releases page</a> and install it.
 </details>
 <details><summary>Arch/Manjaro</summary>
 
-Available the [AUR](https://aur.archlinux.org/packages/minigalaxy). You can use an AUR helper or use the following set of commands to install Minigalaxy on Arch:
-
-```
+Available the <a href="https://aur.archlinux.org/packages/minigalaxy">AUR</a>. You can use an AUR helper or use the following set of commands to install Minigalaxy on Arch:
+<pre>
 git clone https://aur.archlinux.org/minigalaxy.git
 cd minigalaxy
 makepkg -si
-```
+</pre>
 </details>
 
 <details><summary>Fedora</summary>
 
-Available in [official repos](https://src.fedoraproject.org/rpms/minigalaxy) (F31+)
-
-```
+Available in <a href="https://src.fedoraproject.org/rpms/minigalaxy">official repos</a> (F31+)
+<pre>
 sudo dnf install minigalaxy
-```
+</pre>
 </details>
 
 <details><summary>openSUSE</summary>
 
-Available in official repos for openSUSE Tumbleweed. You can use the following set of commands to install Minigalaxy on openSUSE from the devel project on [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy):
-```
+Available in official repos for openSUSE Tumbleweed. You can use the following set of commands to install Minigalaxy on openSUSE from the devel project on <a href="https://build.opensuse.org/package/show/games:tools/minigalaxy">OBS</a>:
+<pre>
 sudo zypper ar -f obs://games:tools gamestools
 sudo zypper ref
 sudo zypper in minigalaxy
-```
+</pre>
 </details>
 
 <details><summary>Gentoo</summary>
 
-Available in the [in the Metahax overlay](https://github.com/metafarion/metahax). Follow the instructions in the link to install Minigalaxy on Gentoo.
+Available in the <a href="https://github.com/metafarion/metahax">in the Metahax overlay</a>. Follow the instructions in the link to install Minigalaxy on Gentoo.
 </details>
 
 <details><summary>MX Linux</summary>
 
-Currently available in the [official repository](http://mxrepo.com/mx/repo/pool/main/m/minigalaxy/).  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
+Currently available in the <a href="http://mxrepo.com/mx/repo/pool/main/m/minigalaxy/">official repository</a>.  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
 </details>
 
 <details><summary>Other distributions</summary>
 
 On other distributions Minigalaxy can be downloaded and started with the following commands:
-```
+<pre>
 git clone https://github.com/sharkwouter/minigalaxy.git
 cd minigalaxy
 bin/minigalaxy
-```
+</pre>
 
 This will be the development version. Alternatively a tarball of a specific release can be downloaded from the [releases page](https://github.com/sharkwouter/minigalaxy/releases).
 </details>
