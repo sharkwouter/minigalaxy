@@ -119,7 +119,7 @@ cd minigalaxy
 bin/minigalaxy
 </pre>
 
-This will be the development version. Alternatively a tarball of a specific release can be downloaded from the [releases page](https://github.com/sharkwouter/minigalaxy/releases).
+This will be the development version. Alternatively a tarball of a specific release can be downloaded from the <a href="https://github.com/sharkwouter/minigalaxy/releases">releases page</a>.
 </details>
 
 ## Support
