@@ -110,6 +110,13 @@ Available in the <a href="https://github.com/metafarion/metahax">in the Metahax 
 
 Currently available in the <a href="http://mxrepo.com/mx/repo/pool/main/m/minigalaxy/">official repository</a>.  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
 </details>
+<details><summary>Solus</summary>
+ 
+Available in the official repositories. You can use the following command to install Minigalaxy on Solus:
+<pre>
+sudo eopkg it minigalaxy
+</pre>
+</details>
 
 <details><summary>Other distributions</summary>
 
