@@ -51,6 +51,7 @@ Minigalaxy should work on the following distributions:
 - openSUSE Tumbleweed
 - Gentoo
 - MX Linux 19
+- Solus
 
 Minigalaxy does **not** ship for the following distributions because they do not contain the required version of PyGObject:
 
