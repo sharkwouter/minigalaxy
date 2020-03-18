@@ -28,7 +28,7 @@ class GameTile(Gtk.Box):
     button_cancel = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
 
-    state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED UNINSTALLING')
+    state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING')
 
     def __init__(self, parent, game, api):
         Gtk.Frame.__init__(self)
@@ -206,7 +206,10 @@ class GameTile(Gtk.Box):
         except (FileNotFoundError, BadZipFile):
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
             return
-        GLib.idle_add(self.update_to_state, self.state.INSTALLED)
+        if self.game.platform == "linux":
+            GLib.idle_add(self.update_to_state, self.state.INSTALLED)
+        else:
+            GLib.idle_add(self.update_to_state, self.state.NOTLAUNCHABLE)
 
     def __cancel_download(self):
         GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
@@ -311,6 +314,18 @@ class GameTile(Gtk.Box):
             self.button.set_label(_("play"))
             # self.button.get_style_context().add_class("suggested-action")
             self.button.set_sensitive(True)
+            self.image.set_sensitive(True)
+            self.menu_button.show()
+            self.button_cancel.hide()
+            self.menu_button.show()
+            self.game.install_dir = self.__get_install_dir()
+
+            if self.progress_bar:
+                self.progress_bar.destroy()
+
+        elif state == self.state.NOTLAUNCHABLE:
+            self.button.set_label(_("Use shortcut to launch"))
+            self.button.set_sensitive(False)
             self.image.set_sensitive(True)
             self.menu_button.show()
             self.button_cancel.hide()
