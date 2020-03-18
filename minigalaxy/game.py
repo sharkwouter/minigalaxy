@@ -2,11 +2,12 @@ import re
 
 
 class Game:
-    def __init__(self, name: str, game_id: int = 0, install_dir: str = "", image_url=""):
+    def __init__(self, name: str, game_id: int = 0, install_dir: str = "", image_url="", platform="linux"):
         self.name = name
         self.id = game_id
         self.install_dir = install_dir
         self.image_url = image_url
+        self.platform = platform
 
     def get_stripped_name(self):
         return self.__strip_string(self.name)

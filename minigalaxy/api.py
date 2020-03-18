@@ -85,13 +85,16 @@ class Api:
             total_pages = response["totalPages"]
 
             for product in response["products"]:
-
-                # Only add products which work on Linux
-                # if product["worksOn"]["Linux"] and product["id"] not in IGNORE_GAME_IDS:
                 if product["id"] not in IGNORE_GAME_IDS:
-                    if product["worksOn"]["Linux"] or Config.get("show_windows_games"):
-                        game = Game(name=product["title"], game_id=product["id"], image_url=product["image"])
-                        games.append(game)
+                    # Only support Linux unless the show_windows_games setting is enabled
+                    if product["worksOn"]["Linux"]:
+                        platform = "linux"
+                    elif Config.get("show_windows_games"):
+                        platform = "windows"
+                    else:
+                        continue
+                    game = Game(name=product["title"], game_id=product["id"], image_url=product["image"], platform=platform)
+                    games.append(game)
             if current_page == total_pages:
                 all_pages_processed = True
             current_page += 1

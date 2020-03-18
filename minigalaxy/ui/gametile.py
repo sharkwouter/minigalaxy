@@ -47,7 +47,7 @@ class GameTile(Gtk.Box):
 
         # Set folder for download installer
         self.download_dir = os.path.join(CACHE_DIR, "download")
-        self.download_path = os.path.join(self.download_dir, "{}.sh".format(self.game.name))
+        self.download_path = os.path.join(self.download_dir, self.game.name)
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
@@ -183,7 +183,7 @@ class GameTile(Gtk.Box):
             finish_func = self.__install
         for key, file_info in enumerate(download_info['files']):
             if key > 0:
-                download_path = "{}.{}".format(self.download_path, key)
+                download_path = "{}-{}.bin".format(self.download_path, key)
             download = Download(
                 url=self.api.get_real_download_link(file_info["downlink"]),
                 save_location=download_path,

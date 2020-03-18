@@ -15,10 +15,14 @@ def install_game(game, installer, parent_window=None) -> None:
         GLib.idle_add(__show_installation_error, game, _("{} failed to download.").format(installer), parent_window)
         raise FileNotFoundError("The installer {} does not exist".format(installer))
 
-    if not __verify_installer_integrity(installer):
-        GLib.idle_add(__show_installation_error, game, _("{} was corrupted. Please download it again.").format(installer), parent_window)
-        os.remove(installer)
-        raise FileNotFoundError("The installer {} was corrupted".format(installer))
+    if game.platform == "linux":
+        if not __verify_installer_integrity(installer):
+            GLib.idle_add(__show_installation_error, game, _("{} was corrupted. Please download it again.").format(installer), parent_window)
+            os.remove(installer)
+            raise FileNotFoundError("The installer {} was corrupted".format(installer))
+    else:
+        subprocess.run(["wine", installer])
+        return
 
     # Make a temporary empty directory for extracting the installer
     temp_dir = os.path.join(CACHE_DIR, "extract/{}".format(game.id))
