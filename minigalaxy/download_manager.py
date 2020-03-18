@@ -2,6 +2,7 @@ import os
 import time
 import threading
 import queue
+from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION
 from minigalaxy.download import Download
 
@@ -116,6 +117,8 @@ class __DownloadManger:
         if download.number == download.out_of_amount:
             finish_thread = threading.Thread(target=download.finish)
             finish_thread.start()
+        if self.__queue.empty():
+            Config.unset("current_download")
 
     def __is_same_download_as_before(self, download):
         file_stats = os.stat(download.save_location)
