@@ -178,9 +178,7 @@ class GameTile(Gtk.Box):
         # Start the download for all files
         self.download = []
         download_path = self.download_path
-        finish_func = self.__end_download
-        if download_info["os"] == "linux":
-            finish_func = self.__install
+        finish_func = self.__install
         for key, file_info in enumerate(download_info['files']):
             if key > 0:
                 download_path = "{}-{}.bin".format(self.download_path, key)
@@ -209,10 +207,6 @@ class GameTile(Gtk.Box):
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
             return
         GLib.idle_add(self.update_to_state, self.state.INSTALLED)
-
-    def __end_download(self):
-        self.game.install_dir = self.__get_install_dir()
-        GLib.idle_add(self.update_to_state, self.state.INSTALLABLE)
 
     def __cancel_download(self):
         GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
