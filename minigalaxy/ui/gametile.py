@@ -336,8 +336,8 @@ class GameTile(Gtk.Box):
             self.button_cancel.hide()
             self.game.install_dir = self.__get_install_dir()
 
-            if self.game.platform != "linux":
-                self.menu_button_settings.show()
+            if self.game.platform == "linux":
+                self.menu_button_settings.hide()
 
             if self.progress_bar:
                 self.progress_bar.destroy()
