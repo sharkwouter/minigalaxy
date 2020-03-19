@@ -47,11 +47,11 @@ class GameTile(Gtk.Box):
 
         # Set folder for download installer
         self.download_dir = os.path.join(CACHE_DIR, "download")
-        self.download_path = os.path.join(self.download_dir, self.game.name)
+        self.download_path = os.path.join(self.download_dir, self.get_real_name())
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
-        self.keep_path = os.path.join(self.keep_dir, "{}.sh".format(self.game.name))
+        self.keep_path = os.path.join(self.keep_dir, self.get_real_name())
 
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
@@ -156,6 +156,16 @@ class GameTile(Gtk.Box):
         DownloadManager.download_now(download)
         return True
 
+    # This function allow to recover the real name for the setup .exe
+    # In this case, it will always the 1st file for game with multiple install files
+    def get_real_name(self):
+        download_info = self.api.get_download_info(self.game)
+        for key, file_info in enumerate(download_info['files']):
+            url = self.api.get_real_download_link(file_info["downlink"])
+            exec_name = url.rsplit('%2F', 1)[1]
+            real_name = exec_name.partition('&')[0]
+            return real_name
+
     def __set_image(self):
         thumbnail_install_dir = os.path.join(self.__get_install_dir(), "thumbnail.jpg")
         thumbnail_cache_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
@@ -177,11 +187,16 @@ class GameTile(Gtk.Box):
 
         # Start the download for all files
         self.download = []
-        download_path = self.download_path
         finish_func = self.__install
         for key, file_info in enumerate(download_info['files']):
-            if key > 0:
-                download_path = "{}-{}.bin".format(self.download_path, key)
+            # Recover the real name for each file
+            url = self.api.get_real_download_link(file_info["downlink"])
+            exec_name = url.rsplit('%2F', 1)[1]
+            real_name = exec_name.partition('&')[0]
+
+            download_file = os.path.join(self.download_dir, real_name)
+            download_path = download_file
+
             download = Download(
                 url=self.api.get_real_download_link(file_info["downlink"]),
                 save_location=download_path,
@@ -206,10 +221,7 @@ class GameTile(Gtk.Box):
         except (FileNotFoundError, BadZipFile):
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
             return
-        if self.game.platform == "linux":
-            GLib.idle_add(self.update_to_state, self.state.INSTALLED)
-        else:
-            GLib.idle_add(self.update_to_state, self.state.NOTLAUNCHABLE)
+        GLib.idle_add(self.update_to_state, self.state.INSTALLED)
 
     def __cancel_download(self):
         GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
@@ -242,6 +254,7 @@ class GameTile(Gtk.Box):
         return os.path.join(Config.get("install_dir"), self.game.get_stripped_name())
 
     def reload_state(self):
+        self.game.install_dir = self.__get_install_dir()
         dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING]
         if self.current_state in dont_act_in_states:
             return
@@ -314,18 +327,6 @@ class GameTile(Gtk.Box):
             self.button.set_label(_("play"))
             # self.button.get_style_context().add_class("suggested-action")
             self.button.set_sensitive(True)
-            self.image.set_sensitive(True)
-            self.menu_button.show()
-            self.button_cancel.hide()
-            self.menu_button.show()
-            self.game.install_dir = self.__get_install_dir()
-
-            if self.progress_bar:
-                self.progress_bar.destroy()
-
-        elif state == self.state.NOTLAUNCHABLE:
-            self.button.set_label(_("Use shortcut to launch"))
-            self.button.set_sensitive(False)
             self.image.set_sensitive(True)
             self.menu_button.show()
             self.button_cancel.hide()
