@@ -11,6 +11,19 @@ from minigalaxy.translation import _
 from minigalaxy.config import Config
 
 
+def config_game(game, options):
+
+    prefix_dir = os.path.join(Config.get("install_dir"), "prefix")
+    prefix = os.path.join(prefix_dir, game.name)
+
+    os.environ["WINEPREFIX"] = prefix
+
+    if options == "winecfg":
+        subprocess.run(['wine', 'winecfg'])
+    elif options == "regedit":
+        subprocess.run(['wine', 'regedit'])
+
+
 def start_game(game, parent_window=None) -> subprocess:
     error_message = ""
     process = None

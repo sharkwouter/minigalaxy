@@ -14,7 +14,7 @@ from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.launcher import start_game
+from minigalaxy.launcher import start_game, config_game
 from minigalaxy.installer import uninstall_game, install_game
 from minigalaxy.css import CSS_PROVIDER
 
@@ -27,6 +27,7 @@ class GameTile(Gtk.Box):
     button = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
+    menu_win = Gtk.Template.Child()
 
     state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING')
 
@@ -105,6 +106,14 @@ class GameTile(Gtk.Box):
             self.prevent_resume_on_startup()
             DownloadManager.cancel_download(self.download)
         message_dialog.destroy()
+
+    @Gtk.Template.Callback("on_menu_button_winecfg_clicked")
+    def on_menu_win_winecfg(self, widget):
+        config_game(self.game, "winecfg")
+
+    @Gtk.Template.Callback("on_menu_button_regedit_clicked")
+    def on_menu_win_regedit(self, widget):
+        config_game(self.game, "regedit")
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
@@ -332,6 +341,9 @@ class GameTile(Gtk.Box):
             self.button_cancel.hide()
             self.menu_button.show()
             self.game.install_dir = self.__get_install_dir()
+
+            if self.game.platform != "linux":
+                self.menu_win.show()
 
             if self.progress_bar:
                 self.progress_bar.destroy()
