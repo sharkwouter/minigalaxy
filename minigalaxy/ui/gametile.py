@@ -27,7 +27,7 @@ class GameTile(Gtk.Box):
     button = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
-    menu_win = Gtk.Template.Child()
+    menu_button_settings = Gtk.Template.Child()
 
     state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING')
 
@@ -48,11 +48,9 @@ class GameTile(Gtk.Box):
 
         # Set folder for download installer
         self.download_dir = os.path.join(CACHE_DIR, "download")
-        self.download_path = os.path.join(self.download_dir, self.get_real_name())
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
-        self.keep_path = os.path.join(self.keep_dir, self.get_real_name())
 
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
@@ -107,13 +105,9 @@ class GameTile(Gtk.Box):
             DownloadManager.cancel_download(self.download)
         message_dialog.destroy()
 
-    @Gtk.Template.Callback("on_menu_button_winecfg_clicked")
-    def on_menu_win_winecfg(self, widget):
+    @Gtk.Template.Callback("on_menu_button_settings_clicked")
+    def on_menu_button_settings(self, widget):
         config_game(self.game, "winecfg")
-
-    @Gtk.Template.Callback("on_menu_button_regedit_clicked")
-    def on_menu_win_regedit(self, widget):
-        config_game(self.game, "regedit")
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
@@ -165,16 +159,6 @@ class GameTile(Gtk.Box):
         DownloadManager.download_now(download)
         return True
 
-    # This function allow to recover the real name for the setup .exe
-    # In this case, it will always the 1st file for game with multiple install files
-    def get_real_name(self):
-        download_info = self.api.get_download_info(self.game)
-        for key, file_info in enumerate(download_info['files']):
-            url = self.api.get_real_download_link(file_info["downlink"])
-            exec_name = url.rsplit('%2F', 1)[1]
-            real_name = exec_name.partition('&')[0]
-            return real_name
-
     def __set_image(self):
         thumbnail_install_dir = os.path.join(self.__get_install_dir(), "thumbnail.jpg")
         thumbnail_cache_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
@@ -200,15 +184,10 @@ class GameTile(Gtk.Box):
         for key, file_info in enumerate(download_info['files']):
             # Recover the real name for each file
             url = self.api.get_real_download_link(file_info["downlink"])
-            exec_name = url.rsplit('%2F', 1)[1]
-            real_name = exec_name.partition('&')[0]
-
-            download_file = os.path.join(self.download_dir, real_name)
-            download_path = download_file
 
             download = Download(
                 url=self.api.get_real_download_link(file_info["downlink"]),
-                save_location=download_path,
+                save_location=self.download_path(),
                 finish_func=finish_func,
                 progress_func=self.set_progress,
                 cancel_func=self.__cancel_download,
@@ -223,10 +202,10 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.update_to_state, self.state.INSTALLING)
         self.game.install_dir = self.__get_install_dir()
         try:
-            if os.path.exists(self.keep_path):
-                install_game(self.game, self.keep_path, parent_window=self.parent)
+            if os.path.exists(self.keep_path()):
+                install_game(self.game, self.keep_path(), parent_window=self.parent)
             else:
-                install_game(self.game, self.download_path, parent_window=self.parent)
+                install_game(self.game, self.download_path(), parent_window=self.parent)
         except (FileNotFoundError, BadZipFile):
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
             return
@@ -269,10 +248,26 @@ class GameTile(Gtk.Box):
             return
         if self.game.install_dir and os.path.exists(self.game.install_dir):
             self.update_to_state(self.state.INSTALLED)
-        elif os.path.exists(self.keep_path):
+        elif os.path.exists(self.keep_path()):
             self.update_to_state(self.state.INSTALLABLE)
         else:
             self.update_to_state(self.state.DOWNLOADABLE)
+
+    def keep_path(self):
+        return os.path.join(self.keep_dir, self.get_real_name())
+
+    def download_path(self):
+        return os.path.join(self.download_dir, self.get_real_name())
+
+    # This function allow to recover the real name for the setup .exe
+    # In this case, it will always the 1st file for game with multiple install files
+    def get_real_name(self):
+        download_info = self.api.get_download_info(self.game)
+        for key, file_info in enumerate(download_info['files']):
+            url = self.api.get_real_download_link(file_info["downlink"])
+            exec_name = url.rsplit('%2F', 1)[1]
+            real_name = exec_name.partition('&')[0]
+            return real_name
 
     def update_to_state(self, state):
         self.current_state = state
@@ -339,11 +334,10 @@ class GameTile(Gtk.Box):
             self.image.set_sensitive(True)
             self.menu_button.show()
             self.button_cancel.hide()
-            self.menu_button.show()
             self.game.install_dir = self.__get_install_dir()
 
             if self.game.platform != "linux":
-                self.menu_win.show()
+                self.menu_button_settings.show()
 
             if self.progress_bar:
                 self.progress_bar.destroy()

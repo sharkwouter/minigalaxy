@@ -18,11 +18,8 @@ def config_game(game, options):
 
     os.environ["WINEPREFIX"] = prefix
 
-    if options == "winecfg":
+    if "winecfg":
         subprocess.run(['wine', 'winecfg'])
-    elif options == "regedit":
-        subprocess.run(['wine', 'regedit'])
-
 
 def start_game(game, parent_window=None) -> subprocess:
     error_message = ""
@@ -102,7 +99,8 @@ def __get_execute_command(game) -> list:
             return ["scummvm", "-c", scummvm_config]
 
     # Wine
-    if shutil.which("wine"):
+    if "unins000.exe" in files:
+        print(__exec_name(game))
         prefix_dir = os.path.join(Config.get("install_dir"), "prefix")
         prefix = os.path.join(prefix_dir, game.name)
         os.environ["WINEPREFIX"] = prefix
@@ -117,10 +115,14 @@ def __get_execute_command(game) -> list:
                 filename = path_name[0]["path"]
 
             return ["wine", filename]
-    else:
-        filepath = glob.glob(game.install_dir + '/*.exe')[0]
-        filename = os.path.splitext(os.path.basename(filepath))[0] + '.exe'
-        return ["wine", filename]
+        else:
+            filepath = glob.glob(game.install_dir + '/*.exe')[0]
+            filename = os.path.splitext(os.path.basename(filepath))[0] + '.exe'
+            return ["wine", filename]
+
+    elif "prefix" in files and shutil.which("wine"):
+        # This still needs to be implemented
+        return [os.path.join(game.install_dir, "start.sh")]
 
     # None of the above, but there is a start script
     if "start.sh" in files:

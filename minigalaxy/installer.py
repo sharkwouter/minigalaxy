@@ -3,7 +3,6 @@ import shutil
 import zipfile
 import subprocess
 import gi
-from os import listdir
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
 from minigalaxy.translation import _
@@ -78,7 +77,7 @@ def install_game(game, installer, parent_window=None) -> None:
             os.makedirs(keep_dir)
         try:
             # It's needed for multiple files
-            for file in listdir(download_dir):
+            for file in os.listdir(download_dir):
                 shutil.move(download_dir + '/' + file, keep_dir + '/' + file)
         except Exception as ex:
             print("Encountered error while copying {} to {}. Got error: {}".format(installer, keep_dir, ex))

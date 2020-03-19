@@ -10,20 +10,6 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkModelButton" id="menu_button_support">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="text" translatable="yes" context="support" comments="Opens the official support webpage">Support</property>
-            <signal name="clicked" handler="on_menu_button_support_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkModelButton" id="menu_button_open">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -51,44 +37,32 @@
             <property name="position">1</property>
           </packing>
         </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkPopover" id="menu_wine">
-    <property name="can_focus">False</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
         <child>
-          <object class="GtkModelButton" id="menu_win_winecfg">
+          <object class="GtkModelButton" id="menu_button_settings">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="text" translatable="yes" context="support" comments="Opens the official support webpage">Winecfg</property>
-            <property name="centered">True</property>
-            <signal name="clicked" handler="on_menu_button_winecfg_clicked" swapped="no"/>
+            <property name="text" translatable="yes" context="Wine Settings" comments="Open winecfg settings for Windows games">Settings</property>
+            <signal name="clicked" handler="on_menu_button_settings_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">0</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="menu_win_regedit">
+          <object class="GtkModelButton" id="menu_button_support">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="text" translatable="yes" context="uninstall" comments="Removes the game files from the local machine">Regedit</property>
-            <property name="centered">True</property>
-            <signal name="clicked" handler="on_menu_button_regedit_clicked" swapped="no"/>
+            <property name="text" translatable="yes" context="support" comments="Opens the official support webpage">Support</property>
+            <signal name="clicked" handler="on_menu_button_support_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>
@@ -182,7 +156,6 @@
             <property name="valign">start</property>
             <property name="relief">none</property>
             <property name="use_popover">False</property>
-            <property name="popover">menu_wine</property>
             <child>
               <object class="GtkImage" id="wine_icon">
                 <property name="visible">True</property>
