@@ -88,8 +88,10 @@ def __get_execute_command(game) -> list:
                     return ["wine", info["playTasks"][0]["path"]]
 
         # in case no goggame info file was found
-        filepath = glob.glob(game.install_dir + '/*.exe')[0]
-        filename = os.path.splitext(os.path.basename(filepath))[0] + '.exe'
+
+        executables = glob.glob(game.install_dir + '/*.exe')
+        executables.remove("unins000.exe")
+        filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
         return ["wine", filename]
 
     # Dosbox
