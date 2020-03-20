@@ -4,10 +4,18 @@ import shutil
 import re
 import json
 import gi
+import glob
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from minigalaxy.translation import _
 from minigalaxy.config import Config
+
+
+def config_game(game):
+    prefix = os.path.join(game.install_dir, "prefix")
+
+    os.environ["WINEPREFIX"] = prefix
+    subprocess.Popen(['wine', 'winecfg'])
 
 
 def start_game(game, parent_window=None) -> subprocess:
@@ -65,6 +73,26 @@ def start_game(game, parent_window=None) -> subprocess:
 
 def __get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
+
+    # Windows
+    if "unins000.exe" in files:
+        prefix = os.path.join(game.install_dir, "prefix")
+        os.environ["WINEPREFIX"] = prefix
+
+        # Find game executable file
+        for file in files:
+            if re.match(r'^goggame-[0-9]*\.info$', file):
+                os.chdir(game.install_dir)
+                with open(file, 'r') as info_file:
+                    info = json.loads(info_file.read())
+                    return ["wine", info["playTasks"][0]["path"]]
+
+        # in case no goggame info file was found
+
+        executables = glob.glob(game.install_dir + '/*.exe')
+        executables.remove(os.path.join(game.install_dir, "unins000.exe"))
+        filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
+        return ["wine", filename]
 
     # Dosbox
     if "dosbox" in files and shutil.which("dosbox"):

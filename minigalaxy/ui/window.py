@@ -92,6 +92,9 @@ class Window(Gtk.ApplicationWindow):
     def reset_library(self):
         self.library.reset()
 
+    def update_library(self):
+        self.library.update_library()
+
     """
     The API remembers the authentication token and uses it
     The token is not valid for a long time

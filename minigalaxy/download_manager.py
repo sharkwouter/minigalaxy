@@ -2,6 +2,7 @@ import os
 import time
 import threading
 import queue
+from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION
 from minigalaxy.download import Download
 
@@ -30,20 +31,25 @@ class __DownloadManger:
         download_file_thread.daemon = True
         download_file_thread.start()
 
-    def cancel_download(self, download):
-        if download == self.__current_download:
-            self.cancel_current_download()
-        else:
-            self.__paused = True
-            new_queue = queue.Queue()
-            while not self.__queue.empty():
-                queued_download = self.__queue.get()
-                if download == queued_download:
-                    download.cancel()
-                else:
-                    new_queue.put(queued_download)
-            self.__queue = new_queue
-            self.__paused = False
+    def cancel_download(self, downloads):
+        # Make sure we're always dealing with a list
+        if isinstance(downloads, Download):
+            downloads = [downloads]
+
+        for download in downloads:
+            if download == self.__current_download:
+                self.cancel_current_download()
+            else:
+                self.__paused = True
+                new_queue = queue.Queue()
+                while not self.__queue.empty():
+                    queued_download = self.__queue.get()
+                    if download == queued_download:
+                        download.cancel()
+                    else:
+                        new_queue.put(queued_download)
+                self.__queue = new_queue
+                self.__paused = False
 
     def cancel_current_download(self):
         self.__cancel = True
@@ -108,8 +114,11 @@ class __DownloadManger:
                         progress = int(downloaded_size / file_size * 100)
                         download.set_progress(progress)
                 save_file.close()
-        finish_thread = threading.Thread(target=download.finish)
-        finish_thread.start()
+        if download.number == download.out_of_amount:
+            finish_thread = threading.Thread(target=download.finish)
+            finish_thread.start()
+        if self.__queue.empty():
+            Config.unset("current_download")
 
     def __is_same_download_as_before(self, download):
         file_stats = os.stat(download.save_location)

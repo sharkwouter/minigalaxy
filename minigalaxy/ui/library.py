@@ -1,4 +1,6 @@
 import os
+import re
+import json
 import gi
 import threading
 from typing import List
@@ -110,19 +112,31 @@ class Library(Gtk.Viewport):
                 continue
             # Make sure the gameinfo file exists
             gameinfo = os.path.join(full_path, "gameinfo")
-            if not os.path.isfile(gameinfo):
-                continue
-            with open(gameinfo, 'r') as file:
-                name = file.readline().strip()
-                version = file.readline().strip()
-                version_dev = file.readline().strip()
-                language = file.readline().strip()
-                game_id = file.readline().strip()
-                if not game_id:
-                    game_id = 0
-                else:
-                    game_id = int(game_id)
+            if os.path.isfile(gameinfo):
+                with open(gameinfo, 'r') as file:
+                    name = file.readline().strip()
+                    version = file.readline().strip()
+                    version_dev = file.readline().strip()
+                    language = file.readline().strip()
+                    game_id = file.readline().strip()
+                    if not game_id:
+                        game_id = 0
+                    else:
+                        game_id = int(game_id)
                 games.append(Game(name=name, game_id=game_id, install_dir=full_path))
+            else:
+                game_files = os.listdir(full_path)
+                for file in game_files:
+                    if re.match(r'^goggame-[0-9]*\.info$', file):
+                        with open(os.path.join(full_path, file), 'r') as info_file:
+                            info = json.loads(info_file.read())
+                            game = Game(
+                                name=info["name"],
+                                game_id=int(info["gameId"]),
+                                install_dir=full_path,
+                                platform="windows"
+                            )
+                            games.append(game)
         return games
 
     def __add_games_from_api(self):
