@@ -75,6 +75,27 @@ def start_game(game, parent_window=None) -> subprocess:
 def __get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
 
+    # Windows
+    if "unins000.exe" in files:
+        prefix_dir = os.path.join(Config.get("install_dir"), "prefix")
+        prefix = os.path.join(prefix_dir, game.name)
+        os.environ["WINEPREFIX"] = prefix
+
+        # Find game executable file
+        goggame_info = os.path.join(game.install_dir, "goggame-" + str(game.id) + ".info")
+
+        if os.path.isfile(goggame_info):
+            with open(goggame_info) as info_data:
+                info_dict = json.load(info_data)
+                path_name = info_dict.get("playTasks")
+                filename = path_name[0]["path"]
+
+            return ["wine", filename]
+        else:
+            filepath = glob.glob(game.install_dir + '/*.exe')[0]
+            filename = os.path.splitext(os.path.basename(filepath))[0] + '.exe'
+            return ["wine", filename]
+
     # Dosbox
     if "dosbox" in files and shutil.which("dosbox"):
         for file in files:
@@ -97,28 +118,7 @@ def __get_execute_command(game) -> list:
             return ["scummvm", "-c", scummvm_config]
 
     # Wine
-    if "unins000.exe" in files:
-        print(__exec_name(game))
-        prefix_dir = os.path.join(Config.get("install_dir"), "prefix")
-        prefix = os.path.join(prefix_dir, game.name)
-        os.environ["WINEPREFIX"] = prefix
-
-        # Find game executable file
-        goggame_info = os.path.join(game.install_dir, "goggame-" + str(game.id) + ".info")
-
-        if os.path.isfile(goggame_info):
-            with open(goggame_info) as info_data:
-                info_dict = json.load(info_data)
-                path_name = info_dict.get("playTasks")
-                filename = path_name[0]["path"]
-
-            return ["wine", filename]
-        else:
-            filepath = glob.glob(game.install_dir + '/*.exe')[0]
-            filename = os.path.splitext(os.path.basename(filepath))[0] + '.exe'
-            return ["wine", filename]
-
-    elif "prefix" in files and shutil.which("wine"):
+    if "prefix" in files and shutil.which("wine"):
         # This still needs to be implemented
         return [os.path.join(game.install_dir, "start.sh")]
 
