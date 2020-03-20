@@ -100,7 +100,6 @@ def __get_execute_command(game) -> list:
 
     # Wine
     if "unins000.exe" in files:
-        print(__exec_name(game))
         prefix_dir = os.path.join(Config.get("install_dir"), "prefix")
         prefix = os.path.join(prefix_dir, game.name)
         os.environ["WINEPREFIX"] = prefix

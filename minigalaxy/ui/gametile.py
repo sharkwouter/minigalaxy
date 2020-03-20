@@ -85,9 +85,13 @@ class GameTile(Gtk.Box):
         elif self.current_state == self.state.INSTALLED:
             start_game(self.game, self.parent)
         elif self.current_state == self.state.INSTALLABLE:
+            if self.game.platform == "linux":
+                self.choose_platform()
             install_thread = threading.Thread(target=self.__install)
             install_thread.start()
         elif self.current_state == self.state.DOWNLOADABLE:
+            if self.game.platform == "linux":
+                self.choose_platform()
             download_thread = threading.Thread(target=self.__download_file)
             download_thread.start()
 
@@ -145,6 +149,23 @@ class GameTile(Gtk.Box):
             dialog.run()
             dialog.destroy()
 
+    def choose_platform(self):
+        message_dialog = Gtk.MessageDialog(parent=self.parent.parent,
+                                           flags=Gtk.DialogFlags.MODAL,
+                                           message_type=Gtk.MessageType.WARNING,
+                                           buttons=Gtk.ButtonsType.OK_CANCEL,
+                                           message_format=_("Do you want to install Linux version of %s?" % self.game.name))
+
+
+        response = message_dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            Config.set("platform", "linux")
+            message_dialog.destroy()
+        elif response == Gtk.ResponseType.CANCEL:
+            Config.set("platform", "windows")
+            message_dialog.destroy()
+
     def load_thumbnail(self):
         if self.__set_image():
             return True
@@ -176,8 +197,10 @@ class GameTile(Gtk.Box):
     def __download_file(self) -> None:
         Config.set("current_download", self.game.id)
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
-        download_info = self.api.get_download_info(self.game)
-
+        if Config.get(("platform")) == "linux":
+            download_info = self.api.get_download_info(self.game, "linux")
+        else:
+            download_info = self.api.get_download_info(self.game, "windows")
         # Start the download for all files
         self.download = []
         finish_func = self.__install
@@ -185,9 +208,15 @@ class GameTile(Gtk.Box):
             # Recover the real name for each file
             url = self.api.get_real_download_link(file_info["downlink"])
 
+            exec_name = url.rsplit('%2F', 1)[1]
+            real_name = exec_name.partition('&')[0]
+
+            download_file = os.path.join(self.download_dir, real_name)
+            download_path = download_file
+
             download = Download(
                 url=self.api.get_real_download_link(file_info["downlink"]),
-                save_location=self.download_path(),
+                save_location=download_path,
                 finish_func=finish_func,
                 progress_func=self.set_progress,
                 cancel_func=self.__cancel_download,
@@ -262,12 +291,20 @@ class GameTile(Gtk.Box):
     # This function allow to recover the real name for the setup .exe
     # In this case, it will always the 1st file for game with multiple install files
     def get_real_name(self):
-        download_info = self.api.get_download_info(self.game)
-        for key, file_info in enumerate(download_info['files']):
-            url = self.api.get_real_download_link(file_info["downlink"])
-            exec_name = url.rsplit('%2F', 1)[1]
-            real_name = exec_name.partition('&')[0]
-            return real_name
+        if Config.get("platform") == "linux":
+            download_info = self.api.get_download_info(self.game, "linux")
+            for key, file_info in enumerate(download_info['files']):
+                url = self.api.get_real_download_link(file_info["downlink"])
+                exec_name = url.rsplit('%2F', 1)[1]
+                real_name = exec_name.partition('&')[0]
+                return real_name
+        else:
+            download_info = self.api.get_download_info(self.game, "windows")
+            for key, file_info in enumerate(download_info['files']):
+                url = self.api.get_real_download_link(file_info["downlink"])
+                exec_name = url.rsplit('%2F', 1)[1]
+                real_name = exec_name.partition('&')[0]
+                return real_name
 
     def update_to_state(self, state):
         self.current_state = state

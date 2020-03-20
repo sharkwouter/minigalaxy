@@ -15,7 +15,7 @@ def install_game(game, installer, parent_window=None) -> None:
         GLib.idle_add(__show_installation_error, game, _("{} failed to download.").format(installer), parent_window)
         raise FileNotFoundError("The installer {} does not exist".format(installer))
 
-    if game.platform == "linux":
+    if game.platform == "linux" and Config.get("platform") == "linux":
         if not __verify_installer_integrity(installer):
             GLib.idle_add(__show_installation_error, game, _("{} was corrupted. Please download it again.").format(installer), parent_window)
             os.remove(installer)
