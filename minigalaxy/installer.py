@@ -53,13 +53,11 @@ def install_game(game, installer, parent_window=None) -> None:
 
     else:
         # Set the prefix for Windows games
-        prefix_dir = os.path.join(Config.get("install_dir"), "prefix")
-
+        prefix_dir = os.path.join(game.install_dir, "prefix")
         if not os.path.exists(prefix_dir):
             os.makedirs(prefix_dir)
 
-        prefix = os.path.join(prefix_dir, game.name)
-        os.environ["WINEPREFIX"] = prefix
+        os.environ["WINEPREFIX"] = prefix_dir
 
         # It's possible to set install dir as argument before installation
         command = ["wine", installer, "/dir=" + game.install_dir]

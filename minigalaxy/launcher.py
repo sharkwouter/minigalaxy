@@ -12,8 +12,7 @@ from minigalaxy.config import Config
 
 
 def config_game(game):
-    prefix_dir = os.path.join(Config.get("install_dir"), "prefix")
-    prefix = os.path.join(prefix_dir, game.name)
+    prefix = os.path.join(game.install_dir, "prefix")
 
     os.environ["WINEPREFIX"] = prefix
     subprocess.Popen(['wine', 'winecfg'])
@@ -77,8 +76,7 @@ def __get_execute_command(game) -> list:
 
     # Windows
     if "unins000.exe" in files:
-        prefix_dir = os.path.join(Config.get("install_dir"), "prefix")
-        prefix = os.path.join(prefix_dir, game.name)
+        prefix = os.path.join(game.install_dir, "prefix")
         os.environ["WINEPREFIX"] = prefix
 
         # Find game executable file
