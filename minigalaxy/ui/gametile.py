@@ -1,5 +1,4 @@
 import shutil
-import json
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib, Gdk
@@ -14,7 +13,7 @@ from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.launcher import start_game
+from minigalaxy.launcher import start_game, config_game
 from minigalaxy.installer import uninstall_game, install_game
 from minigalaxy.css import CSS_PROVIDER
 
@@ -27,6 +26,7 @@ class GameTile(Gtk.Box):
     button = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
+    menu_button_settings = Gtk.Template.Child()
 
     state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING')
 
@@ -51,7 +51,7 @@ class GameTile(Gtk.Box):
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
-        self.keep_path = os.path.join(self.keep_dir, "{}.sh".format(self.game.name))
+        self.keep_path = os.path.join(self.keep_dir, self.game.name)
 
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
@@ -105,6 +105,10 @@ class GameTile(Gtk.Box):
             self.prevent_resume_on_startup()
             DownloadManager.cancel_download(self.download)
         message_dialog.destroy()
+
+    @Gtk.Template.Callback("on_menu_button_settings_clicked")
+    def on_menu_button_settings(self, widget):
+        config_game(self.game)
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
@@ -206,10 +210,7 @@ class GameTile(Gtk.Box):
         except (FileNotFoundError, BadZipFile):
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
             return
-        if self.game.platform == "linux":
-            GLib.idle_add(self.update_to_state, self.state.INSTALLED)
-        else:
-            GLib.idle_add(self.update_to_state, self.state.NOTLAUNCHABLE)
+        GLib.idle_add(self.update_to_state, self.state.INSTALLED)
 
     def __cancel_download(self):
         GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
@@ -242,6 +243,7 @@ class GameTile(Gtk.Box):
         return os.path.join(Config.get("install_dir"), self.game.get_stripped_name())
 
     def reload_state(self):
+        self.game.install_dir = self.__get_install_dir()
         dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING]
         if self.current_state in dont_act_in_states:
             return
@@ -317,20 +319,10 @@ class GameTile(Gtk.Box):
             self.image.set_sensitive(True)
             self.menu_button.show()
             self.button_cancel.hide()
-            self.menu_button.show()
             self.game.install_dir = self.__get_install_dir()
 
-            if self.progress_bar:
-                self.progress_bar.destroy()
-
-        elif state == self.state.NOTLAUNCHABLE:
-            self.button.set_label(_("Use shortcut to launch"))
-            self.button.set_sensitive(False)
-            self.image.set_sensitive(True)
-            self.menu_button.show()
-            self.button_cancel.hide()
-            self.menu_button.show()
-            self.game.install_dir = self.__get_install_dir()
+            if self.game.platform == "linux":
+                self.menu_button_settings.hide()
 
             if self.progress_bar:
                 self.progress_bar.destroy()
