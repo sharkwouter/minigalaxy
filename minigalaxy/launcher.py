@@ -82,19 +82,17 @@ def __get_execute_command(game) -> list:
         os.environ["WINEPREFIX"] = prefix
 
         # Find game executable file
-        goggame_info = os.path.join(game.install_dir, "goggame-" + str(game.id) + ".info")
+        for file in files:
+            if re.match(r'^goggame-[0-9]*\.info$', file):
+                os.chdir(game.install_dir)
+                with open(file, 'r') as info_file:
+                    info = json.loads(info_file.read())
+                    return ["wine", info["playTasks"][0]["path"]]
 
-        if os.path.isfile(goggame_info):
-            with open(goggame_info) as info_data:
-                info_dict = json.load(info_data)
-                path_name = info_dict.get("playTasks")
-                filename = path_name[0]["path"]
-
-            return ["wine", filename]
-        else:
-            filepath = glob.glob(game.install_dir + '/*.exe')[0]
-            filename = os.path.splitext(os.path.basename(filepath))[0] + '.exe'
-            return ["wine", filename]
+        # in case no goggame info file was found
+        filepath = glob.glob(game.install_dir + '/*.exe')[0]
+        filename = os.path.splitext(os.path.basename(filepath))[0] + '.exe'
+        return ["wine", filename]
 
     # Dosbox
     if "dosbox" in files and shutil.which("dosbox"):
