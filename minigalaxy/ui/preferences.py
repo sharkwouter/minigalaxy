@@ -102,7 +102,7 @@ class Preferences(Gtk.Dialog):
 
         if self.switch_show_windows_games.get_active() != Config.get("show_windows_games"):
             Config.set("show_windows_games", self.switch_show_windows_games.get_active())
-            self.parent.update_library()
+            self.parent.reset_library()
 
         # Only change the install_dir is it was actually changed
         if self.button_file_chooser.get_filename() != Config.get("install_dir"):
