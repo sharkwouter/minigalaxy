@@ -1,8 +1,10 @@
 **0.9.4 (unreleased)**
 - Added the following translations:
     - Norwegian Nynorsk (thanks to LordPilum)
+    - Russian (thanks to protheory8)
 - Updated the following translations:
     - Brazilian Portuguese (thanks to EsdrasTarsis)
+- Added support for installing Windows games (with help from Odelpasso)
 
 **0.9.3**
 - Added the following translations:
