@@ -146,24 +146,18 @@
           </packing>
         </child>
         <child type="overlay">
-          <object class="GtkMenuButton" id="menu_win">
+          <object class="GtkButton" id="button_wine">
+            <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="has_focus">True</property>
             <property name="focus_on_click">False</property>
             <property name="receives_default">True</property>
             <property name="no_show_all">True</property>
             <property name="halign">start</property>
-            <property name="valign">start</property>
+            <property name="valign">end</property>
             <property name="relief">none</property>
-            <property name="use_popover">False</property>
             <child>
               <object class="GtkImage" id="wine_icon">
-                <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <property name="icon_name">applications-other</property>
-                <property name="icon_size">3</property>
               </object>
             </child>
           </object>
