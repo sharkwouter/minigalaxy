@@ -66,6 +66,7 @@ class GameTile(Gtk.Box):
 
         # Icon for Windows games
         if self.game.platform == "windows":
+            self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
             self.wine_icon.set_from_file(ICON_WINE_PATH)
             self.wine_icon.show()
 
