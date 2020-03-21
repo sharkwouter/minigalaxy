@@ -88,7 +88,6 @@ def __get_execute_command(game) -> list:
                     return ["wine", info["playTasks"][0]["path"]]
 
         # in case no goggame info file was found
-
         executables = glob.glob(game.install_dir + '/*.exe')
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
@@ -141,8 +140,10 @@ def __get_execute_command(game) -> list:
 def __set_fps_display():
     # Enable FPS Counter for Nvidia or AMD (Mesa) users
     if Config.get("show_fps"):
-        os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users
-        os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users
+        os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users + OpenGL/Vulkan games
+        os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users + OpenGL games
+        os.environ["VK_INSTANCE_LAYERS"] = "VK_LAYER_MESA_overlay" # For AMDGPU users + Vulkan games
     elif Config.get("show_fps") is False:
-        os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0"  # For Nvidia users
+        os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0"
         os.environ["GALLIUM_HUD"] = ""
+        os.environ["VK_INSTANCE_LAYERS"] = ""
