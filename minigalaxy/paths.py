@@ -18,7 +18,9 @@ LOGO_IMAGE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/icons/192x19
 if not os.path.exists(LOGO_IMAGE_PATH):
     LOGO_IMAGE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/icons/hicolor/192x192/apps/com.github.sharkwouter.minigalaxy.png"))
 
-ICON_WINE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/icons/20x20/winehq_logo_glass.png"))
+ICON_WINE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/winehq_logo_glass.png"))
+if not os.path.exists(ICON_WINE_PATH):
+    ICON_WINE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/winehq_logo_glass.png"))
 
 LOCALE_DIR = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/mo"))
 if not os.path.exists(LOCALE_DIR):
