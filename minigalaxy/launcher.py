@@ -79,6 +79,14 @@ def __get_execute_command(game) -> list:
         prefix = os.path.join(game.install_dir, "prefix")
         os.environ["WINEPREFIX"] = prefix
 
+        # Enable ACO by default for AMD users.
+        # Mesa 19.x and > are needed.
+        # ACO allow to compile more quickly than with LLVM
+        # and avoid stuttering in Vulkan games (only).
+        # This option is not enabled by default
+        # We'll can remove this variable when it'll be done
+        os.environ["RADV_PERFTEST"] = "aco"
+
         # Find game executable file
         for file in files:
             if re.match(r'^goggame-[0-9]*\.info$', file):
@@ -88,7 +96,6 @@ def __get_execute_command(game) -> list:
                     return ["wine", info["playTasks"][0]["path"]]
 
         # in case no goggame info file was found
-
         executables = glob.glob(game.install_dir + '/*.exe')
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
