@@ -16,7 +16,7 @@ from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game, config_game
 from minigalaxy.installer import uninstall_game, install_game
 from minigalaxy.css import CSS_PROVIDER
-from minigalaxy.paths import LOGO_ICON_PATH
+from minigalaxy.paths import ICON_WINE_PATH
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -28,7 +28,6 @@ class GameTile(Gtk.Box):
     button_cancel = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
     menu_button_settings = Gtk.Template.Child()
-    button_wine = Gtk.Template.Child()
     wine_icon = Gtk.Template.Child()
 
     state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING')
@@ -67,8 +66,8 @@ class GameTile(Gtk.Box):
 
         # Icon for Windows games
         if self.game.platform == "windows":
-            self.wine_icon = GdkPixbuf.Pixbuf().new_from_file(LOGO_ICON_PATH)
-            self.button_wine.show()
+            self.wine_icon = GdkPixbuf.Pixbuf().new_from_file(ICON_WINE_PATH)
+            self.wine_icon.show()
 
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):

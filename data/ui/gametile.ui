@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface domain="minigalaxy">
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkPopover" id="menu">
@@ -146,20 +146,8 @@
           </packing>
         </child>
         <child type="overlay">
-          <object class="GtkButton" id="button_wine">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="focus_on_click">False</property>
-            <property name="receives_default">True</property>
-            <property name="no_show_all">True</property>
-            <property name="halign">start</property>
-            <property name="valign">end</property>
-            <property name="relief">none</property>
-            <child>
-              <object class="GtkImage" id="wine_icon">
-                <property name="can_focus">False</property>
-              </object>
-            </child>
+          <object class="GtkImage" id="wine_icon">
+            <property name="can_focus">False</property>
           </object>
           <packing>
             <property name="index">2</property>
