@@ -145,6 +145,16 @@
             <property name="index">1</property>
           </packing>
         </child>
+        <child type="overlay">
+          <object class="GtkImage" id="wine_icon">
+            <property name="can_focus">False</property>
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+          </object>
+          <packing>
+            <property name="index">2</property>
+          </packing>
+        </child>
       </object>
       <packing>
         <property name="expand">False</property>
