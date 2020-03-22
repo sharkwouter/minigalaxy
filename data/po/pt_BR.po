@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-21 15:28+0100\n"
-"PO-Revision-Date: 2020-03-11 20:31-0300\n"
+"PO-Revision-Date: 2020-03-22 11:36-0300\n"
 "Last-Translator: Esdras Tarsis <esdrastarsis@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -41,7 +41,7 @@ msgstr "Tem certeza de que deseja cancelar o download do game {}?"
 #: minigalaxy/ui/gametile.py:119
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
-msgstr "Você tem certeza de que deseja desinstalar %s"
+msgstr "Você tem certeza de que deseja desinstalar %s?"
 
 #: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
@@ -82,7 +82,7 @@ msgstr "Inglês"
 
 #: minigalaxy/installer.py:87
 msgid "Failed to install {}"
-msgstr "Falha ao iniciar {}:"
+msgstr "Falha ao instalar {}:"
 
 #: minigalaxy/ui/library.py:148
 msgid "Failed to retrieve library"
@@ -228,7 +228,7 @@ msgstr "Salvar"
 #: data/ui/gametile.ui:45
 msgctxt "Wine Settings"
 msgid "Settings"
-msgstr ""
+msgstr "Configurações"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:187
@@ -238,10 +238,9 @@ msgstr "Mostrar FPS nos jogos:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:201
-#, fuzzy
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Mostrar FPS nos jogos:"
+msgstr "Mostrar jogos para Windows: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -308,7 +307,7 @@ msgstr ""
 #: data/ui/preferences.ui:198
 msgctxt "show_windows_games_tooltip"
 msgid "Whether Windows games are shown in the library or not"
-msgstr ""
+msgstr "Mostrar jogos para Windows na biblioteca ou não"
 
 #: minigalaxy/ui/gametile.py:260
 msgid "download"
@@ -344,7 +343,7 @@ msgstr "{} não pode ser descompactado."
 
 #: minigalaxy/installer.py:15
 msgid "{} failed to download."
-msgstr "{} falha no download."
+msgstr "{} falhou ao realizar o download."
 
 #: minigalaxy/ui/preferences.py:119
 msgid "{} isn't a usable path"
