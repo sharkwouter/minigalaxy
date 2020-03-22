@@ -4,6 +4,7 @@
     - Russian (thanks to protheory8)
 - Updated the following translations:
     - Brazilian Portuguese (thanks to EsdrasTarsis)
+    - Taiwanese Mandarin (thanks to s8321414)
 - Added support for installing Windows games (with help from Odelpasso)
 
 **0.9.3**
