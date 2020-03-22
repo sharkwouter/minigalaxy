@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-21 15:28+0100\n"
-"PO-Revision-Date: 2020-03-22 11:36-0300\n"
+"PO-Revision-Date: 2020-03-22 11:40-0300\n"
 "Last-Translator: Esdras Tarsis <esdrastarsis@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -82,7 +82,7 @@ msgstr "Inglês"
 
 #: minigalaxy/installer.py:87
 msgid "Failed to install {}"
-msgstr "Falha ao instalar {}:"
+msgstr "Falha ao instalar {}"
 
 #: minigalaxy/ui/library.py:148
 msgid "Failed to retrieve library"
