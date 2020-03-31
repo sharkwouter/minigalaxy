@@ -93,7 +93,7 @@ class Api:
                         platform = "windows"
                     else:
                         continue
-                    game = Game(name=product["title"], game_id=product["id"], image_url=product["image"], platform=platform)
+                    game = Game(name=product["title"], url=product["url"], game_id=product["id"], image_url=product["image"], platform=platform)
                     games.append(game)
             if current_page == total_pages:
                 all_pages_processed = True

@@ -45,7 +45,6 @@ class Library(Gtk.Viewport):
         GLib.idle_add(self.__load_tile_states)
         # Get already installed games first
         self.games = self.__get_installed_games()
-        self.__create_gametiles()
 
         # Get games from the API
         self.__add_games_from_api()
@@ -156,6 +155,8 @@ class Library(Gtk.Viewport):
                     if game == installed_game:
                         if not installed_game.id:
                             installed_game.id = game.id
+                        if not installed_game.url:
+                            installed_game.url = game.url
                         break
 
     def __show_error(self, text, subtext):
