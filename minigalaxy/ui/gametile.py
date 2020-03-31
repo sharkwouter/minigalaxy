@@ -22,6 +22,7 @@ from minigalaxy.paths import ICON_WINE_PATH
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
 class GameTile(Gtk.Box):
     __gtype_name__ = "GameTile"
+    gogBaseUrl = "https://www.gog.com"
 
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
@@ -160,8 +161,7 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_store_clicked")
     def on_menu_button_store(self, widget):
-        print(self.game.url)
-        webbrowser.open("https://www.gog.com" + self.game.url)
+        webbrowser.open(self.gogBaseUrl + self.game.url)
 
     def load_thumbnail(self):
         if self.__set_image():
