@@ -106,8 +106,8 @@ class Preferences(Gtk.Dialog):
 
         # Only change the install_dir is it was actually changed
         if self.button_file_chooser.get_filename() != Config.get("install_dir"):
-            DownloadManager.cancel_all_downloads()
             if self.__save_install_dir_choice():
+                DownloadManager.cancel_all_downloads()
                 self.parent.reset_library()
             else:
                 dialog = Gtk.MessageDialog(
@@ -116,7 +116,7 @@ class Preferences(Gtk.Dialog):
                     destroy_with_parent=True,
                     message_type=Gtk.MessageType.ERROR,
                     buttons=Gtk.ButtonsType.OK,
-                    text=_("{} isn't a usable path").format(self.entry_installpath.get_text())
+                    text=_("{} isn't a usable path").format(self.button_file_chooser.get_filename())
                 )
                 dialog.run()
                 dialog.destroy()
