@@ -1,6 +1,5 @@
 import os
 import shutil
-import zipfile
 import subprocess
 import gi
 gi.require_version('Gtk', '3.0')
@@ -28,17 +27,10 @@ def install_game(game, installer, parent_window=None) -> None:
             os.makedirs(temp_dir)
 
         # Extract the installer
-        try:
-            with zipfile.ZipFile(installer) as archive:
-                for member in archive.namelist():
-                    file = archive.getinfo(member)
-                    archive.extract(file, temp_dir)
-                    # Set permissions
-                    attr = file.external_attr >> 16
-                    os.chmod(os.path.join(temp_dir, member), attr)
-        except zipfile.BadZipFile as e:
+        subprocess.call(["unzip", "-qq", installer, "-d", temp_dir])
+        if len(os.listdir(temp_dir)) == 0:
             GLib.idle_add(__show_installation_error, game, _("{} could not be unzipped.").format(installer), parent_window)
-            raise e
+            raise CannotOpenZipContent(_("{} could not be unzipped.").format(installer))
 
         # Make sure the install directory exists
         library_dir = Config.get("install_dir")
@@ -96,6 +88,10 @@ def __show_installation_error(game, message, parent_window=None):
     dialog.format_secondary_text(error_message[1])
     dialog.run()
     dialog.destroy()
+
+
+class CannotOpenZipContent(Exception):
+    pass
 
 
 def __verify_installer_integrity(installer):
