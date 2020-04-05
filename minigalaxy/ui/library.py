@@ -156,6 +156,8 @@ class Library(Gtk.Viewport):
                     if game == installed_game:
                         if not installed_game.id:
                             installed_game.id = game.id
+                        if not installed_game.url:
+                            installed_game.url = game.url
                         break
 
     def __show_error(self, text, subtext):

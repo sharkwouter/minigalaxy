@@ -2,8 +2,9 @@ import re
 
 
 class Game:
-    def __init__(self, name: str, game_id: int = 0, install_dir: str = "", image_url="", platform="linux"):
+    def __init__(self, name: str, url: str = "", game_id: int = 0, install_dir: str = "", image_url="", platform="linux"):
         self.name = name
+        self.url = url
         self.id = game_id
         self.install_dir = install_dir
         self.image_url = image_url

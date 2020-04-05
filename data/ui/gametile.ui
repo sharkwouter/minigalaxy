@@ -10,45 +10,17 @@
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkModelButton" id="menu_button_open">
+          <object class="GtkModelButton" id="menu_button_store">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="text" translatable="yes" context="open_files" comments="Opens the directory the game is installed in">Open Files</property>
-            <signal name="clicked" handler="on_menu_button_open_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkModelButton" id="menu_button_uninstall">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="text" translatable="yes" context="uninstall" comments="Removes the game files from the local machine">Uninstall</property>
-            <signal name="clicked" handler="on_menu_button_uninstall_clicked" swapped="no"/>
+            <property name="text" translatable="yes" context="store" comments="Open store page">Store Page</property>
+            <signal name="clicked" handler="on_menu_button_store_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkModelButton" id="menu_button_settings">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="text" translatable="yes" context="Wine Settings" comments="Open winecfg settings for Windows games">Settings</property>
-            <signal name="clicked" handler="on_menu_button_settings_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -62,7 +34,49 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_button_open">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes" context="open_files" comments="Opens the directory the game is installed in">Open Files</property>
+            <signal name="clicked" handler="on_menu_button_open_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_button_settings">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes" context="Wine Settings" comments="Open winecfg settings for Windows games">Settings</property>
+            <signal name="clicked" handler="on_menu_button_settings_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_button_uninstall">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes" context="uninstall" comments="Removes the game files from the local machine">Uninstall</property>
+            <signal name="clicked" handler="on_menu_button_uninstall_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">5</property>
           </packing>
         </child>
       </object>

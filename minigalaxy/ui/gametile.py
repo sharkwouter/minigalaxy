@@ -22,6 +22,7 @@ from minigalaxy.paths import ICON_WINE_PATH
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
 class GameTile(Gtk.Box):
     __gtype_name__ = "GameTile"
+    gogBaseUrl = "https://www.gog.com"
 
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
@@ -29,6 +30,7 @@ class GameTile(Gtk.Box):
     menu_button = Gtk.Template.Child()
     menu_button_settings = Gtk.Template.Child()
     wine_icon = Gtk.Template.Child()
+    menu_button_store = Gtk.Template.Child()
 
     state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING')
 
@@ -69,6 +71,9 @@ class GameTile(Gtk.Box):
             self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
             self.wine_icon.set_from_file(ICON_WINE_PATH)
             self.wine_icon.show()
+
+        if self.game.url == "":
+            self.menu_button_store.hide()
 
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):
@@ -153,6 +158,10 @@ class GameTile(Gtk.Box):
             dialog.format_secondary_text(_("Please check your internet connection"))
             dialog.run()
             dialog.destroy()
+
+    @Gtk.Template.Callback("on_menu_button_store_clicked")
+    def on_menu_button_store(self, widget):
+        webbrowser.open(self.gogBaseUrl + self.game.url)
 
     def load_thumbnail(self):
         if self.__set_image():
