@@ -13,12 +13,12 @@ setup(
     scripts=['bin/minigalaxy'],
 
     data_files=[
-        ('share/applications', ['data/com.github.sharkwouter.minigalaxy.desktop']),
-        ('share/icons/hicolor/128x128/apps', ['data/icons/128x128/com.github.sharkwouter.minigalaxy.png']),
-        ('share/icons/hicolor/192x192/apps', ['data/icons/192x192/com.github.sharkwouter.minigalaxy.png']),
+        ('share/applications', ['data/io.github.sharkwouter.Minigalaxy.desktop']),
+        ('share/icons/hicolor/128x128/apps', ['data/icons/128x128/io.github.sharkwouter.Minigalaxy.png']),
+        ('share/icons/hicolor/192x192/apps', ['data/icons/192x192/io.github.sharkwouter.Minigalaxy.png']),
         ('share/minigalaxy/ui', glob('data/ui/*.ui')),
         ('share/minigalaxy/images', glob('data/images/*')),
-        ('share/metainfo', ['data/com.github.sharkwouter.minigalaxy.metainfo.xml']),
+        ('share/metainfo', ['data/io.github.sharkwouter.Minigalaxy.metainfo.xml']),
 
         # Add translations
         ('share/minigalaxy/translations/de/LC_MESSAGES/', ['data/mo/de/LC_MESSAGES/minigalaxy.mo']),
