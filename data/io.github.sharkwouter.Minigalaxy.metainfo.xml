@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2019-2020 Wouter Wijsman <wwijsman@live.nl> -->
 <component type="desktop-application">
-    <id>com.github.sharkwouter.minigalaxy</id>
+    <id>io.github.sharkwouter.Minigalaxy</id>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license> GPL-3.0-or-later</project_license>
     <name>Minigalaxy</name>
@@ -24,7 +24,7 @@
         </p>
     </description>
 
-    <launchable type="desktop-id">com.github.sharkwouter.minigalaxy.desktop</launchable>
+    <launchable type="desktop-id">io.github.sharkwouter.Minigalaxy.desktop</launchable>
 
     <screenshots>
         <screenshot type="default">
