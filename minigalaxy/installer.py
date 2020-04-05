@@ -24,7 +24,7 @@ def install_game(game, installer, parent_window=None) -> None:
         temp_dir = os.path.join(CACHE_DIR, "extract/{}".format(game.id))
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir, ignore_errors=True)
-            os.makedirs(temp_dir)
+        os.makedirs(temp_dir)
 
         # Extract the installer
         subprocess.call(["unzip", "-qq", installer, "-d", temp_dir])
