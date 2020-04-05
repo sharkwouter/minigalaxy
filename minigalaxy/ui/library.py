@@ -45,6 +45,7 @@ class Library(Gtk.Viewport):
         GLib.idle_add(self.__load_tile_states)
         # Get already installed games first
         self.games = self.__get_installed_games()
+        self.__create_gametiles()
 
         # Get games from the API
         self.__add_games_from_api()
