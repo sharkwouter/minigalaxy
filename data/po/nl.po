@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-06 09:15+0200\n"
+"POT-Creation-Date: 2020-04-06 21:15+0200\n"
 "PO-Revision-Date: 2020-01-06 19:14+0100\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch\n"
@@ -56,7 +56,7 @@ msgstr "Annuleren"
 msgid "Chinese"
 msgstr "Chinees"
 
-#: minigalaxy/ui/library.py:148
+#: minigalaxy/ui/library.py:150
 msgid "Couldn't connect to GOG servers"
 msgstr "Er kon geen verbinding gemaakt worden met de GOG servers"
 
@@ -84,7 +84,7 @@ msgstr "Engels"
 msgid "Failed to install {}"
 msgstr "Kon {} niet starten:"
 
-#: minigalaxy/ui/library.py:148
+#: minigalaxy/ui/library.py:150
 msgid "Failed to retrieve library"
 msgstr "De lijst me games kon niet opgehaald worden"
 
@@ -114,6 +114,10 @@ msgstr "Github pagina"
 msgid "Hungarian"
 msgstr "Hongaars"
 
+#: minigalaxy/ui/preferences.py:47
+msgid "Install Wine to enable this feature"
+msgstr ""
+
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
 msgctxt "install_path"
@@ -134,7 +138,7 @@ msgstr "Italiaans"
 msgid "Japanese"
 msgstr "Japans"
 
-#: minigalaxy/ui/preferences.py:39
+#: minigalaxy/ui/preferences.py:40
 msgid ""
 "Keep installers after downloading a game.\n"
 "Installers are stored in: {}"
@@ -192,7 +196,7 @@ msgstr "Pools"
 msgid "Portuguese"
 msgstr "Portugees"
 
-#: minigalaxy/ui/preferences.py:27
+#: minigalaxy/ui/preferences.py:28
 msgid "Preferences"
 msgstr "Voorkeuren"
 
@@ -352,7 +356,7 @@ msgstr "{} kan niet uitgepakt worden"
 msgid "{} failed to download."
 msgstr "{} kon niet worden gedownload"
 
-#: minigalaxy/ui/preferences.py:119
+#: minigalaxy/ui/preferences.py:127
 msgid "{} isn't a usable path"
 msgstr "{} is geen bruikbaar pad"
 

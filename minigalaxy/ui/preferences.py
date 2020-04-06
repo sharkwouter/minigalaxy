@@ -2,6 +2,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import os
+import shutil
 from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES
@@ -38,6 +39,13 @@ class Preferences(Gtk.Dialog):
         self.label_keep_installers.set_tooltip_text(
             _("Keep installers after downloading a game.\nInstallers are stored in: {}").format(installer_dir)
         )
+
+        # Only allow showing Windows games if wine is available
+        if not shutil.which("wine"):
+            self.switch_show_windows_games.set_sensitive(False)
+            self.switch_show_windows_games.set_tooltip_text(
+                _("Install Wine to enable this feature")
+            )
 
     def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)

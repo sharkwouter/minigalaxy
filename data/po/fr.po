@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-06 09:15+0200\n"
+"POT-Creation-Date: 2020-04-06 21:15+0200\n"
 "PO-Revision-Date: 2020-03-03 12:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -56,7 +56,7 @@ msgstr "Annuler"
 msgid "Chinese"
 msgstr "Chinois"
 
-#: minigalaxy/ui/library.py:148
+#: minigalaxy/ui/library.py:150
 msgid "Couldn't connect to GOG servers"
 msgstr "Impossible de se connecter aux serveurs de GOG"
 
@@ -84,7 +84,7 @@ msgstr "Anglais"
 msgid "Failed to install {}"
 msgstr "Impossible de démarrer {} :"
 
-#: minigalaxy/ui/library.py:148
+#: minigalaxy/ui/library.py:150
 msgid "Failed to retrieve library"
 msgstr "Impossible de récupérer la bibliothèque"
 
@@ -114,6 +114,10 @@ msgstr "Page GitHub"
 msgid "Hungarian"
 msgstr "Hongrois"
 
+#: minigalaxy/ui/preferences.py:47
+msgid "Install Wine to enable this feature"
+msgstr ""
+
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
 msgctxt "install_path"
@@ -134,7 +138,7 @@ msgstr "Italien"
 msgid "Japanese"
 msgstr "Japonais"
 
-#: minigalaxy/ui/preferences.py:39
+#: minigalaxy/ui/preferences.py:40
 msgid ""
 "Keep installers after downloading a game.\n"
 "Installers are stored in: {}"
@@ -192,7 +196,7 @@ msgstr "Polonais"
 msgid "Portuguese"
 msgstr "Portugais"
 
-#: minigalaxy/ui/preferences.py:27
+#: minigalaxy/ui/preferences.py:28
 msgid "Preferences"
 msgstr "Préférences"
 
@@ -352,7 +356,7 @@ msgstr "{} n'a pas pu être décompressé."
 msgid "{} failed to download."
 msgstr "{} n'a pas pu être téléchargé."
 
-#: minigalaxy/ui/preferences.py:119
+#: minigalaxy/ui/preferences.py:127
 msgid "{} isn't a usable path"
 msgstr "{} n'est pas un chemin utilisable"
 
