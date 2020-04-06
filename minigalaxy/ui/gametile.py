@@ -1,7 +1,7 @@
 import shutil
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Gdk, GdkPixbuf
 import os
 import webbrowser
 import threading
@@ -13,23 +13,32 @@ from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.launcher import start_game
+from minigalaxy.launcher import start_game, config_game
 from minigalaxy.installer import uninstall_game, install_game
+from minigalaxy.css import CSS_PROVIDER
+from minigalaxy.paths import ICON_WINE_PATH
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
 class GameTile(Gtk.Box):
     __gtype_name__ = "GameTile"
+    gogBaseUrl = "https://www.gog.com"
 
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
+    menu_button_settings = Gtk.Template.Child()
+    wine_icon = Gtk.Template.Child()
+    menu_button_store = Gtk.Template.Child()
 
-    state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED UNINSTALLING')
+    state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING')
 
     def __init__(self, parent, game, api):
         Gtk.Frame.__init__(self)
+        Gtk.StyleContext.add_provider(self.button.get_style_context(),
+                                      CSS_PROVIDER,
+                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         self.parent = parent
         self.game = game
         self.api = api
@@ -42,17 +51,42 @@ class GameTile(Gtk.Box):
 
         # Set folder for download installer
         self.download_dir = os.path.join(CACHE_DIR, "download")
-        self.download_path = os.path.join(self.download_dir, "{}.sh".format(self.game.name))
+        self.download_path = os.path.join(self.download_dir, self.game.name)
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
-        self.keep_path = os.path.join(self.keep_dir, "{}.sh".format(self.game.name))
+        self.keep_path = os.path.join(self.keep_dir, self.game.name)
 
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
 
         self.reload_state()
         self.load_thumbnail()
+
+        # Start download if Minigalaxy was closed while downloading this game
+        self.resume_download_if_expected()
+
+        # Icon for Windows games
+        if self.game.platform == "windows":
+            self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
+            self.wine_icon.set_from_file(ICON_WINE_PATH)
+            self.wine_icon.show()
+
+        if self.game.url == "":
+            self.menu_button_store.hide()
+
+    # Downloads if Minigalaxy was closed with this game downloading
+    def resume_download_if_expected(self):
+        download_id = Config.get("current_download")
+        if download_id and download_id == self.game.id and self.current_state == self.state.DOWNLOADABLE:
+            download_thread = threading.Thread(target=self.__download_file)
+            download_thread.start()
+
+    # Do not restart the download if Minigalaxy is restarted
+    def prevent_resume_on_startup(self):
+        download_id = Config.get("current_download")
+        if download_id and download_id == self.game.id:
+            Config.unset("current_download")
 
     def __str__(self):
         return self.game.name
@@ -77,12 +111,17 @@ class GameTile(Gtk.Box):
                                            flags=Gtk.DialogFlags.MODAL,
                                            message_type=Gtk.MessageType.WARNING,
                                            buttons=Gtk.ButtonsType.OK_CANCEL,
-                                           message_format=_("Are you sure you want to cancel downloading {}?".format(self.game.name)))
+                                           message_format=_("Are you sure you want to cancel downloading {}?").format(self.game.name))
         response = message_dialog.run()
 
         if response == Gtk.ResponseType.OK:
+            self.prevent_resume_on_startup()
             DownloadManager.cancel_download(self.download)
         message_dialog.destroy()
+
+    @Gtk.Template.Callback("on_menu_button_settings_clicked")
+    def on_menu_button_settings(self, widget):
+        config_game(self.game)
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
@@ -120,6 +159,10 @@ class GameTile(Gtk.Box):
             dialog.run()
             dialog.destroy()
 
+    @Gtk.Template.Callback("on_menu_button_store_clicked")
+    def on_menu_button_store(self, widget):
+        webbrowser.open(self.gogBaseUrl + self.game.url)
+
     def load_thumbnail(self):
         if self.__set_image():
             return True
@@ -149,10 +192,28 @@ class GameTile(Gtk.Box):
         return False
 
     def __download_file(self) -> None:
+        Config.set("current_download", self.game.id)
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
         download_info = self.api.get_download_info(self.game)
-        file_url = download_info["downlink"]
-        self.download = Download(file_url, self.download_path, self.__install, progress_func=self.set_progress, cancel_func=self.__cancel_download)
+
+        # Start the download for all files
+        self.download = []
+        download_path = self.download_path
+        finish_func = self.__install
+        for key, file_info in enumerate(download_info['files']):
+            if key > 0:
+                download_path = "{}-{}.bin".format(self.download_path, key)
+            download = Download(
+                url=self.api.get_real_download_link(file_info["downlink"]),
+                save_location=download_path,
+                finish_func=finish_func,
+                progress_func=self.set_progress,
+                cancel_func=self.__cancel_download,
+                number=key+1,
+                out_of_amount=len(download_info['files'])
+            )
+            self.download.append(download)
+
         DownloadManager.download(self.download)
 
     def __install(self):
@@ -199,6 +260,7 @@ class GameTile(Gtk.Box):
         return os.path.join(Config.get("install_dir"), self.game.get_stripped_name())
 
     def reload_state(self):
+        self.game.install_dir = self.__get_install_dir()
         dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING]
         if self.current_state in dont_act_in_states:
             return
@@ -269,12 +331,15 @@ class GameTile(Gtk.Box):
 
         elif state == self.state.INSTALLED:
             self.button.set_label(_("play"))
+            # self.button.get_style_context().add_class("suggested-action")
             self.button.set_sensitive(True)
             self.image.set_sensitive(True)
             self.menu_button.show()
             self.button_cancel.hide()
-            self.menu_button.show()
             self.game.install_dir = self.__get_install_dir()
+
+            if self.game.platform == "linux":
+                self.menu_button_settings.hide()
 
             if self.progress_bar:
                 self.progress_bar.destroy()

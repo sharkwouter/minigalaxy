@@ -1,4 +1,6 @@
 import os
+import re
+import json
 import gi
 import threading
 from typing import List
@@ -43,11 +45,11 @@ class Library(Gtk.Viewport):
         GLib.idle_add(self.__load_tile_states)
         # Get already installed games first
         self.games = self.__get_installed_games()
-        self.__create_gametiles()
+        GLib.idle_add(self.__create_gametiles)
 
         # Get games from the API
         self.__add_games_from_api()
-        self.__create_gametiles()
+        GLib.idle_add(self.__create_gametiles)
         GLib.idle_add(self.filter_library)
 
     def __load_tile_states(self):
@@ -85,17 +87,19 @@ class Library(Gtk.Viewport):
         games_with_tiles = []
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
-            games_with_tiles.append(tile.game)
+            if tile.current_state == tile.state.INSTALLED:
+                if not tile.game.image_url:
+                    self.flowbox.remove(tile)
+                    continue
+            if tile.game in self.games:
+                games_with_tiles.append(tile.game)
 
         for game in self.games:
             if game in games_with_tiles:
                 continue
-            GLib.idle_add(self.__add_gametile, game)
+            self.__add_gametile(game)
 
     def __add_gametile(self, game):
-        for child in self.flowbox.get_children():
-            if game == child.get_children()[0].game:
-                return
         self.flowbox.add(GameTile(self, game, self.api))
         self.sort_library()
         self.flowbox.show_all()
@@ -110,19 +114,31 @@ class Library(Gtk.Viewport):
                 continue
             # Make sure the gameinfo file exists
             gameinfo = os.path.join(full_path, "gameinfo")
-            if not os.path.isfile(gameinfo):
-                continue
-            with open(gameinfo, 'r') as file:
-                name = file.readline().strip()
-                version = file.readline().strip()
-                version_dev = file.readline().strip()
-                language = file.readline().strip()
-                game_id = file.readline().strip()
-                if not game_id:
-                    game_id = 0
-                else:
-                    game_id = int(game_id)
+            if os.path.isfile(gameinfo):
+                with open(gameinfo, 'r') as file:
+                    name = file.readline().strip()
+                    version = file.readline().strip()
+                    version_dev = file.readline().strip()
+                    language = file.readline().strip()
+                    game_id = file.readline().strip()
+                    if not game_id:
+                        game_id = 0
+                    else:
+                        game_id = int(game_id)
                 games.append(Game(name=name, game_id=game_id, install_dir=full_path))
+            else:
+                game_files = os.listdir(full_path)
+                for file in game_files:
+                    if re.match(r'^goggame-[0-9]*\.info$', file):
+                        with open(os.path.join(full_path, file), 'r') as info_file:
+                            info = json.loads(info_file.read())
+                            game = Game(
+                                name=info["name"],
+                                game_id=int(info["gameId"]),
+                                install_dir=full_path,
+                                platform="windows"
+                            )
+                            games.append(game)
         return games
 
     def __add_games_from_api(self):
@@ -134,15 +150,13 @@ class Library(Gtk.Viewport):
             GLib.idle_add(self.__show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
             return
         for game in retrieved_games:
-            if game not in self.games:
-                self.games.append(game)
-            else:
+            if game in self.games:
                 # Make sure the game id is set if the game is installed
                 for installed_game in self.games:
                     if game == installed_game:
-                        if not installed_game.id:
-                            installed_game.id = game.id
+                        self.games.remove(installed_game)
                         break
+            self.games.append(game)
 
     def __show_error(self, text, subtext):
         dialog = Gtk.MessageDialog(

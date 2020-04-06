@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface domain="minigalaxy">
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkPopover" id="menu">
@@ -9,6 +9,20 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkModelButton" id="menu_button_store">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes" context="store" comments="Open store page">Store Page</property>
+            <signal name="clicked" handler="on_menu_button_store_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkModelButton" id="menu_button_support">
             <property name="visible">True</property>
@@ -20,7 +34,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">0</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -34,7 +48,21 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">0</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_button_settings">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes" context="Wine Settings" comments="Open winecfg settings for Windows games">Settings</property>
+            <signal name="clicked" handler="on_menu_button_settings_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
           </packing>
         </child>
         <child>
@@ -48,7 +76,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">5</property>
           </packing>
         </child>
       </object>
@@ -129,6 +157,16 @@
           </object>
           <packing>
             <property name="index">1</property>
+          </packing>
+        </child>
+        <child type="overlay">
+          <object class="GtkImage" id="wine_icon">
+            <property name="can_focus">False</property>
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+          </object>
+          <packing>
+            <property name="index">2</property>
           </packing>
         </child>
       </object>

@@ -28,17 +28,18 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
 
 # The default values for new configuration files
 DEFAULT_CONFIGURATION = {
-    "config_version": VERSION,
     "lang": "en",
     "install_dir": DEFAULT_INSTALL_DIR,
     "keep_installers": False,
     "stay_logged_in": True,
-    "show_fps": False
+    "show_fps": False,
+    "show_windows_games": False
 }
 
 # Game IDs to ignore when received by the API
 IGNORE_GAME_IDS = [
     1424856371,  # Hotline Miami 2: Wrong Number - Digital Comics
+    1980301910,  # The Witcher Goodies Collection
 ]
 
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB

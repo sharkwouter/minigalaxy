@@ -7,26 +7,29 @@ from minigalaxy.version import VERSION
 subprocess.run(['scripts/compile-translations.sh'])
 
 setup(
-    name="Minigalaxy",
+    name="minigalaxy",
     version=VERSION,
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     scripts=['bin/minigalaxy'],
 
     data_files=[
-        ('share/applications', ['data/minigalaxy.desktop']),
-        ('share/icons/hicolor/192x192/apps', ['data/minigalaxy.png']),
+        ('share/applications', ['data/io.github.sharkwouter.Minigalaxy.desktop']),
+        ('share/icons/hicolor/128x128/apps', ['data/icons/128x128/io.github.sharkwouter.Minigalaxy.png']),
+        ('share/icons/hicolor/192x192/apps', ['data/icons/192x192/io.github.sharkwouter.Minigalaxy.png']),
         ('share/minigalaxy/ui', glob('data/ui/*.ui')),
-        ('share/metainfo', ['data/minigalaxy.metainfo.xml']),
+        ('share/minigalaxy/images', glob('data/images/*')),
+        ('share/metainfo', ['data/io.github.sharkwouter.Minigalaxy.metainfo.xml']),
 
         # Add translations
-        ('share/minigalaxy/translations/nl/LC_MESSAGES/', ['data/mo/nl/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/de/LC_MESSAGES/', ['data/mo/de/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/tr/LC_MESSAGES/', ['data/mo/tr/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/fr/LC_MESSAGES/', ['data/mo/fr/LC_MESSAGES/minigalaxy.mo']),
+        ('share/minigalaxy/translations/nb_NO/LC_MESSAGES/', ['data/mo/nb_NO/LC_MESSAGES/minigalaxy.mo']),
+        ('share/minigalaxy/translations/nl/LC_MESSAGES/', ['data/mo/nl/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/pl/LC_MESSAGES/', ['data/mo/pl/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/pt_BR/LC_MESSAGES/', ['data/mo/pt_BR/LC_MESSAGES/minigalaxy.mo']),
+        ('share/minigalaxy/translations/ru_RU/LC_MESSAGES/', ['data/mo/ru_RU/LC_MESSAGES/minigalaxy.mo']),
+        ('share/minigalaxy/translations/tr/LC_MESSAGES/', ['data/mo/tr/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/zh_TW/LC_MESSAGES/', ['data/mo/zh_TW/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/nb_NO/LC_MESSAGES/', ['data/mo/nb_NO/LC_MESSAGES/minigalaxy.mo']),
     ],
 
     # Project uses reStructuredText, so ensure that the docutils get

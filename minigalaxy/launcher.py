@@ -4,10 +4,18 @@ import shutil
 import re
 import json
 import gi
+import glob
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from minigalaxy.translation import _
 from minigalaxy.config import Config
+
+
+def config_game(game):
+    prefix = os.path.join(game.install_dir, "prefix")
+
+    os.environ["WINEPREFIX"] = prefix
+    subprocess.Popen(['wine', 'winecfg'])
 
 
 def start_game(game, parent_window=None) -> subprocess:
@@ -66,6 +74,25 @@ def start_game(game, parent_window=None) -> subprocess:
 def __get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
 
+    # Windows
+    if "unins000.exe" in files:
+        prefix = os.path.join(game.install_dir, "prefix")
+        os.environ["WINEPREFIX"] = prefix
+
+        # Find game executable file
+        for file in files:
+            if re.match(r'^goggame-[0-9]*\.info$', file):
+                os.chdir(game.install_dir)
+                with open(file, 'r') as info_file:
+                    info = json.loads(info_file.read())
+                    return ["wine", info["playTasks"][0]["path"]]
+
+        # in case no goggame info file was found
+        executables = glob.glob(game.install_dir + '/*.exe')
+        executables.remove(os.path.join(game.install_dir, "unins000.exe"))
+        filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
+        return ["wine", filename]
+
     # Dosbox
     if "dosbox" in files and shutil.which("dosbox"):
         for file in files:
@@ -90,11 +117,11 @@ def __get_execute_command(game) -> list:
     # Wine
     if "prefix" in files and shutil.which("wine"):
         # This still needs to be implemented
-        return ["./start.sh"]
+        return [os.path.join(game.install_dir, "start.sh")]
 
     # None of the above, but there is a start script
     if "start.sh" in files:
-        return ["./start.sh"]
+        return [os.path.join(game.install_dir, "start.sh")]
 
     # This is the final resort, applies to FTL
     if "game" in files:
@@ -113,8 +140,10 @@ def __get_execute_command(game) -> list:
 def __set_fps_display():
     # Enable FPS Counter for Nvidia or AMD (Mesa) users
     if Config.get("show_fps"):
-        os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users
-        os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users
+        os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users + OpenGL/Vulkan games
+        os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users + OpenGL games
+        os.environ["VK_INSTANCE_LAYERS"] = "VK_LAYER_MESA_overlay" # For AMDGPU users + Vulkan games
     elif Config.get("show_fps") is False:
-        os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0"  # For Nvidia users
+        os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0"
         os.environ["GALLIUM_HUD"] = ""
+        os.environ["VK_INSTANCE_LAYERS"] = ""

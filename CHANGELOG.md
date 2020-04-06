@@ -1,4 +1,13 @@
-**0.9.3 (unreleased)**
+**0.9.4 (unreleased)**
+- Added the following translations:
+    - Norwegian Nynorsk (thanks to LordPilum)
+    - Russian (thanks to protheory8)
+- Updated the following translations:
+    - Brazilian Portuguese (thanks to EsdrasTarsis)
+    - Taiwanese Mandarin (thanks to s8321414)
+- Added support for installing Windows games (with help from Odelpasso)
+
+**0.9.3**
 - Added the following translations:
     - German (thanks to BlindJerobine)
     - Turkish (thanks to fuzunspm)
@@ -10,8 +19,10 @@
 - Changed the way games are downloaded to a queue instead of trying to download everything at once.
 - Added support option to game specific menus which open the GOG support page (thanks to BlindJerobine).
 - Ask for confirmation before uninstalling (thanks to Odelpasso).
+- Added option to display FPS in games (thanks to Odelpasso).
 - Downloads can now be resumed after having been cancelled before.
 - Installers are now verified before installing.
+- The active download is now resumed when restarting Minigalaxy.
 - Fixed issue with games not downloading.
 
 **0.9.2**
