@@ -116,7 +116,7 @@ msgstr "Hongaars"
 
 #: minigalaxy/ui/preferences.py:47
 msgid "Install Wine to enable this feature"
-msgstr ""
+msgstr "Installeer Wine om deze feature te te kunnen gebruiken"
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
@@ -232,7 +232,7 @@ msgstr "Opslaan"
 #: data/ui/gametile.ui:59
 msgctxt "Wine Settings"
 msgid "Settings"
-msgstr ""
+msgstr "Instellingen"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:187
@@ -276,7 +276,7 @@ msgstr "Blijf ingelogd: "
 #: data/ui/gametile.ui:17
 msgctxt "store"
 msgid "Store Page"
-msgstr ""
+msgstr "Winkelpagina"
 
 #. Opens the official support webpage
 #: data/ui/gametile.ui:31
@@ -318,7 +318,7 @@ msgstr ""
 #: data/ui/preferences.ui:198
 msgctxt "show_windows_games_tooltip"
 msgid "Whether Windows games are shown in the library or not"
-msgstr ""
+msgstr "Of Windows games zichtbaar zijn in de bibliotheek"
 
 #: minigalaxy/ui/gametile.py:277
 msgid "download"
