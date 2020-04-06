@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-21 15:28+0100\n"
+"POT-Creation-Date: 2020-04-06 09:15+0200\n"
 "PO-Revision-Date: 2020-03-21 13:40+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -35,11 +35,11 @@ msgctxt "about"
 msgid "About"
 msgstr "О Minigalaxy"
 
-#: minigalaxy/ui/gametile.py:101
+#: minigalaxy/ui/gametile.py:114
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Вы уверены что Вы хотите отменить загрузку {}?"
 
-#: minigalaxy/ui/gametile.py:119
+#: minigalaxy/ui/gametile.py:132
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Вы уверены что Вы хотите удалить %s?"
@@ -61,7 +61,7 @@ msgstr "Китайский"
 msgid "Couldn't connect to GOG servers"
 msgstr "Не удалось подключиться к серверам GOG"
 
-#: minigalaxy/ui/gametile.py:143
+#: minigalaxy/ui/gametile.py:156
 msgid "Couldn't open support page"
 msgstr "Не удалось открыть страницу поддержки"
 
@@ -81,7 +81,7 @@ msgstr "Нидерландский"
 msgid "English"
 msgstr "Английский"
 
-#: minigalaxy/installer.py:87
+#: minigalaxy/installer.py:79
 msgid "Failed to install {}"
 msgstr "Не удалось установить {}"
 
@@ -176,12 +176,12 @@ msgid "Norwegian"
 msgstr "Норвежский"
 
 #. Opens the directory the game is installed in
-#: data/ui/gametile.ui:17
+#: data/ui/gametile.ui:45
 msgctxt "open_files"
 msgid "Open Files"
 msgstr "Открыть Файлы"
 
-#: minigalaxy/ui/gametile.py:145
+#: minigalaxy/ui/gametile.py:158
 msgid "Please check your internet connection"
 msgstr "Пожалуйста, проверьте ваше интернет-соединение"
 
@@ -226,7 +226,7 @@ msgid "Save"
 msgstr "Сохранить"
 
 #. Open winecfg settings for Windows games
-#: data/ui/gametile.ui:45
+#: data/ui/gametile.ui:59
 msgctxt "Wine Settings"
 msgid "Settings"
 msgstr ""
@@ -269,8 +269,14 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Не выходить из системы:"
 
+#. Open store page
+#: data/ui/gametile.ui:17
+msgctxt "store"
+msgid "Store Page"
+msgstr ""
+
 #. Opens the official support webpage
-#: data/ui/gametile.ui:59
+#: data/ui/gametile.ui:31
 msgctxt "support"
 msgid "Support"
 msgstr "Поддержка"
@@ -294,7 +300,7 @@ msgid "Turkish"
 msgstr "Турецкий"
 
 #. Removes the game files from the local machine
-#: data/ui/gametile.ui:31
+#: data/ui/gametile.ui:73
 msgctxt "uninstall"
 msgid "Uninstall"
 msgstr "Удалить"
@@ -310,39 +316,39 @@ msgctxt "show_windows_games_tooltip"
 msgid "Whether Windows games are shown in the library or not"
 msgstr ""
 
-#: minigalaxy/ui/gametile.py:260
+#: minigalaxy/ui/gametile.py:277
 msgid "download"
 msgstr "загрузить"
 
-#: minigalaxy/ui/gametile.py:292
+#: minigalaxy/ui/gametile.py:309
 msgid "downloading.."
 msgstr "загрузка.."
 
-#: minigalaxy/ui/gametile.py:284
+#: minigalaxy/ui/gametile.py:301
 msgid "in queue.."
 msgstr "в очереди.."
 
-#: minigalaxy/ui/gametile.py:272
+#: minigalaxy/ui/gametile.py:289
 msgid "install"
 msgstr "установить"
 
-#: minigalaxy/ui/gametile.py:302
+#: minigalaxy/ui/gametile.py:319
 msgid "installing.."
 msgstr "установка.."
 
-#: minigalaxy/ui/gametile.py:316
+#: minigalaxy/ui/gametile.py:333
 msgid "play"
 msgstr "играть"
 
-#: minigalaxy/ui/gametile.py:331
+#: minigalaxy/ui/gametile.py:348
 msgid "uninstalling.."
 msgstr "удаление.."
 
-#: minigalaxy/installer.py:40
+#: minigalaxy/installer.py:32 minigalaxy/installer.py:33
 msgid "{} could not be unzipped."
 msgstr "Не удалось распаковать {}."
 
-#: minigalaxy/installer.py:15
+#: minigalaxy/installer.py:14
 msgid "{} failed to download."
 msgstr "Не удалось загрузить {}."
 
@@ -350,6 +356,6 @@ msgstr "Не удалось загрузить {}."
 msgid "{} isn't a usable path"
 msgstr "Невозможно использовать {} для установки"
 
-#: minigalaxy/installer.py:20
+#: minigalaxy/installer.py:19
 msgid "{} was corrupted. Please download it again."
 msgstr "{} поврежден. Пожалуйста загрузите его заново."
