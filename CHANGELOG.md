@@ -6,6 +6,9 @@
     - Brazilian Portuguese (thanks to EsdrasTarsis)
     - Taiwanese Mandarin (thanks to s8321414)
 - Added support for installing Windows games (with help from Odelpasso)
+- Added store page link to game menus (thanks to larslindq)
+- Fixed thumbnails not being downloaded for already installed games
+- Made preparations for a flathub package
 
 **0.9.3**
 - Added the following translations:
