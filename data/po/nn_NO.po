@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-06 21:15+0200\n"
-"PO-Revision-Date: 2020-03-11 15:11+0100\n"
+"PO-Revision-Date: 2020-04-07 07:13+0200\n"
 "Last-Translator: Jan Kjetil Myklebust\n"
 "Language-Team: \n"
 "Language: nb_NO\n"
@@ -116,7 +116,7 @@ msgstr "Ungarsk"
 
 #: minigalaxy/ui/preferences.py:47
 msgid "Install Wine to enable this feature"
-msgstr ""
+msgstr "Installer Wine for å aktivere denne funksjonen"
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
@@ -232,7 +232,7 @@ msgstr "Lagre"
 #: data/ui/gametile.ui:59
 msgctxt "Wine Settings"
 msgid "Settings"
-msgstr ""
+msgstr "Innstillingar"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:187
@@ -242,10 +242,9 @@ msgstr "Vis FPS i spel:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:201
-#, fuzzy
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Vis FPS i spel:"
+msgstr "Vis spel for Windows:"
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -276,7 +275,7 @@ msgstr "Bli verande pålogga:"
 #: data/ui/gametile.ui:17
 msgctxt "store"
 msgid "Store Page"
-msgstr ""
+msgstr "Produktside"
 
 #. Opens the official support webpage
 #: data/ui/gametile.ui:31
@@ -317,7 +316,7 @@ msgstr ""
 #: data/ui/preferences.ui:198
 msgctxt "show_windows_games_tooltip"
 msgid "Whether Windows games are shown in the library or not"
-msgstr ""
+msgstr "Om spel for Windows vert vist i biblioteket eller ikkje"
 
 #: minigalaxy/ui/gametile.py:277
 msgid "download"
