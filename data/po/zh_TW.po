@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-06 21:15+0200\n"
-"PO-Revision-Date: 2020-03-22 10:42+0800\n"
+"PO-Revision-Date: 2020-04-07 08:53+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
 "Language: zh_TW\n"
@@ -115,7 +115,7 @@ msgstr "匈牙利文"
 
 #: minigalaxy/ui/preferences.py:47
 msgid "Install Wine to enable this feature"
-msgstr ""
+msgstr "安裝 Wine 以啟用此功能"
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
@@ -272,7 +272,7 @@ msgstr "保持登入："
 #: data/ui/gametile.ui:17
 msgctxt "store"
 msgid "Store Page"
-msgstr ""
+msgstr "商店頁面"
 
 #. Opens the official support webpage
 #: data/ui/gametile.ui:31
