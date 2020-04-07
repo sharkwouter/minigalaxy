@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-06 21:15+0200\n"
-"PO-Revision-Date: 2020-04-08 00:49+0000\n"
+"PO-Revision-Date: 2020-04-07 18:05+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -245,7 +245,7 @@ msgstr "Показывать FPS в играх:"
 #: data/ui/preferences.ui:201
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Показывать FPS в играх: "
+msgstr "Показывать Windows игры: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
