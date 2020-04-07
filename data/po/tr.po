@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-06 21:15+0200\n"
-"PO-Revision-Date: 2020-03-03 13:59+0300\n"
+"PO-Revision-Date: 2020-04-07 11:13+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. A short description of what Minigalaxy is
@@ -116,7 +116,7 @@ msgstr "Macarca"
 
 #: minigalaxy/ui/preferences.py:47
 msgid "Install Wine to enable this feature"
-msgstr ""
+msgstr "Bu özelliği etkinleştirmek için Wine yükleyin"
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
@@ -232,7 +232,7 @@ msgstr "Kaydet"
 #: data/ui/gametile.ui:59
 msgctxt "Wine Settings"
 msgid "Settings"
-msgstr ""
+msgstr "Ayarlar"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:187
@@ -242,10 +242,9 @@ msgstr "Oyunlarda FPS göster:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:201
-#, fuzzy
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Oyunlarda FPS göster:"
+msgstr "Oyunlarda FPS göster: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -276,7 +275,7 @@ msgstr "Çevrimci tut:"
 #: data/ui/gametile.ui:17
 msgctxt "store"
 msgid "Store Page"
-msgstr ""
+msgstr "Market Sayfası"
 
 #. Opens the official support webpage
 #: data/ui/gametile.ui:31
@@ -316,7 +315,7 @@ msgstr "Etkin değilken her Minigalaxy açıldığında giriş yapılması isten
 #: data/ui/preferences.ui:198
 msgctxt "show_windows_games_tooltip"
 msgid "Whether Windows games are shown in the library or not"
-msgstr ""
+msgstr "Windows oyunları kütüphanede gözükmeli mi"
 
 #: minigalaxy/ui/gametile.py:277
 msgid "download"
