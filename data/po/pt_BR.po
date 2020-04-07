@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-06 21:15+0200\n"
-"PO-Revision-Date: 2020-03-22 11:40-0300\n"
+"PO-Revision-Date: 2020-04-06 18:38-0300\n"
 "Last-Translator: Esdras Tarsis <esdrastarsis@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -116,7 +116,7 @@ msgstr "Húngaro"
 
 #: minigalaxy/ui/preferences.py:47
 msgid "Install Wine to enable this feature"
-msgstr ""
+msgstr "Instale o Wine para habilitar esse recurso"
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
@@ -275,7 +275,7 @@ msgstr "Permanecer conectado:"
 #: data/ui/gametile.ui:17
 msgctxt "store"
 msgid "Store Page"
-msgstr ""
+msgstr "Página da Loja"
 
 #. Opens the official support webpage
 #: data/ui/gametile.ui:31
