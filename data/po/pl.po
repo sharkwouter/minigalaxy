@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-06 21:15+0200\n"
-"PO-Revision-Date: 2020-03-10 09:31+0100\n"
+"PO-Revision-Date: 2020-04-09 11:57+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl_PL\n"
@@ -42,7 +42,7 @@ msgstr "Czy na pewno chcesz anulować pobieranie {}?"
 #: minigalaxy/ui/gametile.py:132
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
-msgstr "Czy na pewno chcesz odinstalować %s"
+msgstr "Czy na pewno chcesz odinstalować %s?"
 
 #: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
@@ -117,7 +117,7 @@ msgstr "Węgierski"
 
 #: minigalaxy/ui/preferences.py:47
 msgid "Install Wine to enable this feature"
-msgstr ""
+msgstr "Zainstaluj Wine, aby włączyć tę funkcję"
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
@@ -233,7 +233,7 @@ msgstr "Zapis"
 #: data/ui/gametile.ui:59
 msgctxt "Wine Settings"
 msgid "Settings"
-msgstr ""
+msgstr "Ustawienia"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:187
@@ -243,10 +243,9 @@ msgstr "Pokaż FPS w grach:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:201
-#, fuzzy
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Pokaż FPS w grach:"
+msgstr "Pokaż FPS w grach: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -277,7 +276,7 @@ msgstr "Pozostań zalogowany:"
 #: data/ui/gametile.ui:17
 msgctxt "store"
 msgid "Store Page"
-msgstr ""
+msgstr "Strona Sklepu"
 
 #. Opens the official support webpage
 #: data/ui/gametile.ui:31
@@ -320,6 +319,8 @@ msgstr ""
 msgctxt "show_windows_games_tooltip"
 msgid "Whether Windows games are shown in the library or not"
 msgstr ""
+"Czy gry natywnie przeznaczone dla systemu Windows mają być wyświetlane w "
+"bibliotece, czy nie"
 
 #: minigalaxy/ui/gametile.py:277
 msgid "download"
