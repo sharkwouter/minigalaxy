@@ -245,7 +245,7 @@ msgstr "Pokaż FPS w grach:"
 #: data/ui/preferences.ui:201
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Pokaż FPS w grach: "
+msgstr "Wyświetl gry dla Systemu Windows: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
