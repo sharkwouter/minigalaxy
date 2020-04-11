@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-06 21:15+0200\n"
-"PO-Revision-Date: 2020-01-22 13:25+0100\n"
+"PO-Revision-Date: 2020-04-11 13:17+0200\n"
 "Last-Translator: Kim Malmo <berencamlost@msn.com>\n"
 "Language-Team: \n"
 "Language: nb_NO\n"
@@ -36,12 +36,12 @@ msgstr "Om"
 
 #: minigalaxy/ui/gametile.py:114
 msgid "Are you sure you want to cancel downloading {}?"
-msgstr ""
+msgstr "Er du sikker på at du vil avbryte nedlastingen av {}?"
 
 #: minigalaxy/ui/gametile.py:132
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
-msgstr "Er du sikker på at du vil avinstallere %s"
+msgstr "Er du sikker på at du vil avinstallere %s?"
 
 #: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
@@ -116,7 +116,7 @@ msgstr "Ungarsk"
 
 #: minigalaxy/ui/preferences.py:47
 msgid "Install Wine to enable this feature"
-msgstr ""
+msgstr "Installér Wine for å aktivere denne egenskapen"
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
@@ -232,20 +232,19 @@ msgstr "Lagre"
 #: data/ui/gametile.ui:59
 msgctxt "Wine Settings"
 msgid "Settings"
-msgstr ""
+msgstr "Innstillinger"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:187
 msgctxt "show_fps"
 msgid "Show FPS in games:"
-msgstr ""
+msgstr "Vis FPS i spill:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:201
-#, fuzzy
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Vis kun installerte spill"
+msgstr "Vis Windows spill: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -259,6 +258,8 @@ msgid ""
 "Show the framerate while playing games. Only works with AMD and Nvidia "
 "graphics cards."
 msgstr ""
+"Vis bildeoppdateringen mens du spiller. Kun mulig med AMD og Nvidia grafikk-"
+"kort."
 
 #: minigalaxy/constants.py:24
 msgid "Spanish"
@@ -274,7 +275,7 @@ msgstr "Forbli pålogget:"
 #: data/ui/gametile.ui:17
 msgctxt "store"
 msgid "Store Page"
-msgstr ""
+msgstr "Butikkside"
 
 #. Opens the official support webpage
 #: data/ui/gametile.ui:31
@@ -315,7 +316,7 @@ msgstr ""
 #: data/ui/preferences.ui:198
 msgctxt "show_windows_games_tooltip"
 msgid "Whether Windows games are shown in the library or not"
-msgstr ""
+msgstr "Om Windows spill skal vises i bibloteket eller ikke"
 
 #: minigalaxy/ui/gametile.py:277
 msgid "download"
@@ -327,7 +328,7 @@ msgstr "laster ned..."
 
 #: minigalaxy/ui/gametile.py:301
 msgid "in queue.."
-msgstr ""
+msgstr "i kø.."
 
 #: minigalaxy/ui/gametile.py:289
 msgid "install"
@@ -347,11 +348,11 @@ msgstr "avinstallerer.."
 
 #: minigalaxy/installer.py:32 minigalaxy/installer.py:33
 msgid "{} could not be unzipped."
-msgstr ""
+msgstr "{} kunne ikke pakkes ut."
 
 #: minigalaxy/installer.py:14
 msgid "{} failed to download."
-msgstr ""
+msgstr "{} kunne ikke lastes ned."
 
 #: minigalaxy/ui/preferences.py:127
 msgid "{} isn't a usable path"
@@ -359,7 +360,7 @@ msgstr "{} er ikke en brukbar sti"
 
 #: minigalaxy/installer.py:19
 msgid "{} was corrupted. Please download it again."
-msgstr ""
+msgstr "{} ble ødelagt. Vennligst last ned på nytt."
 
 #~ msgid "Minigalaxy is now running in offline mode"
 #~ msgstr "Minigalaxy kjører i frakoblet modus"
