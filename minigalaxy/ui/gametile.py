@@ -257,7 +257,7 @@ class GameTile(Gtk.Box):
     def __get_install_dir(self):
         if self.game.install_dir:
             return self.game.install_dir
-        return os.path.join(Config.get("install_dir"), self.game.get_stripped_name())
+        return os.path.join(Config.get("install_dir"), self.game.name)
 
     def reload_state(self):
         self.game.install_dir = self.__get_install_dir()
