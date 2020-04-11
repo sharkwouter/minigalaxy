@@ -4,10 +4,17 @@
     - Russian (thanks to protheory8)
 - Updated the following translations:
     - Brazilian Portuguese (thanks to EsdrasTarsis)
+    - French (thanks to Thomasb22)
+    - German (thanks to BlindJerobine)
+    - Norwegian Bokmål (thanks to kimmalmo)
+    - Polish (thanks to ArturWroblewski)
     - Taiwanese Mandarin (thanks to s8321414)
+    - Turkish (thanks to fuzunspm)
 - Added support for installing Windows games (with help from Odelpasso)
 - Added store page link to game menus (thanks to larslindq)
+- Fixed game directories being created without any spaces in the name (thanks to larslindq)
 - Fixed thumbnails not being downloaded for already installed games
+- Fixed symlinks to libraries not being created correctly upon installation
 - Made preparations for a flathub package
 
 **0.9.3**
