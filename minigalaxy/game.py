@@ -22,11 +22,6 @@ class Game:
     def __eq__(self, other):
         if self.id > 0 and other.id > 0:
             if self.id == other.id:
-                # Exchange images urls
-                if self.image_url:
-                    other.image_url = self.image_url
-                else:
-                    self.image_url = other.image_url
                 return True
             else:
                 return False

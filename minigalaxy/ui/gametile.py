@@ -72,7 +72,7 @@ class GameTile(Gtk.Box):
             self.wine_icon.set_from_file(ICON_WINE_PATH)
             self.wine_icon.show()
 
-        if self.game.url == "":
+        if not self.game.url:
             self.menu_button_store.hide()
 
     # Downloads if Minigalaxy was closed with this game downloading
