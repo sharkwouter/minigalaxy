@@ -1,3 +1,4 @@
+import copy
 import os
 import re
 import json
@@ -85,10 +86,12 @@ class Library(Gtk.Viewport):
 
     def __create_gametiles(self) -> None:
         games_with_tiles = []
+        games_with_removed_tiles = []
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
             if tile.current_state == tile.state.INSTALLED:
                 if not tile.game.image_url:
+                    games_with_removed_tiles.append(copy.deepcopy(tile.game))
                     self.flowbox.remove(tile)
                     continue
             if tile.game in self.games:
@@ -97,6 +100,11 @@ class Library(Gtk.Viewport):
         for game in self.games:
             if game in games_with_tiles:
                 continue
+            if game in games_with_removed_tiles:
+                for tile_game in games_with_removed_tiles:
+                    if game == tile_game:
+                        game.install_dir = tile_game.install_dir
+                        break
             self.__add_gametile(game)
 
     def __add_gametile(self, game):
