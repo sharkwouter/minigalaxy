@@ -10,12 +10,13 @@
     - Polish (thanks to ArturWroblewski)
     - Taiwanese Mandarin (thanks to s8321414)
     - Turkish (thanks to fuzunspm)
-- Added support for installing Windows games (with help from Odelpasso)
-- Added store page link to game menus (thanks to larslindq)
-- Fixed game directories being created without any spaces in the name (thanks to larslindq)
-- Fixed thumbnails not being downloaded for already installed games
-- Fixed symlinks to libraries not being created correctly upon installation
-- Made preparations for a flathub package
+- Added support for installing Windows games (with help from Odelpasso).
+- Added store page link to game menus (thanks to larslindq).
+- Fixed game directories being created without any spaces in the name (thanks to larslindq).
+- Fixed thumbnails not being downloaded for already installed games.
+- Fixed symlinks to libraries not being created correctly upon installation.
+- Made preparations for a flathub package.
+- Added all contributors and translators to the about window.
 
 **0.9.3**
 - Added the following translations:
