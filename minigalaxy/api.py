@@ -93,6 +93,8 @@ class Api:
                         platform = "windows"
                     else:
                         continue
+                    if not product["url"]:
+                        print("{} has no store page url".format(product["title"]))
                     game = Game(name=product["title"], url=product["url"], game_id=product["id"], image_url=product["image"], platform=platform)
                     games.append(game)
             if current_page == total_pages:
