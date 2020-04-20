@@ -2,14 +2,15 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Artem Polishchuk <ego.cordatus@gmail.com>, 2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-06 21:15+0200\n"
-"PO-Revision-Date: 2020-04-07 18:05+0000\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2020-04-20 23:47+0300\n"
+"Last-Translator: Artem Polishchuk <ego.cordatus@gmail.com>\n"
 "Language-Team: \n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
@@ -37,12 +38,12 @@ msgstr "О Minigalaxy"
 
 #: minigalaxy/ui/gametile.py:114
 msgid "Are you sure you want to cancel downloading {}?"
-msgstr "Вы уверены что Вы хотите отменить загрузку {}?"
+msgstr "Вы уверены что хотите отменить загрузку {}?"
 
 #: minigalaxy/ui/gametile.py:132
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
-msgstr "Вы уверены что Вы хотите удалить %s?"
+msgstr "Вы уверены что хотите удалить %s?"
 
 #: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
@@ -187,7 +188,7 @@ msgstr "Открыть Файлы"
 
 #: minigalaxy/ui/gametile.py:158
 msgid "Please check your internet connection"
-msgstr "Пожалуйста, проверьте ваше интернет-соединение"
+msgstr "Проверьте ваше интернет-соединение"
 
 #: minigalaxy/constants.py:21
 msgid "Polish"
@@ -199,13 +200,13 @@ msgstr "Португальский"
 
 #: minigalaxy/ui/preferences.py:28
 msgid "Preferences"
-msgstr "Настройки"
+msgstr "Параметры"
 
 #. Opens preferences dialog
 #: data/ui/application.ui:32
 msgctxt "preferences"
 msgid "Preferences"
-msgstr "Настройки"
+msgstr "Параметры"
 
 #. Prefered language to download games in. Ends with ": ".
 #: data/ui/preferences.ui:70
@@ -259,8 +260,8 @@ msgid ""
 "Show the framerate while playing games. Only works with AMD and Nvidia "
 "graphics cards."
 msgstr ""
-"Показать частоту кадров во время игры. Работает только на видеокартах AMD и "
-"Nvidia."
+"Показывать частоту кадров во время игры. Работает только на видеокартах AMD "
+"и Nvidia."
 
 #: minigalaxy/constants.py:24
 msgid "Spanish"
@@ -296,7 +297,7 @@ msgstr "Язык, на котором Вы хотите скачивать иг�
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
-msgstr "Это где игры будут установлены"
+msgstr "Место, где будут установлены игры"
 
 #: minigalaxy/constants.py:26
 msgid "Turkish"
