@@ -40,6 +40,7 @@ DEFAULT_CONFIGURATION = {
 IGNORE_GAME_IDS = [
     1424856371,  # Hotline Miami 2: Wrong Number - Digital Comics
     1980301910,  # The Witcher Goodies Collection
+    2005648906,  # Spring Sale Goodies Collection #1
 ]
 
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
