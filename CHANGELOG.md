@@ -1,4 +1,4 @@
-**0.9.4 (unreleased)**
+**0.9.4**
 - Added the following translations:
     - Norwegian Nynorsk (thanks to LordPilum)
     - Russian (thanks to protheory8)
@@ -15,7 +15,7 @@
 - Fixed game directories being created without any spaces in the name (thanks to larslindq).
 - Fixed thumbnails not being downloaded for already installed games.
 - Fixed symlinks to libraries not being created correctly upon installation.
-- Made preparations for a flathub package.
+- Made preparations for a Flathub package.
 - Added all contributors and translators to the about window.
 
 **0.9.3**
