@@ -13,6 +13,9 @@ class Game:
     def get_stripped_name(self):
         return self.__strip_string(self.name)
 
+    def get_install_directory_name(self):
+        return re.sub('[^A-Za-z0-9 ]+', '', self.name)
+
     def __strip_string(self, string):
         return re.sub('[^A-Za-z0-9]+', '', string)
 
