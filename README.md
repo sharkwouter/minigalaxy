@@ -68,6 +68,10 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 
 ## Installation
 
+<a href="https://repology.org/project/minigalaxy/versions">
+    <img src="https://repology.org/badge/vertical-allrepos/minigalaxy.svg" alt="Packaging status" align="right">
+</a>
+
 <details><summary>Ubuntu/Debian</summary>
 
 Download the latest deb package from the <a href="https://github.com/sharkwouter/minigalaxy/releases">releases page</a> and install it.
