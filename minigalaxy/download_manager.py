@@ -96,24 +96,31 @@ class __DownloadManger:
         download_request = SESSION.get(download.url, headers=resume_header, stream=True)
         downloaded_size = start_point
         file_size = int(download_request.headers.get('content-length'))
-        if downloaded_size < file_size:
-            with open(download.save_location, download_mode) as save_file:
-                for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-                    # Pause if needed
-                    while self.__paused:
-                        time.sleep(0.1)
-                    save_file.write(chunk)
-                    downloaded_size += len(chunk)
-                    if self.__cancel:
-                        self.__cancel = False
-                        save_file.close()
-                        download.cancel()
-                        self.__current_download = None
-                        return
-                    if file_size > 0:
-                        progress = int(downloaded_size / file_size * 100)
-                        download.set_progress(progress)
-                save_file.close()
+        download_remaining = file_size - downloaded_size
+        if download_remaining > 0:
+            # Check disk space available. Note this is a linux-specific command.
+            disk_status = os.statvfs(os.path.dirname(download.save_location))
+            disk_space_available = disk_status.f_frsize * disk_status.f_bavail
+            if disk_space_available < download_remaining:
+                # replace error raise with a graceful cancellation
+                raise OSError(f"Disk space remaining ({disk_space_available}) is less than the remaining download size ({download_remaining}).")
+            else:
+                with open(download.save_location, download_mode) as save_file:
+                    for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                        # Pause if needed
+                        while self.__paused:
+                            time.sleep(0.1)
+                        save_file.write(chunk)
+                        downloaded_size += len(chunk)
+                        if self.__cancel:
+                            self.__cancel = False
+                            save_file.close()
+                            download.cancel()
+                            self.__current_download = None
+                            return
+                        if file_size > 0:
+                            progress = int(downloaded_size / file_size * 100)
+                            download.set_progress(progress)
         if download.number == download.out_of_amount:
             finish_thread = threading.Thread(target=download.finish)
             finish_thread.start()
