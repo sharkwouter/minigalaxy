@@ -8,7 +8,8 @@ from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
-from minigalaxy.ui.library import Library
+from minigalaxy.ui.grid_library import GridLibrary
+from minigalaxy.ui.list_library import ListLibrary
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
@@ -18,6 +19,7 @@ class Window(Gtk.ApplicationWindow):
 
     HeaderBar = Gtk.Template.Child()
     header_sync = Gtk.Template.Child()
+    header_viewas = Gtk.Template.Child();
     header_installed = Gtk.Template.Child()
     header_search = Gtk.Template.Child()
     menu_about = Gtk.Template.Child()
@@ -31,9 +33,26 @@ class Window(Gtk.ApplicationWindow):
         self.show_installed_only = False
         self.search_string = ""
         self.offline = False
+        self.library = None
+        
+        img = self.header_viewas.get_children()[0];
+        iconsize = img.get_icon_name().size;
+        
+        # Set default state for the installed switch
+        if (Config.get("filter_installed") == True):
+            self.show_installed_only=True
+            self.header_installed.set_state(True)
 
-        # Set library
-        self.library = Library(self, self.api)
+        # Set library view mode
+        if (Config.get("viewas") == "list"):
+            img.set_from_icon_name("view-grid-symbolic",iconsize)
+            self.header_viewas.set_tooltip_text("View as Grid")
+            self.library = ListLibrary(self, self.api, show_installed_only=self.show_installed_only)
+        else:
+            img.set_from_icon_name("view-list-symbolic",iconsize)
+            self.header_viewas.set_tooltip_text("View as List")
+            self.library = GridLibrary(self, self.api, show_installed_only=self.show_installed_only)
+        
         self.window_library.add(self.library)
 
         # Set the icon
@@ -54,7 +73,9 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("filter_library")
     def filter_library(self, switch, _=""):
-        self.library.filter_library(switch)
+        if (self.library is not None):
+            Config.set("filter_installed", False if switch.get_state() else True)
+            self.library.filter_library(switch)
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
@@ -88,6 +109,26 @@ class Window(Gtk.ApplicationWindow):
         if self.library.offline:
             self.__authenticate()
         self.library.update_library()
+        
+    @Gtk.Template.Callback("on_header_viewas_clicked")
+    def library_viewas(self, _=""):
+        self.window_library.remove(self.library)
+        self.library.destroy()
+        img = self.header_viewas.get_children()[0];
+        iconname = img.get_icon_name().icon_name;
+        iconsize = img.get_icon_name().size;
+        if (iconname == "view-list-symbolic"):
+            img.set_from_icon_name("view-grid-symbolic",iconsize)
+            Config.set("viewas","grid")
+            self.header_viewas.set_tooltip_text("View as Grid")
+            self.library = ListLibrary(self, self.api, show_installed_only=self.show_installed_only, search_string=self.header_search.get_text())
+        else:
+            img.set_from_icon_name("view-list-symbolic",iconsize)
+            Config.set("viewas","list")
+            self.header_viewas.set_tooltip_text("View as List")
+            self.library = GridLibrary(self, self.api, show_installed_only=self.show_installed_only, search_string=self.header_search.get_text())
+        self.window_library.add(self.library)
+        self.sync_library()
 
     def reset_library(self):
         self.library.reset()

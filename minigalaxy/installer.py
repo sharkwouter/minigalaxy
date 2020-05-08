@@ -38,7 +38,13 @@ def install_game(game, installer, parent_window=None) -> None:
             os.makedirs(library_dir)
 
         # Copy the game files into the correct directory
-        shutil.move(os.path.join(temp_dir, "data/noarch"), game.install_dir)
+        tmp_noarch_dir=os.path.join(temp_dir, "data/noarch")
+        if not os.path.exists(game.install_dir):
+            # move if destination folder does not exist
+            shutil.move(tmp_noarch_dir, game.install_dir)
+        else:
+            # copy if destination folder exists
+            shutil.copytree(tmp_noarch_dir, game.install_dir,dirs_exist_ok=True)
 
         # Remove the temporary directory
         shutil.rmtree(temp_dir, ignore_errors=True)
@@ -55,20 +61,29 @@ def install_game(game, installer, parent_window=None) -> None:
         command = ["wine", installer, "/dir=" + game.install_dir]
         subprocess.run(command)
 
-    shutil.copyfile(
-        os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
-        os.path.join(game.install_dir, "thumbnail.jpg"),
-    )
+    thumbnail_small = os.path.join(THUMBNAIL_DIR, "{}_100.jpg".format(game.id))
+    thumbnail_medium = os.path.join(THUMBNAIL_DIR, "{}_196.jpg".format(game.id))
+    if os.path.exists(thumbnail_small):
+        shutil.copyfile(thumbnail_small,os.path.join(game.install_dir, "thumbnail_100.jpg"))
+    if os.path.exists(thumbnail_medium):
+        shutil.copyfile(thumbnail_medium,os.path.join(game.install_dir, "thumbnail_196.jpg"))
 
     if Config.get("keep_installers"):
         keep_dir = os.path.join(Config.get("install_dir"), "installer")
         download_dir = os.path.join(CACHE_DIR, "download")
+        update_dir = os.path.join(CACHE_DIR, "update")
         if not os.path.exists(keep_dir):
             os.makedirs(keep_dir)
         try:
             # It's needed for multiple files
             for file in os.listdir(download_dir):
                 shutil.move(download_dir + '/' + file, keep_dir + '/' + file)
+        except Exception as ex:
+            print("Encountered error while copying {} to {}. Got error: {}".format(installer, keep_dir, ex))
+        try:
+            # It's needed for multiple files
+            for file in os.listdir(update_dir):
+                shutil.move(update_dir + '/' + file, keep_dir + '/' + file)
         except Exception as ex:
             print("Encountered error while copying {} to {}. Got error: {}".format(installer, keep_dir, ex))
     else:
