@@ -90,7 +90,7 @@ class GameRow(Gtk.Box):
             self.wine_icon.set_from_file(ICON_WINE_PATH)
             self.wine_icon.show()
             if self.game.updates is not None and self.game.updates > 0:
-                self.wine_icon.__setattr__("margin_left", 22)
+                self.wine_icon.set_margin_left(22)
         # Icon if update is available
         if self.game.updates is not None and self.game.updates > 0:
             self.image.set_tooltip_text("{} (update{})".format(self.game.name,", Wine" if self.game.platform == "windows" else ""))
