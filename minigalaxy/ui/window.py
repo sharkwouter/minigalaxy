@@ -75,6 +75,7 @@ class Window(Gtk.ApplicationWindow):
     def filter_library(self, switch, _=""):
         if (self.library is not None):
             Config.set("filter_installed", False if switch.get_state() else True)
+            self.show_installed_only = False if switch.get_state() else True
             self.library.filter_library(switch)
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")

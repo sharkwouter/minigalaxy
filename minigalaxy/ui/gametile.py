@@ -81,13 +81,13 @@ class GameTile(Gtk.Box):
             self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
             self.wine_icon.set_from_file(ICON_WINE_PATH)
             self.wine_icon.show()
-            if self.game.updates > 0:
+            if self.game.updates is not None and self.game.updates > 0:
                 self.wine_icon.__setattr__("margin_left", 22)
         # Icon if update is available
-        if self.game.updates > 0:
+        if self.game.updates is not None and self.game.updates > 0:
             self.image.set_tooltip_text("{} (update{})".format(self.game.name,", Wine" if self.game.platform == "windows" else ""))
             self.update_icon.show()
-            if self.game.installed == 1:
+            if self.game.updates is not None and self.game.installed == 1:
                 self.update_icon.set_from_file(ICON_UPDATE_PATH)
             else:
                 self.update_icon.set_from_icon_name("gtk-refresh",4)
@@ -375,11 +375,11 @@ class GameTile(Gtk.Box):
             self.menu_button_uninstall.show()
             self.menu_button_open.show()
         # special cases 
-        if self.game.updates > 0:
+        if self.game.updates is not None and self.game.updates > 0:
             self.update_icon.show()
         else:
             self.update_icon.hide()
-        if self.game.installed == 1 and self.game.updates > 0:
+        if self.game.installed == 1 and self.game.updates is not None and self.game.updates > 0:
             # figure out if we should fetch or install the update
             if (self.current_state == self.state.UPDATABLE or self.current_state == self.state.INSTALLED):
                 self.menu_button_update.set_label(_("Download Update"))

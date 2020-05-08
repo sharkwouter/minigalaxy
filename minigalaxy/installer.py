@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import stat
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
@@ -8,6 +9,31 @@ from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
 
+def copytree(src, dst, symlinks = False, ignore = None):
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+        shutil.copystat(src, dst)
+    lst = os.listdir(src)
+    if ignore:
+        excl = ignore(src, lst)
+        lst = [x for x in lst if x not in excl]
+    for item in lst:
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if symlinks and os.path.islink(s):
+            if os.path.lexists(d):
+                os.remove(d)
+            os.symlink(os.readlink(s), d)
+            try:
+                st = os.lstat(s)
+                mode = stat.S_IMODE(st.st_mode)
+                os.lchmod(d, mode)
+            except:
+                pass # lchmod not available
+        elif os.path.isdir(s):
+            copytree(s, d, symlinks, ignore)
+        else:
+            shutil.copy2(s, d)
 
 def install_game(game, installer, parent_window=None) -> None:
     if not os.path.exists(installer):
@@ -39,12 +65,7 @@ def install_game(game, installer, parent_window=None) -> None:
 
         # Copy the game files into the correct directory
         tmp_noarch_dir=os.path.join(temp_dir, "data/noarch")
-        if not os.path.exists(game.install_dir):
-            # move if destination folder does not exist
-            shutil.move(tmp_noarch_dir, game.install_dir)
-        else:
-            # copy if destination folder exists
-            shutil.copytree(tmp_noarch_dir, game.install_dir,dirs_exist_ok=True)
+        copytree(tmp_noarch_dir, game.install_dir)
 
         # Remove the temporary directory
         shutil.rmtree(temp_dir, ignore_errors=True)
