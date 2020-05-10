@@ -120,12 +120,12 @@ class Window(Gtk.ApplicationWindow):
         iconsize = img.get_icon_name().size;
         if (iconname == "view-list-symbolic"):
             img.set_from_icon_name("view-grid-symbolic",iconsize)
-            Config.set("viewas","grid")
+            Config.set("viewas","list")
             self.header_viewas.set_tooltip_text("View as Grid")
             self.library = ListLibrary(self, self.api, show_installed_only=self.show_installed_only, search_string=self.header_search.get_text())
         else:
             img.set_from_icon_name("view-list-symbolic",iconsize)
-            Config.set("viewas","list")
+            Config.set("viewas","grid")
             self.header_viewas.set_tooltip_text("View as List")
             self.library = GridLibrary(self, self.api, show_installed_only=self.show_installed_only, search_string=self.header_search.get_text())
         self.window_library.add(self.library)
