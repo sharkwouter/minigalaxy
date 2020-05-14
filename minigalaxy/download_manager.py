@@ -14,10 +14,8 @@ class __DownloadManger:
         symlinks to disks with sufficient space are correctly measured. Note this is
         a linux-specific command."""
         absolute_location = os.path.realpath(location)
-        print(absolute_location)
         disk_status = os.statvfs(os.path.dirname(absolute_location))
         available_diskspace = disk_status.f_frsize * disk_status.f_bavail
-        print(available_diskspace)
         return available_diskspace
 
     def __init__(self):
