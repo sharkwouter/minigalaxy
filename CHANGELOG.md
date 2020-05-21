@@ -1,6 +1,7 @@
 **0.9.5 (unreleased)**
 - Add the following translations:
     - Simplified Chinese (thanks to dummyx)
+    - Spanish (thanks to juanborda)
 - Update the following translations:
     - Russian (thanks to tim77)
 - Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)
