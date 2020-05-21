@@ -22,6 +22,7 @@ setup(
 
         # Add translations
         ('share/minigalaxy/translations/de/LC_MESSAGES/', ['data/mo/de/LC_MESSAGES/minigalaxy.mo']),
+        ('share/minigalaxy/translations/es/LC_MESSAGES/', ['data/mo/es/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/fr/LC_MESSAGES/', ['data/mo/fr/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/nb_NO/LC_MESSAGES/', ['data/mo/nb_NO/LC_MESSAGES/minigalaxy.mo']),
         ('share/minigalaxy/translations/nl/LC_MESSAGES/', ['data/mo/nl/LC_MESSAGES/minigalaxy.mo']),
