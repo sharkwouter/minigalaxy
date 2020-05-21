@@ -143,8 +143,8 @@ msgid ""
 "Keep installers after downloading a game.\n"
 "Installers are stored in: {}"
 msgstr ""
-"Guardar los instaladores luego de descargar un juego. Los instaladores se "
-"guardan en: {}"
+"Guardar los instaladores luego de descargar un juego.\n"
+"Los instaladores se guardan en: {}"
 
 #. Whether installer files are kept after download. Ends with ": ".
 #: data/ui/preferences.ui:122
