@@ -344,9 +344,6 @@ msgstr ""
 msgid "Download Update"
 msgstr ""
 
-msgid "Install Update"
-msgstr ""
-
 #: minigalaxy/ui/gametile.py:348
 msgid "uninstalling.."
 msgstr ""

@@ -2,7 +2,7 @@ import os
 import gi
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gtk, GdkPixbuf, Gdk
 from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
@@ -34,6 +34,11 @@ class Window(Gtk.ApplicationWindow):
         self.search_string = ""
         self.offline = False
         self.library = None
+        
+        res = self.get_screen_resolution()
+        # we got resolution
+        if res[0] > 0 and res[0] <= 1368:
+            self.set_default_size(1024,700)
         
         img = self.header_viewas.get_children()[0];
         iconsize = img.get_icon_name().size;
@@ -70,6 +75,31 @@ class Window(Gtk.ApplicationWindow):
         self.__authenticate()
         self.HeaderBar.set_subtitle(self.api.get_user_info())
         self.sync_library()
+        
+    def get_screen_resolution(self, measurement="px"):
+        """
+        Tries to detect the screen resolution from the system.
+        @param measurement: The measurement to describe the screen resolution in. Can be either 'px', 'inch' or 'mm'. 
+        @return: (screen_width,screen_height) where screen_width and screen_height are int types according to measurement.
+        """
+        mm_per_inch = 25.4
+        try: # Platforms supported by GTK3, Fx Linux/BSD
+            screen = Gdk.Screen.get_default()
+            if measurement=="px":
+                width = screen.get_width()
+                height = screen.get_height()
+            elif measurement=="inch":
+                width = screen.get_width_mm()/mm_per_inch
+                height = screen.get_height_mm()/mm_per_inch
+            elif measurement=="mm":
+                width = screen.get_width_mm()
+                height = screen.get_height_mm()
+            else:
+                raise NotImplementedError("Handling %s is not implemented." % measurement)
+            return (width,height)
+        except Exception as ex:
+            print("Could not obtain screen resolution. Cause: {}".format(ex))
+            return (-1,-1)
 
     @Gtk.Template.Callback("filter_library")
     def filter_library(self, switch, _=""):
@@ -180,7 +210,11 @@ class Window(Gtk.ApplicationWindow):
             token = None
 
         # Make sure there is an internet connection
-        if not self.api.can_connect():
+        try:
+            if not self.api.can_connect():
+                return
+        except Exception as ex:
+            print("Encountered error while trying to check if an API connection is possible. Got error: {}".format(ex))
             return
 
         authenticated = self.api.authenticate(refresh_token=token, login_code=url)
