@@ -133,17 +133,10 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def on_button_cancel(self, widget):
-        message_dialog = Gtk.MessageDialog(parent=self.parent.parent,
-                                           flags=Gtk.DialogFlags.MODAL,
-                                           message_type=Gtk.MessageType.WARNING,
-                                           buttons=Gtk.ButtonsType.OK_CANCEL,
-                                           message_format=_("Are you sure you want to cancel downloading {}?").format(self.game.name))
-        response = message_dialog.run()
-
-        if response == Gtk.ResponseType.OK:
+        question = _("Are you sure you want to cancel downloading {}?").format(self.game.name)
+        if self.parent.parent.show_question(question):
             self.prevent_resume_on_startup()
             DownloadManager.cancel_download(self.download)
-        message_dialog.destroy()
 
     @Gtk.Template.Callback("on_menu_button_settings_clicked")
     def on_menu_button_settings(self, widget):
@@ -151,19 +144,10 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
-        message_dialog = Gtk.MessageDialog(parent=self.parent.parent,
-                                           flags=Gtk.DialogFlags.MODAL,
-                                           message_type=Gtk.MessageType.WARNING,
-                                           buttons=Gtk.ButtonsType.OK_CANCEL,
-                                           message_format=_("Are you sure you want to uninstall %s?" % self.game.name))
-        response = message_dialog.run()
-
-        if response == Gtk.ResponseType.OK:
+        question = _("Are you sure you want to uninstall %s?" % self.game.name)
+        if self.parent.parent.show_question(question):
             uninstall_thread = threading.Thread(target=self.__uninstall_game)
             uninstall_thread.start()
-            message_dialog.destroy()
-        elif response == Gtk.ResponseType.CANCEL:
-            message_dialog.destroy()
 
     @Gtk.Template.Callback("on_menu_button_open_clicked")
     def on_menu_button_open_files(self, widget):
@@ -174,16 +158,10 @@ class GameTile(Gtk.Box):
         try:
             webbrowser.open(self.api.get_info(self.game)['links']['support'], new=2)
         except:
-            dialog = Gtk.MessageDialog(
-                message_type=Gtk.MessageType.ERROR,
-                parent=self.parent.parent,
-                modal=True,
-                buttons=Gtk.ButtonsType.OK,
-                text=_("Couldn't open support page")
+            self.parent.parent.show_eror(
+                _("Couldn't open support page"),
+                _("Please check your internet connection")
             )
-            dialog.format_secondary_text(_("Please check your internet connection"))
-            dialog.run()
-            dialog.destroy()
 
     @Gtk.Template.Callback("on_menu_button_store_clicked")
     def on_menu_button_store(self, widget):
@@ -256,9 +234,9 @@ class GameTile(Gtk.Box):
         self.game.install_dir = self.__get_install_dir()
         try:
             if os.path.exists(self.keep_path):
-                install_game(self.game, self.keep_path, parent_window=self.parent)
+                install_game(self.game, self.keep_path, main_window=self.parent.parent)
             else:
-                install_game(self.game, self.download_path, parent_window=self.parent)
+                install_game(self.game, self.download_path, main_window=self.parent.parent)
         except (FileNotFoundError, BadZipFile):
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
             return

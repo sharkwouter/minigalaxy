@@ -23,7 +23,7 @@ class ListLibrary(Gtk.Viewport):
         self.search_string = search_string
         self.offline = False
         self.library = Library(self.api)
-        self.games = []
+        self.games = self.library.get_games()
 
     def reset(self):
         self.games = []

@@ -4,7 +4,7 @@ import subprocess
 import stat
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
+from gi.repository import GLib
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
@@ -35,14 +35,14 @@ def copytree(src, dst, symlinks = False, ignore = None):
         else:
             shutil.copy2(s, d)
 
-def install_game(game, installer, parent_window=None) -> None:
+def install_game(game, installer, main_window=None) -> None:
     if not os.path.exists(installer):
-        GLib.idle_add(__show_installation_error, game, _("{} failed to download.").format(installer), parent_window)
+        GLib.idle_add(__show_installation_error, game, _("{} failed to download.").format(installer), main_window)
         raise FileNotFoundError("The installer {} does not exist".format(installer))
 
     if game.platform == "linux":
         if not __verify_installer_integrity(installer):
-            GLib.idle_add(__show_installation_error, game, _("{} was corrupted. Please download it again.").format(installer), parent_window)
+            GLib.idle_add(__show_installation_error, game, _("{} was corrupted. Please download it again.").format(installer), main_window)
             os.remove(installer)
             raise FileNotFoundError("The installer {} was corrupted".format(installer))
 
@@ -55,7 +55,7 @@ def install_game(game, installer, parent_window=None) -> None:
         # Extract the installer
         subprocess.call(["unzip", "-qq", installer, "-d", temp_dir])
         if len(os.listdir(temp_dir)) == 0:
-            GLib.idle_add(__show_installation_error, game, _("{} could not be unzipped.").format(installer), parent_window)
+            GLib.idle_add(__show_installation_error, game, _("{} could not be unzipped.").format(installer), main_window)
             raise CannotOpenZipContent(_("{} could not be unzipped.").format(installer))
 
         # Make sure the install directory exists
@@ -111,19 +111,10 @@ def install_game(game, installer, parent_window=None) -> None:
         os.remove(installer)
 
 
-def __show_installation_error(game, message, parent_window=None):
+def __show_installation_error(game, message, main_window=None):
     error_message = [_("Failed to install {}").format(game.name), message]
     print("{}: {}".format(error_message[0], error_message[1]))
-    dialog = Gtk.MessageDialog(
-        message_type=Gtk.MessageType.ERROR,
-        parent=parent_window.parent,
-        modal=True,
-        buttons=Gtk.ButtonsType.CLOSE,
-        text=error_message[0]
-    )
-    dialog.format_secondary_text(error_message[1])
-    dialog.run()
-    dialog.destroy()
+    main_window.show_error(error_message[0], error_message[1])
 
 
 class CannotOpenZipContent(Exception):

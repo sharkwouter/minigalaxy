@@ -102,7 +102,7 @@ class Api:
                         supported_platforms.append("windows")
                     if product["worksOn"]["Mac"]:
                         supported_platforms.append("mac")
-                    game = Game(name=product["title"], url=product["url"], game_id=product["id"], image_url=product["image"], platform=platform, updates=product["updates"], dlcCount=product["dlcCount"], tags=product["tags"], category=product["category"], supported_platforms=supported_platforms)
+                    game = Game(name=product["title"], url=product["url"], game_id=product["id"], image_url=product["image"], platform=platform, updates=0, dlcCount=product["dlcCount"], tags=product["tags"], category=product["category"], supported_platforms=supported_platforms)
                     games.append(game)
             if current_page == total_pages:
                 all_pages_processed = True
