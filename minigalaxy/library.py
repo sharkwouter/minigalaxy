@@ -100,11 +100,11 @@ class Library():
                         self.games.remove(installed_game)
                         break
             self.games.append(game)
+        self.last_api_check = time.time()
     
     def get_games(self) -> List[Game]:
         # wait a some time before calling the API again
         if (time.time() - self.last_api_check < 30):
-            self.last_api_check = time.time()
             return self.games;
         # rebuild list
         self.games = self.__get_installed_games()
