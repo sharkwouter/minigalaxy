@@ -31,7 +31,11 @@ class __Config:
     def __load_config_file(self) -> dict:
         if os.path.exists(self.__config_file):
             with open(self.__config_file, "r") as file:
-                return json.loads(file.read())
+                try:
+                    return json.loads(file.read())
+                except json.decoder.JSONDecodeError:
+                    print("Reading config.json failed, creating new config file.")
+                    return self.__create_config_file()
         else:
             return self.__create_config_file()
 

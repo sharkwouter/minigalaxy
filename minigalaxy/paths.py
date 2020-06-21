@@ -2,6 +2,8 @@ import os
 import sys
 
 LAUNCH_DIR = os.path.abspath(os.path.dirname(sys.argv[0]))
+if LAUNCH_DIR == "/bin" or LAUNCH_DIR == "/sbin":
+    LAUNCH_DIR = "/usr" + LAUNCH_DIR
 
 CONFIG_DIR = os.path.join(os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config')), "minigalaxy")
 CONFIG_FILE_PATH = os.path.join(CONFIG_DIR, "config.json")

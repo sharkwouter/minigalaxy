@@ -8,6 +8,16 @@ from minigalaxy.download import Download
 
 
 class __DownloadManger:
+    @staticmethod
+    def get_availablediskspace(location):
+        """Check disk space available to the user. This method uses the absolute path so
+        symlinks to disks with sufficient space are correctly measured. Note this is
+        a linux-specific command."""
+        absolute_location = os.path.realpath(location)
+        disk_status = os.statvfs(os.path.dirname(absolute_location))
+        available_diskspace = disk_status.f_frsize * disk_status.f_bavail
+        return available_diskspace
+
     def __init__(self):
         self.__queue = queue.Queue()
         self.__current_download = None
@@ -17,6 +27,18 @@ class __DownloadManger:
         download_thread = threading.Thread(target=self.__download_thread)
         download_thread.daemon = True
         download_thread.start()
+
+    def verify_downloaddiskspace(self, file_size, downloaded_size, location):
+        """This method will check if the download size does not exceed the disk space available.
+        The reserved_space variable can be used to make sure this amount of space will be left
+        unused. This method raises an error when space is not deemed sufficient."""
+        download_remaining = file_size - downloaded_size
+        diskspace_available = self.get_availablediskspace(location)
+        reserved_space = 0
+        if diskspace_available < (download_remaining + reserved_space):
+            raise OSError(f"The available disk space {diskspace_available} is insufficient "
+                          f"for the download remaining {download_remaining} (+ {reserved_space} "
+                          f"reserved)")
 
     def download(self, download):
         if isinstance(download, Download):
@@ -96,29 +118,33 @@ class __DownloadManger:
         download_request = SESSION.get(download.url, headers=resume_header, stream=True)
         downloaded_size = start_point
         file_size = int(download_request.headers.get('content-length'))
-        if downloaded_size < file_size:
-            with open(download.save_location, download_mode) as save_file:
-                for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-                    # Pause if needed
-                    while self.__paused:
-                        time.sleep(0.1)
-                    save_file.write(chunk)
-                    downloaded_size += len(chunk)
-                    if self.__cancel:
-                        self.__cancel = False
-                        save_file.close()
-                        download.cancel()
-                        self.__current_download = None
-                        return
-                    if file_size > 0:
-                        progress = int(downloaded_size / file_size * 100)
-                        download.set_progress(progress)
-                save_file.close()
-        if download.number == download.out_of_amount:
-            finish_thread = threading.Thread(target=download.finish)
-            finish_thread.start()
-        if self.__queue.empty():
-            Config.unset("current_download")
+        try:
+            self.verify_downloaddiskspace(file_size, downloaded_size, download.save_location)
+        except OSError:
+            raise
+        else:
+            if downloaded_size < file_size:
+                with open(download.save_location, download_mode) as save_file:
+                    for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                        # Pause if needed
+                        while self.__paused:
+                            time.sleep(0.1)
+                        save_file.write(chunk)
+                        downloaded_size += len(chunk)
+                        if self.__cancel:
+                            self.__cancel = False
+                            save_file.close()
+                            download.cancel()
+                            self.__current_download = None
+                            return
+                        if file_size > 0:
+                            progress = int(downloaded_size / file_size * 100)
+                            download.set_progress(progress)
+            if download.number == download.out_of_amount:
+                finish_thread = threading.Thread(target=download.finish)
+                finish_thread.start()
+            if self.__queue.empty():
+                Config.unset("current_download")
 
     def __is_same_download_as_before(self, download):
         file_stats = os.stat(download.save_location)
