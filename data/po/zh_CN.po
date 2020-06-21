@@ -1,0 +1,358 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-06 21:15+0200\n"
+"PO-Revision-Date: 2020-05-14 16:00+0900\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
+
+#. A short description of what Minigalaxy is
+#: data/ui/about.ui:10
+msgctxt "short_description"
+msgid "A simple GOG client for Linux"
+msgstr "用于 Linux 的简易 GOG 客户端"
+
+#: minigalaxy/ui/about.py:15
+msgid "About"
+msgstr "关于"
+
+#. Opens about dialog
+#: data/ui/application.ui:58
+msgctxt "about"
+msgid "About"
+msgstr "关于"
+
+#: minigalaxy/ui/gametile.py:114
+msgid "Are you sure you want to cancel downloading {}?"
+msgstr "确定要取消下载 {} 吗？"
+
+#: minigalaxy/ui/gametile.py:132
+#, python-format
+msgid "Are you sure you want to uninstall %s?"
+msgstr "确定要卸载 %s 吗？"
+
+#: minigalaxy/constants.py:8
+msgid "Brazilian Portuguese"
+msgstr "巴西葡萄牙语"
+
+#: data/ui/preferences.ui:23
+msgctxt "cancel"
+msgid "Cancel"
+msgstr "取消"
+
+#: minigalaxy/constants.py:9
+msgid "Chinese"
+msgstr "汉语"
+
+#: minigalaxy/ui/library.py:150
+msgid "Couldn't connect to GOG servers"
+msgstr "无法连接至 GOG 服务器"
+
+#: minigalaxy/ui/gametile.py:156
+msgid "Couldn't open support page"
+msgstr "无法打开支持页面"
+
+#: minigalaxy/launcher.py:45
+msgid "Couldn't start subprocess"
+msgstr "无法启动子进程"
+
+#: minigalaxy/constants.py:10
+msgid "Danish"
+msgstr "丹麦语"
+
+#: minigalaxy/constants.py:11
+msgid "Dutch"
+msgstr "荷兰语"
+
+#: minigalaxy/constants.py:12
+msgid "English"
+msgstr "英语"
+
+#: minigalaxy/installer.py:79
+msgid "Failed to install {}"
+msgstr "安装 {} 失败"
+
+#: minigalaxy/ui/library.py:150
+msgid "Failed to retrieve library"
+msgstr "获取游戏库失败"
+
+#: minigalaxy/launcher.py:59
+msgid "Failed to start {}:"
+msgstr "启动 {} 失败："
+
+#: minigalaxy/constants.py:13
+msgid "Finnish"
+msgstr "芬兰语"
+
+#: minigalaxy/constants.py:14
+msgid "French"
+msgstr "法语"
+
+#: minigalaxy/constants.py:15
+msgid "German"
+msgstr "德语"
+
+#. A link to the Github page
+#: data/ui/about.ui:12
+msgctxt "github_page_link"
+msgid "Github page"
+msgstr "Github 页面"
+
+#: minigalaxy/constants.py:16
+msgid "Hungarian"
+msgstr "匈牙利语"
+
+#: minigalaxy/ui/preferences.py:47
+msgid "Install Wine to enable this feature"
+msgstr "安装 Wine 以启用这项功能"
+
+#. The place directory in which games are installed. Ends with ": ".
+#: data/ui/preferences.ui:95
+msgctxt "install_path"
+msgid "Installation path: "
+msgstr "安装路径："
+
+#. Used next to a checkbox which switches between showing all games and only installed ones
+#: data/ui/application.ui:115
+msgctxt "installed"
+msgid "Installed"
+msgstr "已安装"
+
+#: minigalaxy/constants.py:17
+msgid "Italian"
+msgstr "意大利语"
+
+#: minigalaxy/constants.py:18
+msgid "Japanese"
+msgstr "日语"
+
+#: minigalaxy/ui/preferences.py:40
+msgid ""
+"Keep installers after downloading a game.\n"
+"Installers are stored in: {}"
+msgstr "下载后保留安装包。安装包会保存在： {}"
+
+#. Whether installer files are kept after download. Ends with ": ".
+#: data/ui/preferences.ui:122
+msgctxt "keep_installer"
+msgid "Keep installers: "
+msgstr "保留安装包："
+
+#: minigalaxy/constants.py:19
+msgid "Korean"
+msgstr "韩语"
+
+#: minigalaxy/ui/login.py:23
+msgid "Login"
+msgstr "登录"
+
+#. Logs the users gog account out and returns to login page
+#: data/ui/application.ui:17
+msgctxt "logout"
+msgid "Logout"
+msgstr "退出登录"
+
+#: minigalaxy/launcher.py:56
+msgid "No error message was returned"
+msgstr "未返回错误信息"
+
+#: minigalaxy/launcher.py:33
+msgid "No executable was found in {}"
+msgstr "在 {} 内未找到可执行文件"
+
+#: minigalaxy/constants.py:20
+msgid "Norwegian"
+msgstr "挪威语"
+
+#. Opens the directory the game is installed in
+#: data/ui/gametile.ui:45
+msgctxt "open_files"
+msgid "Open Files"
+msgstr "打开文件"
+
+#: minigalaxy/ui/gametile.py:158
+msgid "Please check your internet connection"
+msgstr "请检查网络连接"
+
+#: minigalaxy/constants.py:21
+msgid "Polish"
+msgstr "波兰语"
+
+#: minigalaxy/constants.py:22
+msgid "Portuguese"
+msgstr "葡萄牙语"
+
+#: minigalaxy/ui/preferences.py:28
+msgid "Preferences"
+msgstr "偏好设置"
+
+#. Opens preferences dialog
+#: data/ui/application.ui:32
+msgctxt "preferences"
+msgid "Preferences"
+msgstr "偏好设置"
+
+#. Prefered language to download games in. Ends with ": ".
+#: data/ui/preferences.ui:70
+msgctxt "preferred_language"
+msgid "Preferred language: "
+msgstr "首选语言："
+
+#. Tooltip for refresh button
+#: data/ui/application.ui:88
+msgctxt "refresh"
+msgid "Refresh game list"
+msgstr "刷新游戏列表"
+
+#: minigalaxy/constants.py:23
+msgid "Russian"
+msgstr "俄语"
+
+#. Saves the preferences
+#: data/ui/preferences.ui:37
+msgctxt "save"
+msgid "Save"
+msgstr "保存"
+
+#. Open winecfg settings for Windows games
+#: data/ui/gametile.ui:59
+msgctxt "Wine Settings"
+msgid "Settings"
+msgstr "设置"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:187
+msgctxt "show_fps"
+msgid "Show FPS in games:"
+msgstr "在游戏内显示 FPS："
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:201
+msgctxt "show_windows_games"
+msgid "Show Windows games: "
+msgstr "显示 Windows 游戏："
+
+#. Tooltip for the switch which allows only showing installed games or all games
+#: data/ui/application.ui:104
+msgctxt "tooltil_installed"
+msgid "Show only installed games"
+msgstr "只显示已安装的游戏"
+
+#: data/ui/preferences.ui:184
+msgctxt "show_fps_tooltip"
+msgid ""
+"Show the framerate while playing games. Only works with AMD and Nvidia "
+"graphics cards."
+msgstr "在游戏内显示帧率。仅支持 AMD 和英伟达显卡。"
+
+#: minigalaxy/constants.py:24
+msgid "Spanish"
+msgstr "西班牙语"
+
+#. Whether the user will stay logged in after closing Minigalaxy. Ends with ": ".
+#: data/ui/preferences.ui:148
+msgctxt "stay_logged_in"
+msgid "Stay logged in:"
+msgstr "保持登录："
+
+#. Open store page
+#: data/ui/gametile.ui:17
+msgctxt "store"
+msgid "Store Page"
+msgstr "商店页面"
+
+#. Opens the official support webpage
+#: data/ui/gametile.ui:31
+msgctxt "support"
+msgid "Support"
+msgstr "支持"
+
+#: minigalaxy/constants.py:25
+msgid "Swedish"
+msgstr "瑞典语"
+
+#: data/ui/preferences.ui:67
+msgctxt "preferred_language_tooltip"
+msgid "The preferred language for downloading games in"
+msgstr "下载游戏时优先选择的语言"
+
+#: data/ui/preferences.ui:92
+msgctxt "install_path_tooltip"
+msgid "This is where games will be installed"
+msgstr "游戏会被安装到这里"
+
+#: minigalaxy/constants.py:26
+msgid "Turkish"
+msgstr "土耳其语"
+
+#. Removes the game files from the local machine
+#: data/ui/gametile.ui:73
+msgctxt "uninstall"
+msgid "Uninstall"
+msgstr "卸载"
+
+#: data/ui/preferences.ui:145
+msgctxt "stay_logged_in_tooltip"
+msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
+msgstr "如果禁用，Minigalaxy 每次启动时将会请求您登录"
+
+#: data/ui/preferences.ui:198
+msgctxt "show_windows_games_tooltip"
+msgid "Whether Windows games are shown in the library or not"
+msgstr "是否在游戏库内显示 Windows 游戏"
+
+#: minigalaxy/ui/gametile.py:277
+msgid "download"
+msgstr "下载"
+
+#: minigalaxy/ui/gametile.py:309
+msgid "downloading.."
+msgstr "正在下载…"
+
+#: minigalaxy/ui/gametile.py:301
+msgid "in queue.."
+msgstr "队列中…"
+
+#: minigalaxy/ui/gametile.py:289
+msgid "install"
+msgstr "安装"
+
+#: minigalaxy/ui/gametile.py:319
+msgid "installing.."
+msgstr "正在安装…"
+
+#: minigalaxy/ui/gametile.py:333
+msgid "play"
+msgstr "开始游戏"
+
+#: minigalaxy/ui/gametile.py:348
+msgid "uninstalling.."
+msgstr "正在卸载…"
+
+#: minigalaxy/installer.py:32 minigalaxy/installer.py:33
+msgid "{} could not be unzipped."
+msgstr "{} 无法解压。"
+
+#: minigalaxy/installer.py:14
+msgid "{} failed to download."
+msgstr "{} 下载失败。"
+
+#: minigalaxy/ui/preferences.py:127
+msgid "{} isn't a usable path"
+msgstr "{} 路径不可用"
+
+#: minigalaxy/installer.py:19
+msgid "{} was corrupted. Please download it again."
+msgstr "{} 已损坏，请重新下载。"

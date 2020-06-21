@@ -1,5 +1,6 @@
 import os
 import gi
+
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf
 from minigalaxy.ui.login import Login
@@ -13,7 +14,6 @@ from minigalaxy.ui.library import Library
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
 class Window(Gtk.ApplicationWindow):
-
     __gtype_name__ = "Window"
 
     HeaderBar = Gtk.Template.Child()
@@ -25,7 +25,7 @@ class Window(Gtk.ApplicationWindow):
     menu_logout = Gtk.Template.Child()
     window_library = Gtk.Template.Child()
 
-    def __init__(self, name):
+    def __init__(self, name="Minigalaxy"):
         Gtk.ApplicationWindow.__init__(self, title=name)
         self.api = Api()
         self.show_installed_only = False
@@ -95,10 +95,39 @@ class Window(Gtk.ApplicationWindow):
     def update_library(self):
         self.library.update_library()
 
+    def show_error(self, text, secondary_text=""):
+        dialog = Gtk.MessageDialog(
+            parent=self,
+            modal=True,
+            destroy_with_parent=True,
+            message_type=Gtk.MessageType.ERROR,
+            buttons=Gtk.ButtonsType.OK,
+            text=text
+        )
+        if secondary_text:
+            dialog.format_secondary_text(secondary_text)
+        dialog.run()
+        dialog.destroy()
+
+    def show_question(self, text, secondary_text=""):
+        dialog = Gtk.MessageDialog(
+            parent=self,
+            flags=Gtk.DialogFlags.MODAL,
+            message_type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.OK_CANCEL,
+            message_format=text
+        )
+        if secondary_text:
+            dialog.format_secondary_text(secondary_text)
+        response = dialog.run()
+        dialog.destroy()
+        return response == Gtk.ResponseType.OK
+
     """
     The API remembers the authentication token and uses it
     The token is not valid for a long time
     """
+
     def __authenticate(self):
         url = None
         if Config.get("stay_logged_in"):
