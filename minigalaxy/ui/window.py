@@ -8,6 +8,7 @@ from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
+from minigalaxy.download_manager import DownloadManager
 from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
 from minigalaxy.ui.library import Library
 
@@ -31,6 +32,9 @@ class Window(Gtk.ApplicationWindow):
         self.show_installed_only = False
         self.search_string = ""
         self.offline = False
+
+        # Make the DownloadManager able to output errors
+        DownloadManager.window = self
 
         # Set library
         self.library = Library(self, self.api)
