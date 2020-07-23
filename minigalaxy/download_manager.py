@@ -5,6 +5,7 @@ import queue
 from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION
 from minigalaxy.download import Download
+from minigalaxy.paths import CACHE_DIR
 
 
 class __DownloadManger:
@@ -23,22 +24,23 @@ class __DownloadManger:
         self.__current_download = None
         self.__cancel = False
         self.__paused = False
+        self.window = None
 
         download_thread = threading.Thread(target=self.__download_thread)
         download_thread.daemon = True
         download_thread.start()
 
-    def verify_downloaddiskspace(self, file_size, downloaded_size, location):
-        """This method will check if the download size does not exceed the disk space available.
-        The reserved_space variable can be used to make sure this amount of space will be left
-        unused. This method raises an error when space is not deemed sufficient."""
+    def check_diskspace(self, file_size, downloaded_size, location):
+        """This method will return True when the disk space available is sufficient
+        for the Download. If not sufficient, it returns False."""
         download_remaining = file_size - downloaded_size
         diskspace_available = self.get_availablediskspace(location)
+        # Reserved space can be used to mimic a full disk or prevent filling a disk completely.
         reserved_space = 0
         if diskspace_available < (download_remaining + reserved_space):
-            raise OSError(f"The available disk space {diskspace_available} is insufficient "
-                          f"for the download remaining {download_remaining} (+ {reserved_space} "
-                          f"reserved)")
+            return False
+        else:
+            return True
 
     def download(self, download):
         if isinstance(download, Download):
@@ -118,10 +120,15 @@ class __DownloadManger:
         download_request = SESSION.get(download.url, headers=resume_header, stream=True)
         downloaded_size = start_point
         file_size = int(download_request.headers.get('content-length'))
-        try:
-            self.verify_downloaddiskspace(file_size, downloaded_size, download.save_location)
-        except OSError:
-            raise
+        if not self.check_diskspace(file_size, downloaded_size, download.save_location):
+            download.cancel()
+            self.__current_download = None
+            print("There is insufficient disk space to cache the download.")
+            # self.window.show_error(
+            #     text="There is insufficient disk space to cache the download.",
+            #     secondary_text=(f"Cache location is '{CACHE_DIR}' ({self.get_availablediskspace(download.save_location)})"
+            #                     f" and current download is {file_size}."),
+            # )
         else:
             if downloaded_size < file_size:
                 with open(download.save_location, download_mode) as save_file:
