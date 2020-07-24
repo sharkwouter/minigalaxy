@@ -111,6 +111,9 @@ class GameTile(Gtk.Box):
         if self.parent.parent.show_question(question):
             self.prevent_resume_on_startup()
             DownloadManager.cancel_download(self.download)
+            for filename in os.listdir(self.download_dir):
+                if self.game.get_install_directory_name() in filename:
+                    os.remove(os.path.join(self.download_dir, filename))
 
     @Gtk.Template.Callback("on_menu_button_settings_clicked")
     def on_menu_button_settings(self, widget):
