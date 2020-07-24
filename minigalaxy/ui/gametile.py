@@ -51,11 +51,11 @@ class GameTile(Gtk.Box):
 
         # Set folder for download installer
         self.download_dir = os.path.join(CACHE_DIR, "download")
-        self.download_path = os.path.join(self.download_dir, self.game.name)
+        self.download_path = os.path.join(self.download_dir, self.game.get_install_directory_name())
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
-        self.keep_path = os.path.join(self.keep_dir, self.game.name)
+        self.keep_path = os.path.join(self.keep_dir, self.game.get_install_directory_name())
 
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
