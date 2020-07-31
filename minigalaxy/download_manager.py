@@ -37,10 +37,7 @@ class __DownloadManger:
         diskspace_available = self.get_availablediskspace(location)
         # Reserved space can be used to mimic a full disk or prevent filling a disk completely.
         reserved_space = 0
-        if diskspace_available < (download_remaining + reserved_space):
-            return False
-        else:
-            return True
+        return False if diskspace_available < (download_remaining + reserved_space) else True
 
     def download(self, download):
         if isinstance(download, Download):
@@ -124,11 +121,6 @@ class __DownloadManger:
             download.cancel()
             self.__current_download = None
             print("There is insufficient disk space to cache the download.")
-            # self.window.show_error(
-            #     text="There is insufficient disk space to cache the download.",
-            #     secondary_text=(f"Cache location is '{CACHE_DIR}' ({self.get_availablediskspace(download.save_location)})"
-            #                     f" and current download is {file_size}."),
-            # )
         else:
             if downloaded_size < file_size:
                 with open(download.save_location, download_mode) as save_file:
