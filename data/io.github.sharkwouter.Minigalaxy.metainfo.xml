@@ -8,14 +8,17 @@
     <summary>A simple GOG client for Linux</summary>
 
     <description>
-        <p>Minigalaxy lets you download, install and play your GOG Linux games without getting in your way.</p>
-        <p>Besides installing games, it offers the following features: </p>
+        <p>
+        Minigalaxy lets you download, install and play your GOG Linux games without getting in your way.
+        </p>
+        <p> Besides all that, it offers the following additional features:</p>
         <ul>
             <li>Select in which language you'd prefer to download your games</li>
             <li>Change where games are installed</li>
             <li>Search your GOG Linux library</li>
             <li>Show all games or just the ones you've installed</li>
             <li>View the error message if a game fails to launch</li>
+            <li>Enable displaying the FPS in games</li>
         </ul>
         <p>An account on gog.com is required to use this application.</p>
     </description>
@@ -38,6 +41,21 @@
     </provides>
 
     <releases>
+        <release version="0.9.5" date="2020-07-09">
+            <description>
+                <p>Added the following translations:</p>
+                <ul>
+                    <li>Simplified Chinese (thanks to dummyx)</li>
+                    <li>Spanish (thanks to juanborda)</li>
+                </ul>
+                <p>Updated the following translations:</p>
+                <ul>
+                    <li>Russian (thanks to tim77)</li>
+                </ul>
+                <p>Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)</p>
+                <p>Create new config file if old one is unreadable (thanks to SvdB-nonp)</p>
+            </description>
+        </release>
         <release version="0.9.4" date="2020-04-20">
             <description>
                 <ul>
