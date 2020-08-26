@@ -22,6 +22,7 @@ def install_game(game, installer, main_window=None) -> None:
 
         # Make a temporary empty directory for extracting the installer
         temp_dir = os.path.join(CACHE_DIR, "extract/{}".format(game.id))
+        # TODO: Add disk space checking for extracting installer?
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir, ignore_errors=True)
         os.makedirs(temp_dir)
@@ -38,6 +39,7 @@ def install_game(game, installer, main_window=None) -> None:
             os.makedirs(library_dir)
 
         # Copy the game files into the correct directory
+        # TODO: Add disk space checking for final install directory?
         shutil.move(os.path.join(temp_dir, "data/noarch"), game.install_dir)
 
         # Remove the temporary directory
@@ -65,6 +67,7 @@ def install_game(game, installer, main_window=None) -> None:
         download_dir = os.path.join(CACHE_DIR, "download")
         if not os.path.exists(keep_dir):
             os.makedirs(keep_dir)
+        # TODO:Add disk space checking for keep_dir location?
         try:
             # It's needed for multiple files
             for file in os.listdir(download_dir):

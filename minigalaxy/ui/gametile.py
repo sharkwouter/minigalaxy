@@ -198,6 +198,7 @@ class GameTile(Gtk.Box):
     def __install(self):
         GLib.idle_add(self.update_to_state, self.state.INSTALLING)
         self.game.install_dir = self.__get_install_dir()
+        # TODO: Add disk space checking for installing the game?
         try:
             if os.path.exists(self.keep_path):
                 install_game(self.game, self.keep_path, main_window=self.parent.parent)
