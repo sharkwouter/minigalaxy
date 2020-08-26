@@ -53,7 +53,12 @@ def install_game(game, installer, main_window=None) -> None:
 
         # It's possible to set install dir as argument before installation
         command = ["wine", installer, "/dir=" + game.install_dir]
-        subprocess.run(command)
+        process = subprocess.Popen(command)
+        process.wait()
+        if process.returncode != 0:
+            GLib.idle_add(__show_installation_error, game,
+                      _("The installation of {} failed. Please try again.").format(installer), main_window)
+            return
 
     shutil.copyfile(
         os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
