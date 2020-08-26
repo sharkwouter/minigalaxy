@@ -6,6 +6,7 @@
     - Russian (thanks to tim77)
 - Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)
 - Create new config file if old one is unreadable (thanks to SvdB-nonp)
+- Fix some Windows games not installing because of the directory name used (thanks to SvdB-nonp)
 
 **0.9.4**
 - Added the following translations:
