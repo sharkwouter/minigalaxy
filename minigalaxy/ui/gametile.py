@@ -180,10 +180,8 @@ class GameTile(Gtk.Box):
         finish_func = self.__install
         number_of_files = len(download_info['files'])
         for key, file_info in enumerate(download_info['files']):
-            if key > 0 and number_of_files > 2:
+            if key > 0:
                 download_path = "{}-{}.bin".format(self.download_path, key)
-            elif key > 0 and number_of_files == 2:
-                download_path = "{}.bin".format(self.download_path)
             download = Download(
                 url=self.api.get_real_download_link(file_info["downlink"]),
                 save_location=download_path,
