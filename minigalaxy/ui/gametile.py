@@ -6,6 +6,8 @@ import os
 import webbrowser
 import threading
 import subprocess
+import re
+import urllib.parse
 from enum import Enum
 from zipfile import BadZipFile
 from minigalaxy.translation import _
@@ -180,10 +182,18 @@ class GameTile(Gtk.Box):
         finish_func = self.__install
         number_of_files = len(download_info['files'])
         for key, file_info in enumerate(download_info['files']):
-            if key > 0:
-                download_path = "{}-{}.bin".format(self.download_path, key)
+            download_url = self.api.get_real_download_link(file_info["downlink"])
+            try:
+                # Extract the filename from the download url (filename is between %2F and &token)
+                download_path = os.path.join(self.download_dir, urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1)))
+                if key == 0:
+                    # Iff key = 0, denote the file as the executable's path
+                    self.download_path = download_path
+            except AttributeError:
+                if key > 0:
+                    download_path = "{}-{}.bin".format(self.download_path, key)
             download = Download(
-                url=self.api.get_real_download_link(file_info["downlink"]),
+                url=download_url,
                 save_location=download_path,
                 finish_func=finish_func,
                 progress_func=self.set_progress,
