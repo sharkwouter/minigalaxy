@@ -52,13 +52,12 @@ class GameTile(Gtk.Box):
         self.image.set_tooltip_text(self.game.name)
 
         # Set folder for download installer
-        self.download_dir = os.path.join(CACHE_DIR, "download")
+        self.download_dir = os.path.join(CACHE_DIR, "download", self.game.get_install_directory_name())
         self.download_path = os.path.join(self.download_dir, self.game.get_install_directory_name())
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
         self.keep_path = os.path.join(self.keep_dir, self.game.get_install_directory_name())
-
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR)
 
@@ -171,6 +170,13 @@ class GameTile(Gtk.Box):
             return True
         return False
 
+    def get_keep_executable_path(self):
+        if os.path.exists(self.keep_path):
+            for fil in os.scandir(self.keep_path):
+                if os.access(fil.path, os.X_OK) or os.path.splitext(fil)[-1] == ".exe" or os.path.splitext(fil)[-1] == ".sh":
+                    return fil.path
+        return ""
+
     def __download_file(self) -> None:
         Config.set("current_download", self.game.id)
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
@@ -209,8 +215,9 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.update_to_state, self.state.INSTALLING)
         self.game.install_dir = self.__get_install_dir()
         try:
-            if os.path.exists(self.keep_path):
-                install_game(self.game, self.keep_path, main_window=self.parent.parent)
+            keep_executable_path = self.get_keep_executable_path()
+            if keep_executable_path:
+                install_game(self.game, keep_executable_path, main_window=self.parent.parent)
             else:
                 install_game(self.game, self.download_path, main_window=self.parent.parent)
         except (FileNotFoundError, BadZipFile):
@@ -255,7 +262,7 @@ class GameTile(Gtk.Box):
             return
         if self.game.install_dir and os.path.exists(self.game.install_dir):
             self.update_to_state(self.state.INSTALLED)
-        elif os.path.exists(self.keep_path):
+        elif self.get_keep_executable_path():
             self.update_to_state(self.state.INSTALLABLE)
         else:
             self.update_to_state(self.state.DOWNLOADABLE)
