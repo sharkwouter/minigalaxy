@@ -172,9 +172,13 @@ class GameTile(Gtk.Box):
 
     def get_keep_executable_path(self):
         if os.path.exists(self.keep_path):
-            for fil in os.scandir(self.keep_path):
-                if os.access(fil.path, os.X_OK) or os.path.splitext(fil)[-1] == ".exe" or os.path.splitext(fil)[-1] == ".sh":
-                    return fil.path
+            if os.path.isdir(self.keep_path):
+                for fil in os.scandir(self.keep_path):
+                    if os.access(fil.path, os.X_OK) or os.path.splitext(fil)[-1] == ".exe" or os.path.splitext(fil)[-1] == ".sh":
+                        return fil.path
+            elif os.path.isfile(self.keep_path):
+                # This is only the case for installers that have been downloaded with versions <= 0.9.4
+                return self.keep_path
         return ""
 
     def __download_file(self) -> None:
@@ -193,7 +197,7 @@ class GameTile(Gtk.Box):
                 # Extract the filename from the download url (filename is between %2F and &token)
                 download_path = os.path.join(self.download_dir, urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1)))
                 if key == 0:
-                    # Iff key = 0, denote the file as the executable's path
+                    # If key = 0, denote the file as the executable's path
                     self.download_path = download_path
             except AttributeError:
                 if key > 0:
