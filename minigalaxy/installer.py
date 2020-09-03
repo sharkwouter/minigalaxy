@@ -30,7 +30,7 @@ def install_game(game, installer, main_window=None) -> None:
         subprocess.call(["unzip", "-qq", installer, "-d", temp_dir])
         if len(os.listdir(temp_dir)) == 0:
             GLib.idle_add(__show_installation_error, game, _("{} could not be unzipped.").format(installer), main_window)
-            raise CannotOpenZipContent(_("{} could not be unzipped.").format(installer))
+            raise CannotOpenZipContent("{} could not be unzipped.".format(installer))
 
         # Make sure the install directory exists
         library_dir = Config.get("install_dir")
