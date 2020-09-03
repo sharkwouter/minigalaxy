@@ -8,6 +8,7 @@
 - Create new config file if old one is unreadable (thanks to SvdB-nonp)
 - Fix some Windows games not installing because of the directory name used (thanks to SvdB-nonp)
 - Fix some Windows games like Witcher 3 not launching because of the working directory not being set (thanks for kibun1)
+- Clean up installation files for cancelled downloads (thanks to SvdB-nonp)
 - Use 755 permissions for all directories created by Minigalaxy
 
 **0.9.4**
