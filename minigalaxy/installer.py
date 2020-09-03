@@ -24,7 +24,7 @@ def install_game(game, installer, main_window=None) -> None:
         temp_dir = os.path.join(CACHE_DIR, "extract/{}".format(game.id))
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir, ignore_errors=True)
-        os.makedirs(temp_dir)
+        os.makedirs(temp_dir, mode=0o755)
 
         # Extract the installer
         subprocess.call(["unzip", "-qq", installer, "-d", temp_dir])
@@ -47,7 +47,7 @@ def install_game(game, installer, main_window=None) -> None:
         # Set the prefix for Windows games
         prefix_dir = os.path.join(game.install_dir, "prefix")
         if not os.path.exists(prefix_dir):
-            os.makedirs(prefix_dir)
+            os.makedirs(prefix_dir, mode=0o755)
 
         os.environ["WINEPREFIX"] = prefix_dir
 
@@ -69,7 +69,7 @@ def install_game(game, installer, main_window=None) -> None:
         keep_dir = os.path.join(Config.get("install_dir"), "installer")
         download_dir = os.path.join(CACHE_DIR, "download")
         if not os.path.exists(keep_dir):
-            os.makedirs(keep_dir)
+            os.makedirs(keep_dir, mode=0o755)
         try:
             # It's needed for multiple files
             for file in os.listdir(download_dir):

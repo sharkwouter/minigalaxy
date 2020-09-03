@@ -45,7 +45,7 @@ class Window(Gtk.ApplicationWindow):
 
         # Create the thumbnails directory
         if not os.path.exists(THUMBNAIL_DIR):
-            os.makedirs(THUMBNAIL_DIR)
+            os.makedirs(THUMBNAIL_DIR, mode=0o755)
 
         # Interact with the API
         self.__authenticate()

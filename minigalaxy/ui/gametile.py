@@ -58,7 +58,7 @@ class GameTile(Gtk.Box):
         self.keep_path = os.path.join(self.keep_dir, self.game.get_install_directory_name())
 
         if not os.path.exists(CACHE_DIR):
-            os.makedirs(CACHE_DIR)
+            os.makedirs(CACHE_DIR, mode=0o755)
 
         self.reload_state()
         self.load_thumbnail()
