@@ -35,7 +35,7 @@ def install_game(game, installer, main_window=None) -> None:
         # Make sure the install directory exists
         library_dir = Config.get("install_dir")
         if not os.path.exists(library_dir):
-            os.makedirs(library_dir)
+            os.makedirs(library_dir, mode=0o755)
 
         # Copy the game files into the correct directory
         shutil.move(os.path.join(temp_dir, "data/noarch"), game.install_dir)
