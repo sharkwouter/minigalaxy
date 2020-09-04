@@ -19,6 +19,7 @@ from minigalaxy.launcher import start_game, config_game
 from minigalaxy.installer import uninstall_game, install_game
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
+from minigalaxy.api import NoDownloadLinkFound
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -136,7 +137,7 @@ class GameTile(Gtk.Box):
         try:
             webbrowser.open(self.api.get_info(self.game)['links']['support'], new=2)
         except:
-            self.parent.parent.show_eror(
+            self.parent.parent.show_error(
                 _("Couldn't open support page"),
                 _("Please check your internet connection")
             )
@@ -185,10 +186,17 @@ class GameTile(Gtk.Box):
         return ""
 
     def __download_file(self) -> None:
-        Config.set("current_download", self.game.id)
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
-        download_info = self.api.get_download_info(self.game)
-
+        try:
+            download_info = self.api.get_download_info(self.game)
+        except NoDownloadLinkFound:
+            if Config.get("current_download") == self.game.id:
+                Config.unset("current_download")
+            GLib.idle_add(self.parent.parent.show_error, _("Download error"),_("There was an error when trying to fetch the download link!"))
+            GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
+            return
+        
+        Config.set("current_download", self.game.id)
         # Start the download for all files
         self.download = []
         download_path = self.download_path
