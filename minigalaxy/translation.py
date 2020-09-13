@@ -3,8 +3,11 @@ import locale
 from minigalaxy.paths import LOCALE_DIR
 
 TRANSLATION_DOMAIN = "minigalaxy"
+try:
+    locale.setlocale(locale.LC_ALL, '')
+except locale.Error:
+    print("Unsupported locale detected, continuing without translation support")
 
-locale.setlocale(locale.LC_ALL, '')
 try:
     locale.bindtextdomain(TRANSLATION_DOMAIN, LOCALE_DIR)
 except AttributeError:
