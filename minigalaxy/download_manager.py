@@ -40,7 +40,6 @@ class DownloadManager(Gtk.Popover):
 
         GLib.idle_add(self.button.show)
 
-
     def download_now(self, download):
         download_file_thread = threading.Thread(target=self.__download_file, args=(download,))
         download_file_thread.daemon = True
@@ -66,6 +65,8 @@ class DownloadManager(Gtk.Popover):
                 self.__queue = new_queue
                 self.__paused = False
 
+        self.hide_download_button_if_no_downloads()
+
     def cancel_current_download(self):
         self.__cancel = True
 
@@ -77,6 +78,8 @@ class DownloadManager(Gtk.Popover):
         # wait for the download to be fully cancelled
         while self.__current_download:
             time.sleep(0.1)
+
+        self.hide_download_button_if_no_downloads()
 
     def __download_thread(self):
         while True:
@@ -148,3 +151,7 @@ class DownloadManager(Gtk.Popover):
             with open(download.save_location, "rb") as file:
                 file_content = file.read(size_to_check)
                 return file_content == chunk
+
+    def hide_download_button_if_no_downloads(self):
+        if self.__queue.empty():
+            GLib.idle_add(self.button.hide)
