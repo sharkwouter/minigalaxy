@@ -4,6 +4,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
 from minigalaxy.paths import UI_DIR
+from minigalaxy.translation import _
+
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "download.ui"))
 class Download(Gtk.Box):
@@ -27,6 +29,7 @@ class Download(Gtk.Box):
 
         if name:
             self.title.set_text(self.name)
+            self.information.set_text(_("in queue.."))
             self.show_all()
 
     def set_progress(self, percentage: int) -> None:
@@ -36,6 +39,8 @@ class Download(Gtk.Box):
                 progress_start = 100/self.out_of_amount*(self.number-1)
                 percentage = progress_start + percentage/self.out_of_amount
             self.__progress_func(percentage)
+        GLib.idle_add(self.progress.set_fraction, percentage/100)
+        GLib.idle_add(self.information.set_text,_("downloading.."))
 
     def finish(self):
         if self.__finish_func:
@@ -43,6 +48,7 @@ class Download(Gtk.Box):
                 self.__finish_func()
             except (FileNotFoundError, BadZipFile):
                 self.cancel()
+        GLib.idle_add(self.hide)
 
     @Gtk.Template.Callback("on_cancel_clicked")
     def cancel(self, button=None):

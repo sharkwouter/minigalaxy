@@ -146,6 +146,7 @@
             <property name="no_show_all">True</property>
             <property name="valign">center</property>
             <property name="use_popover">False</property>
+            <signal name="toggled" handler="on_header_downloads_toggled" swapped="no"/>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
