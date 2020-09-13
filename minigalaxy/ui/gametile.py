@@ -14,7 +14,6 @@ from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 from minigalaxy.config import Config
 from minigalaxy.download import Download
-from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game, config_game
 from minigalaxy.installer import uninstall_game, install_game
 from minigalaxy.css import CSS_PROVIDER
@@ -37,7 +36,7 @@ class GameTile(Gtk.Box):
 
     state = Enum('state', 'DOWNLOADABLE INSTALLABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING')
 
-    def __init__(self, parent, game, api):
+    def __init__(self, parent, game, api, download_manager):
         Gtk.Frame.__init__(self)
         Gtk.StyleContext.add_provider(self.button.get_style_context(),
                                       CSS_PROVIDER,
@@ -49,6 +48,7 @@ class GameTile(Gtk.Box):
         self.thumbnail_set = False
         self.download = None
         self.current_state = self.state.DOWNLOADABLE
+        self.download_manager = download_manager
 
         self.image.set_tooltip_text(self.game.name)
 
@@ -112,10 +112,11 @@ class GameTile(Gtk.Box):
         question = _("Are you sure you want to cancel downloading {}?").format(self.game.name)
         if self.parent.parent.show_question(question):
             self.prevent_resume_on_startup()
-            DownloadManager.cancel_download(self.download)
-            for filename in os.listdir(self.download_dir):
-                if self.game.get_install_directory_name() in filename:
-                    os.remove(os.path.join(self.download_dir, filename))
+            self.download_manager.cancel_download(self.download)
+            if os.path.exists(self.download_dir):
+                for filename in os.listdir(self.download_dir):
+                    if self.game.get_install_directory_name() in filename:
+                        os.remove(os.path.join(self.download_dir, filename))
 
     @Gtk.Template.Callback("on_menu_button_settings_clicked")
     def on_menu_button_settings(self, widget):
@@ -157,7 +158,7 @@ class GameTile(Gtk.Box):
         thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
 
         download = Download(image_url, thumbnail, finish_func=self.__set_image)
-        DownloadManager.download_now(download)
+        self.download_manager.download_now(download)
         return True
 
     def __set_image(self):
@@ -214,6 +215,7 @@ class GameTile(Gtk.Box):
                 if key > 0:
                     download_path = "{}-{}.bin".format(self.download_path, key)
             download = Download(
+                name="{} - {}/{}".format(self.game.name, key+1, number_of_files),
                 url=download_url,
                 save_location=download_path,
                 finish_func=finish_func,
@@ -224,7 +226,7 @@ class GameTile(Gtk.Box):
             )
             self.download.append(download)
 
-        DownloadManager.download(self.download)
+        self.download_manager.download(self.download)
 
     def __install(self):
         GLib.idle_add(self.update_to_state, self.state.INSTALLING)

@@ -21,10 +21,11 @@ class Library(Gtk.Viewport):
 
     flowbox = Gtk.Template.Child()
 
-    def __init__(self, parent, api: Api):
+    def __init__(self, parent, api: Api, download_manager):
         Gtk.Viewport.__init__(self)
         self.parent = parent
         self.api = api
+        self.download_manager = download_manager
         self.show_installed_only = False
         self.search_string = ""
         self.offline = False
@@ -108,7 +109,7 @@ class Library(Gtk.Viewport):
             self.__add_gametile(game)
 
     def __add_gametile(self, game):
-        self.flowbox.add(GameTile(self, game, self.api))
+        self.flowbox.add(GameTile(self, game, self.api, self.download_manager))
         self.sort_library()
         self.flowbox.show_all()
 

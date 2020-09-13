@@ -10,6 +10,7 @@ from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
 from minigalaxy.ui.library import Library
+from minigalaxy.download_manager import DownloadManager
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
@@ -20,6 +21,7 @@ class Window(Gtk.ApplicationWindow):
     header_sync = Gtk.Template.Child()
     header_installed = Gtk.Template.Child()
     header_search = Gtk.Template.Child()
+    header_downloads = Gtk.Template.Child()
     menu_about = Gtk.Template.Child()
     menu_preferences = Gtk.Template.Child()
     menu_logout = Gtk.Template.Child()
@@ -31,9 +33,10 @@ class Window(Gtk.ApplicationWindow):
         self.show_installed_only = False
         self.search_string = ""
         self.offline = False
+        self.__download_manager = DownloadManager(self.header_downloads)
 
         # Set library
-        self.library = Library(self, self.api)
+        self.library = Library(self, self.api, self.__download_manager)
         self.window_library.add(self.library)
 
         # Set the icon
@@ -58,7 +61,7 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
-        preferences_window = Preferences(self)
+        preferences_window = Preferences(self, self.__download_manager)
         preferences_window.run()
         preferences_window.destroy()
 

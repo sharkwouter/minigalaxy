@@ -2,13 +2,18 @@ import os
 import time
 import threading
 import queue
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, GLib
 from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION
 from minigalaxy.download import Download
 
 
-class __DownloadManger:
-    def __init__(self):
+class DownloadManager(Gtk.Popover):
+    def __init__(self, button):
+        Gtk.Popover.__init__(self)
+        self.button = button
         self.__queue = queue.Queue()
         self.__current_download = None
         self.__cancel = False
@@ -18,13 +23,23 @@ class __DownloadManger:
         download_thread.daemon = True
         download_thread.start()
 
+        self.box = Gtk.VBox()
+        self.add(self.box)
+        self.box.show()
+        self.button.set_popover(self)
+
     def download(self, download):
         if isinstance(download, Download):
             self.__queue.put(download)
+            self.box.pack_start(download, True, True, 0)
         else:
             # Assume we've received a list of downloads
             for d in download:
                 self.__queue.put(d)
+                self.box.pack_start(d, True, True, 0)
+
+        GLib.idle_add(self.button.show)
+
 
     def download_now(self, download):
         download_file_thread = threading.Thread(target=self.__download_file, args=(download,))
@@ -133,6 +148,3 @@ class __DownloadManger:
             with open(download.save_location, "rb") as file:
                 file_content = file.read(size_to_check)
                 return file_content == chunk
-
-
-DownloadManager = __DownloadManger()
