@@ -144,6 +144,7 @@
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
             <property name="no_show_all">True</property>
+            <property name="tooltip_text" translatable="yes" context="header_downloads_tooltip" comments="Tooltip for button which shows active downloads">Downloads</property>
             <property name="valign">center</property>
             <property name="use_popover">False</property>
             <signal name="toggled" handler="on_header_downloads_toggled" swapped="no"/>
