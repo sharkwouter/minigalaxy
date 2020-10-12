@@ -50,18 +50,18 @@ def install_game(game, installer, main_window=None) -> None:
         temp_dir = os.path.join(CACHE_DIR, "extract/{}".format(game.id))
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir, ignore_errors=True)
-        os.makedirs(temp_dir)
+        os.makedirs(temp_dir, mode=0o755)
 
         # Extract the installer
         subprocess.call(["unzip", "-qq", installer, "-d", temp_dir])
         if len(os.listdir(temp_dir)) == 0:
             GLib.idle_add(__show_installation_error, game, _("{} could not be unzipped.").format(installer), main_window)
-            raise CannotOpenZipContent(_("{} could not be unzipped.").format(installer))
+            raise CannotOpenZipContent("{} could not be unzipped.".format(installer))
 
         # Make sure the install directory exists
         library_dir = Config.get("install_dir")
         if not os.path.exists(library_dir):
-            os.makedirs(library_dir)
+            os.makedirs(library_dir, mode=0o755)
 
         # Copy the game files into the correct directory
         tmp_noarch_dir=os.path.join(temp_dir, "data/noarch")
@@ -74,13 +74,18 @@ def install_game(game, installer, main_window=None) -> None:
         # Set the prefix for Windows games
         prefix_dir = os.path.join(game.install_dir, "prefix")
         if not os.path.exists(prefix_dir):
-            os.makedirs(prefix_dir)
+            os.makedirs(prefix_dir, mode=0o755)
 
         os.environ["WINEPREFIX"] = prefix_dir
 
         # It's possible to set install dir as argument before installation
         command = ["wine", installer, "/dir=" + game.install_dir]
-        subprocess.run(command)
+        process = subprocess.Popen(command)
+        process.wait()
+        if process.returncode != 0:
+            GLib.idle_add(__show_installation_error, game,
+                      _("The installation of {} failed. Please try again.").format(installer), main_window)
+            return
 
     thumbnail_small = os.path.join(THUMBNAIL_DIR, "{}_100.jpg".format(game.id))
     thumbnail_medium = os.path.join(THUMBNAIL_DIR, "{}_196.jpg".format(game.id))
@@ -94,7 +99,7 @@ def install_game(game, installer, main_window=None) -> None:
         download_dir = os.path.join(CACHE_DIR, "download")
         update_dir = os.path.join(CACHE_DIR, "update")
         if not os.path.exists(keep_dir):
-            os.makedirs(keep_dir)
+            os.makedirs(keep_dir, mode=0o755)
         try:
             # It's needed for multiple files
             for file in os.listdir(download_dir):
