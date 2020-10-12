@@ -44,7 +44,8 @@ class Library():
                         game_id = int(game_id)
                 supported_platforms=[]
                 supported_platforms.append("linux")
-                games.append(Game(name=name, game_id=game_id, install_dir=full_path, installed = 1, platform="linux", supported_platforms=supported_platforms, installed_version = version))
+                games.append(Game(name=name, game_id=game_id, install_dir=full_path, installed=1, platform="linux",
+                                  supported_platforms=supported_platforms, installed_version=version))
             else:
                 game_files = os.listdir(full_path)
                 for file in game_files:
@@ -64,18 +65,23 @@ class Library():
                             games.append(game)
         return games
     
-    def __validate_if_installed_is_latest(self,game,info) -> bool:
-        if (game.installed_version is None or len(game.installed_version) == 0):
-            return False
-        installers = info["downloads"]["installers"];
-        current_installer = None
-        for installer in installers: 
-            if (installer["os"] != game.platform):
-                continue;
-            current_installer = installer
-            break            
-        # validate if we have the latest version
-        return (current_installer is not None and current_installer["version"] == game.installed_version)
+    @staticmethod
+    def __validate_if_installed_is_latest(game, info) -> bool:
+        is_latest = False
+        if game.installed_version is None or len(game.installed_version) == 0:
+            is_latest = False
+        else:
+            installers = info["downloads"]["installers"]
+            current_installer = None
+            for installer in installers:
+                if installer["os"] != game.platform:
+                    current_installer = installer
+                    break
+            if current_installer is not None and current_installer["version"] == game.installed_version:
+                is_latest = True
+            else:
+                is_latest = False
+        return is_latest
     
     def __get_games_from_api(self):
         try:
@@ -92,11 +98,8 @@ class Library():
                         game.installed = 1
                         game.install_dir = installed_game.install_dir
                         game.installed_version = installed_game.installed_version
-                        # also check if we have the most up to date version or not
-                        try:
-                            game.updates = 0 if self.__validate_if_installed_is_latest(game,self.api.get_info(game)) == True else 1 
-                        except:
-                            print("Could not fetch current information about {}".format(game.name))
+                        game.updates = 0 if self.__validate_if_installed_is_latest(game, self.api.get_info(game)) else 1
+                        # print("Could not fetch current information about {}".format(game.name))
                         self.games.remove(installed_game)
                         break
             self.games.append(game)

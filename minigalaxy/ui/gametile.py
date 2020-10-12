@@ -309,9 +309,9 @@ class GameTile(Gtk.Box):
         self.game.install_dir = self.__get_install_dir()
         try:
             if os.path.exists(self.keep_path):
-                install_game(self.game, self.keep_path, parent_window=self.parent)
+                install_game(self.game, self.keep_path)
             else:
-                install_game(self.game, self.update_path, parent_window=self.parent)
+                install_game(self.game, self.update_path)
         except (FileNotFoundError, BadZipFile):
             GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
             return
