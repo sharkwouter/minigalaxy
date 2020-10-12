@@ -13,23 +13,21 @@ from minigalaxy.config import Config
 from minigalaxy.game import Game
 from pickle import TRUE
 
-class Library():
+
+class Library:
 
     def __init__(self, api: Api):
         self.api = api
         self.games = []
         self.offline = False
-        self.last_api_check = 0;
-        
-    def __get_installed_games(self) -> List[Game]:
+        self.last_api_check = 0
+
+    @staticmethod
+    def __get_installed_games() -> List[Game]:
         games = []
         directories = os.listdir(Config.get("install_dir"))
         for directory in directories:
             full_path = os.path.join(Config.get("install_dir"), directory)
-            # Only scan directories
-            if not os.path.isdir(full_path):
-                continue
-            # Make sure the gameinfo file exists
             gameinfo = os.path.join(full_path, "gameinfo")
             if os.path.isfile(gameinfo):
                 with open(gameinfo, 'r') as file:
@@ -42,8 +40,7 @@ class Library():
                         game_id = 0
                     else:
                         game_id = int(game_id)
-                supported_platforms=[]
-                supported_platforms.append("linux")
+                supported_platforms = ["linux"]
                 games.append(Game(name=name, game_id=game_id, install_dir=full_path, installed=1, platform="linux",
                                   supported_platforms=supported_platforms, installed_version=version))
             else:
@@ -52,8 +49,7 @@ class Library():
                     if re.match(r'^goggame-[0-9]*\.info$', file):
                         with open(os.path.join(full_path, file), 'r') as info_file:
                             info = json.loads(info_file.read())
-                            supported_platforms=[]
-                            supported_platforms.append("windows")
+                            supported_platforms = ["windows"]
                             game = Game(
                                 name=info["name"],
                                 game_id=int(info["gameId"]),
@@ -64,10 +60,9 @@ class Library():
                             )
                             games.append(game)
         return games
-    
+
     @staticmethod
     def __validate_if_installed_is_latest(game, info) -> bool:
-        is_latest = False
         if game.installed_version is None or len(game.installed_version) == 0:
             is_latest = False
         else:
@@ -82,7 +77,7 @@ class Library():
             else:
                 is_latest = False
         return is_latest
-    
+
     def __get_games_from_api(self):
         try:
             retrieved_games = self.api.get_library()
@@ -104,7 +99,7 @@ class Library():
                         break
             self.games.append(game)
         self.last_api_check = time.time()
-    
+
     def get_games(self) -> List[Game]:
         # wait a some time before calling the API again
         if (time.time() - self.last_api_check < 30):
@@ -114,21 +109,21 @@ class Library():
         self.__get_games_from_api()
         return self.games
 
-    def get_sorted_games(self, key="game", reverse=False, sortfn = None) -> List[Game]:
+    def get_sorted_games(self, key="game", reverse=False, sortfn=None) -> List[Game]:
         if (sortfn is None):
             return sorted(self.games, key, reverse)
         else:
             return sortfn(self.games, key, reverse)
 
-    def get_filtered_games(self, installed = None, platform = None, category = None, tag = None, name = None) -> List[Game]:
+    def get_filtered_games(self, installed=None, platform=None, category=None, tag=None, name=None) -> List[Game]:
         games = []
         for game in self.games:
-            if (self.is_game_filtered(game,installed, platform, category, tag, name) == False):
+            if (self.is_game_filtered(game, installed, platform, category, tag, name) == False):
                 continue
             games.append(game)
         return games
-       
-    def is_game_filtered(self, game, installed = None, platform = None, category = None, tag = None, name = None) -> bool:
+
+    def is_game_filtered(self, game, installed=None, platform=None, category=None, tag=None, name=None) -> bool:
         if (installed == True and game.installed == 0):
             return False
         if (platform is not None and platform not in game.supported_platforms):
