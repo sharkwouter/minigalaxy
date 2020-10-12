@@ -69,7 +69,7 @@ class Library:
             installers = info["downloads"]["installers"]
             current_installer = None
             for installer in installers:
-                if installer["os"] != game.platform:
+                if installer["os"] == game.platform:
                     current_installer = installer
                     break
             if current_installer is not None and current_installer["version"] == game.installed_version:
