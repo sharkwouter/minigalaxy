@@ -1,39 +1,13 @@
 import os
 import shutil
 import subprocess
-import stat
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import GLib
+from gi.repository import Gtk, GLib
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
 
-def copytree(src, dst, symlinks = False, ignore = None):
-    if not os.path.exists(dst):
-        os.makedirs(dst)
-        shutil.copystat(src, dst)
-    lst = os.listdir(src)
-    if ignore:
-        excl = ignore(src, lst)
-        lst = [x for x in lst if x not in excl]
-    for item in lst:
-        s = os.path.join(src, item)
-        d = os.path.join(dst, item)
-        if symlinks and os.path.islink(s):
-            if os.path.lexists(d):
-                os.remove(d)
-            os.symlink(os.readlink(s), d)
-            try:
-                st = os.lstat(s)
-                mode = stat.S_IMODE(st.st_mode)
-                os.lchmod(d, mode)
-            except:
-                pass # lchmod not available
-        elif os.path.isdir(s):
-            copytree(s, d, symlinks, ignore)
-        else:
-            shutil.copy2(s, d)
 
 def install_game(game, installer, main_window=None) -> None:
     if not os.path.exists(installer):
@@ -64,8 +38,7 @@ def install_game(game, installer, main_window=None) -> None:
             os.makedirs(library_dir, mode=0o755)
 
         # Copy the game files into the correct directory
-        tmp_noarch_dir=os.path.join(temp_dir, "data/noarch")
-        copytree(tmp_noarch_dir, game.install_dir)
+        shutil.move(os.path.join(temp_dir, "data/noarch"), game.install_dir)
 
         # Remove the temporary directory
         shutil.rmtree(temp_dir, ignore_errors=True)
@@ -87,12 +60,10 @@ def install_game(game, installer, main_window=None) -> None:
                       _("The installation of {} failed. Please try again.").format(installer), main_window)
             return
 
-    thumbnail_small = os.path.join(THUMBNAIL_DIR, "{}_100.jpg".format(game.id))
-    thumbnail_medium = os.path.join(THUMBNAIL_DIR, "{}_196.jpg".format(game.id))
-    if os.path.exists(thumbnail_small):
-        shutil.copyfile(thumbnail_small,os.path.join(game.install_dir, "thumbnail_100.jpg"))
-    if os.path.exists(thumbnail_medium):
-        shutil.copyfile(thumbnail_medium,os.path.join(game.install_dir, "thumbnail_196.jpg"))
+    shutil.copyfile(
+        os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
+        os.path.join(game.install_dir, "thumbnail.jpg"),
+    )
 
     if Config.get("keep_installers"):
         keep_dir = os.path.join(Config.get("install_dir"), "installer")
@@ -104,12 +75,6 @@ def install_game(game, installer, main_window=None) -> None:
             # It's needed for multiple files
             for file in os.listdir(download_dir):
                 shutil.move(download_dir + '/' + file, keep_dir + '/' + file)
-        except Exception as ex:
-            print("Encountered error while copying {} to {}. Got error: {}".format(installer, keep_dir, ex))
-        try:
-            # It's needed for multiple files
-            for file in os.listdir(update_dir):
-                shutil.move(update_dir + '/' + file, keep_dir + '/' + file)
         except Exception as ex:
             print("Encountered error while copying {} to {}. Got error: {}".format(installer, keep_dir, ex))
     else:

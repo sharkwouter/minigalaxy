@@ -23,7 +23,7 @@ if not os.path.exists(LOGO_IMAGE_PATH):
 ICON_WINE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/winehq_logo_glass.png"))
 if not os.path.exists(ICON_WINE_PATH):
     ICON_WINE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/winehq_logo_glass.png"))
-    
+
 ICON_UPDATE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/update_available.png"))
 if not os.path.exists(ICON_UPDATE_PATH):
     ICON_UPDATE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/update_available.png"))

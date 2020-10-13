@@ -155,25 +155,13 @@ class Library(Gtk.Viewport):
             self.offline = False
         except:
             self.offline = True
-            GLib.idle_add(self.__show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
+            GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
             return
+        installed_game_names = []
+        for game in self.games:
+            installed_game_names.append(game.name.lower())
         for game in retrieved_games:
-            if game in self.games:
-                # Make sure the game id is set if the game is installed
-                for installed_game in self.games:
-                    if game == installed_game:
-                        self.games.remove(installed_game)
-                        break
-            self.games.append(game)
+            if game.name.lower() not in installed_game_names:
+                self.games.append(game)
 
-    def __show_error(self, text, subtext):
-        dialog = Gtk.MessageDialog(
-            message_type=Gtk.MessageType.ERROR,
-            parent=self.parent,
-            modal=True,
-            buttons=Gtk.ButtonsType.CLOSE,
-            text=text
-        )
-        dialog.format_secondary_text(subtext)
-        dialog.run()
-        dialog.destroy()
+

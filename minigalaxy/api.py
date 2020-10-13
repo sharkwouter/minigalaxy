@@ -89,20 +89,14 @@ class Api:
                     # Only support Linux unless the show_windows_games setting is enabled
                     if product["worksOn"]["Linux"]:
                         platform = "linux"
-                    elif (Config.get("show_windows_games") and product["worksOn"]["Windows"]):
+                    elif Config.get("show_windows_games"):
                         platform = "windows"
                     else:
                         continue
                     if not product["url"]:
                         print("{} ({}) has no store page url".format(product["title"], product['id']))
-                    supported_platforms = []
-                    if product["worksOn"]["Linux"]:
-                        supported_platforms.append("linux")
-                    if product["worksOn"]["Windows"]:
-                        supported_platforms.append("windows")
-                    if product["worksOn"]["Mac"]:
-                        supported_platforms.append("mac")
-                    game = Game(name=product["title"], url=product["url"], game_id=product["id"], image_url=product["image"], platform=platform, updates=0, dlcCount=product["dlcCount"], tags=product["tags"], category=product["category"], supported_platforms=supported_platforms)
+                    game = Game(name=product["title"], url=product["url"], game_id=product["id"],
+                                image_url=product["image"], platform=platform)
                     games.append(game)
             if current_page == total_pages:
                 all_pages_processed = True
