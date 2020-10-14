@@ -38,7 +38,7 @@ def install_game(game, installer, main_window=None) -> None:
             os.makedirs(library_dir, mode=0o755)
 
         # Copy the game files into the correct directory
-        shutil.move(os.path.join(temp_dir, "data/noarch"), game.install_dir)
+        __move_and_overwrite(os.path.join(temp_dir, "data/noarch"), game.install_dir)
 
         # Remove the temporary directory
         shutil.rmtree(temp_dir, ignore_errors=True)
@@ -85,6 +85,19 @@ def __show_installation_error(game, message, main_window=None):
     error_message = [_("Failed to install {}").format(game.name), message]
     print("{}: {}".format(error_message[0], error_message[1]))
     main_window.show_error(error_message[0], error_message[1])
+
+
+def __move_and_overwrite(source_dir, target_dir):
+    for src_dir, dirs, files in os.walk(source_dir):
+        destination_dir = src_dir.replace(source_dir, target_dir, 1)
+        if not os.path.exists(destination_dir):
+            os.makedirs(destination_dir)
+        for src_file in files:
+            file_to_copy = os.path.join(src_dir, src_file)
+            dst_file = os.path.join(destination_dir, src_file)
+            if os.path.exists(dst_file):
+                os.remove(dst_file)
+            shutil.move(file_to_copy, destination_dir)
 
 
 class CannotOpenZipContent(Exception):

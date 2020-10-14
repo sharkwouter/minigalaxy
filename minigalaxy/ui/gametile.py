@@ -73,7 +73,6 @@ class GameTile(Gtk.Box):
 
         self.reload_state()
         self.load_thumbnail()
-        print(self.game.name)
 
         # Start download if Minigalaxy was closed while downloading this game
         self.resume_download_if_expected()
@@ -158,12 +157,8 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_update_clicked")
     def on_menu_button_update(self, widget):
-        if self.current_state == self.state.UPDATE_INSTALLABLE:
-            install_thread = threading.Thread(target=self.__update)
-            install_thread.start()
-        elif self.current_state == self.state.UPDATABLE or self.current_state == self.state.INSTALLED:
-            download_thread = threading.Thread(target=self.__download_update)
-            download_thread.start()
+        download_thread = threading.Thread(target=self.__download_update)
+        download_thread.start()
 
     def load_thumbnail(self):
         if self.__set_image():
@@ -271,14 +266,13 @@ class GameTile(Gtk.Box):
         # Start the download for all files
         self.download = []
         download_path = self.update_path
-        finish_func = self.__update
         for key, file_info in enumerate(download_info['files']):
             if key > 0:
                 download_path = "{}-{}.bin".format(self.update_path, key)
             download = Download(
                 url=self.api.get_real_download_link(file_info["downlink"]),
                 save_location=download_path,
-                finish_func=finish_func,
+                finish_func=self.__update,
                 progress_func=self.set_progress,
                 cancel_func=self.__cancel_update,
                 number=key+1,
@@ -292,10 +286,7 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.update_to_state, self.state.UPDATING)
         self.game.install_dir = self.__get_install_dir()
         try:
-            if os.path.exists(self.keep_path):
-                install_game(self.game, self.keep_path)
-            else:
-                install_game(self.game, self.update_path)
+            install_game(self.game, self.update_path, main_window=self.parent.parent)
             install_success = True
         except (FileNotFoundError, BadZipFile) as e:
             print("Warning: {}".format(e))
@@ -303,6 +294,8 @@ class GameTile(Gtk.Box):
             install_success = False
         if install_success:
             GLib.idle_add(self.update_to_state, self.state.INSTALLED)
+            self.menu_button_update.hide()
+            self.update_icon.hide()
 
     def __cancel_update(self):
         GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
@@ -451,3 +444,9 @@ class GameTile(Gtk.Box):
             self.menu_button_update.show()
             if self.game.platform == "windows":
                 self.wine_icon.set_margin_left(22)
+
+        elif self.current_state == self.state.UPDATE_QUEUED:
+            self.button_cancel.show()
+
+        elif self.current_state == self.state.UPDATING:
+            self.button.set_label(_("updating.."))
