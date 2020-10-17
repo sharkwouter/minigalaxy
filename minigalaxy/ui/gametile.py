@@ -40,7 +40,7 @@ class GameTile(Gtk.Box):
 
     state = Enum('state',
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
-                 ' UPDATING UPDATE_QUEUED UPDATE_DOWNLOADING UPDATE_INSTALLABLE')
+                 ' UPDATING UPDATE_INSTALLABLE')
 
     def __init__(self, parent, game, api):
         Gtk.Frame.__init__(self)
@@ -260,7 +260,7 @@ class GameTile(Gtk.Box):
 
     def __download_update(self) -> None:
         Config.set("current_download", self.game.id)
-        GLib.idle_add(self.update_to_state, self.state.UPDATE_QUEUED)
+        GLib.idle_add(self.update_to_state, self.state.QUEUED)
         download_info = self.api.get_download_info(self.game)
 
         # Start the download for all files
@@ -304,8 +304,6 @@ class GameTile(Gtk.Box):
     def set_progress(self, percentage: int):
         if self.current_state == self.state.QUEUED:
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADING)
-        if self.current_state == self.state.UPDATE_QUEUED:
-            GLib.idle_add(self.update_to_state, self.state.UPDATE_DOWNLOADING)
         if self.progress_bar:
             GLib.idle_add(self.progress_bar.set_fraction, percentage/100)
 
@@ -332,7 +330,7 @@ class GameTile(Gtk.Box):
     def reload_state(self):
         self.game.install_dir = self.__get_install_dir()
         dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING,
-                              self.state.UPDATING, self.state.UPDATE_QUEUED, self.state.UPDATE_DOWNLOADING]
+                              self.state.UPDATING, self.state.DOWNLOADING]
         if self.current_state in dont_act_in_states:
             return
         if self.game.installed_version:
@@ -444,9 +442,6 @@ class GameTile(Gtk.Box):
             self.menu_button_update.show()
             if self.game.platform == "windows":
                 self.wine_icon.set_margin_left(22)
-
-        elif self.current_state == self.state.UPDATE_QUEUED:
-            self.button_cancel.show()
 
         elif self.current_state == self.state.UPDATING:
             self.button.set_label(_("updating.."))
