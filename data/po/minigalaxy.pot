@@ -324,10 +324,6 @@ msgstr ""
 msgid "in queue.."
 msgstr ""
 
-#: minigalaxy/ui/gametile.py:301
-msgid "update in queue.."
-msgstr ""
-
 #: minigalaxy/ui/gametile.py:289
 msgid "install"
 msgstr ""
@@ -338,10 +334,6 @@ msgstr ""
 
 #: minigalaxy/ui/gametile.py:333
 msgid "play"
-msgstr ""
-
-#: minigalaxy/ui/gametile.py:333
-msgid "Download Update"
 msgstr ""
 
 #: minigalaxy/ui/gametile.py:348
