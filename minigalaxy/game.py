@@ -1,8 +1,6 @@
 import os
 import re
 
-from minigalaxy.config import Config
-
 
 class Game:
     def __init__(self, name: str, url: str = "", game_id: int = 0, install_dir: str = "", image_url="",
