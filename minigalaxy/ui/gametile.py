@@ -42,7 +42,7 @@ class GameTile(Gtk.Box):
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
                  ' UPDATING UPDATE_INSTALLABLE')
 
-    def __init__(self, parent, game, api):
+    def __init__(self, parent, game, api, offline):
         Gtk.Frame.__init__(self)
         Gtk.StyleContext.add_provider(self.button.get_style_context(),
                                       CSS_PROVIDER,
@@ -50,6 +50,7 @@ class GameTile(Gtk.Box):
         self.parent = parent
         self.game = game
         self.api = api
+        self.offline = offline
         self.progress_bar = None
         self.thumbnail_set = False
         self.download = None
@@ -335,7 +336,7 @@ class GameTile(Gtk.Box):
                               self.state.UPDATING, self.state.DOWNLOADING]
         if self.current_state in dont_act_in_states:
             return
-        if self.game.installed_version:
+        if self.game.installed_version and not self.offline:
             installer = self.api.get_info(self.game)["downloads"]["installers"]
             update_available = self.game.validate_if_installed_is_latest(installer)
         else:

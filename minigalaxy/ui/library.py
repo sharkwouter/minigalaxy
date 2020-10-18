@@ -108,7 +108,7 @@ class Library(Gtk.Viewport):
             self.__add_gametile(game)
 
     def __add_gametile(self, game):
-        self.flowbox.add(GameTile(self, game, self.api))
+        self.flowbox.add(GameTile(self, game, self.api, self.offline))
         self.sort_library()
         self.flowbox.show_all()
 
