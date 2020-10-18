@@ -294,8 +294,10 @@ class GameTile(Gtk.Box):
             install_success = False
         if install_success:
             GLib.idle_add(self.update_to_state, self.state.INSTALLED)
-            self.menu_button_update.hide()
-            self.update_icon.hide()
+            if self.game.platform == "windows":
+                self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
+            else:
+                self.image.set_tooltip_text(self.game.name)
 
     def __cancel_update(self):
         GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
@@ -420,6 +422,9 @@ class GameTile(Gtk.Box):
             if self.progress_bar:
                 self.progress_bar.destroy()
 
+            self.menu_button_update.hide()
+            self.update_icon.hide()
+
         elif state == self.state.UNINSTALLING:
             self.button.set_label(_("uninstalling.."))
             self.button.set_sensitive(False)
@@ -433,12 +438,11 @@ class GameTile(Gtk.Box):
 
         elif state == self.state.UPDATABLE:
             self.update_icon.show()
+            self.update_icon.set_from_file(ICON_UPDATE_PATH)
             self.button.set_label(_("play"))
             self.menu_button.show()
             tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")
             self.image.set_tooltip_text(tooltip_text)
-            self.update_icon.show()
-            self.update_icon.set_from_file(ICON_UPDATE_PATH)
             self.menu_button_update.show()
             if self.game.platform == "windows":
                 self.wine_icon.set_margin_left(22)
