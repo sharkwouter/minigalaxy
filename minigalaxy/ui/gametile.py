@@ -336,7 +336,7 @@ class GameTile(Gtk.Box):
                               self.state.UPDATING, self.state.DOWNLOADING]
         if self.current_state in dont_act_in_states:
             return
-        if self.game.installed_version and not self.offline:
+        if self.game.installed_version and self.game.id and not self.offline:
             installer = self.api.get_info(self.game)["downloads"]["installers"]
             update_available = self.game.validate_if_installed_is_latest(installer)
         else:
