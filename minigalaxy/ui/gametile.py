@@ -283,6 +283,13 @@ class GameTile(Gtk.Box):
 
         DownloadManager.download(self.download)
 
+    def __check_for_update(self):
+        if self.game.installed_version and self.game.id and not self.offline:
+            installer = self.api.get_info(self.game)["downloads"]["installers"]
+            update_available = self.game.validate_if_installed_is_latest(installer)
+            if update_available:
+                self.update_to_state(self.state.UPDATABLE)
+
     def __update(self):
         GLib.idle_add(self.update_to_state, self.state.UPDATING)
         self.game.install_dir = self.__get_install_dir()
@@ -336,19 +343,14 @@ class GameTile(Gtk.Box):
                               self.state.UPDATING, self.state.DOWNLOADING]
         if self.current_state in dont_act_in_states:
             return
-        if self.game.installed_version and self.game.id and not self.offline:
-            installer = self.api.get_info(self.game)["downloads"]["installers"]
-            update_available = self.game.validate_if_installed_is_latest(installer)
-        else:
-            update_available = False
-        if update_available:
-            self.update_to_state(self.state.UPDATABLE)
-        elif self.game.install_dir and os.path.exists(self.game.install_dir):
+        if self.game.install_dir and os.path.exists(self.game.install_dir):
             self.update_to_state(self.state.INSTALLED)
         elif self.get_keep_executable_path():
             self.update_to_state(self.state.INSTALLABLE)
         else:
             self.update_to_state(self.state.DOWNLOADABLE)
+        check_upd_thread = threading.Thread(target=self.__check_for_update())
+        check_upd_thread.start()
 
     def update_to_state(self, state):
         self.current_state = state
