@@ -92,11 +92,6 @@ class Window(Gtk.ApplicationWindow):
             self.__authenticate()
         self.library.update_library()
 
-    @Gtk.Template.Callback("on_header_downloads_toggled")
-    def downloads_toggled(self, button):
-        if not button.get_active():
-            self.__download_manager.hide_download_button_if_no_downloads()
-
     def reset_library(self):
         self.library.reset()
 

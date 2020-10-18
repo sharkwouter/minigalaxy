@@ -147,7 +147,6 @@
             <property name="tooltip_text" translatable="yes" context="header_downloads_tooltip" comments="Tooltip for button which shows active downloads">Downloads</property>
             <property name="valign">center</property>
             <property name="use_popover">False</property>
-            <signal name="toggled" handler="on_header_downloads_toggled" swapped="no"/>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
