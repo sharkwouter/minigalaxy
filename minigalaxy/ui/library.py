@@ -71,7 +71,7 @@ class Library(Gtk.Viewport):
         # Hide games which aren't installed while in offline mode
         if not tile.game.install_dir and self.offline:
             return False
-        if tile.current_state == tile.state.INSTALLED and self.show_installed_only or not self.show_installed_only:
+        if tile.current_state in [tile.state.INSTALLED, tile.state.UPDATABLE] and self.show_installed_only or not self.show_installed_only:
             if self.search_string.lower() in str(tile).lower():
                 return True
         return False
