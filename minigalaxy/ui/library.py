@@ -71,7 +71,7 @@ class Library(Gtk.Viewport):
         # Hide games which aren't installed while in offline mode
         if not tile.game.install_dir and self.offline:
             return False
-        if tile.current_state == tile.state.INSTALLED and self.show_installed_only or not self.show_installed_only:
+        if tile.current_state in [tile.state.INSTALLED, tile.state.UPDATABLE] and self.show_installed_only or not self.show_installed_only:
             if self.search_string.lower() in str(tile).lower():
                 return True
         return False
@@ -108,7 +108,7 @@ class Library(Gtk.Viewport):
             self.__add_gametile(game)
 
     def __add_gametile(self, game):
-        self.flowbox.add(GameTile(self, game, self.api))
+        self.flowbox.add(GameTile(self, game, self.api, self.offline))
         self.sort_library()
         self.flowbox.show_all()
 
@@ -157,11 +157,11 @@ class Library(Gtk.Viewport):
             self.offline = True
             GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
             return
+        installed_game_names = []
+        for game in self.games:
+            installed_game_names.append(game.name.lower())
         for game in retrieved_games:
-            if game in self.games:
-                # Make sure the game id is set if the game is installed
-                for installed_game in self.games:
-                    if game == installed_game:
-                        self.games.remove(installed_game)
-                        break
-            self.games.append(game)
+            if game.name.lower() not in installed_game_names:
+                self.games.append(game)
+
+

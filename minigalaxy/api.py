@@ -95,7 +95,8 @@ class Api:
                         continue
                     if not product["url"]:
                         print("{} ({}) has no store page url".format(product["title"], product['id']))
-                    game = Game(name=product["title"], url=product["url"], game_id=product["id"], image_url=product["image"], platform=platform)
+                    game = Game(name=product["title"], url=product["url"], game_id=product["id"],
+                                image_url=product["image"], platform=platform)
                     games.append(game)
             if current_page == total_pages:
                 all_pages_processed = True

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.36.0 -->
 <interface domain="minigalaxy">
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkPopover" id="menu">
@@ -34,7 +34,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">2</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -48,7 +48,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -58,6 +58,20 @@
             <property name="receives_default">True</property>
             <property name="text" translatable="yes" context="Wine Settings" comments="Open winecfg settings for Windows games">Settings</property>
             <signal name="clicked" handler="on_menu_button_settings_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_button_update">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes" context="update" comments="Updates game">Update</property>
+            <signal name="clicked" handler="on_menu_button_update_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -164,9 +178,23 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="valign">start</property>
+            <property name="margin_start">2</property>
+            <property name="margin_top">2</property>
           </object>
           <packing>
             <property name="index">2</property>
+          </packing>
+        </child>
+        <child type="overlay">
+          <object class="GtkImage" id="update_icon">
+            <property name="can_focus">False</property>
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="margin_start">2</property>
+            <property name="margin_top">2</property>
+          </object>
+          <packing>
+            <property name="index">3</property>
           </packing>
         </child>
       </object>

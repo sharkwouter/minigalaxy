@@ -340,6 +340,10 @@ msgstr ""
 msgid "uninstalling.."
 msgstr ""
 
+#: minigalaxy/ui/gametile.py:348
+msgid "updating.."
+msgstr ""
+
 #: minigalaxy/installer.py:32 minigalaxy/installer.py:33
 msgid "{} could not be unzipped."
 msgstr ""
