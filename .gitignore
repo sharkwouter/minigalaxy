@@ -8,6 +8,8 @@ dist/
 *.swp
 .eggs/
 data/po/*.mo
+.project
+.pydevproject
 
 # Files generated when building the deb package
 .pybuild/
