@@ -149,20 +149,6 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="menu_button_uninstall">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="text" translatable="yes" context="uninstall" comments="Removes the game files from the local machine">Uninstall</property>
-            <signal name="clicked" handler="on_menu_button_uninstall_clicked" swapped="no"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">5</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkMenuButton" id="menu_button_dlc">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -182,8 +168,21 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">7</property>
+            <property name="position">5</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="menu_button_uninstall">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes" context="uninstall" comments="Removes the game files from the local machine">Uninstall</property>
+            <signal name="clicked" handler="on_menu_button_uninstall_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">6</property>
           </packing>
         </child>
       </object>
