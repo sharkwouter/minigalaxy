@@ -50,6 +50,18 @@ class Game:
                 is_latest = True
         return is_latest
 
+    def get_dlc_status(self, dlc):
+        # TODO
+        status_list = ["installed", "updatable", "not-installed", "not-installable"]
+        status = status_list[2]
+        return status
+
+    def install_dlc(self, installer):
+        # TODO
+        print("Install DLC")
+        print(installer)
+        return True
+
     def __str__(self):
         return self.name
 
