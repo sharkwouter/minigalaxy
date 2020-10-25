@@ -290,12 +290,14 @@ class GameTile(Gtk.Box):
 
         DownloadManager.download(self.download)
 
-    def __check_for_update(self):
+    def __check_for_update_dlc(self):
         if self.game.installed_version and self.game.id and not self.offline:
-            installer = self.api.get_info(self.game)["downloads"]["installers"]
+            game_info = self.api.get_info(self.game)
+            installer = game_info["downloads"]["installers"]
             update_available = self.game.validate_if_installed_is_latest(installer)
             if update_available:
                 self.update_to_state(self.state.UPDATABLE)
+            self.__check_for_dlc(game_info)
 
     def __update(self):
         GLib.idle_add(self.update_to_state, self.state.UPDATING)
@@ -318,27 +320,26 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
         GLib.idle_add(self.reload_state)
 
-    def __check_for_dlc(self):
-        if self.game.installed_version and self.game.id and not self.offline:
-            dlcs = self.api.get_info(self.game)["expanded_dlcs"]
-            if dlcs:
-                print("yes")
-                self.menu_button_dlc.show()
-            else:
-                print("no")
-                self.menu_button_dlc.hide()
-            for dlc in dlcs:
-                print(dlc["id"])
-                print(dlc["title"])
-                self.dlc_name.set_text(dlc["title"])
-                url = "http:{}".format(dlc["images"]["sidebarIcon"])
-                response = urllib.request.urlopen(url)
-                input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
-                pixbuf = Pixbuf.new_from_stream(input_stream, None)
-                self.dlc_image.set_from_pixbuf(pixbuf)
-                break
-#                print(dlc["images"]["sidebarIcon"])
-#                print(dlc["downloads"]["installers"])
+    def __check_for_dlc(self, game_info):
+        dlcs = game_info["expanded_dlcs"]
+        if dlcs:
+            print("yes")
+            self.menu_button_dlc.show()
+        else:
+            print("no")
+            self.menu_button_dlc.hide()
+        for dlc in dlcs:
+            print(dlc["id"])
+            print(dlc["title"])
+            self.dlc_name.set_text(dlc["title"])
+            url = "http:{}".format(dlc["images"]["sidebarIcon"])
+            response = urllib.request.urlopen(url)
+            input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
+            pixbuf = Pixbuf.new_from_stream(input_stream, None)
+            self.dlc_image.set_from_pixbuf(pixbuf)
+            break
+#           print(dlc["images"]["sidebarIcon"])
+#           print(dlc["downloads"]["installers"])
 
     def set_progress(self, percentage: int):
         if self.current_state == self.state.QUEUED:
@@ -378,10 +379,8 @@ class GameTile(Gtk.Box):
             self.update_to_state(self.state.INSTALLABLE)
         else:
             self.update_to_state(self.state.DOWNLOADABLE)
-        check_upd_thread = threading.Thread(target=self.__check_for_update())
+        check_upd_thread = threading.Thread(target=self.__check_for_update_dlc())
         check_upd_thread.start()
-        check_dlc_thread = threading.Thread(target=self.__check_for_dlc())
-        check_dlc_thread.start()
 
     def update_to_state(self, state):
         self.current_state = state
