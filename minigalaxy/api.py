@@ -118,10 +118,9 @@ class Api:
 
     # Get Extrainfo about a game
     def get_info(self, game: Game) -> tuple:
-        request_url = "https://api.gog.com/products/" + str(game.id) + "?expand=downloads,expanded_dlcs,description," \
-                                                                       "screenshots,videos,related_products,changelog "
+        request_url = "https://api.gog.com/products/{}?expand=downloads,expanded_dlcs,description,screenshots,videos," \
+                      "related_products,changelog ".format(str(game.id))
         response = self.__request(request_url)
-
         return response
 
     # This returns a unique download url and a link to the checksum of the download

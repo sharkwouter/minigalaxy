@@ -1,13 +1,15 @@
 import shutil
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib, Gdk, GdkPixbuf
+from gi.repository import Gtk, GLib, Gdk, GdkPixbuf, Gio
 import os
 import webbrowser
 import threading
 import subprocess
 import re
 import urllib.parse
+import urllib.request
+from gi.repository.GdkPixbuf import Pixbuf
 from enum import Enum
 from zipfile import BadZipFile
 from minigalaxy.translation import _
@@ -37,6 +39,11 @@ class GameTile(Gtk.Box):
     update_icon = Gtk.Template.Child()
     menu_button_store = Gtk.Template.Child()
     menu_button_update = Gtk.Template.Child()
+    menu_button_dlc = Gtk.Template.Child()
+    dlc_image = Gtk.Template.Child()
+    dlc_name = Gtk.Template.Child()
+    dlc_button = Gtk.Template.Child()
+    dlc_button_icon = Gtk.Template.Child()
 
     state = Enum('state',
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
@@ -311,6 +318,28 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
         GLib.idle_add(self.reload_state)
 
+    def __check_for_dlc(self):
+        if self.game.installed_version and self.game.id and not self.offline:
+            dlcs = self.api.get_info(self.game)["expanded_dlcs"]
+            if dlcs:
+                print("yes")
+                self.menu_button_dlc.show()
+            else:
+                print("no")
+                self.menu_button_dlc.hide()
+            for dlc in dlcs:
+                print(dlc["id"])
+                print(dlc["title"])
+                self.dlc_name.set_text(dlc["title"])
+                url = "http:{}".format(dlc["images"]["sidebarIcon"])
+                response = urllib.request.urlopen(url)
+                input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
+                pixbuf = Pixbuf.new_from_stream(input_stream, None)
+                self.dlc_image.set_from_pixbuf(pixbuf)
+                break
+#                print(dlc["images"]["sidebarIcon"])
+#                print(dlc["downloads"]["installers"])
+
     def set_progress(self, percentage: int):
         if self.current_state == self.state.QUEUED:
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADING)
@@ -351,6 +380,8 @@ class GameTile(Gtk.Box):
             self.update_to_state(self.state.DOWNLOADABLE)
         check_upd_thread = threading.Thread(target=self.__check_for_update())
         check_upd_thread.start()
+        check_dlc_thread = threading.Thread(target=self.__check_for_dlc())
+        check_dlc_thread.start()
 
     def update_to_state(self, state):
         self.current_state = state
