@@ -40,10 +40,7 @@ class GameTile(Gtk.Box):
     menu_button_store = Gtk.Template.Child()
     menu_button_update = Gtk.Template.Child()
     menu_button_dlc = Gtk.Template.Child()
-    dlc_image = Gtk.Template.Child()
-    dlc_name = Gtk.Template.Child()
-    dlc_button = Gtk.Template.Child()
-    dlc_button_icon = Gtk.Template.Child()
+    dlc_horizontal_box = Gtk.Template.Child()
 
     state = Enum('state',
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
@@ -323,23 +320,38 @@ class GameTile(Gtk.Box):
     def __check_for_dlc(self, game_info):
         dlcs = game_info["expanded_dlcs"]
         if dlcs:
-            print("yes")
             self.menu_button_dlc.show()
         else:
-            print("no")
             self.menu_button_dlc.hide()
         for dlc in dlcs:
             print(dlc["id"])
             print(dlc["title"])
-            self.dlc_name.set_text(dlc["title"])
-            url = "http:{}".format(dlc["images"]["sidebarIcon"])
-            response = urllib.request.urlopen(url)
-            input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
-            pixbuf = Pixbuf.new_from_stream(input_stream, None)
-            self.dlc_image.set_from_pixbuf(pixbuf)
+            self.dlc_box(dlc["images"]["sidebarIcon"], dlc["title"], "installed")
             break
-#           print(dlc["images"]["sidebarIcon"])
 #           print(dlc["downloads"]["installers"])
+
+    def dlc_box(self, icon, title, status):
+        dlc_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        image = Gtk.Image()
+        url = "http:{}".format(icon)
+        response = urllib.request.urlopen(url)
+        input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
+        pixbuf = Pixbuf.new_from_stream(input_stream, None)
+        image.set_from_pixbuf(pixbuf)
+        dlc_box.pack_start(image, True, True, 0)
+        label = Gtk.Label(label=title, xalign=0)
+        dlc_box.pack_start(label, True, True, 0)
+        install_button = Gtk.Button()
+        install_button_image = Gtk.Image()
+        if status.lower() == "installed":
+            icon_name = "gtk-ok"
+        else:
+            icon_name = "gtk-goto-bottom"
+        install_button_image.set_from_icon_name(icon_name, 1)
+        install_button.add(install_button_image)
+        dlc_box.pack_start(install_button, True, True, 0)
+        self.dlc_horizontal_box.pack_start(dlc_box, True, True, 0)
+        dlc_box.show_all()
 
     def set_progress(self, percentage: int):
         if self.current_state == self.state.QUEUED:
