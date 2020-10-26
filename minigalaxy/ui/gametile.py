@@ -324,11 +324,12 @@ class GameTile(Gtk.Box):
         else:
             self.menu_button_dlc.hide()
         for dlc in dlcs:
-            d_icon = dlc["images"]["sidebarIcon"]
-            d_name = dlc["title"]
-            d_status = self.game.get_dlc_status(dlc)
             d_installer = dlc["downloads"]["installers"]
-            self.dlc_box(d_icon, d_name, d_status, d_installer)
+            if d_installer:
+                d_icon = dlc["images"]["sidebarIcon"]
+                d_name = dlc["title"]
+                d_status = self.game.get_dlc_status(dlc)
+                self.dlc_box(d_icon, d_name, d_status, d_installer)
 
     def dlc_box(self, icon, title, status, installer):
         if title not in self.dlc_dict:
