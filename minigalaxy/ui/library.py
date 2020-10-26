@@ -59,7 +59,6 @@ class Library(Gtk.Viewport):
             tile.reload_state()
 
     def filter_library(self, widget: Gtk.Widget = None):
-        self.__load_tile_states()
         if isinstance(widget, Gtk.Switch):
             self.show_installed_only = widget.get_active()
         elif isinstance(widget, Gtk.SearchEntry):
