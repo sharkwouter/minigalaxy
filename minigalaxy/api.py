@@ -124,10 +124,14 @@ class Api:
         return response
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game, operating_system="linux") -> tuple:
-        response = self.get_info(game)
+    def get_download_info(self, game: Game, operating_system="linux", dlc=False, dlc_installers="") -> tuple:
+        if dlc:
+            installers = dlc_installers
+        else:
+            response = self.get_info(game)
+            installers = response["downloads"]["installers"]
         possible_downloads = []
-        for installer in response["downloads"]["installers"]:
+        for installer in installers:
             if installer["os"] == operating_system:
                 possible_downloads.append(installer)
         if not possible_downloads:

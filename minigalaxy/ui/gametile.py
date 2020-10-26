@@ -70,6 +70,9 @@ class GameTile(Gtk.Box):
         self.update_dir = os.path.join(CACHE_DIR, "update")
         self.update_path = os.path.join(self.update_dir, self.game.name)
 
+        # Set folder for dlc installer
+        self.dlc_dir = os.path.join(CACHE_DIR, "dlc")
+
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
         self.keep_path = os.path.join(self.keep_dir, self.game.get_install_directory_name())
@@ -317,6 +320,50 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
         GLib.idle_add(self.reload_state)
 
+    def __download_dlc(self, dlc_installers) -> None:
+        Config.set("current_download", self.game.id)
+        GLib.idle_add(self.update_to_state, self.state.QUEUED)
+        download_info = self.api.get_download_info(self.game, dlc=True, dlc_installers=dlc_installers)
+
+        # Start the download for all files
+        dlc_path = os.path.join(self.dlc_dir, self.game.name)
+        for dlc in self.game.dlcs:
+            if dlc["downloads"]["installers"] == dlc_installers:
+                dlc_path = os.path.join(self.dlc_dir, dlc["title"])
+        self.download = []
+        key = 1
+        for dlc_file in download_info['files']:
+            download_path = "{}-{}.bin".format(dlc_path, dlc_file["id"])
+            download = Download(
+                url=self.api.get_real_download_link(dlc_file["downlink"]),
+                save_location=download_path,
+                finish_func=lambda: self.__install_dlc(download_path),
+                progress_func=self.set_progress,
+                cancel_func=self.__cancel_dlc,
+                number=key,
+                out_of_amount=len(download_info['files'])
+            )
+            self.download.append(download)
+            key += 1
+
+        DownloadManager.download(self.download)
+
+    def __install_dlc(self, dlc_download_path):
+        print("download dlc ready")
+        GLib.idle_add(self.update_to_state, self.state.INSTALLING)
+        self.game.install_dir = self.__get_install_dir()
+        try:
+            install_game(self.game, dlc_download_path, main_window=self.parent.parent)
+            install_success = True
+        except (FileNotFoundError, BadZipFile) as e:
+            print("Warning: {}".format(e))
+            install_success = False
+        GLib.idle_add(self.update_to_state, self.state.INSTALLED)
+
+    def __cancel_dlc(self):
+        GLib.idle_add(self.update_to_state, self.state.INSTALLED)
+        GLib.idle_add(self.reload_state)
+
     def __check_for_dlc(self, game_info):
         dlcs = game_info["expanded_dlcs"]
         if dlcs:
@@ -330,6 +377,8 @@ class GameTile(Gtk.Box):
                 d_name = dlc["title"]
                 d_status = self.game.get_dlc_status(dlc)
                 self.dlc_box(d_icon, d_name, d_status, d_installer)
+                if dlc not in self.game.dlcs:
+                    self.game.dlcs.append(dlc)
 
     def dlc_box(self, icon, title, status, installer):
         if title not in self.dlc_dict:
@@ -342,7 +391,7 @@ class GameTile(Gtk.Box):
             install_button = Gtk.Button()
             dlc_box.pack_start(install_button, False, True, 0)
             self.dlc_dict[title] = [install_button, image]
-            self.dlc_dict[title][0].connect("clicked", lambda x: self.game.install_dlc(installer))
+            self.dlc_dict[title][0].connect("clicked", lambda x: self.__download_dlc(installer))
             self.dlc_horizontal_box.pack_start(dlc_box, False, True, 0)
             dlc_box.show_all()
             self.get_async_image_dlc_icon(icon, title)

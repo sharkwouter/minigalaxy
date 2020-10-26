@@ -4,7 +4,7 @@ import re
 
 class Game:
     def __init__(self, name: str, url: str = "", game_id: int = 0, install_dir: str = "", image_url="",
-                 platform="linux"):
+                 platform="linux", dlcs=[]):
         self.name = name
         self.url = url
         self.id = game_id
@@ -12,6 +12,7 @@ class Game:
         self.image_url = image_url
         self.platform = platform
         self.installed_version = self.get_installed_version()
+        self.dlcs = dlcs
 
     def get_stripped_name(self):
         return self.__strip_string(self.name)
@@ -55,12 +56,6 @@ class Game:
         status_list = ["installed", "updatable", "not-installed", "not-installable"]
         status = status_list[2]
         return status
-
-    def install_dlc(self, installer):
-        # TODO
-        print("Install DLC")
-        print(installer)
-        return True
 
     def __str__(self):
         return self.name
