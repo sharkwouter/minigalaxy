@@ -1,5 +1,6 @@
 import os
 import re
+import pickle
 
 
 class Game:
@@ -51,11 +52,37 @@ class Game:
                 is_latest = True
         return is_latest
 
-    def get_dlc_status(self, dlc):
-        # TODO
+    def get_dlc_status(self, dlc_title):
         status_list = ["installed", "updatable", "not-installed", "not-installable"]
         status = status_list[2]
+        dlc_status_file_name = "minigalaxy-dlc.pickle"
+        dlc_status_file_path = os.path.join(self.install_dir, dlc_status_file_name)
+        if self.installed_version:
+            if os.path.isfile(dlc_status_file_path):
+                dlc_staus_file = open(dlc_status_file_path, 'rb')
+                dlc_status_dict = pickle.load(dlc_staus_file)
+                dlc_staus_file.close()
+                if dlc_status_dict[dlc_title]:
+                    status = status_list[0]
         return status
+
+    def set_dlc_status(self, dlc_title, status):
+        dlc_status_file_name = "minigalaxy-dlc.pickle"
+        dlc_status_file_path = os.path.join(self.install_dir, dlc_status_file_name)
+        if self.installed_version:
+            if os.path.isfile(dlc_status_file_path):
+                dlc_staus_file = open(dlc_status_file_path, 'rb')
+                dlc_status_dict = pickle.load(dlc_staus_file)
+                dlc_staus_file.close()
+            else:
+                dlc_status_dict = {}
+            for dlc in self.dlcs:
+                if dlc["title"] not in dlc_status_dict:
+                    dlc_status_dict[dlc["title"]] = False
+            dlc_status_dict[dlc_title] = status
+            dlc_staus_file = open(dlc_status_file_path, 'wb')
+            pickle.dump(dlc_status_dict, dlc_staus_file)
+            dlc_staus_file.close()
 
     def __str__(self):
         return self.name

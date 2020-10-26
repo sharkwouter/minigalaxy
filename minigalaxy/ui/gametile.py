@@ -327,17 +327,20 @@ class GameTile(Gtk.Box):
 
         # Start the download for all files
         dlc_path = os.path.join(self.dlc_dir, self.game.name)
+        dlc_title = self.game.name
         for dlc in self.game.dlcs:
             if dlc["downloads"]["installers"] == dlc_installers:
-                dlc_path = os.path.join(self.dlc_dir, dlc["title"])
+                dlc_title = dlc["title"]
+                dlc_path = os.path.join(self.dlc_dir, dlc_title)
         self.download = []
         key = 1
         for dlc_file in download_info['files']:
+            print(dlc_file)
             download_path = "{}-{}.bin".format(dlc_path, dlc_file["id"])
             download = Download(
                 url=self.api.get_real_download_link(dlc_file["downlink"]),
                 save_location=download_path,
-                finish_func=lambda: self.__install_dlc(download_path),
+                finish_func=lambda: self.__install_dlc(dlc_title, download_path),
                 progress_func=self.set_progress,
                 cancel_func=self.__cancel_dlc,
                 number=key,
@@ -348,7 +351,7 @@ class GameTile(Gtk.Box):
 
         DownloadManager.download(self.download)
 
-    def __install_dlc(self, dlc_download_path):
+    def __install_dlc(self, dlc_title, dlc_download_path):
         print("download dlc ready")
         GLib.idle_add(self.update_to_state, self.state.INSTALLING)
         self.game.install_dir = self.__get_install_dir()
@@ -359,6 +362,8 @@ class GameTile(Gtk.Box):
             print("Warning: {}".format(e))
             install_success = False
         GLib.idle_add(self.update_to_state, self.state.INSTALLED)
+        self.game.set_dlc_status(dlc_title, install_success)
+        self.__check_for_dlc(self.api.get_info(self.game))
 
     def __cancel_dlc(self):
         GLib.idle_add(self.update_to_state, self.state.INSTALLED)
@@ -375,7 +380,7 @@ class GameTile(Gtk.Box):
             if d_installer:
                 d_icon = dlc["images"]["sidebarIcon"]
                 d_name = dlc["title"]
-                d_status = self.game.get_dlc_status(dlc)
+                d_status = self.game.get_dlc_status(d_name)
                 self.dlc_box(d_icon, d_name, d_status, d_installer)
                 if dlc not in self.game.dlcs:
                     self.game.dlcs.append(dlc)
