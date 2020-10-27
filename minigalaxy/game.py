@@ -12,14 +12,15 @@ class Game:
         self.install_dir = install_dir
         self.image_url = image_url
         self.platform = platform
-        self.installed_version = self.get_installed_version()
+        self.installed_version = ""
         if dlcs is None:
             dlcs = []
         self.dlcs = dlcs
 
-        self.dlc_status_list = ["installed", "updatable", "not-installed", "not-installable"]
+        self.dlc_status_list = ["not-installed", "installed"]
         self.dlc_status_file_name = "minigalaxy-dlc.pickle"
-        self.dlc_status_file_path = os.path.join(self.install_dir, self.dlc_status_file_name)
+        self.dlc_status_file_path = ""
+        self.read_installed_version()
 
     def get_stripped_name(self):
         return self.__strip_string(self.name)
@@ -31,7 +32,7 @@ class Game:
     def __strip_string(string):
         return re.sub('[^A-Za-z0-9]+', '', string)
 
-    def get_installed_version(self):
+    def read_installed_version(self):
         gameinfo = os.path.join(self.install_dir, "gameinfo")
         gameinfo_list = []
         if os.path.isfile(gameinfo):
@@ -41,9 +42,11 @@ class Game:
             version = gameinfo_list[1].strip()
         else:
             version = ""
-        return version
+        self.installed_version = version
+        self.dlc_status_file_path = os.path.join(self.install_dir, self.dlc_status_file_name)
 
     def validate_if_installed_is_latest(self, installers):
+        self.read_installed_version()
         if not self.installed_version:
             is_latest = False
         else:
@@ -59,7 +62,8 @@ class Game:
         return is_latest
 
     def get_dlc_status(self, dlc_title):
-        status = self.dlc_status_list[2]
+        self.read_installed_version()
+        status = self.dlc_status_list[0]
         if self.installed_version:
             if os.path.isfile(self.dlc_status_file_path):
                 dlc_staus_file = open(self.dlc_status_file_path, 'rb')
@@ -69,6 +73,7 @@ class Game:
         return status
 
     def set_dlc_status(self, dlc_title, status):
+        self.read_installed_version()
         if self.installed_version:
             if os.path.isfile(self.dlc_status_file_path):
                 dlc_staus_file = open(self.dlc_status_file_path, 'rb')
@@ -78,14 +83,14 @@ class Game:
                 dlc_status_dict = {}
             for dlc in self.dlcs:
                 if dlc["title"] not in dlc_status_dict:
-                    dlc_status_dict[dlc["title"]] = self.dlc_status_list[2]
+                    dlc_status_dict[dlc["title"]] = self.dlc_status_list[0]
             if status:
-                dlc_status_dict[dlc_title] = self.dlc_status_list[0]
+                dlc_status_dict[dlc_title] = self.dlc_status_list[1]
             else:
-                dlc_status_dict[dlc_title] = self.dlc_status_list[2]
-            dlc_staus_file = open(self.dlc_status_file_path, 'wb')
-            pickle.dump(dlc_status_dict, dlc_staus_file)
-            dlc_staus_file.close()
+                dlc_status_dict[dlc_title] = self.dlc_status_list[0]
+            dlc_status_file = open(self.dlc_status_file_path, 'wb')
+            pickle.dump(dlc_status_dict, dlc_status_file)
+            dlc_status_file.close()
 
     def __str__(self):
         return self.name
