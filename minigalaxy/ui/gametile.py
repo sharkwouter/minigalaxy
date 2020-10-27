@@ -298,6 +298,8 @@ class GameTile(Gtk.Box):
             if update_available:
                 self.update_to_state(self.state.UPDATABLE)
             self.__check_for_dlc(game_info)
+        if self.offline:
+            self.menu_button_dlc.hide()
 
     def __update(self):
         GLib.idle_add(self.update_to_state, self.state.UPDATING)
@@ -335,24 +337,28 @@ class GameTile(Gtk.Box):
         self.download = []
         key = 1
         for dlc_file in download_info['files']:
-            print(dlc_file)
             download_path = "{}-{}.bin".format(dlc_path, dlc_file["id"])
-            download = Download(
-                url=self.api.get_real_download_link(dlc_file["downlink"]),
-                save_location=download_path,
-                finish_func=lambda: self.__install_dlc(dlc_title, download_path),
-                progress_func=self.set_progress,
-                cancel_func=self.__cancel_dlc,
-                number=key,
-                out_of_amount=len(download_info['files'])
-            )
-            self.download.append(download)
-            key += 1
-
+            # Try to handle: json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+            # in self.api.get_real_download_link
+            try:
+                download = Download(
+                    url=self.api.get_real_download_link(dlc_file["downlink"]),
+                    save_location=download_path,
+                    finish_func=lambda: self.__install_dlc(dlc_title, download_path),
+                    progress_func=self.set_progress,
+                    cancel_func=self.__cancel_dlc,
+                    number=key,
+                    out_of_amount=len(download_info['files'])
+                )
+                self.download.append(download)
+                key += 1
+            except ValueError as e:
+                print(e)
+                GLib.idle_add(self.parent.parent.show_error, _("Download DLC error"), _(str(e)))
+                GLib.idle_add(self.update_to_state, self.state.INSTALLED)
         DownloadManager.download(self.download)
 
     def __install_dlc(self, dlc_title, dlc_download_path):
-        print("download dlc ready")
         GLib.idle_add(self.update_to_state, self.state.INSTALLING)
         self.game.install_dir = self.__get_install_dir()
         try:

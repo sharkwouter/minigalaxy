@@ -5,7 +5,7 @@ import pickle
 
 class Game:
     def __init__(self, name: str, url: str = "", game_id: int = 0, install_dir: str = "", image_url="",
-                 platform="linux", dlcs=[]):
+                 platform="linux", dlcs=None):
         self.name = name
         self.url = url
         self.id = game_id
@@ -13,7 +13,13 @@ class Game:
         self.image_url = image_url
         self.platform = platform
         self.installed_version = self.get_installed_version()
+        if dlcs is None:
+            dlcs = []
         self.dlcs = dlcs
+
+        self.dlc_status_list = ["installed", "updatable", "not-installed", "not-installable"]
+        self.dlc_status_file_name = "minigalaxy-dlc.pickle"
+        self.dlc_status_file_path = os.path.join(self.install_dir, self.dlc_status_file_name)
 
     def get_stripped_name(self):
         return self.__strip_string(self.name)
@@ -53,34 +59,31 @@ class Game:
         return is_latest
 
     def get_dlc_status(self, dlc_title):
-        status_list = ["installed", "updatable", "not-installed", "not-installable"]
-        status = status_list[2]
-        dlc_status_file_name = "minigalaxy-dlc.pickle"
-        dlc_status_file_path = os.path.join(self.install_dir, dlc_status_file_name)
+        status = self.dlc_status_list[2]
         if self.installed_version:
-            if os.path.isfile(dlc_status_file_path):
-                dlc_staus_file = open(dlc_status_file_path, 'rb')
+            if os.path.isfile(self.dlc_status_file_path):
+                dlc_staus_file = open(self.dlc_status_file_path, 'rb')
                 dlc_status_dict = pickle.load(dlc_staus_file)
                 dlc_staus_file.close()
-                if dlc_status_dict[dlc_title]:
-                    status = status_list[0]
+                status = dlc_status_dict[dlc_title]
         return status
 
     def set_dlc_status(self, dlc_title, status):
-        dlc_status_file_name = "minigalaxy-dlc.pickle"
-        dlc_status_file_path = os.path.join(self.install_dir, dlc_status_file_name)
         if self.installed_version:
-            if os.path.isfile(dlc_status_file_path):
-                dlc_staus_file = open(dlc_status_file_path, 'rb')
+            if os.path.isfile(self.dlc_status_file_path):
+                dlc_staus_file = open(self.dlc_status_file_path, 'rb')
                 dlc_status_dict = pickle.load(dlc_staus_file)
                 dlc_staus_file.close()
             else:
                 dlc_status_dict = {}
             for dlc in self.dlcs:
                 if dlc["title"] not in dlc_status_dict:
-                    dlc_status_dict[dlc["title"]] = False
-            dlc_status_dict[dlc_title] = status
-            dlc_staus_file = open(dlc_status_file_path, 'wb')
+                    dlc_status_dict[dlc["title"]] = self.dlc_status_list[2]
+            if status:
+                dlc_status_dict[dlc_title] = self.dlc_status_list[0]
+            else:
+                dlc_status_dict[dlc_title] = self.dlc_status_list[2]
+            dlc_staus_file = open(self.dlc_status_file_path, 'wb')
             pickle.dump(dlc_status_dict, dlc_staus_file)
             dlc_staus_file.close()
 
