@@ -68,13 +68,14 @@ class Library(Gtk.Viewport):
 
     def __filter_library_func(self, child):
         tile = child.get_children()[0]
-        # Hide games which aren't installed while in offline mode
-        if not tile.game.install_dir and self.offline:
-            return False
-        if tile.current_state in [tile.state.INSTALLED, tile.state.UPDATABLE] and self.show_installed_only or not self.show_installed_only:
-            if self.search_string.lower() in str(tile).lower():
-                return True
-        return False
+        show_game = False
+        if tile.current_state not in [tile.state.DOWNLOADABLE] and self.show_installed_only:
+            show_game = True
+        elif not self.show_installed_only:
+            show_game = True
+        if self.search_string.lower() not in str(tile).lower():
+            show_game = False
+        return show_game
 
     def sort_library(self):
         self.flowbox.set_sort_func(self.__sort_library_func)
