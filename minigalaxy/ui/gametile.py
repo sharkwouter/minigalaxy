@@ -342,7 +342,7 @@ class GameTile(Gtk.Box):
         if not install_success:
             GLib.idle_add(self.update_to_state, self.state.INSTALLED)
         self.game.set_dlc_status(dlc_title, install_success)
-        self.__check_for_dlc(self.api.get_info(self.game))
+        self.__check_for_update_dlc()
 
     def __check_for_dlc(self, game_info):
         dlcs = game_info["expanded_dlcs"]
