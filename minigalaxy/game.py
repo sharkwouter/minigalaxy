@@ -1,6 +1,6 @@
 import os
 import re
-import pickle
+import json
 
 
 class Game:
@@ -18,7 +18,7 @@ class Game:
         self.dlcs = dlcs
 
         self.dlc_status_list = ["not-installed", "installed"]
-        self.dlc_status_file_name = "minigalaxy-dlc.pickle"
+        self.dlc_status_file_name = "minigalaxy-dlc.json"
         self.dlc_status_file_path = ""
         self.read_installed_version()
 
@@ -66,8 +66,8 @@ class Game:
         status = self.dlc_status_list[0]
         if self.installed_version:
             if os.path.isfile(self.dlc_status_file_path):
-                dlc_staus_file = open(self.dlc_status_file_path, 'rb')
-                dlc_status_dict = pickle.load(dlc_staus_file)
+                dlc_staus_file = open(self.dlc_status_file_path, 'r')
+                dlc_status_dict = json.load(dlc_staus_file)
                 dlc_staus_file.close()
                 status = dlc_status_dict[dlc_title]
         return status
@@ -76,8 +76,8 @@ class Game:
         self.read_installed_version()
         if self.installed_version:
             if os.path.isfile(self.dlc_status_file_path):
-                dlc_staus_file = open(self.dlc_status_file_path, 'rb')
-                dlc_status_dict = pickle.load(dlc_staus_file)
+                dlc_staus_file = open(self.dlc_status_file_path, 'r')
+                dlc_status_dict = json.load(dlc_staus_file)
                 dlc_staus_file.close()
             else:
                 dlc_status_dict = {}
@@ -88,8 +88,8 @@ class Game:
                 dlc_status_dict[dlc_title] = self.dlc_status_list[1]
             else:
                 dlc_status_dict[dlc_title] = self.dlc_status_list[0]
-            dlc_status_file = open(self.dlc_status_file_path, 'wb')
-            pickle.dump(dlc_status_dict, dlc_status_file)
+            dlc_status_file = open(self.dlc_status_file_path, 'w')
+            json.dump(dlc_status_dict, dlc_status_file)
             dlc_status_file.close()
 
     def __str__(self):
