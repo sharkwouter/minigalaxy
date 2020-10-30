@@ -97,6 +97,7 @@ class __DownloadManger:
             self.__cancel = False
             download.cancel()
             self.__current_download = None
+            os.remove(download.save_location)
 
     def prepare_location(self, save_location):
         # Make sure the directory exists
