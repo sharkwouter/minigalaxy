@@ -22,7 +22,7 @@ def install_game(game, installer, main_window=None) -> None:
 
         # Make a temporary empty directory for extracting the installer
         extract_dir = os.path.join(CACHE_DIR, "extract")
-        temp_dir = os.path.join(extract_dir, game.id)
+        temp_dir = os.path.join(extract_dir, str(game.id))
         if os.path.exists(extract_dir):
             shutil.rmtree(extract_dir, ignore_errors=True)
         os.makedirs(temp_dir, mode=0o755)
