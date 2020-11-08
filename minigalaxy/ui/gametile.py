@@ -352,13 +352,13 @@ class GameTile(Gtk.Box):
                 d_icon = dlc["images"]["sidebarIcon"]
                 d_name = dlc["title"]
                 d_status = self.game.get_dlc_status(d_name)
-                self.dlc_box(d_icon, d_name, d_status, d_installer)
+                self.update_gtk_box_for_dlc(d_icon, d_name, d_status, d_installer)
                 if dlc not in self.game.dlcs:
                     self.game.dlcs.append(dlc)
         if self.game.dlcs:
             self.menu_button_dlc.show()
 
-    def dlc_box(self, icon, title, status, installer):
+    def update_gtk_box_for_dlc(self, icon, title, status, installer):
         if title not in self.dlc_dict:
             dlc_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             image = Gtk.Image()
@@ -432,8 +432,8 @@ class GameTile(Gtk.Box):
             self.update_to_state(self.state.INSTALLABLE)
         else:
             self.update_to_state(self.state.DOWNLOADABLE)
-        check_upd_thread = threading.Thread(target=self.__check_for_update_dlc())
-        check_upd_thread.start()
+        check_update_thread = threading.Thread(target=self.__check_for_update_dlc())
+        check_update_thread.start()
 
     def update_to_state(self, state):
         self.current_state = state
