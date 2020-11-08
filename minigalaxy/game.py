@@ -17,7 +17,7 @@ class Game:
             dlcs = []
         self.dlcs = dlcs
 
-        self.dlc_status_list = ["not-installed", "installed"]
+        self.dlc_status_list = ["not-installed", "installed", "updatable"]
         self.dlc_status_file_name = "minigalaxy-dlc.json"
         self.dlc_status_file_path = ""
         self.read_installed_version()
@@ -67,7 +67,8 @@ class Game:
         if self.installed_version:
             if os.path.isfile(self.dlc_status_file_path):
                 dlc_staus_file = open(self.dlc_status_file_path, 'r')
-                dlc_status_dict = json.load(dlc_staus_file)
+                json_list = json.load(dlc_staus_file)
+                dlc_status_dict = json_list[0]
                 dlc_staus_file.close()
                 status = dlc_status_dict[dlc_title]
         return status
@@ -77,19 +78,27 @@ class Game:
         if self.installed_version:
             if os.path.isfile(self.dlc_status_file_path):
                 dlc_staus_file = open(self.dlc_status_file_path, 'r')
-                dlc_status_dict = json.load(dlc_staus_file)
+                json_list = json.load(dlc_staus_file)
+                dlc_status_dict = json_list[0]
+                dlc_installers_version_dict = json_list[1]
                 dlc_staus_file.close()
             else:
                 dlc_status_dict = {}
+                dlc_installers_version_dict = {}
             for dlc in self.dlcs:
                 if dlc["title"] not in dlc_status_dict:
                     dlc_status_dict[dlc["title"]] = self.dlc_status_list[0]
             if status:
                 dlc_status_dict[dlc_title] = self.dlc_status_list[1]
+                dlc_installers = {}
+                for dlc in self.dlcs:
+                    if dlc_title == dlc["title"]:
+                        dlc_installers = dlc["downloads"]["installers"]
+                dlc_installers_version_dict[dlc_title] = dlc_installers
             else:
                 dlc_status_dict[dlc_title] = self.dlc_status_list[0]
             dlc_status_file = open(self.dlc_status_file_path, 'w')
-            json.dump(dlc_status_dict, dlc_status_file)
+            json.dump([dlc_status_dict, dlc_installers_version_dict], dlc_status_file)
             dlc_status_file.close()
 
     def __str__(self):
