@@ -68,14 +68,14 @@ class Library(Gtk.Viewport):
 
     def __filter_library_func(self, child):
         tile = child.get_children()[0]
-        show_game = False
-        if tile.current_state not in [tile.state.DOWNLOADABLE] and self.show_installed_only:
-            show_game = True
-        elif not self.show_installed_only:
-            show_game = True
         if self.search_string.lower() not in str(tile).lower():
-            show_game = False
-        return show_game
+            return False
+
+        if self.show_installed_only:
+            if tile.current_state in [tile.state.DOWNLOADABLE, tile.state.INSTALLABLE]:
+                return False
+
+        return True
 
     def sort_library(self):
         self.flowbox.set_sort_func(self.__sort_library_func)
