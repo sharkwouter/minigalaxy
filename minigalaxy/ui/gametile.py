@@ -346,21 +346,17 @@ class GameTile(Gtk.Box):
 
     def __check_for_dlc(self, game_info):
         dlcs = game_info["expanded_dlcs"]
-        dlcs_present = False
         for dlc in dlcs:
             d_installer = dlc["downloads"]["installers"]
             if d_installer:
-                dlcs_present = True
                 d_icon = dlc["images"]["sidebarIcon"]
                 d_name = dlc["title"]
                 d_status = self.game.get_dlc_status(d_name)
                 self.dlc_box(d_icon, d_name, d_status, d_installer)
                 if dlc not in self.game.dlcs:
                     self.game.dlcs.append(dlc)
-        if dlcs_present:
+        if self.game.dlcs:
             self.menu_button_dlc.show()
-        else:
-            self.menu_button_dlc.hide()
 
     def dlc_box(self, icon, title, status, installer):
         if title not in self.dlc_dict:
