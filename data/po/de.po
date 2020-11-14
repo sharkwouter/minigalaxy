@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-14 11:48+0100\n"
-"PO-Revision-Date: 2020-04-06 21:46+0200\n"
+"PO-Revision-Date: 2020-11-14 12:33+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #: data/ui/about.ui:20
 msgid ""
@@ -29,6 +29,15 @@ msgid ""
 "<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
 "<a href=\"https://github.com/thomasb22\">thomasb22</a>"
 msgstr ""
+"<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
+"<a href=\"https://github.com/BlindJerobine\">BlindJerobine</a>\n"
+"<a href=\"https://github.com/EsdrasTarsis\">Esdras Tarsis</a>\n"
+"<a href=\"https://github.com/fuzunspm\">Hüseyin Fahri Uzun</a>\n"
+"<a href=\"https://github.com/LordPilum\">Jan Kjetil Myklebust</a>\n"
+"<a href=\"https://github.com/s8321414\">Jeff Huang</a>\n"
+"<a href=\"https://github.com/kimmalmo\">kimmalmo</a>\n"
+"<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
+"<a href=\"https://github.com/thomasb22\">thomasb22</a>"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -82,16 +91,15 @@ msgstr "Konnte Unterprozess nicht starten"
 
 #: data/ui/gametile.ui:108
 msgid "DLC"
-msgstr ""
+msgstr "DLC"
 
 #: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr "Dänisch"
 
 #: minigalaxy/ui/gametile.py:212 minigalaxy/ui/gametile.py:239
-#, fuzzy
 msgid "Download error"
-msgstr "Herunterladen"
+msgstr "Download-Fehler"
 
 #: minigalaxy/constants.py:11
 msgid "Dutch"
@@ -264,10 +272,9 @@ msgstr "Zeige FPS im Spiel:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:201
-#, fuzzy
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Zeige FPS im Spiel:"
+msgstr "Zeige Windows-Spiele: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -312,7 +319,7 @@ msgstr "Schwedisch"
 
 #: minigalaxy/installer.py:61
 msgid "The installation of {} failed. Please try again."
-msgstr ""
+msgstr "Die Installation von {} ist fehlgeschlagen. Bitte versuche es erneut."
 
 #: data/ui/preferences.ui:67
 msgctxt "preferred_language_tooltip"
@@ -324,6 +331,8 @@ msgid ""
 "There was an error when trying to fetch the download link!\n"
 "{}"
 msgstr ""
+"Fehler beim Abrufen des Download-Links!\n"
+"{}"
 
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
@@ -344,7 +353,7 @@ msgstr "Deinstallieren"
 #: data/ui/gametile.ui:86
 msgctxt "update"
 msgid "Update"
-msgstr ""
+msgstr "Aktualisieren"
 
 #: data/ui/preferences.ui:145
 msgctxt "stay_logged_in_tooltip"
@@ -386,9 +395,8 @@ msgid "uninstalling.."
 msgstr "Wird deinstalliert..."
 
 #: minigalaxy/ui/gametile.py:537
-#, fuzzy
 msgid "updating.."
-msgstr "Lädt herunter..."
+msgstr "Aktualisiere.."
 
 #: minigalaxy/installer.py:33
 msgid "{} could not be unzipped."
