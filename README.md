@@ -1,6 +1,6 @@
 # Minigalaxy
 
-A simple GOG client for Linux that lets you download and play your GOG Linux games
+A simple GOG client for Linux
 
 ![screenshot](screenshot.jpg?raw=true)
 
@@ -19,18 +19,24 @@ In addition to that, Minigalaxy also allows you to:
 - Search your GOG Linux library
 - Show all games or just the ones you've installed
 - View the error message if a game fails to launch
+- Enable displaying the FPS in games
 - Use the system's Scummvm or Dosbox installation
-
-Features **not** in Minigalaxy:
-
-- Installing games meant for other platforms
+- Install Windows games using Wine
 
 ## Supported languages
 
 Currently Minigalaxy can be displayed in the following languages:
+- Brazilian Portuguese
 - English
 - Dutch
+- French
+- German
+- Norwegian Bokmål
+- Norwegian Nynorsk
+- Polish
+- Russian
 - Taiwanese Mandarin
+- Turkish
 
 ## System requirements
 
@@ -44,6 +50,7 @@ Minigalaxy should work on the following distributions:
 - openSUSE Tumbleweed
 - Gentoo
 - MX Linux 19
+- Solus
 
 Minigalaxy does **not** ship for the following distributions because they do not contain the required version of PyGObject:
 
@@ -55,61 +62,76 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 
 - GTK+
 - Python 3
-- PyGObject 3.30+
+- PyGObject 3.29.1+
 - Webkit2gtk with API version 4.0 support
 - Python Requests
 
 ## Installation
 
-**Ubuntu/Debian**
+<a href="https://repology.org/project/minigalaxy/versions">
+    <img src="https://repology.org/badge/vertical-allrepos/minigalaxy.svg" alt="Packaging status" align="right">
+</a>
 
-Download the latest deb package from the [releases page](https://github.com/sharkwouter/minigalaxy/releases) and install it.
+<details><summary>Ubuntu/Debian</summary>
 
-**Arch/Manjaro**
+Download the latest deb package from the <a href="https://github.com/sharkwouter/minigalaxy/releases">releases page</a> and install it.
+</details>
+<details><summary>Arch/Manjaro</summary>
 
-Available the [AUR](https://aur.archlinux.org/packages/minigalaxy). You can use an AUR helper or use the following set of commands to install Minigalaxy on Arch:
-
-```shell script
+Available the <a href="https://aur.archlinux.org/packages/minigalaxy">AUR</a>. You can use an AUR helper or use the following set of commands to install Minigalaxy on Arch:
+<pre>
 git clone https://aur.archlinux.org/minigalaxy.git
 cd minigalaxy
 makepkg -si
-```
+</pre>
+</details>
 
-**Fedora**
+<details><summary>Fedora</summary>
 
-Available in [official repos](https://src.fedoraproject.org/rpms/minigalaxy) (F31+)
-
-```shell script
+Available in <a href="https://src.fedoraproject.org/rpms/minigalaxy">official repos</a> (F31+)
+<pre>
 sudo dnf install minigalaxy
-```
+</pre>
+</details>
 
-**openSUSE**
+<details><summary>openSUSE</summary>
 
-Available in the [OBS](https://build.opensuse.org/package/show/games:tools/minigalaxy). You can use the following set of commands to install Minigalaxy on openSUSE:
-```shell script
+Available in official repos for openSUSE Tumbleweed. You can use the following set of commands to install Minigalaxy on openSUSE from the devel project on <a href="https://build.opensuse.org/package/show/games:tools/minigalaxy">OBS</a>:
+<pre>
 sudo zypper ar -f obs://games:tools gamestools
 sudo zypper ref
 sudo zypper in minigalaxy
-```
+</pre>
+</details>
 
-**Gentoo**
+<details><summary>Gentoo</summary>
 
-Available in the [in the Metahax overlay](https://github.com/metafarion/metahax). Follow the instructions in the link to install Minigalaxy on Gentoo.
+Available in the <a href="https://github.com/metafarion/metahax">in the Metahax overlay</a>. Follow the instructions in the link to install Minigalaxy on Gentoo.
+</details>
 
-**MX Linux**
+<details><summary>MX Linux</summary>
 
-Currently available in the [Test Repository](http://mxrepo.com/mx/testrepo/pool/test/m/minigalaxy/).  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
+Currently available in the <a href="http://mxrepo.com/mx/repo/pool/main/m/minigalaxy/">official repository</a>.  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
+</details>
+<details><summary>Solus</summary>
+ 
+Available in the official repositories. You can use the following command to install Minigalaxy on Solus:
+<pre>
+sudo eopkg it minigalaxy
+</pre>
+</details>
 
-**Other distributions**
+<details><summary>Other distributions</summary>
 
 On other distributions Minigalaxy can be downloaded and started with the following commands:
-```shell script
+<pre>
 git clone https://github.com/sharkwouter/minigalaxy.git
 cd minigalaxy
 bin/minigalaxy
-```
+</pre>
 
-This will be the development version. Alternatively a tarball of a specific release can be downloaded from the [releases page](https://github.com/sharkwouter/minigalaxy/releases).
+This will be the development version. Alternatively a tarball of a specific release can be downloaded from the <a href="https://github.com/sharkwouter/minigalaxy/releases">releases page</a>.
+</details>
 
 ## Support
 If you need any help using Minigalaxy, feel free to join the [Minigalaxy Discord server](https://discord.gg/RC4cXVD).
@@ -122,7 +144,7 @@ Currently help is needed with the following:
 - Reporting bugs in the [issue tracker](https://github.com/sharkwouter/minigalaxy/issues).
 - Translating to different languages. Instructions [here](https://github.com/sharkwouter/minigalaxy/wiki/Translating-Minigalaxy).
 - Testing issues with the ["needs testing"](https://github.com/sharkwouter/minigalaxy/issues?q=is%3Aissue+is%3Aopen+label%3A%22needs+testing%22) tag. 
-- Working on or giving input on issues with the ["help wanted"](https://github.com/sharkwouter/minigalaxy/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) tag. Also check out the [the wiki](https://github.com/sharkwouter/minigalaxy/wiki/Developer-information) for developer information.
+- Working on or giving input on issues with the ["help wanted"](https://github.com/sharkwouter/minigalaxy/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) or ["good first issue"](https://github.com/sharkwouter/minigalaxy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) tag. Also check out the [the wiki](https://github.com/sharkwouter/minigalaxy/wiki/Developer-information) for developer information.
 
 Feel free to join the [Minigalaxy Discord](https://discord.gg/RC4cXVD) if you would like to help out.
 
@@ -138,9 +160,19 @@ Expect to see the following issues:
 Special thanks goes out to all contributors:
 
 - Odelpasso for multiple code contributions
+- tim77 for packaging Minigalaxy for Fedora, Flathub and multiple code contributions
+- larslindq for multiple code contributions
+- BlindJerobine for translating to German and adding the support option
+- JoshuaFern for packaging Minigalaxy for NixOS and for contributing code
 - s8321414 for translating to Taiwanese Mandarin
-- BlindJerobine for translating to German
+- fuzunspm for translating to Turkish
+- thomansb22 for translating to French
+- ArturWroblewski for translating to Polish
+- kimmalmo for translating to Norwegian Bokmål
+- EsdrasTarsis for translating to Brazilian Portuguese
+- protheory8 for translating to Russian
+- LordPilum for translating to Norwegian Nynorsk
 - jubalh for packaging Minigalaxy for openSUSE
-- tim77 for packaging Minigalaxy for Fedora
+- gasinvein for packaging Minigalaxy for flathub
 - metafarion for packaging Minigalaxy for Gentoo
 - SwampRabbit and Steven Pusser for packaging Minigalaxy for MX Linux

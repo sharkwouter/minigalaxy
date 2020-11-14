@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-08 19:50+0100\n"
-"PO-Revision-Date: 2020-01-09 08:42+0800\n"
+"POT-Creation-Date: 2020-11-14 11:48+0100\n"
+"PO-Revision-Date: 2020-04-07 08:53+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
 "Language: zh_TW\n"
@@ -17,13 +17,26 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Lokalize 19.08.3\n"
 
+#: data/ui/about.ui:20
+msgid ""
+"<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
+"<a href=\"https://github.com/BlindJerobine\">BlindJerobine</a>\n"
+"<a href=\"https://github.com/EsdrasTarsis\">Esdras Tarsis</a>\n"
+"<a href=\"https://github.com/fuzunspm\">Hüseyin Fahri Uzun</a>\n"
+"<a href=\"https://github.com/LordPilum\">Jan Kjetil Myklebust</a>\n"
+"<a href=\"https://github.com/s8321414\">Jeff Huang</a>\n"
+"<a href=\"https://github.com/kimmalmo\">kimmalmo</a>\n"
+"<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
+"<a href=\"https://github.com/thomasb22\">thomasb22</a>"
+msgstr ""
+
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
 msgctxt "short_description"
 msgid "A simple GOG client for Linux"
 msgstr "Linux 上簡單的 GOG 客戶端"
 
-#: minigalaxy/window/about.py:15
+#: minigalaxy/ui/about.py:15
 msgid "About"
 msgstr "關於"
 
@@ -33,12 +46,16 @@ msgctxt "about"
 msgid "About"
 msgstr "關於"
 
-#: minigalaxy/window/gametile.py:76
-#, python-format
-msgid "Are you sure to uninstall %s"
-msgstr "您確定要解除安裝 %s 嗎"
+#: minigalaxy/ui/gametile.py:122
+msgid "Are you sure you want to cancel downloading {}?"
+msgstr "您確定您想要取消下載 {} 嗎？"
 
-#: minigalaxy/window/preferences.py:9
+#: minigalaxy/ui/gametile.py:136
+#, python-format
+msgid "Are you sure you want to uninstall %s?"
+msgstr "您確定要解除安裝 %s 嗎？"
+
+#: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
 msgstr "葡萄牙文（巴西）"
 
@@ -47,48 +64,64 @@ msgctxt "cancel"
 msgid "Cancel"
 msgstr "取消"
 
-#: minigalaxy/window/preferences.py:10
+#: minigalaxy/constants.py:9
 msgid "Chinese"
 msgstr "中文"
 
-#: minigalaxy/window/window.py:163 minigalaxy/window/window.py:279
-#: minigalaxy/window/window.py:291
+#: minigalaxy/ui/library.py:146
 msgid "Couldn't connect to GOG servers"
 msgstr "無法連線至 GOG 伺服器"
 
-#: minigalaxy/window/gametile.py:253
+#: minigalaxy/ui/gametile.py:151
+msgid "Couldn't open support page"
+msgstr "無法開啟支援頁面"
+
+#: minigalaxy/launcher.py:45
 msgid "Couldn't start subprocess"
 msgstr "無法啟動子行程"
 
-#: minigalaxy/window/preferences.py:11
+#: data/ui/gametile.ui:108
+msgid "DLC"
+msgstr ""
+
+#: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr "丹麥文"
 
-#: minigalaxy/window/preferences.py:12
+#: minigalaxy/ui/gametile.py:212 minigalaxy/ui/gametile.py:239
+#, fuzzy
+msgid "Download error"
+msgstr "下載"
+
+#: minigalaxy/constants.py:11
 msgid "Dutch"
 msgstr "荷蘭文"
 
-#: minigalaxy/window/preferences.py:13
+#: minigalaxy/constants.py:12
 msgid "English"
 msgstr "英文"
 
-#: minigalaxy/window/window.py:163
+#: minigalaxy/installer.py:86
+msgid "Failed to install {}"
+msgstr "安裝 {} 失敗"
+
+#: minigalaxy/ui/library.py:146
 msgid "Failed to retrieve library"
 msgstr "擷取收藏庫失敗"
 
-#: minigalaxy/window/gametile.py:267
+#: minigalaxy/launcher.py:59
 msgid "Failed to start {}:"
 msgstr "啟動 {} 失敗："
 
-#: minigalaxy/window/preferences.py:14
+#: minigalaxy/constants.py:13
 msgid "Finnish"
 msgstr "芬蘭文"
 
-#: minigalaxy/window/preferences.py:15
+#: minigalaxy/constants.py:14
 msgid "French"
 msgstr "法文"
 
-#: minigalaxy/window/preferences.py:16
+#: minigalaxy/constants.py:15
 msgid "German"
 msgstr "德文"
 
@@ -98,9 +131,13 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "GitHub 頁面"
 
-#: minigalaxy/window/preferences.py:17
+#: minigalaxy/constants.py:16
 msgid "Hungarian"
 msgstr "匈牙利文"
+
+#: minigalaxy/ui/preferences.py:47
+msgid "Install Wine to enable this feature"
+msgstr "安裝 Wine 以啟用此功能"
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
@@ -114,15 +151,15 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "已安裝"
 
-#: minigalaxy/window/preferences.py:18
+#: minigalaxy/constants.py:17
 msgid "Italian"
 msgstr "義大利文"
 
-#: minigalaxy/window/preferences.py:19
+#: minigalaxy/constants.py:18
 msgid "Japanese"
 msgstr "日文"
 
-#: minigalaxy/window/preferences.py:55
+#: minigalaxy/ui/preferences.py:40
 msgid ""
 "Keep installers after downloading a game.\n"
 "Installers are stored in: {}"
@@ -136,11 +173,11 @@ msgctxt "keep_installer"
 msgid "Keep installers: "
 msgstr "保留安裝程式："
 
-#: minigalaxy/window/preferences.py:20
+#: minigalaxy/constants.py:19
 msgid "Korean"
 msgstr "韓文"
 
-#: minigalaxy/window/login.py:23
+#: minigalaxy/ui/login.py:23
 msgid "Login"
 msgstr "登入"
 
@@ -150,37 +187,37 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "登出"
 
-#: minigalaxy/window/window.py:281
-msgid "Minigalaxy is now running in offline mode"
-msgstr "Minigalaxy 目前以離線模式執行"
-
-#: minigalaxy/window/gametile.py:264
+#: minigalaxy/launcher.py:56
 msgid "No error message was returned"
 msgstr "未傳回錯誤訊息"
 
-#: minigalaxy/window/gametile.py:241
+#: minigalaxy/launcher.py:33
 msgid "No executable was found in {}"
 msgstr "在 {} 找不到可執行檔"
 
-#: minigalaxy/window/preferences.py:21
+#: minigalaxy/constants.py:20
 msgid "Norwegian"
 msgstr "挪威文"
 
 #. Opens the directory the game is installed in
-#: data/ui/gametile.ui:17
+#: data/ui/gametile.ui:58
 msgctxt "open_files"
 msgid "Open Files"
 msgstr "開啟檔案"
 
-#: minigalaxy/window/preferences.py:22
+#: minigalaxy/ui/gametile.py:152
+msgid "Please check your internet connection"
+msgstr "請檢查您的網際網路連線"
+
+#: minigalaxy/constants.py:21
 msgid "Polish"
 msgstr "波蘭文"
 
-#: minigalaxy/window/preferences.py:23
+#: minigalaxy/constants.py:22
 msgid "Portuguese"
 msgstr "葡萄牙文"
 
-#: minigalaxy/window/preferences.py:44
+#: minigalaxy/ui/preferences.py:28
 msgid "Preferences"
 msgstr "偏好設定"
 
@@ -202,7 +239,7 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "重新整理遊戲清單"
 
-#: minigalaxy/window/preferences.py:24
+#: minigalaxy/constants.py:23
 msgid "Russian"
 msgstr "俄文"
 
@@ -212,13 +249,38 @@ msgctxt "save"
 msgid "Save"
 msgstr "儲存"
 
+#. Open winecfg settings for Windows games
+#: data/ui/gametile.ui:72
+msgctxt "Wine Settings"
+msgid "Settings"
+msgstr "設定"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:187
+msgctxt "show_fps"
+msgid "Show FPS in games:"
+msgstr "在遊戲中顯示 FPS："
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:201
+msgctxt "show_windows_games"
+msgid "Show Windows games: "
+msgstr "顯示 Windows 遊戲："
+
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
 msgctxt "tooltil_installed"
 msgid "Show only installed games"
 msgstr "僅顯示已安裝的遊戲"
 
-#: minigalaxy/window/preferences.py:25
+#: data/ui/preferences.ui:184
+msgctxt "show_fps_tooltip"
+msgid ""
+"Show the framerate while playing games. Only works with AMD and Nvidia "
+"graphics cards."
+msgstr "在遊玩遊戲時顯示畫面率。僅可與 AMD 及 Nvidia 的顯示卡一同運作。"
+
+#: minigalaxy/constants.py:24
 msgid "Spanish"
 msgstr "西班牙文"
 
@@ -228,63 +290,119 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "保持登入："
 
-#: minigalaxy/window/preferences.py:26
+#. Open store page
+#: data/ui/gametile.ui:30
+msgctxt "store"
+msgid "Store Page"
+msgstr "商店頁面"
+
+#. Opens the official support webpage
+#: data/ui/gametile.ui:44
+msgctxt "support"
+msgid "Support"
+msgstr "支援"
+
+#: minigalaxy/constants.py:25
 msgid "Swedish"
 msgstr "瑞典文"
+
+#: minigalaxy/installer.py:61
+msgid "The installation of {} failed. Please try again."
+msgstr ""
 
 #: data/ui/preferences.ui:67
 msgctxt "preferred_language_tooltip"
 msgid "The preferred language for downloading games in"
 msgstr "下載遊戲的偏好語言"
 
+#: minigalaxy/ui/gametile.py:213
+msgid ""
+"There was an error when trying to fetch the download link!\n"
+"{}"
+msgstr ""
+
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "遊戲會安裝在"
 
-#: minigalaxy/window/window.py:293
-msgid "Try again with an active internet connection"
-msgstr "使用有效的網際網路連線重試"
-
-#: minigalaxy/window/preferences.py:27
+#: minigalaxy/constants.py:26
 msgid "Turkish"
 msgstr "土耳其文"
 
 #. Removes the game files from the local machine
-#: data/ui/gametile.ui:31
+#: data/ui/gametile.ui:123
 msgctxt "uninstall"
 msgid "Uninstall"
 msgstr "解除安裝"
+
+#. Updates game
+#: data/ui/gametile.ui:86
+msgctxt "update"
+msgid "Update"
+msgstr ""
 
 #: data/ui/preferences.ui:145
 msgctxt "stay_logged_in_tooltip"
 msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
 msgstr "若停用，您每次打開 Minigalaxy 時都會被要求登入"
 
-#: minigalaxy/window/gametile.py:228
+#: data/ui/preferences.ui:198
+msgctxt "show_windows_games_tooltip"
+msgid "Whether Windows games are shown in the library or not"
+msgstr "Windows 遊戲是否要顯示在收藏庫中"
+
+#: minigalaxy/ui/gametile.py:441
 msgid "download"
 msgstr "下載"
 
-#: minigalaxy/window/gametile.py:66
-msgid "downloading..."
+#: minigalaxy/ui/gametile.py:473
+msgid "downloading.."
 msgstr "正在下載……"
 
-#: minigalaxy/window/gametile.py:223
+#: minigalaxy/ui/gametile.py:465
+msgid "in queue.."
+msgstr "在佇列中……"
+
+#: minigalaxy/ui/gametile.py:453
 msgid "install"
 msgstr "安裝"
 
-#: minigalaxy/window/gametile.py:142
+#: minigalaxy/ui/gametile.py:483
 msgid "installing.."
 msgstr "正在安裝……"
 
-#: minigalaxy/window/gametile.py:218
+#: minigalaxy/ui/gametile.py:497 minigalaxy/ui/gametile.py:528
 msgid "play"
 msgstr "遊玩"
 
-#: minigalaxy/window/gametile.py:82
+#: minigalaxy/ui/gametile.py:515
 msgid "uninstalling.."
 msgstr "正在解除安裝……"
 
-#: minigalaxy/window/preferences.py:126
+#: minigalaxy/ui/gametile.py:537
+#, fuzzy
+msgid "updating.."
+msgstr "正在下載……"
+
+#: minigalaxy/installer.py:33
+msgid "{} could not be unzipped."
+msgstr "無法解壓縮 {}。"
+
+#: minigalaxy/installer.py:14
+msgid "{} failed to download."
+msgstr "{} 下載失敗。"
+
+#: minigalaxy/ui/preferences.py:127
 msgid "{} isn't a usable path"
 msgstr "{} 不是可用的路徑"
+
+#: minigalaxy/installer.py:19
+msgid "{} was corrupted. Please download it again."
+msgstr "{} 已損毀。請再下載一次。"
+
+#~ msgid "Minigalaxy is now running in offline mode"
+#~ msgstr "Minigalaxy 目前以離線模式執行"
+
+#~ msgid "Try again with an active internet connection"
+#~ msgstr "使用有效的網際網路連線重試"

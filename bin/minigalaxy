@@ -54,7 +54,7 @@ def main():
     import gi
     gi.require_version('Gtk', '3.0')
     from gi.repository import Gtk
-    from minigalaxy.window import Window
+    from minigalaxy.ui import Window
 
     # Start the application
     window = Window(APPLICATION_NAME)

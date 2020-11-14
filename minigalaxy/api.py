@@ -1,20 +1,23 @@
+import os
 import time
 from urllib.parse import urlencode
 import requests
 from minigalaxy.game import Game
+from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
+from minigalaxy.config import Config
 
-IDS_TO_EXCLUDE = [
-    1424856371,  # Hotline Miami 2: Wrong Number - Digital Comics
-]
+
+class NoDownloadLinkFound(BaseException):
+    pass
 
 
 class Api:
-    def __init__(self, config):
-        self.config = config
+    def __init__(self):
         self.login_success_url = "https://embed.gog.com/on_login_success"
         self.redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
         self.client_id = "46899977096215655"
         self.client_secret = "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
+        self.debug = os.environ.get("MG_DEBUG")
 
     # use a method to authenticate, based on the information we have
     # Returns an empty string if no information was entered
@@ -35,7 +38,7 @@ class Api:
             'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
         }
-        response = requests.get(request_url, params=params)
+        response = SESSION.get(request_url, params=params)
 
         response_params = response.json()
         self.active_token = response_params['access_token']
@@ -54,7 +57,7 @@ class Api:
             'code': login_code,
             'redirect_uri': self.redirect_uri,
         }
-        response = requests.get(request_url, params=params)
+        response = SESSION.get(request_url, params=params)
 
         response_params = response.json()
         self.active_token = response_params['access_token']
@@ -82,10 +85,18 @@ class Api:
             total_pages = response["totalPages"]
 
             for product in response["products"]:
-
-                # Only add products which work on Linux
-                if product["worksOn"]["Linux"] and product["id"] not in IDS_TO_EXCLUDE:
-                    game = Game(name=product["title"], game_id=product["id"], image_url=product["image"])
+                if product["id"] not in IGNORE_GAME_IDS:
+                    # Only support Linux unless the show_windows_games setting is enabled
+                    if product["worksOn"]["Linux"]:
+                        platform = "linux"
+                    elif Config.get("show_windows_games"):
+                        platform = "windows"
+                    else:
+                        continue
+                    if not product["url"]:
+                        print("{} ({}) has no store page url".format(product["title"], product['id']))
+                    game = Game(name=product["title"], url=product["url"], game_id=product["id"],
+                                image_url=product["image"], platform=platform)
                     games.append(game)
             if current_page == total_pages:
                 all_pages_processed = True
@@ -107,43 +118,56 @@ class Api:
 
     # Get Extrainfo about a game
     def get_info(self, game: Game) -> tuple:
-        request_url = "https://api.gog.com/products/" + str(game.id) + "?expand=downloads,expanded_dlcs,description," \
-                                                                       "screenshots,videos,related_products,changelog "
+        request_url = "https://api.gog.com/products/{}?expand=downloads,expanded_dlcs,description,screenshots,videos," \
+                      "related_products,changelog ".format(str(game.id))
         response = self.__request(request_url)
-
         return response
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game) -> tuple:
-        response = self.get_info(game)
+    def get_download_info(self, game: Game, operating_system="linux", dlc=False, dlc_installers="") -> tuple:
+        if dlc:
+            installers = dlc_installers
+        else:
+            response = self.get_info(game)
+            installers = response["downloads"]["installers"]
         possible_downloads = []
-        for installer in response["downloads"]["installers"]:
-            if installer["os"] == "linux":
-                if installer['language'] == self.config.get("lang"):
-                    return self.__request(installer["files"][0]["downlink"])
-                if len(possible_downloads) == 0:
-                    possible_downloads.append(installer)
-                    continue
-                if installer['language'] == "en":
-                    possible_downloads.append(installer)
+        for installer in installers:
+            if installer["os"] == operating_system:
+                possible_downloads.append(installer)
+        if not possible_downloads:
+            if operating_system == "linux":
+                return self.get_download_info(game, "windows")
+            else:
+                raise NoDownloadLinkFound("Error: {} with id {} couldn't be installed".format(game.name, game.id))
+
+        download_info = possible_downloads[0]
+        for installer in possible_downloads:
+            if installer['language'] == Config.get("lang"):
+                download_info = installer
+                break
+            if installer['language'] == "en":
+                download_info = installer
 
         # Return last entry in possible_downloads. This will either be English or the first langauge in the list
         # This is just a backup, if the preferred language has been found, this part won't execute
-        return self.__request(possible_downloads[-1]["files"][0]["downlink"])
+        return download_info
+
+    def get_real_download_link(self, url):
+        return self.__request(url)['downlink']
 
     def get_user_info(self) -> str:
-        username = self.config.get("username")
+        username = Config.get("username")
         if not username:
             url = "https://embed.gog.com/userData.json"
             response = self.__request(url)
             username = response["username"]
-            self.config.set("username", username)
+            Config.set("username", username)
         return username
 
     def can_connect(self) -> bool:
         url = "https://embed.gog.com"
         try:
-            requests.get(url, timeout=5)
+            SESSION.get(url, timeout=5)
         except requests.exceptions.ConnectionError:
             return False
         return True
@@ -153,12 +177,17 @@ class Api:
         # Refresh the token if needed
         if self.active_token_expiration_time < time.time():
             print("Refreshing token")
-            refresh_token = self.config.get("refresh_token")
-            self.config.set("refresh_token", self.__refresh_token(refresh_token))
+            refresh_token = Config.get("refresh_token")
+            Config.set("refresh_token", self.__refresh_token(refresh_token))
 
         # Make the request
         headers = {
             'Authorization': "Bearer " + self.active_token,
         }
-        response = requests.get(url, headers=headers, params=params)
+        response = SESSION.get(url, headers=headers, params=params)
+        if self.debug:
+            print("Request: {}".format(url))
+            print("Return code: {}".format(response.status_code))
+            print("Response body: {}".format(response.text))
+            print("")
         return response.json()

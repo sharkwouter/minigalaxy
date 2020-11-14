@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-08 19:50+0100\n"
+"POT-Creation-Date: 2020-11-14 11:48+0100\n"
 "PO-Revision-Date: 2020-01-06 19:14+0100\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch\n"
@@ -18,13 +18,26 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.2.4\n"
 
+#: data/ui/about.ui:20
+msgid ""
+"<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
+"<a href=\"https://github.com/BlindJerobine\">BlindJerobine</a>\n"
+"<a href=\"https://github.com/EsdrasTarsis\">Esdras Tarsis</a>\n"
+"<a href=\"https://github.com/fuzunspm\">Hüseyin Fahri Uzun</a>\n"
+"<a href=\"https://github.com/LordPilum\">Jan Kjetil Myklebust</a>\n"
+"<a href=\"https://github.com/s8321414\">Jeff Huang</a>\n"
+"<a href=\"https://github.com/kimmalmo\">kimmalmo</a>\n"
+"<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
+"<a href=\"https://github.com/thomasb22\">thomasb22</a>"
+msgstr ""
+
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
 msgctxt "short_description"
 msgid "A simple GOG client for Linux"
 msgstr "Een simpele GOG client voor Linux"
 
-#: minigalaxy/window/about.py:15
+#: minigalaxy/ui/about.py:15
 msgid "About"
 msgstr "Over Minigalaxy"
 
@@ -34,12 +47,16 @@ msgctxt "about"
 msgid "About"
 msgstr "Over Minigalaxy"
 
-#: minigalaxy/window/gametile.py:76
-#, python-format
-msgid "Are you sure to uninstall %s"
-msgstr ""
+#: minigalaxy/ui/gametile.py:122
+msgid "Are you sure you want to cancel downloading {}?"
+msgstr "Weet zeker dat je je de download voor {} wilt stoppen?"
 
-#: minigalaxy/window/preferences.py:9
+#: minigalaxy/ui/gametile.py:136
+#, python-format
+msgid "Are you sure you want to uninstall %s?"
+msgstr "Weet je zeker dat je %s wilt verwijderen?"
+
+#: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
 msgstr "Braziliaans-Portugees"
 
@@ -48,48 +65,64 @@ msgctxt "cancel"
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: minigalaxy/window/preferences.py:10
+#: minigalaxy/constants.py:9
 msgid "Chinese"
 msgstr "Chinees"
 
-#: minigalaxy/window/window.py:163 minigalaxy/window/window.py:279
-#: minigalaxy/window/window.py:291
+#: minigalaxy/ui/library.py:146
 msgid "Couldn't connect to GOG servers"
 msgstr "Er kon geen verbinding gemaakt worden met de GOG servers"
 
-#: minigalaxy/window/gametile.py:253
+#: minigalaxy/ui/gametile.py:151
+msgid "Couldn't open support page"
+msgstr "De ondersteuningspagina kon niet worden geopend"
+
+#: minigalaxy/launcher.py:45
 msgid "Couldn't start subprocess"
 msgstr "Het subprocess kon niet gestart worden"
 
-#: minigalaxy/window/preferences.py:11
+#: data/ui/gametile.ui:108
+msgid "DLC"
+msgstr "DLC"
+
+#: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr "Deens"
 
-#: minigalaxy/window/preferences.py:12
+#: minigalaxy/ui/gametile.py:212 minigalaxy/ui/gametile.py:239
+#, fuzzy
+msgid "Download error"
+msgstr "download"
+
+#: minigalaxy/constants.py:11
 msgid "Dutch"
 msgstr "Nederlands"
 
-#: minigalaxy/window/preferences.py:13
+#: minigalaxy/constants.py:12
 msgid "English"
 msgstr "Engels"
 
-#: minigalaxy/window/window.py:163
+#: minigalaxy/installer.py:86
+msgid "Failed to install {}"
+msgstr "Kon {} niet starten:"
+
+#: minigalaxy/ui/library.py:146
 msgid "Failed to retrieve library"
 msgstr "De lijst me games kon niet opgehaald worden"
 
-#: minigalaxy/window/gametile.py:267
+#: minigalaxy/launcher.py:59
 msgid "Failed to start {}:"
 msgstr "Kon {} niet starten:"
 
-#: minigalaxy/window/preferences.py:14
+#: minigalaxy/constants.py:13
 msgid "Finnish"
 msgstr "Fins"
 
-#: minigalaxy/window/preferences.py:15
+#: minigalaxy/constants.py:14
 msgid "French"
 msgstr "Frans"
 
-#: minigalaxy/window/preferences.py:16
+#: minigalaxy/constants.py:15
 msgid "German"
 msgstr "Duits"
 
@@ -99,9 +132,13 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "Github pagina"
 
-#: minigalaxy/window/preferences.py:17
+#: minigalaxy/constants.py:16
 msgid "Hungarian"
 msgstr "Hongaars"
+
+#: minigalaxy/ui/preferences.py:47
+msgid "Install Wine to enable this feature"
+msgstr "Installeer Wine om deze feature te te kunnen gebruiken"
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:95
@@ -115,15 +152,15 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "Geïnstalleerd"
 
-#: minigalaxy/window/preferences.py:18
+#: minigalaxy/constants.py:17
 msgid "Italian"
 msgstr "Italiaans"
 
-#: minigalaxy/window/preferences.py:19
+#: minigalaxy/constants.py:18
 msgid "Japanese"
 msgstr "Japans"
 
-#: minigalaxy/window/preferences.py:55
+#: minigalaxy/ui/preferences.py:40
 msgid ""
 "Keep installers after downloading a game.\n"
 "Installers are stored in: {}"
@@ -137,11 +174,11 @@ msgctxt "keep_installer"
 msgid "Keep installers: "
 msgstr "Behoud installatiebestanden: "
 
-#: minigalaxy/window/preferences.py:20
+#: minigalaxy/constants.py:19
 msgid "Korean"
 msgstr "Koreaans"
 
-#: minigalaxy/window/login.py:23
+#: minigalaxy/ui/login.py:23
 msgid "Login"
 msgstr "Log in"
 
@@ -151,37 +188,37 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "Uitloggen"
 
-#: minigalaxy/window/window.py:281
-msgid "Minigalaxy is now running in offline mode"
-msgstr "Minigalaxy is nu in offline modus"
-
-#: minigalaxy/window/gametile.py:264
+#: minigalaxy/launcher.py:56
 msgid "No error message was returned"
 msgstr "Er is geen foutmelding afgegeven"
 
-#: minigalaxy/window/gametile.py:241
+#: minigalaxy/launcher.py:33
 msgid "No executable was found in {}"
 msgstr "Geen programma gevonden in {}"
 
-#: minigalaxy/window/preferences.py:21
+#: minigalaxy/constants.py:20
 msgid "Norwegian"
 msgstr "Noors"
 
 #. Opens the directory the game is installed in
-#: data/ui/gametile.ui:17
+#: data/ui/gametile.ui:58
 msgctxt "open_files"
 msgid "Open Files"
 msgstr "Bestanden openen"
 
-#: minigalaxy/window/preferences.py:22
+#: minigalaxy/ui/gametile.py:152
+msgid "Please check your internet connection"
+msgstr "Controleer je internetverbinding"
+
+#: minigalaxy/constants.py:21
 msgid "Polish"
 msgstr "Pools"
 
-#: minigalaxy/window/preferences.py:23
+#: minigalaxy/constants.py:22
 msgid "Portuguese"
 msgstr "Portugees"
 
-#: minigalaxy/window/preferences.py:44
+#: minigalaxy/ui/preferences.py:28
 msgid "Preferences"
 msgstr "Voorkeuren"
 
@@ -203,7 +240,7 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Haal gamelijst opnieuw op"
 
-#: minigalaxy/window/preferences.py:24
+#: minigalaxy/constants.py:23
 msgid "Russian"
 msgstr "Russisch"
 
@@ -213,13 +250,41 @@ msgctxt "save"
 msgid "Save"
 msgstr "Opslaan"
 
+#. Open winecfg settings for Windows games
+#: data/ui/gametile.ui:72
+msgctxt "Wine Settings"
+msgid "Settings"
+msgstr "Instellingen"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:187
+msgctxt "show_fps"
+msgid "Show FPS in games:"
+msgstr "Laat FPS zijn tijdens het spelen:"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:201
+#, fuzzy
+msgctxt "show_windows_games"
+msgid "Show Windows games: "
+msgstr "Laat FPS zijn tijdens het spelen:"
+
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
 msgctxt "tooltil_installed"
 msgid "Show only installed games"
 msgstr "Laat alleen geïnstalleerde games zien"
 
-#: minigalaxy/window/preferences.py:25
+#: data/ui/preferences.ui:184
+msgctxt "show_fps_tooltip"
+msgid ""
+"Show the framerate while playing games. Only works with AMD and Nvidia "
+"graphics cards."
+msgstr ""
+"Laat de hoeveelheid beelden per seconde on het scherm zien tijdens het "
+"spelen van games. Dit werkt alleen met AMD en Nvidia grafische kaarten."
+
+#: minigalaxy/constants.py:24
 msgid "Spanish"
 msgstr "Spaans"
 
@@ -229,33 +294,59 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Blijf ingelogd: "
 
-#: minigalaxy/window/preferences.py:26
+#. Open store page
+#: data/ui/gametile.ui:30
+msgctxt "store"
+msgid "Store Page"
+msgstr "Winkelpagina"
+
+#. Opens the official support webpage
+#: data/ui/gametile.ui:44
+msgctxt "support"
+msgid "Support"
+msgstr "Ondersteuning"
+
+#: minigalaxy/constants.py:25
 msgid "Swedish"
 msgstr "Zweeds"
+
+#: minigalaxy/installer.py:61
+msgid "The installation of {} failed. Please try again."
+msgstr "De installatie van {} is mislukt. Probeer het opnieuw."
 
 #: data/ui/preferences.ui:67
 msgctxt "preferred_language_tooltip"
 msgid "The preferred language for downloading games in"
 msgstr "De voorkeurstaal voor gedownloadde games"
 
+#: minigalaxy/ui/gametile.py:213
+msgid ""
+"There was an error when trying to fetch the download link!\n"
+"{}"
+msgstr ""
+"Er is een fout opgetreden bij het ophalen van de downloadlink!\n"
+"{}"
+
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Dit is waar games geinstalleerd worden"
 
-#: minigalaxy/window/window.py:293
-msgid "Try again with an active internet connection"
-msgstr "Probeer het opnieuw als u weer met het internet vebonden bent"
-
-#: minigalaxy/window/preferences.py:27
+#: minigalaxy/constants.py:26
 msgid "Turkish"
 msgstr "Turks"
 
 #. Removes the game files from the local machine
-#: data/ui/gametile.ui:31
+#: data/ui/gametile.ui:123
 msgctxt "uninstall"
 msgid "Uninstall"
 msgstr "Verwijderen"
+
+#. Updates game
+#: data/ui/gametile.ui:86
+msgctxt "update"
+msgid "Update"
+msgstr "Update"
 
 #: data/ui/preferences.ui:145
 msgctxt "stay_logged_in_tooltip"
@@ -264,30 +355,61 @@ msgstr ""
 "Als deze optie uitgeschakeld is, zal Minigalaxy altijd het inlogscherm tonen "
 "bij het opstarten"
 
-#: minigalaxy/window/gametile.py:228
+#: data/ui/preferences.ui:198
+msgctxt "show_windows_games_tooltip"
+msgid "Whether Windows games are shown in the library or not"
+msgstr "Of Windows games zichtbaar zijn in de bibliotheek"
+
+#: minigalaxy/ui/gametile.py:441
 msgid "download"
 msgstr "download"
 
-#: minigalaxy/window/gametile.py:66
-msgid "downloading..."
+#: minigalaxy/ui/gametile.py:473
+msgid "downloading.."
 msgstr "downloaden.."
 
-#: minigalaxy/window/gametile.py:223
+#: minigalaxy/ui/gametile.py:465
+msgid "in queue.."
+msgstr "in de wachtrij.."
+
+#: minigalaxy/ui/gametile.py:453
 msgid "install"
 msgstr "installeren"
 
-#: minigalaxy/window/gametile.py:142
+#: minigalaxy/ui/gametile.py:483
 msgid "installing.."
 msgstr "installeren.."
 
-#: minigalaxy/window/gametile.py:218
+#: minigalaxy/ui/gametile.py:497 minigalaxy/ui/gametile.py:528
 msgid "play"
 msgstr "spelen"
 
-#: minigalaxy/window/gametile.py:82
+#: minigalaxy/ui/gametile.py:515
 msgid "uninstalling.."
 msgstr "verwijderen.."
 
-#: minigalaxy/window/preferences.py:126
+#: minigalaxy/ui/gametile.py:537
+msgid "updating.."
+msgstr "updaten.."
+
+#: minigalaxy/installer.py:33
+msgid "{} could not be unzipped."
+msgstr "{} kan niet uitgepakt worden"
+
+#: minigalaxy/installer.py:14
+msgid "{} failed to download."
+msgstr "{} kon niet worden gedownload"
+
+#: minigalaxy/ui/preferences.py:127
 msgid "{} isn't a usable path"
 msgstr "{} is geen bruikbaar pad"
+
+#: minigalaxy/installer.py:19
+msgid "{} was corrupted. Please download it again."
+msgstr "{} is beschadigd. Download het opnieuw."
+
+#~ msgid "Minigalaxy is now running in offline mode"
+#~ msgstr "Minigalaxy is nu in offline modus"
+
+#~ msgid "Try again with an active internet connection"
+#~ msgstr "Probeer het opnieuw als u weer met het internet vebonden bent"

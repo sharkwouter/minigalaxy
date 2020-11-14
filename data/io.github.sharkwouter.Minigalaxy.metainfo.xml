@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2019-2020 Wouter Wijsman <wwijsman@live.nl> -->
+<component type="desktop-application">
+    <id>io.github.sharkwouter.Minigalaxy</id>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>GPL-3.0-or-later</project_license>
+    <name>Minigalaxy</name>
+    <summary>A simple GOG client for Linux</summary>
+
+    <description>
+        <p>
+        Minigalaxy lets you download, install and play your GOG Linux games without getting in your way.
+        </p>
+        <p> Besides all that, it offers the following additional features:</p>
+        <ul>
+            <li>Select in which language you'd prefer to download your games</li>
+            <li>Change where games are installed</li>
+            <li>Search your GOG Linux library</li>
+            <li>Show all games or just the ones you've installed</li>
+            <li>View the error message if a game fails to launch</li>
+            <li>Enable displaying the FPS in games</li>
+        </ul>
+        <p>An account on gog.com is required to use this application.</p>
+    </description>
+
+    <launchable type="desktop-id">io.github.sharkwouter.Minigalaxy.desktop</launchable>
+
+    <screenshots>
+        <screenshot type="default">
+            <caption>Minigalaxy</caption>
+            <image>https://raw.githubusercontent.com/sharkwouter/minigalaxy/master/screenshot.jpg</image>
+        </screenshot>
+    </screenshots>
+
+    <url type="homepage">https://github.com/sharkwouter/minigalaxy</url>
+
+    <developer_name>Wouter "sharkwouter" Wijsman</developer_name>
+
+    <provides>
+        <binary>minigalaxy</binary>
+    </provides>
+
+    <releases>
+        <release version="0.9.5" date="2020-07-09">
+            <description>
+                <p>Added the following translations:</p>
+                <ul>
+                    <li>Simplified Chinese (thanks to dummyx)</li>
+                    <li>Spanish (thanks to juanborda)</li>
+                </ul>
+                <p>Updated the following translations:</p>
+                <ul>
+                    <li>Russian (thanks to tim77)</li>
+                </ul>
+                <p>Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)</p>
+                <p>Create new config file if old one is unreadable (thanks to SvdB-nonp)</p>
+            </description>
+        </release>
+        <release version="0.9.4" date="2020-04-20">
+            <description>
+                <ul>
+                    <li>Added Norwegian Nynorsk translation (thanks to LordPilum).</li>
+                    <li>Added Russian translation (thanks to protheory8).</li>
+                    <li>Updated Brazilian Portuguese translation (thanks to EsdrasTarsis).</li>
+                    <li>Updated French translation (thanks to thomasb22).</li>
+                    <li>Updated German translation (thanks to BlindJerobine).</li>
+                    <li>Updated Norwegian Bokmål translation (thanks to kimmalmo).</li>
+                    <li>Updated Polish translation (thanks to ArturWroblewski).</li>
+                    <li>Updated Taiwanese Mandarin translation (thanks to s8321414).</li>
+                    <li>Updated Turkish translation (thanks to fuzunspm).</li>
+                    <li>Added support for installing Windows games (with help from Odelpasso).</li>
+                    <li>Added store page link to game menus (thanks to larslindq).</li>
+                    <li>Fixed game directories being created without any spaces in the name (thanks to larslindq).</li>
+                    <li>Fixed thumbnails not being downloaded for already installed games.</li>
+                    <li>Fixed symlinks to libraries not being created correctly upon installation.</li>
+                    <li>Made preparations for a Flathub package.</li>
+                    <li>Added all contributors and translators to the about window.</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.9.3" date="2020-03-10">
+            <description>
+                <ul>
+                    <li>Added German translation (thanks to BlindJerobine).</li>
+                    <li>Added Turkish translation (thanks to fuzunspm).</li>
+                    <li>Added Brazilian Portuguese translation (thanks to EsdrasTarsis).</li>
+                    <li>Added Norwegian Bokmål translation (thanks to kimmalmo).</li>
+                    <li>Added Polish translation (thanks to ArturWroblewski).</li>
+                    <li>Added French translation (thanks to thomasb22).</li>
+                    <li>Added option to cancel downloads.</li>
+                    <li>Changed the way games are downloaded to a queue instead of trying to download everything at once.</li>
+                    <li>Added support option to game specific menus which open the GOG support page (thanks to BlindJerobine).</li>
+                    <li>Ask for confirmation before uninstalling (thanks to Odelpasso).</li>
+                    <li>Added option to display FPS in games (thanks to Odelpasso).</li>
+                    <li>Downloads can now be resumed after having been cancelled before.</li>
+                    <li>Installers are now verified before installing.</li>
+                    <li>The active download is now resumed when restarting Minigalaxy.</li>
+                    <li>Fixed issue with games not downloading.</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.9.2" date="2020-01-07">
+            <description>
+                <ul>
+                    <li>Added a button which allows you to uninstall game.</li>
+                    <li>Added a button which allows you to open directory in which game is installed.</li>
+                    <li>Added Dutch translation.</li>
+                    <li>Added Taiwanese Mandarin translation (thanks to s8321414).</li>
+                    <li>Added offline mode.</li>
+                    <li>The system's Dosbox and Scummvm installations are now preferred over the ones bundled with games.</li>
+                    <li>Improved game detection to check in all directories in the installation path.</li>
+                    <li>Added the option to keep game installers (thanks to Odelpasso).</li>
+                    <li>Added the option to disable staying logged in (thanks to Odelpasso).</li>
+                    <li>The preferences menu now uses a file picker for setting the installation path (thanks to Odelpasso).</li>
+                    <li>Startup time has been reduced.</li>
+                    <li>Games which aren't installed are now grayed out.</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.9.1" date="2019-12-27">
+            <description>
+                <ul>
+                    <li>Fixed crashes and freezes sometimes happening while downloading and installing games.</li>
+                    <li>Fixed installation failing when the installation directory is not on same filesystem as /home.</li>
+                    <li>Fixed downloads crashing when the installation directory is changed or the refresh button is pressed.</li>
+                    <li>Fixed changing installation directory not loading which games are installed in the new directory.</li>
+                    <li>Fixed copyright file in deb package not being machine readable.</li>
+                    <li>Moved binary to /usr/games in the deb package.</li>
+                    <li>Add command line options --help, --version and --reset. The reset option will reset the cache and configuration.</li>
+                </ul>
+            </description>
+        </release>
+        <release version="0.9.0" date="2019-12-25"> 
+            <description>
+                <p>Initial release.</p>
+            </description>
+        </release>
+    </releases>
+    <content_rating type="oars-1.1">
+        <content_attribute id="drugs-alcohol">moderate</content_attribute>
+        <content_attribute id="drugs-narcotics">moderate</content_attribute>
+        <content_attribute id="drugs-tobacco">moderate</content_attribute>
+        <content_attribute id="language-discrimination">intense</content_attribute>
+        <content_attribute id="language-humor">intense</content_attribute>
+        <content_attribute id="language-profanity">intense</content_attribute>
+        <content_attribute id="money-gambling">none</content_attribute>
+        <content_attribute id="money-purchasing">moderate</content_attribute>
+        <content_attribute id="sex-adultery">moderate</content_attribute>
+        <content_attribute id="sex-appearance">moderate</content_attribute>
+        <content_attribute id="sex-homosexuality">moderate</content_attribute>
+        <content_attribute id="sex-nudity">intense</content_attribute>
+        <content_attribute id="sex-prostitution">moderate</content_attribute>
+        <content_attribute id="sex-themes">moderate</content_attribute>
+        <content_attribute id="social-audio">moderate</content_attribute>
+        <content_attribute id="social-chat">moderate</content_attribute>
+        <content_attribute id="social-contacts">none</content_attribute>
+        <content_attribute id="social-info">none</content_attribute>
+        <content_attribute id="social-location">none</content_attribute>
+        <content_attribute id="violence-bloodshed">intense</content_attribute>
+        <content_attribute id="violence-cartoon">intense</content_attribute>
+        <content_attribute id="violence-desecration">intense</content_attribute>
+        <content_attribute id="violence-fantasy">intense</content_attribute>
+        <content_attribute id="violence-realistic">intense</content_attribute>
+        <content_attribute id="violence-sexual">moderate</content_attribute>
+        <content_attribute id="violence-slavery">intense</content_attribute>
+        <content_attribute id="violence-worship">intense</content_attribute>
+    </content_rating>
+</component>
