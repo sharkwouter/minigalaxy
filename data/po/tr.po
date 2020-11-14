@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-14 11:48+0100\n"
-"PO-Revision-Date: 2020-11-14 16:27+0300\n"
+"PO-Revision-Date: 2020-11-14 16:33+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
@@ -112,7 +112,7 @@ msgstr "İngilzce"
 
 #: minigalaxy/installer.py:86
 msgid "Failed to install {}"
-msgstr "{} başlatılamadı:"
+msgstr "{} yüklenemedi:"
 
 #: minigalaxy/ui/library.py:146
 msgid "Failed to retrieve library"
@@ -274,7 +274,7 @@ msgstr "Oyunlarda FPS göster:"
 #: data/ui/preferences.ui:201
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Oyunlarda FPS göster: "
+msgstr "Windows oyunlarını göster: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:104
@@ -351,7 +351,7 @@ msgstr "Sil"
 #: data/ui/gametile.ui:86
 msgctxt "update"
 msgid "Update"
-msgstr "[update]  Güncelle"
+msgstr "Güncelle"
 
 #: data/ui/preferences.ui:145
 msgctxt "stay_logged_in_tooltip"
