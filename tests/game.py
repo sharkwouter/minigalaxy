@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, mock_open, patch
 from minigalaxy.game import Game
 
 
@@ -45,9 +45,107 @@ class MyTestCase(unittest.TestCase):
         game = Game("Version Test game")
         game.installed_version = "gog-2"
         game.read_installed_version = MagicMock()
-        installers = [{'id': 'installer_windows_en', 'name': 'Beneath a Steel Sky', 'os': 'windows', 'language': 'en', 'language_full': 'English', 'version': '1.0', 'total_size': 91226112, 'files': [{'id': 'en1installer0', 'size': 91226112, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/en1installer0'}]}, {'id': 'installer_mac_en', 'name': 'Beneath a Steel Sky', 'os': 'mac', 'language': 'en', 'language_full': 'English', 'version': '1.0', 'total_size': 92274688, 'files': [{'id': 'en2installer0', 'size': 92274688, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/en2installer0'}]}, {'id': 'installer_linux_en', 'name': 'Beneath a Steel Sky', 'os': 'linux', 'language': 'en', 'language_full': 'English', 'version': 'gog-2', 'total_size': 104857600, 'files': [{'id': 'en3installer0', 'size': 104857600, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/en3installer0'}]}, {'id': 'installer_windows_fr', 'name': 'Beneath a Steel Sky', 'os': 'windows', 'language': 'fr', 'language_full': 'français', 'version': '1.0', 'total_size': 91226112, 'files': [{'id': 'fr1installer2', 'size': 91226112, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/fr1installer2'}]}, {'id': 'installer_mac_fr', 'name': 'Beneath a Steel Sky', 'os': 'mac', 'language': 'fr', 'language_full': 'français', 'version': '1.0', 'total_size': 92274688, 'files': [{'id': 'fr2installer0', 'size': 92274688, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/fr2installer0'}]}, {'id': 'installer_linux_fr', 'name': 'Beneath a Steel Sky', 'os': 'linux', 'language': 'fr', 'language_full': 'français', 'version': 'gog-2', 'total_size': 104857600, 'files': [{'id': 'fr3installer2', 'size': 104857600, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/fr3installer2'}]}, {'id': 'installer_windows_it', 'name': 'Beneath a Steel Sky', 'os': 'windows', 'language': 'it', 'language_full': 'italiano', 'version': '1.0', 'total_size': 91226112, 'files': [{'id': 'it1installer2', 'size': 91226112, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/it1installer2'}]}, {'id': 'installer_mac_it', 'name': 'Beneath a Steel Sky', 'os': 'mac', 'language': 'it', 'language_full': 'italiano', 'version': '1.0', 'total_size': 92274688, 'files': [{'id': 'it2installer0', 'size': 92274688, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/it2installer0'}]}, {'id': 'installer_linux_it', 'name': 'Beneath a Steel Sky', 'os': 'linux', 'language': 'it', 'language_full': 'italiano', 'version': 'gog-2', 'total_size': 104857600, 'files': [{'id': 'it3installer2', 'size': 104857600, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/it3installer2'}]}, {'id': 'installer_windows_de', 'name': 'Beneath a Steel Sky', 'os': 'windows', 'language': 'de', 'language_full': 'Deutsch', 'version': '1.0', 'total_size': 91226112, 'files': [{'id': 'de1installer2', 'size': 91226112, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/de1installer2'}]}, {'id': 'installer_mac_de', 'name': 'Beneath a Steel Sky', 'os': 'mac', 'language': 'de', 'language_full': 'Deutsch', 'version': '1.0', 'total_size': 92274688, 'files': [{'id': 'de2installer0', 'size': 92274688, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/de2installer0'}]}, {'id': 'installer_linux_de', 'name': 'Beneath a Steel Sky', 'os': 'linux', 'language': 'de', 'language_full': 'Deutsch', 'version': 'gog-2', 'total_size': 104857600, 'files': [{'id': 'de3installer2', 'size': 104857600, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/de3installer2'}]}, {'id': 'installer_windows_es', 'name': 'Beneath a Steel Sky', 'os': 'windows', 'language': 'es', 'language_full': 'español', 'version': '1.0', 'total_size': 91226112, 'files': [{'id': 'es1installer2', 'size': 91226112, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/es1installer2'}]}, {'id': 'installer_mac_es', 'name': 'Beneath a Steel Sky', 'os': 'mac', 'language': 'es', 'language_full': 'español', 'version': '1.0', 'total_size': 92274688, 'files': [{'id': 'es2installer0', 'size': 92274688, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/es2installer0'}]}, {'id': 'installer_linux_es', 'name': 'Beneath a Steel Sky', 'os': 'linux', 'language': 'es', 'language_full': 'español', 'version': 'gog-2', 'total_size': 104857600, 'files': [{'id': 'es3installer2', 'size': 104857600, 'downlink': 'https://api.gog.com/products/1207658695/downlink/installer/es3installer2'}]}]
+        installers = [{'os': 'windows', 'version': '1.0'}, {'os': 'mac', 'version': '1.0'}, {'os': 'linux', 'version': 'gog-2'}]
         expected = True
         observed = game.validate_if_installed_is_latest(installers)
+        self.assertEqual(expected, observed)
+
+    def test2_validate_if_installed_is_latest(self):
+        game = Game("Version Test game")
+        game.installed_version = "91.8193.16"
+        game.read_installed_version = MagicMock()
+        installers = [{'os': 'windows', 'version': '81.8193.16'}, {'os': 'mac', 'version': '81.8193.16'}, {'os': 'linux', 'version': '81.8193.16'}]
+        expected = False
+        observed = game.validate_if_installed_is_latest(installers)
+        self.assertEqual(expected, observed)
+
+    def test1_get_install_directory_name(self):
+        game = Game("Get Install Directory Test1")
+        expected = "Get Install Directory Test1"
+        observed = game.get_install_directory_name()
+        self.assertEqual(expected, observed)
+
+    def test2_get_install_directory_name(self):
+        game = Game("Get\r Install\n Directory Test2!@#$%")
+        expected = "Get Install Directory Test2"
+        observed = game.get_install_directory_name()
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test1_read_installed_version(self, mock_isfile):
+        mock_isfile.return_value = True
+        gameinfo = """Beneath A Steel Sky
+gog-2
+20150
+en-US
+1207658695
+1207658695
+664777434"""
+        with patch("builtins.open", mock_open(read_data=gameinfo)):
+            game = Game("Game Name test1")
+        expected = "gog-2"
+        observed = game.installed_version
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test2_read_installed_version(self, mock_isfile):
+        mock_isfile.return_value = False
+        gameinfo = """Beneath A Steel Sky
+    gog-2
+    20150
+    en-US
+    1207658695
+    1207658695
+    664777434"""
+        with patch("builtins.open", mock_open(read_data=gameinfo)):
+            game = Game("Game Name test2")
+        expected = ""
+        observed = game.installed_version
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test1_get_dlc_status(self, mock_isfile):
+        mock_isfile.side_effect = [False, True]
+        json_content = '[{"Neverwinter Nights: Wyvern Crown of Cormyr": "not-installed", ' \
+                       '"Neverwinter Nights: Infinite Dungeons": "updatable", "Neverwinter Nights: Pirates of ' \
+                       'the Sword Coast": "installed"}, {}]'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test1")
+            game.read_installed_version = MagicMock()
+            game.installed_version = "1"
+            dlc_status = game.get_dlc_status("Neverwinter Nights: Wyvern Crown of Cormyr")
+        expected = "not-installed"
+        observed = dlc_status
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test2_get_dlc_status(self, mock_isfile):
+        mock_isfile.side_effect = [False, True]
+        json_content = '[{"Neverwinter Nights: Wyvern Crown of Cormyr": "not-installed", ' \
+                       '"Neverwinter Nights: Infinite Dungeons": "updatable", "Neverwinter Nights: Pirates of ' \
+                       'the Sword Coast": "installed"}, {}]'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test2")
+            game.read_installed_version = MagicMock()
+            game.installed_version = "1"
+            dlc_status = game.get_dlc_status("Neverwinter Nights: Infinite Dungeons")
+        expected = "updatable"
+        observed = dlc_status
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test3_get_dlc_status(self, mock_isfile):
+        mock_isfile.side_effect = [False, False]
+        json_content = '[{"Neverwinter Nights: Wyvern Crown of Cormyr": "not-installed", ' \
+                       '"Neverwinter Nights: Infinite Dungeons": "updatable", "Neverwinter Nights: Pirates of ' \
+                       'the Sword Coast": "installed"}, {}]'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test2")
+            game.read_installed_version = MagicMock()
+            game.installed_version = "1"
+            dlc_status = game.get_dlc_status("Neverwinter Nights: Infinite Dungeons")
+        expected = "not-installed"
+        observed = dlc_status
         self.assertEqual(expected, observed)
 
 
