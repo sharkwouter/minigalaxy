@@ -310,7 +310,7 @@ class GameTile(Gtk.Box):
         if self.game.installed_version and self.game.id and not self.offline:
             game_info = self.api.get_info(self.game)
             installer = game_info["downloads"]["installers"]
-            update_available = self.game.validate_if_installed_is_latest(installer)
+            update_available = not self.game.validate_if_installed_is_latest(installer)
             if update_available:
                 self.update_to_state(self.state.UPDATABLE)
             self.__check_for_dlc(game_info)
