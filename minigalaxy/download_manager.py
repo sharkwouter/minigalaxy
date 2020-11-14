@@ -1,7 +1,9 @@
 import os
+import shutil
 import time
 import threading
 import queue
+from requests.exceptions import ConnectionError
 from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION
 from minigalaxy.download import Download
@@ -71,15 +73,44 @@ class __DownloadManger:
             time.sleep(0.1)
 
     def __download_file(self, download):
+        self.prepare_location(download.save_location)
+        download_max_attempts = 5
+        download_attempt = 0
+        result = False
+        while download_attempt < download_max_attempts:
+            try:
+                start_point, download_mode = self.get_start_point_and_download_mode(download)
+                result = self.download_operation(download, start_point, download_mode)
+                break
+            except ConnectionError as e:
+                print(e)
+                download_attempt += 1
+        # Successful downloads
+        if result:
+            if download.number == download.out_of_amount:
+                finish_thread = threading.Thread(target=download.finish)
+                finish_thread.start()
+            if self.__queue.empty():
+                Config.unset("current_download")
+        # Unsuccessful downloads and cancels
+        else:
+            self.__cancel = False
+            download.cancel()
+            self.__current_download = None
+            os.remove(download.save_location)
+
+    def prepare_location(self, save_location):
         # Make sure the directory exists
-        save_directory = os.path.dirname(download.save_location)
+        save_directory = os.path.dirname(save_location)
         if not os.path.isdir(save_directory):
             os.makedirs(save_directory, mode=0o755)
 
         # Fail if the file already exists
-        if os.path.isdir(download.save_location):
-            raise IsADirectoryError("{} is a directory".format(download.save_location))
+        if os.path.isdir(save_location):
+            shutil.rmtree(save_location)
+            print("{} is a directory. Will remove it, to make place for installer.".format(save_location))
 
+    def get_start_point_and_download_mode(self, download):
         # Resume the previous download if possible
         start_point = 0
         download_mode = 'wb'
@@ -90,12 +121,15 @@ class __DownloadManger:
                 start_point = os.stat(download.save_location).st_size
             else:
                 os.remove(download.save_location)
+        return start_point, download_mode
 
+    def download_operation(self, download, start_point, download_mode):
         # Download the file
         resume_header = {'Range': 'bytes={}-'.format(start_point)}
-        download_request = SESSION.get(download.url, headers=resume_header, stream=True)
+        download_request = SESSION.get(download.url, headers=resume_header, stream=True, timeout=30)
         downloaded_size = start_point
         file_size = int(download_request.headers.get('content-length'))
+        result = True
         if downloaded_size < file_size:
             with open(download.save_location, download_mode) as save_file:
                 for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
@@ -105,20 +139,13 @@ class __DownloadManger:
                     save_file.write(chunk)
                     downloaded_size += len(chunk)
                     if self.__cancel:
-                        self.__cancel = False
-                        save_file.close()
-                        download.cancel()
-                        self.__current_download = None
-                        return
+                        result = False
+                        break
                     if file_size > 0:
                         progress = int(downloaded_size / file_size * 100)
                         download.set_progress(progress)
                 save_file.close()
-        if download.number == download.out_of_amount:
-            finish_thread = threading.Thread(target=download.finish)
-            finish_thread.start()
-        if self.__queue.empty():
-            Config.unset("current_download")
+        return result
 
     def __is_same_download_as_before(self, download):
         file_stats = os.stat(download.save_location)

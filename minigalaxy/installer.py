@@ -21,9 +21,10 @@ def install_game(game, installer, main_window=None) -> None:
             raise FileNotFoundError("The installer {} was corrupted".format(installer))
 
         # Make a temporary empty directory for extracting the installer
-        temp_dir = os.path.join(CACHE_DIR, "extract/{}".format(game.id))
-        if os.path.exists(temp_dir):
-            shutil.rmtree(temp_dir, ignore_errors=True)
+        extract_dir = os.path.join(CACHE_DIR, "extract")
+        temp_dir = os.path.join(extract_dir, str(game.id))
+        if os.path.exists(extract_dir):
+            shutil.rmtree(extract_dir, ignore_errors=True)
         os.makedirs(temp_dir, mode=0o755)
 
         # Extract the installer
