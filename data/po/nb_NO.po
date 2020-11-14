@@ -90,9 +90,8 @@ msgid "Danish"
 msgstr "Dansk"
 
 #: minigalaxy/ui/gametile.py:212 minigalaxy/ui/gametile.py:239
-#, fuzzy
 msgid "Download error"
-msgstr "last ned"
+msgstr "Feil ved nedlasting"
 
 #: minigalaxy/constants.py:11
 msgid "Dutch"
@@ -104,7 +103,7 @@ msgstr "Engelsk"
 
 #: minigalaxy/installer.py:86
 msgid "Failed to install {}"
-msgstr "Kunne ikke starte {}:"
+msgstr "Kunne ikke installere {}:"
 
 #: minigalaxy/ui/library.py:146
 msgid "Failed to retrieve library"
@@ -311,7 +310,7 @@ msgstr "Svensk"
 
 #: minigalaxy/installer.py:61
 msgid "The installation of {} failed. Please try again."
-msgstr ""
+msgstr "Feil ved installasjon av {}. Vennligst prøv igjen."
 
 #: data/ui/preferences.ui:67
 msgctxt "preferred_language_tooltip"
@@ -322,7 +321,8 @@ msgstr "Foretrukket språk for nedlasting av spill"
 msgid ""
 "There was an error when trying to fetch the download link!\n"
 "{}"
-msgstr ""
+msgstr "Det oppstod en feil ved henting av nedlastingslenken!\n"
+"{}"
 
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
@@ -343,7 +343,7 @@ msgstr "Avinstaller"
 #: data/ui/gametile.ui:86
 msgctxt "update"
 msgid "Update"
-msgstr ""
+msgstr "Oppdater"
 
 #: data/ui/preferences.ui:145
 msgctxt "stay_logged_in_tooltip"
@@ -385,9 +385,8 @@ msgid "uninstalling.."
 msgstr "avinstallerer.."
 
 #: minigalaxy/ui/gametile.py:537
-#, fuzzy
 msgid "updating.."
-msgstr "laster ned..."
+msgstr "oppdaterer.."
 
 #: minigalaxy/installer.py:33
 msgid "{} could not be unzipped."
