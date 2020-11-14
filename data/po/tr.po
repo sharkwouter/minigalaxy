@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-14 11:48+0100\n"
-"PO-Revision-Date: 2020-04-07 11:13+0300\n"
+"PO-Revision-Date: 2020-11-14 16:27+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: data/ui/about.ui:20
@@ -30,6 +30,15 @@ msgid ""
 "<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
 "<a href=\"https://github.com/thomasb22\">thomasb22</a>"
 msgstr ""
+"<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
+"<a href=\"https://github.com/BlindJerobine\">BlindJerobine</a>\n"
+"<a href=\"https://github.com/EsdrasTarsis\">Esdras Tarsis</a>\n"
+"<a href=\"https://github.com/fuzunspm\">Hüseyin Fahri Uzun</a>\n"
+"<a href=\"https://github.com/LordPilum\">Jan Kjetil Myklebust</a>\n"
+"<a href=\"https://github.com/s8321414\">Jeff Huang</a>\n"
+"<a href=\"https://github.com/kimmalmo\">kimmalmo</a>\n"
+"<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
+"<a href=\"https://github.com/thomasb22\">thomasb22</a>"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -83,16 +92,15 @@ msgstr "Alt işlem başlatılamadı"
 
 #: data/ui/gametile.ui:108
 msgid "DLC"
-msgstr ""
+msgstr "DLC"
 
 #: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr "Danimarka Dili"
 
 #: minigalaxy/ui/gametile.py:212 minigalaxy/ui/gametile.py:239
-#, fuzzy
 msgid "Download error"
-msgstr "indir"
+msgstr "İndirme hatası"
 
 #: minigalaxy/constants.py:11
 msgid "Dutch"
@@ -311,7 +319,7 @@ msgstr "İsveçce"
 
 #: minigalaxy/installer.py:61
 msgid "The installation of {} failed. Please try again."
-msgstr ""
+msgstr "{} yüklemesi başarısız oldu. Lütfen bir daha deneyiniz."
 
 #: data/ui/preferences.ui:67
 msgctxt "preferred_language_tooltip"
@@ -322,7 +330,7 @@ msgstr "İndirilen oyunlar için tercih edilen dil"
 msgid ""
 "There was an error when trying to fetch the download link!\n"
 "{}"
-msgstr ""
+msgstr "İndirme linki alınırken bir hata oluştu! {}"
 
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
@@ -343,7 +351,7 @@ msgstr "Sil"
 #: data/ui/gametile.ui:86
 msgctxt "update"
 msgid "Update"
-msgstr ""
+msgstr "[update]  Güncelle"
 
 #: data/ui/preferences.ui:145
 msgctxt "stay_logged_in_tooltip"
@@ -384,9 +392,8 @@ msgid "uninstalling.."
 msgstr "siliniyor.."
 
 #: minigalaxy/ui/gametile.py:537
-#, fuzzy
 msgid "updating.."
-msgstr "indirliyor.."
+msgstr "güncelleniyor.."
 
 #: minigalaxy/installer.py:33
 msgid "{} could not be unzipped."
