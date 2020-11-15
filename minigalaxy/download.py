@@ -17,6 +17,7 @@ class Download:
                 # Change the percentage based on which number we are
                 progress_start = 100/self.out_of_amount*(self.number-1)
                 percentage = progress_start + percentage/self.out_of_amount
+                percentage = int(percentage)
             self.__progress_func(percentage)
 
     def finish(self):

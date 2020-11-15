@@ -1,5 +1,5 @@
 from unittest import TestCase, mock
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock
 import sys
 import requests
 import time
