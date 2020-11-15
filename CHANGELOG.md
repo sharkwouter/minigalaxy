@@ -3,8 +3,9 @@
     - Simplified Chinese (thanks to dummyx)
     - Spanish (thanks to juanborda)
 - Update the following translations:
-    - Russian (thanks to tim77)
     - Dutch
+    - Russian (thanks to tim77)
+    - Taiwanese Mandarin (thanks to s8321414)
 - Games can now be updated (thanks to mdgomes and makson96)
 - DLC can now be installed (thanks to makson96)
 - The installed filter now also shows games which are downloading (thanks to makson96)
