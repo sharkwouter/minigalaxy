@@ -148,6 +148,51 @@ en-US
         observed = dlc_status
         self.assertEqual(expected, observed)
 
+    @unittest.mock.patch('os.path.isfile')
+    def test1_set_dlc_status(self, mock_isfile):
+        mock_isfile.return_value = True
+        json_content = '[{"Neverwinter Nights: Wyvern Crown of Cormyr": "not-installed", ' \
+                       '"Neverwinter Nights: Infinite Dungeons": "updatable", "Neverwinter Nights: Pirates of ' \
+                       'the Sword Coast": "installed"}, {}]'
+        dlc_name = "Neverwinter Nights: Wyvern Crown of Cormyr"
+        dlc_status = True
+        with patch("builtins.open", mock_open(read_data=json_content)) as m:
+            game = Game("Game Name test2")
+            game.read_installed_version = MagicMock()
+            game.installed_version = "1"
+            game.set_dlc_status(dlc_name, dlc_status)
+        mock_c = m.mock_calls
+        write_string = ""
+        for kall in mock_c:
+            name, args, kwargs = kall
+            if name == "().write":
+                write_string = "{}{}".format(write_string, args[0])
+        expected = '[{"Neverwinter Nights: Wyvern Crown of Cormyr": "installed", ' \
+                   '"Neverwinter Nights: Infinite Dungeons": "updatable", "Neverwinter Nights: Pirates of ' \
+                   'the Sword Coast": "installed"}, {"Neverwinter Nights: Wyvern Crown of Cormyr": {}}]'
+        observed = write_string
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test2_set_dlc_status(self, mock_isfile):
+        mock_isfile.return_value = False
+        dlc_name = "Neverwinter Nights: Test DLC"
+        dlc_status = False
+        with patch("builtins.open", mock_open()) as m:
+            game = Game("Game Name test2")
+            game.read_installed_version = MagicMock()
+            game.installed_version = "1"
+            game.set_dlc_status(dlc_name, dlc_status)
+        mock_c = m.mock_calls
+        write_string = ""
+        for kall in mock_c:
+            name, args, kwargs = kall
+            if name == "().write":
+                write_string = "{}{}".format(write_string, args[0])
+        expected = '[{"Neverwinter Nights: Test DLC": "not-installed"}, {}]'
+        observed = write_string
+        self.assertEqual(expected, observed)
+
 
 if __name__ == '__main__':
     unittest.main()
