@@ -9,14 +9,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-14 11:48+0100\n"
-"PO-Revision-Date: 2020-04-20 23:47+0300\n"
+"PO-Revision-Date: 2020-11-15 12:03+0100\n"
 "Last-Translator: Artem Polishchuk <ego.cordatus@gmail.com>\n"
 "Language-Team: \n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.1\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 
@@ -32,6 +32,15 @@ msgid ""
 "<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
 "<a href=\"https://github.com/thomasb22\">thomasb22</a>"
 msgstr ""
+"<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
+"<a href=\"https://github.com/BlindJerobine\">BlindJerobine</a>\n"
+"<a href=\"https://github.com/EsdrasTarsis\">Esdras Tarsis</a>\n"
+"<a href=\"https://github.com/fuzunspm\">Hüseyin Fahri Uzun</a>\n"
+"<a href=\"https://github.com/LordPilum\">Jan Kjetil Myklebust</a>\n"
+"<a href=\"https://github.com/s8321414\">Jeff Huang</a>\n"
+"<a href=\"https://github.com/kimmalmo\">kimmalmo</a>\n"
+"<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
+"<a href=\"https://github.com/thomasb22\">thomasb22</a>"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -85,16 +94,15 @@ msgstr "Не удалось запустить подпроцесс"
 
 #: data/ui/gametile.ui:108
 msgid "DLC"
-msgstr ""
+msgstr "DLC"
 
 #: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr "Датский"
 
 #: minigalaxy/ui/gametile.py:212 minigalaxy/ui/gametile.py:239
-#, fuzzy
 msgid "Download error"
-msgstr "загрузить"
+msgstr "Ошибка загрузки"
 
 #: minigalaxy/constants.py:11
 msgid "Dutch"
@@ -282,7 +290,7 @@ msgid ""
 "Show the framerate while playing games. Only works with AMD and Nvidia "
 "graphics cards."
 msgstr ""
-"Показывать частоту кадров во время игры. Работает только на видеокартах AMD "
+"Показывать частоту кадров во время игры. Работает только с видеокартами AMD "
 "и Nvidia."
 
 #: minigalaxy/constants.py:24
@@ -313,7 +321,7 @@ msgstr "Шведский"
 
 #: minigalaxy/installer.py:61
 msgid "The installation of {} failed. Please try again."
-msgstr ""
+msgstr "Не удалось установить {}. Пожалуйста попробуйте ещё раз."
 
 #: data/ui/preferences.ui:67
 msgctxt "preferred_language_tooltip"
@@ -325,6 +333,8 @@ msgid ""
 "There was an error when trying to fetch the download link!\n"
 "{}"
 msgstr ""
+"Произошла ошибка во время получения ссылки для скачивания!\n"
+"{}"
 
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
@@ -345,7 +355,7 @@ msgstr "Удалить"
 #: data/ui/gametile.ui:86
 msgctxt "update"
 msgid "Update"
-msgstr ""
+msgstr "Обновить"
 
 #: data/ui/preferences.ui:145
 msgctxt "stay_logged_in_tooltip"
@@ -387,9 +397,8 @@ msgid "uninstalling.."
 msgstr "удаление.."
 
 #: minigalaxy/ui/gametile.py:537
-#, fuzzy
 msgid "updating.."
-msgstr "загрузка.."
+msgstr "обновление.."
 
 #: minigalaxy/installer.py:33
 msgid "{} could not be unzipped."
@@ -405,4 +414,4 @@ msgstr "Невозможно использовать {} для установк
 
 #: minigalaxy/installer.py:19
 msgid "{} was corrupted. Please download it again."
-msgstr "{} поврежден. Пожалуйста загрузите его заново."
+msgstr "{} поврежден. Пожалуйста загрузите заново."
