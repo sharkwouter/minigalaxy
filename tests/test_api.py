@@ -101,3 +101,7 @@ class TestApi(TestCase):
         exp = "Neverwinter Nights: Enhanced Edition"
         obs = api.get_library()[0].name
         self.assertEqual(exp, obs)
+
+
+del sys.modules['minigalaxy.constants']
+del sys.modules['minigalaxy.config']
