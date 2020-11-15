@@ -5,15 +5,15 @@
 - Update the following translations:
     - Russian (thanks to tim77)
     - Dutch
-- Games can now be updated (thanks to mdgomes and markson96)
-- DLC can now be installed (thanks to markson96)
-- The installed filter now also shows games which are downloading (thanks to markson96)
+- Games can now be updated (thanks to mdgomes and makson96)
+- DLC can now be installed (thanks to makson96)
+- The installed filter now also shows games which are downloading (thanks to makson96)
 - Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)
 - Create new config file if old one is unreadable (thanks to SvdB-nonp)
 - Fix some Windows games not installing because of the directory name used (thanks to SvdB-nonp)
 - Fix some Windows games like Witcher 3 not launching because of the working directory not being set (thanks for kibun1)
 - Clean up installation files for cancelled downloads (thanks to SvdB-nonp)
-- Fix crash on flaky internet connection (thanks to markson96)
+- Fix crash on flaky internet connection (thanks to makson96)
 - Use 755 permissions for all directories created by Minigalaxy
 - Remove cached files when cancelling a download (thanks to svdB-nonp)
 
