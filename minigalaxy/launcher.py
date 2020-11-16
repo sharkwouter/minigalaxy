@@ -85,6 +85,9 @@ def __get_execute_command(game) -> list:
                 os.chdir(game.install_dir)
                 with open(file, 'r') as info_file:
                     info = json.loads(info_file.read())
+                    # if we have the workingDir property, start the executable at that directory
+                    if "workingDir" in info["playTasks"][0]:
+                        return ["wine", "start","/b","/wait","/d", info["playTasks"][0]["workingDir"], info["playTasks"][0]["path"]]
                     return ["wine", info["playTasks"][0]["path"]]
 
         # in case no goggame info file was found

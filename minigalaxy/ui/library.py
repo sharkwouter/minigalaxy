@@ -1,3 +1,4 @@
+import copy
 import os
 import re
 import json
@@ -58,7 +59,6 @@ class Library(Gtk.Viewport):
             tile.reload_state()
 
     def filter_library(self, widget: Gtk.Widget = None):
-        self.__load_tile_states()
         if isinstance(widget, Gtk.Switch):
             self.show_installed_only = widget.get_active()
         elif isinstance(widget, Gtk.SearchEntry):
@@ -67,13 +67,14 @@ class Library(Gtk.Viewport):
 
     def __filter_library_func(self, child):
         tile = child.get_children()[0]
-        # Hide games which aren't installed while in offline mode
-        if not tile.game.install_dir and self.offline:
+        if self.search_string.lower() not in str(tile).lower():
             return False
-        if tile.current_state == tile.state.INSTALLED and self.show_installed_only or not self.show_installed_only:
-            if self.search_string.lower() in str(tile).lower():
-                return True
-        return False
+
+        if self.show_installed_only:
+            if tile.current_state in [tile.state.DOWNLOADABLE, tile.state.INSTALLABLE]:
+                return False
+
+        return True
 
     def sort_library(self):
         self.flowbox.set_sort_func(self.__sort_library_func)
@@ -87,20 +88,15 @@ class Library(Gtk.Viewport):
         games_with_tiles = []
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
-            if tile.current_state == tile.state.INSTALLED:
-                if not tile.game.image_url:
-                    self.flowbox.remove(tile)
-                    continue
             if tile.game in self.games:
                 games_with_tiles.append(tile.game)
 
         for game in self.games:
-            if game in games_with_tiles:
-                continue
-            self.__add_gametile(game)
+            if game not in games_with_tiles:
+                self.__add_gametile(game)
 
     def __add_gametile(self, game):
-        self.flowbox.add(GameTile(self, game, self.api))
+        self.flowbox.add(GameTile(self, game, self.api, self.offline))
         self.sort_library()
         self.flowbox.show_all()
 
@@ -147,25 +143,13 @@ class Library(Gtk.Viewport):
             self.offline = False
         except:
             self.offline = True
-            GLib.idle_add(self.__show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
+            GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
             return
+        installed_game_names = []
+        for game in self.games:
+            installed_game_names.append(game.name.lower())
         for game in retrieved_games:
-            if game in self.games:
-                # Make sure the game id is set if the game is installed
-                for installed_game in self.games:
-                    if game == installed_game:
-                        self.games.remove(installed_game)
-                        break
-            self.games.append(game)
+            if game.name.lower() not in installed_game_names:
+                self.games.append(game)
 
-    def __show_error(self, text, subtext):
-        dialog = Gtk.MessageDialog(
-            message_type=Gtk.MessageType.ERROR,
-            parent=self.parent,
-            modal=True,
-            buttons=Gtk.ButtonsType.CLOSE,
-            text=text
-        )
-        dialog.format_secondary_text(subtext)
-        dialog.run()
-        dialog.destroy()
+

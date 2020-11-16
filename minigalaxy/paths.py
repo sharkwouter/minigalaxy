@@ -2,6 +2,8 @@ import os
 import sys
 
 LAUNCH_DIR = os.path.abspath(os.path.dirname(sys.argv[0]))
+if LAUNCH_DIR == "/bin" or LAUNCH_DIR == "/sbin":
+    LAUNCH_DIR = "/usr" + LAUNCH_DIR
 
 CONFIG_DIR = os.path.join(os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config')), "minigalaxy")
 CONFIG_FILE_PATH = os.path.join(CONFIG_DIR, "config.json")
@@ -21,6 +23,10 @@ if not os.path.exists(LOGO_IMAGE_PATH):
 ICON_WINE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/winehq_logo_glass.png"))
 if not os.path.exists(ICON_WINE_PATH):
     ICON_WINE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/winehq_logo_glass.png"))
+
+ICON_UPDATE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/update_available.png"))
+if not os.path.exists(ICON_UPDATE_PATH):
+    ICON_UPDATE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/update_available.png"))
 
 LOCALE_DIR = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/mo"))
 if not os.path.exists(LOCALE_DIR):

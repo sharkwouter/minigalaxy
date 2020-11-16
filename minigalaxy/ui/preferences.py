@@ -80,7 +80,7 @@ class Preferences(Gtk.Dialog):
 
         if not os.path.exists(choice):
             try:
-                os.makedirs(choice)
+                os.makedirs(choice, mode=0o755)
             except:
                 return False
         else:

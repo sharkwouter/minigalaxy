@@ -1,6 +1,6 @@
 # Minigalaxy
 
-A simple GOG client for Linux that lets you download and play your GOG Linux games
+A simple GOG client for Linux
 
 ![screenshot](screenshot.jpg?raw=true)
 
@@ -21,23 +21,22 @@ In addition to that, Minigalaxy also allows you to:
 - View the error message if a game fails to launch
 - Enable displaying the FPS in games
 - Use the system's Scummvm or Dosbox installation
-
-Features **not** in Minigalaxy:
-
-- Installing games meant for other platforms
+- Install Windows games using Wine
 
 ## Supported languages
 
 Currently Minigalaxy can be displayed in the following languages:
+- Brazilian Portuguese
 - English
 - Dutch
 - French
 - German
+- Norwegian Bokmål
+- Norwegian Nynorsk
 - Polish
+- Russian
 - Taiwanese Mandarin
 - Turkish
-- Brazilian Portuguese (incomplete)
-- Norwegian Bokmål (incomplete)
 
 ## System requirements
 
@@ -68,6 +67,10 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 - Python Requests
 
 ## Installation
+
+<a href="https://repology.org/project/minigalaxy/versions">
+    <img src="https://repology.org/badge/vertical-allrepos/minigalaxy.svg" alt="Packaging status" align="right">
+</a>
 
 <details><summary>Ubuntu/Debian</summary>
 
@@ -157,14 +160,19 @@ Expect to see the following issues:
 Special thanks goes out to all contributors:
 
 - Odelpasso for multiple code contributions
+- tim77 for packaging Minigalaxy for Fedora, Flathub and multiple code contributions
+- larslindq for multiple code contributions
 - BlindJerobine for translating to German and adding the support option
+- JoshuaFern for packaging Minigalaxy for NixOS and for contributing code
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
 - ArturWroblewski for translating to Polish
 - kimmalmo for translating to Norwegian Bokmål
 - EsdrasTarsis for translating to Brazilian Portuguese
+- protheory8 for translating to Russian
+- LordPilum for translating to Norwegian Nynorsk
 - jubalh for packaging Minigalaxy for openSUSE
-- tim77 for packaging Minigalaxy for Fedora
+- gasinvein for packaging Minigalaxy for flathub
 - metafarion for packaging Minigalaxy for Gentoo
 - SwampRabbit and Steven Pusser for packaging Minigalaxy for MX Linux

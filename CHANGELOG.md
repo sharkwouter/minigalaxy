@@ -1,14 +1,42 @@
-**0.9.4 (unreleased)**
+**1.0.0 (unreleased)**
+- Add the following translations:
+    - Simplified Chinese (thanks to dummyx)
+    - Spanish (thanks to juanborda)
+- Update the following translations:
+    - Dutch
+    - Russian (thanks to tim77)
+    - Taiwanese Mandarin (thanks to s8321414)
+- Games can now be updated (thanks to mdgomes and makson96)
+- DLC can now be installed (thanks to makson96)
+- The installed filter now also shows games which are downloading (thanks to makson96)
+- Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)
+- Create new config file if old one is unreadable (thanks to SvdB-nonp)
+- Fix some Windows games not installing because of the directory name used (thanks to SvdB-nonp)
+- Fix some Windows games like Witcher 3 not launching because of the working directory not being set (thanks for kibun1)
+- Clean up installation files for cancelled downloads (thanks to SvdB-nonp)
+- Fix crash on flaky internet connection (thanks to makson96)
+- Use 755 permissions for all directories created by Minigalaxy
+- Remove cached files when cancelling a download (thanks to svdB-nonp)
+
+**0.9.4**
 - Added the following translations:
     - Norwegian Nynorsk (thanks to LordPilum)
     - Russian (thanks to protheory8)
 - Updated the following translations:
     - Brazilian Portuguese (thanks to EsdrasTarsis)
+    - French (thanks to Thomasb22)
+    - German (thanks to BlindJerobine)
+    - Norwegian Bokmål (thanks to kimmalmo)
+    - Polish (thanks to ArturWroblewski)
     - Taiwanese Mandarin (thanks to s8321414)
-- Added support for installing Windows games (with help from Odelpasso)
-- Added store page link to game menus (thanks to larslindq)
-- Fixed thumbnails not being downloaded for already installed games
-- Made preparations for a flathub package
+    - Turkish (thanks to fuzunspm)
+- Added support for installing Windows games (with help from Odelpasso).
+- Added store page link to game menus (thanks to larslindq).
+- Fixed game directories being created without any spaces in the name (thanks to larslindq).
+- Fixed thumbnails not being downloaded for already installed games.
+- Fixed symlinks to libraries not being created correctly upon installation.
+- Made preparations for a Flathub package.
+- Added all contributors and translators to the about window.
 
 **0.9.3**
 - Added the following translations:

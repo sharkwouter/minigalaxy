@@ -10,7 +10,22 @@
     <property name="comments" translatable="yes" context="short_description" comments="A short description of what Minigalaxy is">A simple GOG client for Linux</property>
     <property name="website">https://github.com/sharkwouter/minigalaxy</property>
     <property name="website_label" translatable="yes" context="github_page_link" comments="A link to the Github page">Github page</property>
-    <property name="authors">&lt;a href="https://github.com/sharkwouter"&gt;Wouter Wijsman&lt;/a&gt;</property>
+    <property name="authors">&lt;a href="https://github.com/sharkwouter"&gt;Wouter Wijsman&lt;/a&gt;
+&lt;a href="https://github.com/Odelpasso"&gt;Maxime Lombard&lt;/a&gt;
+&lt;a href="https://github.com/larslindq"&gt;Lars Lindqvist&lt;/a&gt;
+&lt;a href="https://github.com/tim77"&gt;Artem Polishchuk&lt;/a&gt;
+&lt;a href="https://github.com/BlindJerobine"&gt;BlindJerobine&lt;/a&gt;
+&lt;a href="https://github.com/JoshuaFern"&gt;Joshua Fern&lt;/a&gt;
+</property>
+    <property name="translator_credits" translatable="yes">&lt;a href="https://github.com/ArturWroblewski"&gt;Artur Wróblewski&lt;/a&gt;
+&lt;a href="https://github.com/BlindJerobine"&gt;BlindJerobine&lt;/a&gt;
+&lt;a href="https://github.com/EsdrasTarsis"&gt;Esdras Tarsis&lt;/a&gt;
+&lt;a href="https://github.com/fuzunspm"&gt;Hüseyin Fahri Uzun&lt;/a&gt;
+&lt;a href="https://github.com/LordPilum"&gt;Jan Kjetil Myklebust&lt;/a&gt;
+&lt;a href="https://github.com/s8321414"&gt;Jeff Huang&lt;/a&gt;
+&lt;a href="https://github.com/kimmalmo"&gt;kimmalmo&lt;/a&gt;
+&lt;a href="https://github.com/protheory8"&gt;ProTheory8&lt;/a&gt;
+&lt;a href="https://github.com/thomasb22"&gt;thomasb22&lt;/a&gt;</property>
     <property name="artists">&lt;a href="https://opengameart.org/users/epic-runes"&gt;Epic Runes&lt;/a&gt;</property>
     <property name="logo_icon_name">image-missing</property>
     <property name="license_type">gpl-3-0</property>

@@ -31,21 +31,25 @@ class __Config:
     def __load_config_file(self) -> dict:
         if os.path.exists(self.__config_file):
             with open(self.__config_file, "r") as file:
-                return json.loads(file.read())
+                try:
+                    return json.loads(file.read())
+                except json.decoder.JSONDecodeError:
+                    print("Reading config.json failed, creating new config file.")
+                    return self.__create_config_file()
         else:
             return self.__create_config_file()
 
     def __create_config_file(self) -> dict:
         # Make sure the configuration directory exists before creating the configuration file
         if not os.path.exists(CONFIG_DIR):
-            os.makedirs(CONFIG_DIR)
+            os.makedirs(CONFIG_DIR, mode=0o755)
         with open(self.__config_file, "w") as file:
             file.write(json.dumps(DEFAULT_CONFIGURATION))
             file.close()
 
         # Make sure the default installation path exists
         if not os.path.isdir(DEFAULT_CONFIGURATION['install_dir']):
-            os.makedirs(DEFAULT_CONFIGURATION['install_dir'])
+            os.makedirs(DEFAULT_CONFIGURATION['install_dir'], mode=0o755)
 
         return DEFAULT_CONFIGURATION
 
