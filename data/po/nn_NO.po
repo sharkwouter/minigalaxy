@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-14 11:48+0100\n"
-"PO-Revision-Date: 2020-04-07 07:13+0200\n"
+"PO-Revision-Date: 2020-11-16 08:02+0100\n"
 "Last-Translator: Jan Kjetil Myklebust\n"
 "Language-Team: \n"
 "Language: nb_NO\n"
@@ -30,6 +30,15 @@ msgid ""
 "<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
 "<a href=\"https://github.com/thomasb22\">thomasb22</a>"
 msgstr ""
+"<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
+"<a href=\"https://github.com/BlindJerobine\">BlindJerobine</a>\n"
+"<a href=\"https://github.com/EsdrasTarsis\">Esdras Tarsis</a>\n"
+"<a href=\"https://github.com/fuzunspm\">Hüseyin Fahri Uzun</a>\n"
+"<a href=\"https://github.com/LordPilum\">Jan Kjetil Myklebust</a>\n"
+"<a href=\"https://github.com/s8321414\">Jeff Huang</a>\n"
+"<a href=\"https://github.com/kimmalmo\">kimmalmo</a>\n"
+"<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
+"<a href=\"https://github.com/thomasb22\">thomasb22</a>"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -83,16 +92,15 @@ msgstr "Kunne ikkje starte underprosess"
 
 #: data/ui/gametile.ui:108
 msgid "DLC"
-msgstr ""
+msgstr "DLC"
 
 #: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr "Dansk"
 
 #: minigalaxy/ui/gametile.py:212 minigalaxy/ui/gametile.py:239
-#, fuzzy
 msgid "Download error"
-msgstr "last ned"
+msgstr "Nedlastingsfeil"
 
 #: minigalaxy/constants.py:11
 msgid "Dutch"
@@ -311,7 +319,7 @@ msgstr "Svensk"
 
 #: minigalaxy/installer.py:61
 msgid "The installation of {} failed. Please try again."
-msgstr ""
+msgstr "Installasjonen av {} feila. Ver venleg og prøv på nytt."
 
 #: data/ui/preferences.ui:67
 msgctxt "preferred_language_tooltip"
@@ -323,6 +331,8 @@ msgid ""
 "There was an error when trying to fetch the download link!\n"
 "{}"
 msgstr ""
+"Ein feil oppstod ved henting av nedlastingslink!\n"
+"{}"
 
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
@@ -343,7 +353,7 @@ msgstr "Avinstaller"
 #: data/ui/gametile.ui:86
 msgctxt "update"
 msgid "Update"
-msgstr ""
+msgstr "Oppdater"
 
 #: data/ui/preferences.ui:145
 msgctxt "stay_logged_in_tooltip"
@@ -385,9 +395,8 @@ msgid "uninstalling.."
 msgstr "avinstallerar.."
 
 #: minigalaxy/ui/gametile.py:537
-#, fuzzy
 msgid "updating.."
-msgstr "lastar ned..."
+msgstr "oppdaterar.."
 
 #: minigalaxy/installer.py:33
 msgid "{} could not be unzipped."
