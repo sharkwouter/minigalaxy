@@ -55,7 +55,7 @@ class Game:
                 if installer["os"] == self.platform:
                     current_installer = installer
                     break
-            if current_installer is not None and current_installer["version"] == self.installed_version:
+            if current_installer is not None and current_installer["version"] != self.installed_version:
                 is_latest = False
             else:
                 is_latest = True
