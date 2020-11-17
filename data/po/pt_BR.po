@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-11-14 11:48+0100\n"
-"PO-Revision-Date: 2020-04-06 18:38-0300\n"
+"PO-Revision-Date: 2020-11-17 03:06-0300\n"
 "Last-Translator: Esdras Tarsis <esdrastarsis@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
+"X-Generator: Poedit 2.4.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: data/ui/about.ui:20
@@ -83,16 +83,15 @@ msgstr "Não foi possível iniciar o subprocesso"
 
 #: data/ui/gametile.ui:108
 msgid "DLC"
-msgstr ""
+msgstr "DLC"
 
 #: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr "Dinamarquês"
 
 #: minigalaxy/ui/gametile.py:212 minigalaxy/ui/gametile.py:239
-#, fuzzy
 msgid "Download error"
-msgstr "Baixar"
+msgstr "Erro ao baixar"
 
 #: minigalaxy/constants.py:11
 msgid "Dutch"
@@ -311,23 +310,25 @@ msgstr "Sueco"
 
 #: minigalaxy/installer.py:61
 msgid "The installation of {} failed. Please try again."
-msgstr ""
+msgstr "A instalação de {} falhou. Por favor tente novamente."
 
 #: data/ui/preferences.ui:67
 msgctxt "preferred_language_tooltip"
 msgid "The preferred language for downloading games in"
-msgstr "O idioma preferido para baixar jogos em"
+msgstr "O idioma preferido para baixar os jogos"
 
 #: minigalaxy/ui/gametile.py:213
 msgid ""
 "There was an error when trying to fetch the download link!\n"
 "{}"
 msgstr ""
+"Ocorreu um erro ao tentar obter o link de download!\n"
+"{}"
 
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
-msgstr "É aqui que os jogos serão instalados"
+msgstr "É onde os jogos serão instalados"
 
 #: minigalaxy/constants.py:26
 msgid "Turkish"
@@ -343,7 +344,7 @@ msgstr "Desinstalar"
 #: data/ui/gametile.ui:86
 msgctxt "update"
 msgid "Update"
-msgstr ""
+msgstr "Atualizar"
 
 #: data/ui/preferences.ui:145
 msgctxt "stay_logged_in_tooltip"
@@ -386,9 +387,8 @@ msgid "uninstalling.."
 msgstr "Desinstalando..."
 
 #: minigalaxy/ui/gametile.py:537
-#, fuzzy
 msgid "updating.."
-msgstr "Baixando..."
+msgstr "Atualizando..."
 
 #: minigalaxy/installer.py:33
 msgid "{} could not be unzipped."
