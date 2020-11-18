@@ -49,9 +49,11 @@ class Library(Gtk.Viewport):
         GLib.idle_add(self.__create_gametiles)
 
         # Get games from the API
-        self.__add_games_from_api()
+        self.games, self.offline = add_games_from_api(self.games, self.api)
         GLib.idle_add(self.__create_gametiles)
         GLib.idle_add(self.filter_library)
+        if self.offline:
+            GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
 
     def __load_tile_states(self):
         for child in self.flowbox.get_children():
@@ -137,19 +139,20 @@ class Library(Gtk.Viewport):
                             games.append(game)
         return games
 
-    def __add_games_from_api(self):
-        try:
-            retrieved_games = self.api.get_library()
-            self.offline = False
-        except:
-            self.offline = True
-            GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
-            return
-        installed_game_ids = []
-        for game in self.games:
-            installed_game_ids.append(game.id)
-        for game in retrieved_games:
-            if game.id not in installed_game_ids:
-                self.games.append(game)
+
+def add_games_from_api(self_games, self_api):
+    try:
+        retrieved_games = self_api.get_library()
+        offline = False
+    except:
+        retrieved_games = []
+        offline = True
+    installed_game_ids = []
+    for game in self_games:
+        installed_game_ids.append(game.id)
+    for game in retrieved_games:
+        if game.id not in installed_game_ids:
+            self_games.append(game)
+    return self_games, offline
 
 
