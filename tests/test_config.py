@@ -20,9 +20,11 @@ class TestConfig(TestCase):
         obs = lang
         self.assertEqual(exp, obs)
 
+    @mock.patch('os.path.isdir')
     @mock.patch('os.path.exists')
-    def test_create_config(self, mock_isfile):
-        mock_isfile.side_effect = [False, True]
+    def test_create_config(self, mock_exists, mock_isdir):
+        mock_exists.side_effect = [False, True]
+        mock_isdir.return_value = False
         with patch("builtins.open", mock_open()) as mock_config:
             from minigalaxy.config import Config
         mock_c = mock_config.mock_calls
