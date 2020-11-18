@@ -24,7 +24,7 @@ class TestConfig(TestCase):
     @mock.patch('os.path.exists')
     def test_create_config(self, mock_exists, mock_isdir):
         mock_exists.side_effect = [False, True]
-        mock_isdir.return_value = False
+        mock_isdir.return_value = True
         with patch("builtins.open", mock_open()) as mock_config:
             from minigalaxy.config import Config
         mock_c = mock_config.mock_calls
