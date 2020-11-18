@@ -5,11 +5,13 @@ from unittest.mock import MagicMock, patch
 from minigalaxy.game import Game
 
 m_gtk = MagicMock()
+m_gi = MagicMock()
 m_window = MagicMock()
 m_preferences = MagicMock()
 m_gametile = MagicMock()
 m_config = MagicMock()
 sys.modules['gi.repository'] = m_gtk
+sys.modules['gi'] = m_gi
 sys.modules['minigalaxy.ui.window'] = m_window
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.gametile'] = m_gametile
@@ -59,6 +61,7 @@ class TestLibrary(TestCase):
         self.assertEqual(exp, obs)
 
 
+del sys.modules['gi']
 del sys.modules['gi.repository']
 del sys.modules['minigalaxy.ui.window']
 del sys.modules['minigalaxy.ui.preferences']
