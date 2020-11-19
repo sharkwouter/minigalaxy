@@ -60,6 +60,26 @@ class TestLibrary(TestCase):
         obs = Game(name="Stellaris (English)", game_id=1508702879,) in test_library_games
         self.assertEqual(exp, obs)
 
+    def test3_add_games_from_api(self):
+        self_games = []
+        for game in SELF_GAMES:
+            self_games.append(Game(name=game, game_id=int(SELF_GAMES[game]),))
+        self_games.append(Game(name="Game without ID", game_id=0))
+        api_games = []
+        for game in API_GAMES:
+            api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
+        api_gmae_with_id = Game(name="Game without ID", game_id=1234567890)
+        api_games.append(api_gmae_with_id)
+        api_mock = MagicMock()
+        api_mock.get_library.return_value = api_games
+        test_library_games, offline = library.add_games_from_api(self_games, api_mock)
+        exp = True
+        obs = api_gmae_with_id in test_library_games
+        self.assertEqual(exp, obs)
+        exp = len(api_games)
+        obs = len(test_library_games)
+        self.assertEqual(exp, obs)
+
 
 del sys.modules['gi']
 del sys.modules['gi.repository']
