@@ -70,7 +70,10 @@ class Game:
                 json_list = json.load(dlc_staus_file)
                 dlc_status_dict = json_list[0]
                 dlc_staus_file.close()
-                status = dlc_status_dict[dlc_title]
+                if dlc_title in dlc_status_dict:
+                    status = dlc_status_dict[dlc_title]
+                else:
+                    status = self.dlc_status_list[0]
         return status
 
     def set_dlc_status(self, dlc_title, status):
