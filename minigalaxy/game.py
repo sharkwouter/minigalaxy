@@ -79,8 +79,8 @@ class Game:
             installed_version_dcit = json_list[1]
             if dlc_title in installed_version_dcit:
                 installed_version = installed_version_dcit[dlc_title]
-            if available_version != installed_version:
-                status = self.dlc_status_list[2]
+                if available_version != installed_version:
+                    status = self.dlc_status_list[2]
         return status
 
     def set_dlc_status(self, dlc_title, status, version):
@@ -94,7 +94,7 @@ class Game:
                 dlc_staus_file.close()
             else:
                 dlc_status_dict = {}
-                dlc_version = ""
+                dlc_version = {}
             for dlc in self.dlcs:
                 if dlc["title"] not in dlc_status_dict:
                     dlc_status_dict[dlc["title"]] = self.dlc_status_list[0]
