@@ -347,7 +347,7 @@ class GameTile(Gtk.Box):
     def __check_for_dlc(self, game_info):
         dlcs = game_info["expanded_dlcs"]
         for dlc in dlcs:
-            if dlc["is_installable"]:
+            if dlc["is_installable"] and dlc["id"] in self.parent.owned_products_ids:
                 d_installer = dlc["downloads"]["installers"]
                 d_icon = dlc["images"]["sidebarIcon"]
                 d_name = dlc["title"]

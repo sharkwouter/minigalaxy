@@ -103,6 +103,13 @@ class Api:
             current_page += 1
         return games
 
+    def get_owned_products_ids(self):
+        if not self.active_token:
+            return
+        url2 = "https://embed.gog.com/user/data/games"
+        response2 = self.__request(url2)
+        return response2["owned"]
+
     # Generate the URL for the login page for GOG
     def get_login_url(self) -> str:
         params = {

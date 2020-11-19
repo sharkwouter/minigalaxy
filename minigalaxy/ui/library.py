@@ -29,6 +29,7 @@ class Library(Gtk.Viewport):
         self.search_string = ""
         self.offline = False
         self.games = []
+        self.owned_products_ids = []
 
     def reset(self):
         self.games = []
@@ -44,6 +45,7 @@ class Library(Gtk.Viewport):
 
     def __update_library(self):
         GLib.idle_add(self.__load_tile_states)
+        self.owned_products_ids = self.api.get_owned_products_ids()
         # Get already installed games first
         self.games = self.__get_installed_games()
         GLib.idle_add(self.__create_gametiles)
