@@ -61,7 +61,8 @@ class Game:
                 is_latest = True
         return is_latest
 
-    def get_dlc_status(self, dlc_title):
+    def get_dlc_status(self, dlc_title, available_version):
+        json_list = ["", ""]
         self.read_installed_version()
         status = self.dlc_status_list[0]
         if self.installed_version:
@@ -74,34 +75,36 @@ class Game:
                     status = dlc_status_dict[dlc_title]
                 else:
                     status = self.dlc_status_list[0]
+        if status == self.dlc_status_list[1]:
+            installed_version_dcit = json_list[1]
+            if dlc_title in installed_version_dcit:
+                installed_version = installed_version_dcit[dlc_title]
+            if available_version != installed_version:
+                status = self.dlc_status_list[2]
         return status
 
-    def set_dlc_status(self, dlc_title, status):
+    def set_dlc_status(self, dlc_title, status, version):
         self.read_installed_version()
         if self.installed_version:
             if os.path.isfile(self.dlc_status_file_path):
                 dlc_staus_file = open(self.dlc_status_file_path, 'r')
                 json_list = json.load(dlc_staus_file)
                 dlc_status_dict = json_list[0]
-                dlc_installers_version_dict = json_list[1]
+                dlc_version = json_list[1]
                 dlc_staus_file.close()
             else:
                 dlc_status_dict = {}
-                dlc_installers_version_dict = {}
+                dlc_version = ""
             for dlc in self.dlcs:
                 if dlc["title"] not in dlc_status_dict:
                     dlc_status_dict[dlc["title"]] = self.dlc_status_list[0]
             if status:
                 dlc_status_dict[dlc_title] = self.dlc_status_list[1]
-                dlc_installers = {}
-                for dlc in self.dlcs:
-                    if dlc_title == dlc["title"]:
-                        dlc_installers = dlc["downloads"]["installers"]
-                dlc_installers_version_dict[dlc_title] = dlc_installers
+                dlc_version[dlc_title] = version
             else:
                 dlc_status_dict[dlc_title] = self.dlc_status_list[0]
             dlc_status_file = open(self.dlc_status_file_path, 'w')
-            json.dump([dlc_status_dict, dlc_installers_version_dict], dlc_status_file)
+            json.dump([dlc_status_dict, dlc_version], dlc_status_file)
             dlc_status_file.close()
 
     def __str__(self):

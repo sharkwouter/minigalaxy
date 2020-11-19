@@ -326,22 +326,22 @@ class GameTile(Gtk.Box):
                 self.image.set_tooltip_text(self.game.name)
 
     def __download_dlc(self, dlc_installers) -> None:
+        download_info = self.api.get_download_info(self.game, dlc=True, dlc_installers=dlc_installers)
         dlc_title = self.game.name
         for dlc in self.game.dlcs:
             if dlc["downloads"]["installers"] == dlc_installers:
                 dlc_title = dlc["title"]
-        finish_func = lambda: self.__install_dlc(dlc_title)
+        finish_func = lambda: self.__install_dlc(dlc_title, download_info["version"])
         cancel_to_state = self.state.INSTALLED
-        download_info = self.api.get_download_info(self.game, dlc=True, dlc_installers=dlc_installers)
         result = self.__download(download_info, finish_func, cancel_to_state)
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
-    def __install_dlc(self, dlc_title):
+    def __install_dlc(self, dlc_title, dlc_version):
         install_success = self.__install()
         if not install_success:
             GLib.idle_add(self.update_to_state, self.state.INSTALLED)
-        self.game.set_dlc_status(dlc_title, install_success)
+        self.game.set_dlc_status(dlc_title, install_success, dlc_version)
         self.__check_for_update_dlc()
 
     def __check_for_dlc(self, game_info):
@@ -351,7 +351,8 @@ class GameTile(Gtk.Box):
                 d_installer = dlc["downloads"]["installers"]
                 d_icon = dlc["images"]["sidebarIcon"]
                 d_name = dlc["title"]
-                d_status = self.game.get_dlc_status(d_name)
+                download_info = self.api.get_download_info(self.game, dlc=True, dlc_installers=d_installer)
+                d_status = self.game.get_dlc_status(d_name, download_info["version"])
                 self.update_gtk_box_for_dlc(d_icon, d_name, d_status, d_installer)
                 if dlc not in self.game.dlcs:
                     self.game.dlcs.append(dlc)
@@ -376,11 +377,17 @@ class GameTile(Gtk.Box):
         if status.lower() == "installed":
             icon_name = "gtk-ok"
             self.dlc_dict[title][0].set_sensitive(False)
+        elif status.lower() == "updatable":
+            icon_name = ICON_UPDATE_PATH
+            self.dlc_dict[title][0].set_sensitive(True)
         else:
             icon_name = "gtk-goto-bottom"
             self.dlc_dict[title][0].set_sensitive(True)
         install_button_image = Gtk.Image()
-        install_button_image.set_from_icon_name(icon_name, 1)
+        if icon_name in [ICON_UPDATE_PATH]:
+            install_button_image.set_from_file(ICON_UPDATE_PATH)
+        else:
+            install_button_image.set_from_icon_name(icon_name, 1)
         self.dlc_dict[title][0].set_image(install_button_image)
 
     def get_async_image_dlc_icon(self, icon, title):
