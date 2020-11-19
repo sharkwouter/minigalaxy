@@ -45,15 +45,15 @@ class GameTile(Gtk.Box):
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
                  ' UPDATING UPDATE_INSTALLABLE')
 
-    def __init__(self, parent, game, api, offline):
+    def __init__(self, parent, game):
         Gtk.Frame.__init__(self)
         Gtk.StyleContext.add_provider(self.button.get_style_context(),
                                       CSS_PROVIDER,
                                       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         self.parent = parent
         self.game = game
-        self.api = api
-        self.offline = offline
+        self.api = parent.api
+        self.offline = parent.offline
         self.progress_bar = None
         self.thumbnail_set = False
         self.download = None
