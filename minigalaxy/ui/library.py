@@ -147,12 +147,11 @@ def add_games_from_api(self_games, self_api):
     except:
         retrieved_games = []
         offline = True
-    installed_game_ids = []
-    for game in self_games:
-        installed_game_ids.append(game.id)
     for game in retrieved_games:
-        if game.id not in installed_game_ids:
+        if game not in self_games:
             self_games.append(game)
+        elif self_games[self_games.index(game)].id == 0:
+            self_games[self_games.index(game)].id = game.id
     return self_games, offline
 
 
