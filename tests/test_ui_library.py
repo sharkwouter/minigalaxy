@@ -1,6 +1,6 @@
 import sys
-from unittest import TestCase, mock
-from unittest.mock import MagicMock, patch
+from unittest import TestCase
+from unittest.mock import MagicMock
 
 from minigalaxy.game import Game
 
@@ -10,14 +10,44 @@ m_window = MagicMock()
 m_preferences = MagicMock()
 m_gametile = MagicMock()
 m_config = MagicMock()
-sys.modules['gi.repository'] = m_gtk
+
+
+class UnitTestGtkTemplate:
+
+    def __init__(self):
+        self.Child = m_gtk
+
+    def from_file(self, lib_file):
+        def passthrough(func):
+            def passthrough2(parent, api):
+                return func(parent, api)
+            return passthrough2
+        return passthrough
+
+
+class UnitTestGiRepository:
+
+    class Gtk:
+
+        Template = UnitTestGtkTemplate()
+        Widget = m_gtk
+
+        class Viewport:
+            pass
+
+    class GLib:
+        pass
+
+
+u_gi_repository = UnitTestGiRepository()
+sys.modules['gi.repository'] = u_gi_repository
 sys.modules['gi'] = m_gi
 sys.modules['minigalaxy.ui.window'] = m_window
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.gametile'] = m_gametile
 sys.modules['minigalaxy.config'] = m_config
 
-from minigalaxy.ui import library
+from minigalaxy.ui.library import Library
 
 SELF_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath A Steel Sky": "1207658695",
               "Stellaris (English)": "1508702879"}
@@ -41,9 +71,11 @@ class TestLibrary(TestCase):
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games
-        test_library_games, offline = library.add_games_from_api(self_games, api_mock)
+        test_library = Library(MagicMock(), api_mock)
+        test_library.games = self_games
+        test_library._Library__add_games_from_api()
         exp = len(API_GAMES)
-        obs = len(test_library_games)
+        obs = len(test_library.games)
         self.assertEqual(exp, obs)
 
     def test2_add_games_from_api(self):
@@ -55,9 +87,11 @@ class TestLibrary(TestCase):
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games
-        test_library_games, offline = library.add_games_from_api(self_games, api_mock)
+        test_library = Library(MagicMock(), api_mock)
+        test_library.games = self_games
+        test_library._Library__add_games_from_api()
         exp = True
-        obs = Game(name="Stellaris (English)", game_id=1508702879,) in test_library_games
+        obs = Game(name="Stellaris (English)", game_id=1508702879,) in test_library.games
         self.assertEqual(exp, obs)
 
     def test3_add_games_from_api(self):
@@ -72,12 +106,14 @@ class TestLibrary(TestCase):
         api_games.append(api_gmae_with_id)
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games
-        test_library_games, offline = library.add_games_from_api(self_games, api_mock)
+        test_library = Library(MagicMock(), api_mock)
+        test_library.games = self_games
+        test_library._Library__add_games_from_api()
         exp = True
-        obs = api_gmae_with_id in test_library_games
+        obs = api_gmae_with_id in test_library.games
         self.assertEqual(exp, obs)
         exp = len(api_games)
-        obs = len(test_library_games)
+        obs = len(test_library.games)
         self.assertEqual(exp, obs)
 
 
