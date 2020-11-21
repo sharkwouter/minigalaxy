@@ -9,7 +9,7 @@ sys.modules['threading'] = m_thread
 
 
 class TestConfig(TestCase):
-    @mock.patch('os.path.isfile')
+    @mock.patch('os.path.exists')
     def test_get(self, mock_isfile):
         mock_isfile.return_value = True
         config = JSON_DEFAULT_CONFIGURATION
@@ -20,9 +20,11 @@ class TestConfig(TestCase):
         obs = lang
         self.assertEqual(exp, obs)
 
-    @mock.patch('os.path.isfile')
-    def test_create_config(self, mock_isfile):
-        mock_isfile.return_value = False
+    @mock.patch('os.path.isdir')
+    @mock.patch('os.path.exists')
+    def test_create_config(self, mock_exists, mock_isdir):
+        mock_exists.side_effect = [False, True]
+        mock_isdir.return_value = True
         with patch("builtins.open", mock_open()) as mock_config:
             from minigalaxy.config import Config
         mock_c = mock_config.mock_calls
@@ -35,7 +37,7 @@ class TestConfig(TestCase):
         obs = write_string
         self.assertEqual(exp, obs)
 
-    @mock.patch('os.path.isfile')
+    @mock.patch('os.path.exists')
     def test_set(self, mock_isfile):
         mock_isfile.return_value = True
         config = JSON_DEFAULT_CONFIGURATION
@@ -47,7 +49,7 @@ class TestConfig(TestCase):
         obs = lang
         self.assertEqual(exp, obs)
 
-    @mock.patch('os.path.isfile')
+    @mock.patch('os.path.exists')
     def test_unset(self, mock_isfile):
         mock_isfile.return_value = True
         config = JSON_DEFAULT_CONFIGURATION
@@ -58,5 +60,6 @@ class TestConfig(TestCase):
         exp = None
         obs = lang
         self.assertEqual(exp, obs)
+
 
 del sys.modules['threading']
