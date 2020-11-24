@@ -18,42 +18,17 @@ def config_game(game):
     subprocess.Popen(['wine', 'winecfg'])
 
 
-def start_game(game, parent_window=None) -> subprocess:
+def start_game(game):
     error_message = ""
     process = None
-
-    __set_fps_display()
-
-    # Change the directory to the install dir
-    working_dir = os.getcwd()
-    os.chdir(game.install_dir)
-    try:
-        process = subprocess.Popen(__get_execute_command(game), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    except FileNotFoundError:
-        error_message = _("No executable was found in {}").format(game.install_dir)
-
-    # restore the working directory
-    os.chdir(working_dir)
-
-    # Check if the application has started and see if it is still runnning after a short timeout
-    if process:
-        try:
-            process.wait(timeout=float(3))
-        except subprocess.TimeoutExpired:
-            return process
-    elif not error_message:
-        error_message = _("Couldn't start subprocess")
-
-    # Set the error message to what's been received in std error if not yet set
     if not error_message:
-        stdout, stderror = process.communicate()
-        error_message = stderror.decode("utf-8")
-        stdout_message = stdout.decode("utf-8")
-        if not error_message:
-            if stdout:
-                error_message = stdout_message
-            else:
-                error_message = _("No error message was returned")
+        error_message = set_fps_display()
+    if not error_message:
+        error_message, process = run_game_subprocess(game)
+    if not error_message:
+        error_message = check_if_game_started_correctly(process)
+    return error_message
+
 
     # Show the error as both a dialog and in the terminal
     error_text = _("Failed to start {}:").format(game.name)
@@ -140,13 +115,52 @@ def __get_execute_command(game) -> list:
     raise FileNotFoundError()
 
 
-def __set_fps_display():
+def set_fps_display():
+    error_message = ""
     # Enable FPS Counter for Nvidia or AMD (Mesa) users
     if Config.get("show_fps"):
         os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users + OpenGL/Vulkan games
         os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users + OpenGL games
-        os.environ["VK_INSTANCE_LAYERS"] = "VK_LAYER_MESA_overlay" # For AMDGPU users + Vulkan games
-    elif Config.get("show_fps") is False:
+        os.environ["VK_INSTANCE_LAYERS"] = "VK_LAYER_MESA_overlay"  # For AMDGPU users + Vulkan games
+    else:
         os.environ["__GL_SHOW_GRAPHICS_OSD"] = "0"
         os.environ["GALLIUM_HUD"] = ""
         os.environ["VK_INSTANCE_LAYERS"] = ""
+    return error_message
+
+
+def run_game_subprocess(game):
+    # Change the directory to the install dir
+    working_dir = os.getcwd()
+    os.chdir(game.install_dir)
+    try:
+        process = subprocess.Popen(__get_execute_command(game), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        error_message = ""
+    except FileNotFoundError:
+        process = None
+        error_message = _("No executable was found in {}").format(game.install_dir)
+
+    # restore the working directory
+    os.chdir(working_dir)
+    return error_message, process
+
+
+def check_if_game_started_correctly(process):
+    error_message = ""
+    # Check if the application has started and see if it is still runnning after a short timeout
+    try:
+        process.wait(timeout=float(3))
+#        error_message = "" if process.poll() == 0 else "No error message was returned"
+        error_message = "No error message was returned"
+    except subprocess.TimeoutExpired:
+        pass
+
+    # Set the error message to what's been received in std error if not yet set
+    if error_message:
+        stdout, stderror = process.communicate()
+        if stderror:
+            error_message = stderror.decode("utf-8")
+        elif stdout:
+            error_message = stdout.decode("utf-8")
+    return error_message
+
