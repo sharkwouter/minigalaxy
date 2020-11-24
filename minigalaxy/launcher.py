@@ -30,7 +30,7 @@ def start_game(game):
     return error_message
 
 
-def __get_execute_command(game) -> list:
+def get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
     if launcher_type in ["windows"]:
@@ -45,7 +45,6 @@ def __get_execute_command(game) -> list:
         exe_cmd = get_final_resort_exe_cmd(game, files)
     else:
         # If no executable was found at all, raise an error
-        # This should probably be changed to proper error window.
         raise FileNotFoundError()
     return exe_cmd
 
@@ -83,7 +82,7 @@ def get_windows_exe_cmd(game, files):
                     exe_cmd = ["wine", "start","/b","/wait","/d", info["playTasks"][0]["workingDir"], info["playTasks"][0]["path"]]
                 else:
                     exe_cmd = ["wine", info["playTasks"][0]["path"]]
-    if not exe_cmd:
+    if exe_cmd == [""]:
         # in case no goggame info file was found
         executables = glob.glob(game.install_dir + '/*.exe')
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
@@ -150,7 +149,7 @@ def run_game_subprocess(game):
     working_dir = os.getcwd()
     os.chdir(game.install_dir)
     try:
-        process = subprocess.Popen(__get_execute_command(game), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(get_execute_command(game), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         error_message = ""
     except FileNotFoundError:
         process = None
