@@ -23,7 +23,7 @@ def start_game(game):
     if not error_message:
         error_message, process = run_game_subprocess(game)
     if not error_message:
-        error_message = check_if_game_started_correctly(process)
+        error_message = check_if_game_started_correctly(process, game)
     if error_message:
         print(_("Failed to start {}:").format(game.name))
         print(error_message)
@@ -32,71 +32,103 @@ def start_game(game):
 
 def __get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
+    launcher_type = determine_launcher_type(files)
+    if launcher_type in ["windows"]:
+        exe_cmd = get_windows_exe_cmd(game, files)
+    elif launcher_type in ["dosbox"]:
+        exe_cmd = get_dosbox_exe_cmd(game, files)
+    elif launcher_type in ["scummvm"]:
+        exe_cmd = get_scummvm_exe_cmd(game, files)
+    elif launcher_type in ["start_script", "wine"]:
+        exe_cmd = get_start_script_exe_cmd(game, files)
+    elif launcher_type in ["final_resort"]:
+        exe_cmd = get_final_resort_exe_cmd(game, files)
+    else:
+        # If no executable was found at all, raise an error
+        # This should probably be changed to proper error window.
+        raise FileNotFoundError()
+    return exe_cmd
 
-    # Windows
+
+def determine_launcher_type(files):
+    launcher_type = "unknown"
     if "unins000.exe" in files:
-        prefix = os.path.join(game.install_dir, "prefix")
-        os.environ["WINEPREFIX"] = prefix
+        launcher_type = "windows"
+    elif "dosbox" in files and shutil.which("dosbox"):
+        launcher_type = "dosbox"
+    elif "scummvm" in files and shutil.which("scummvm"):
+        launcher_type = "scummvm"
+    elif "prefix" in files and shutil.which("wine"):
+        launcher_type = "wine"
+    elif "start.sh" in files:
+        launcher_type = "start_script"
+    elif "game" in files:
+        launcher_type = "final_resort"
+    return launcher_type
 
-        # Find game executable file
-        for file in files:
-            if re.match(r'^goggame-[0-9]*\.info$', file):
-                os.chdir(game.install_dir)
-                with open(file, 'r') as info_file:
-                    info = json.loads(info_file.read())
-                    # if we have the workingDir property, start the executable at that directory
-                    if "workingDir" in info["playTasks"][0]:
-                        return ["wine", "start","/b","/wait","/d", info["playTasks"][0]["workingDir"], info["playTasks"][0]["path"]]
-                    return ["wine", info["playTasks"][0]["path"]]
 
+def get_windows_exe_cmd(game, files):
+    exe_cmd = [""]
+    prefix = os.path.join(game.install_dir, "prefix")
+    os.environ["WINEPREFIX"] = prefix
+
+    # Find game executable file
+    for file in files:
+        if re.match(r'^goggame-[0-9]*\.info$', file):
+            os.chdir(game.install_dir)
+            with open(file, 'r') as info_file:
+                info = json.loads(info_file.read())
+                # if we have the workingDir property, start the executable at that directory
+                if "workingDir" in info["playTasks"][0]:
+                    exe_cmd = ["wine", "start","/b","/wait","/d", info["playTasks"][0]["workingDir"], info["playTasks"][0]["path"]]
+                else:
+                    exe_cmd = ["wine", info["playTasks"][0]["path"]]
+    if not exe_cmd:
         # in case no goggame info file was found
         executables = glob.glob(game.install_dir + '/*.exe')
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
-        return ["wine", filename]
+        exe_cmd = ["wine", filename]
+    return exe_cmd
 
-    # Dosbox
-    if "dosbox" in files and shutil.which("dosbox"):
-        for file in files:
-            if re.match(r'^dosbox_?([a-z]|[A-Z]|[0-9])+\.conf$', file):
-                dosbox_config = file
-            if re.match(r'^dosbox_?([a-z]|[A-Z]|[0-9])+_single\.conf$', file):
-                dosbox_config_single = file
-        if dosbox_config and dosbox_config_single:
-            print("Using system's dosbox to launch {}".format(game.name))
-            return ["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
 
-    # ScummVM
-    if "scummvm" in files and shutil.which("scummvm"):
-        for file in files:
-            if re.match(r'^.*\.ini$', file):
-                scummvm_config = file
-                break
-        if scummvm_config:
-            print("Using system's scrummvm to launch {}".format(game.name))
-            return ["scummvm", "-c", scummvm_config]
+def get_dosbox_exe_cmd(game, files):
+    dosbox_config = ""
+    dosbox_config_single = ""
+    for file in files:
+        if re.match(r'^dosbox_?([a-z]|[A-Z]|[0-9])+\.conf$', file):
+            dosbox_config = file
+        if re.match(r'^dosbox_?([a-z]|[A-Z]|[0-9])+_single\.conf$', file):
+            dosbox_config_single = file
+    print("Using system's dosbox to launch {}".format(game.name))
+    return ["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
 
-    # Wine
-    if "prefix" in files and shutil.which("wine"):
-        # This still needs to be implemented
-        return [os.path.join(game.install_dir, "start.sh")]
 
-    # None of the above, but there is a start script
-    if "start.sh" in files:
-        return [os.path.join(game.install_dir, "start.sh")]
+def get_scummvm_exe_cmd(game, files):
+    scummvm_config = ""
+    for file in files:
+        if re.match(r'^.*\.ini$', file):
+            scummvm_config = file
+            break
+    print("Using system's scrummvm to launch {}".format(game.name))
+    return ["scummvm", "-c", scummvm_config]
 
+
+def get_start_script_exe_cmd(game, files):
+    return [os.path.join(game.install_dir, "start.sh")]
+
+
+def get_final_resort_exe_cmd(game, files):
     # This is the final resort, applies to FTL
-    if "game" in files:
-        game_files = os.listdir("game")
-        for file in game_files:
-            if re.match(r'^goggame-[0-9]*\.info$', file):
-                os.chdir(os.path.join(game.install_dir, "game"))
-                with open(file, 'r') as info_file:
-                    info = json.loads(info_file.read())
-                    return ["./{}".format(info["playTasks"][0]["path"])]
-
-    # If no executable was found at all, raise an error
-    raise FileNotFoundError()
+    exe_cmd = [""]
+    game_files = os.listdir("game")
+    for file in game_files:
+        if re.match(r'^goggame-[0-9]*\.info$', file):
+            os.chdir(os.path.join(game.install_dir, "game"))
+            with open(file, 'r') as info_file:
+                info = json.loads(info_file.read())
+                exe_cmd = ["./{}".format(info["playTasks"][0]["path"])]
+    return exe_cmd
 
 
 def set_fps_display():
@@ -129,15 +161,17 @@ def run_game_subprocess(game):
     return error_message, process
 
 
-def check_if_game_started_correctly(process):
+def check_if_game_started_correctly(process, game):
     error_message = ""
     # Check if the application has started and see if it is still runnning after a short timeout
     try:
         process.wait(timeout=float(3))
-#        error_message = "" if process.poll() == 0 else "No error message was returned"
-        error_message = "No error message was returned"
+        error_message = "Game start process has finished prematurely"
     except subprocess.TimeoutExpired:
         pass
+
+    if error_message in ["Game start process has finished prematurely"]:
+        error_message = check_if_game_start_process_spawned_final_process(error_message, game)
 
     # Set the error message to what's been received in std error if not yet set
     if error_message:
@@ -148,3 +182,17 @@ def check_if_game_started_correctly(process):
             error_message = stdout.decode("utf-8")
     return error_message
 
+
+def check_if_game_start_process_spawned_final_process(error_message, game):
+    ps_ef = subprocess.check_output(["ps", "-ef"]).decode("utf-8")
+    ps_list = ps_ef.split("\n")
+    for ps in ps_list:
+        ps_split = ps.split()
+        if len(ps_split) < 2:
+            continue
+        if not ps_split[1].isdigit():
+            continue
+        if int(ps_split[1]) > os.getpid() and game.name in ps:
+            error_message = ""
+            break
+    return error_message
