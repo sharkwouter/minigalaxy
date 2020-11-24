@@ -3,10 +3,7 @@ import subprocess
 import shutil
 import re
 import json
-import gi
 import glob
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
 from minigalaxy.translation import _
 from minigalaxy.config import Config
 
@@ -27,23 +24,10 @@ def start_game(game):
         error_message, process = run_game_subprocess(game)
     if not error_message:
         error_message = check_if_game_started_correctly(process)
+    if error_message:
+        print(_("Failed to start {}:").format(game.name))
+        print(error_message)
     return error_message
-
-
-    # Show the error as both a dialog and in the terminal
-    error_text = _("Failed to start {}:").format(game.name)
-    print(error_text)
-    print(error_message)
-    dialog = Gtk.MessageDialog(
-        message_type=Gtk.MessageType.ERROR,
-        parent=parent_window.parent,
-        modal=True,
-        buttons=Gtk.ButtonsType.CLOSE,
-        text=error_text
-    )
-    dialog.format_secondary_text(error_message)
-    dialog.run()
-    dialog.destroy()
 
 
 def __get_execute_command(game) -> list:
