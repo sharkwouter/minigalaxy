@@ -469,7 +469,7 @@ class GameTile(Gtk.Box):
                 self.progress_bar.destroy()
 
         elif state == self.state.QUEUED:
-            self.button.set_label(_("in queue.."))
+            self.button.set_label(_("in queue…"))
             self.button.set_sensitive(False)
             self.image.set_sensitive(False)
             self.menu_button.hide()
@@ -477,7 +477,7 @@ class GameTile(Gtk.Box):
             self.__create_progress_bar()
 
         elif state == self.state.DOWNLOADING:
-            self.button.set_label(_("downloading.."))
+            self.button.set_label(_("downloading…"))
             self.button.set_sensitive(False)
             self.image.set_sensitive(False)
             self.menu_button.hide()
@@ -487,7 +487,7 @@ class GameTile(Gtk.Box):
             self.progress_bar.show_all()
 
         elif state == self.state.INSTALLING:
-            self.button.set_label(_("installing.."))
+            self.button.set_label(_("installing…"))
             self.button.set_sensitive(False)
             self.image.set_sensitive(True)
             self.menu_button.hide()
@@ -519,7 +519,7 @@ class GameTile(Gtk.Box):
             self.update_icon.hide()
 
         elif state == self.state.UNINSTALLING:
-            self.button.set_label(_("uninstalling.."))
+            self.button.set_label(_("uninstalling…"))
             self.button.set_sensitive(False)
             self.image.set_sensitive(False)
             self.menu_button.hide()
@@ -541,4 +541,4 @@ class GameTile(Gtk.Box):
                 self.wine_icon.set_margin_left(22)
 
         elif self.current_state == self.state.UPDATING:
-            self.button.set_label(_("updating.."))
+            self.button.set_label(_("updating…"))
