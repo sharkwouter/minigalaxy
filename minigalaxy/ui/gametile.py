@@ -106,16 +106,19 @@ class GameTile(Gtk.Box):
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget) -> None:
         dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING]
+        err_msg = ""
         if self.current_state in dont_act_in_states:
-            return
+            pass
         elif self.current_state in [self.state.INSTALLED, self.state.UPDATABLE]:
-            start_game(self.game, self.parent)
+            err_msg = start_game(self.game)
         elif self.current_state == self.state.INSTALLABLE:
             install_thread = threading.Thread(target=self.__install_game)
             install_thread.start()
         elif self.current_state == self.state.DOWNLOADABLE:
             download_thread = threading.Thread(target=self.__download_game)
             download_thread.start()
+        if err_msg:
+            self.parent.parent.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def on_button_cancel(self, widget):
