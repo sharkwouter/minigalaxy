@@ -14,6 +14,8 @@ The most important features of Minigalaxy:
 
 In addition to that, Minigalaxy also allows you to:
 
+- Update your games
+- Install and update DLC
 - Select in which language you'd prefer to download your games
 - Change where games are installed
 - Search your GOG Linux library
@@ -35,6 +37,8 @@ Currently Minigalaxy can be displayed in the following languages:
 - Norwegian Nynorsk
 - Polish
 - Russian
+- Simplified Chinese
+- Spanish
 - Taiwanese Mandarin
 - Turkish
 
@@ -152,8 +156,7 @@ Feel free to join the [Minigalaxy Discord](https://discord.gg/RC4cXVD) if you wo
 
 Expect to see the following issues:
 
-* Changing the installation directory makes Minigalaxy unable to detect previously installed games
-* Updating games has not been implemented yet
+* Some games will always show there is an update available.
 
 ## Special thanks
 
