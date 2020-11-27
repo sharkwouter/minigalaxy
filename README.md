@@ -159,11 +159,14 @@ Expect to see the following issues:
 
 Special thanks goes out to all contributors:
 
+- makson96 for multiple code contributions
 - Odelpasso for multiple code contributions
+- SvdB-nonp for multiple code contributions
 - tim77 for packaging Minigalaxy for Fedora, Flathub and multiple code contributions
 - larslindq for multiple code contributions
 - BlindJerobine for translating to German and adding the support option
 - JoshuaFern for packaging Minigalaxy for NixOS and for contributing code
+- sgn for fixing a bug
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
@@ -172,6 +175,8 @@ Special thanks goes out to all contributors:
 - EsdrasTarsis for translating to Brazilian Portuguese
 - protheory8 for translating to Russian
 - LordPilum for translating to Norwegian Nynorsk
+- dummyx for translating to simplified Chinese
+- juanborda for translating to Spanish
 - jubalh for packaging Minigalaxy for openSUSE
 - gasinvein for packaging Minigalaxy for flathub
 - metafarion for packaging Minigalaxy for Gentoo
