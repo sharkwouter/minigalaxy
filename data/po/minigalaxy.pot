@@ -354,11 +354,11 @@ msgid "download"
 msgstr ""
 
 #: minigalaxy/ui/gametile.py:473
-msgid "downloading.."
+msgid "downloading…"
 msgstr ""
 
 #: minigalaxy/ui/gametile.py:465
-msgid "in queue.."
+msgid "in queue…"
 msgstr ""
 
 #: minigalaxy/ui/gametile.py:453
@@ -366,7 +366,7 @@ msgid "install"
 msgstr ""
 
 #: minigalaxy/ui/gametile.py:483
-msgid "installing.."
+msgid "installing…"
 msgstr ""
 
 #: minigalaxy/ui/gametile.py:497 minigalaxy/ui/gametile.py:528
@@ -374,11 +374,11 @@ msgid "play"
 msgstr ""
 
 #: minigalaxy/ui/gametile.py:515
-msgid "uninstalling.."
+msgid "uninstalling…"
 msgstr ""
 
 #: minigalaxy/ui/gametile.py:537
-msgid "updating.."
+msgid "updating…"
 msgstr ""
 
 #: minigalaxy/installer.py:33

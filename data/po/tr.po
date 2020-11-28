@@ -368,32 +368,32 @@ msgid "download"
 msgstr "indir"
 
 #: minigalaxy/ui/gametile.py:473
-msgid "downloading.."
-msgstr "indirliyor.."
+msgid "downloading…"
+msgstr "indirliyor…"
 
 #: minigalaxy/ui/gametile.py:465
-msgid "in queue.."
-msgstr "sırada.."
+msgid "in queue…"
+msgstr "sırada…"
 
 #: minigalaxy/ui/gametile.py:453
 msgid "install"
 msgstr "yükle"
 
 #: minigalaxy/ui/gametile.py:483
-msgid "installing.."
-msgstr "yükleniyor.."
+msgid "installing…"
+msgstr "yükleniyor…"
 
 #: minigalaxy/ui/gametile.py:497 minigalaxy/ui/gametile.py:528
 msgid "play"
 msgstr "oyna"
 
 #: minigalaxy/ui/gametile.py:515
-msgid "uninstalling.."
-msgstr "siliniyor.."
+msgid "uninstalling…"
+msgstr "siliniyor…"
 
 #: minigalaxy/ui/gametile.py:537
-msgid "updating.."
-msgstr "güncelleniyor.."
+msgid "updating…"
+msgstr "güncelleniyor…"
 
 #: minigalaxy/installer.py:33
 msgid "{} could not be unzipped."

@@ -357,11 +357,11 @@ msgid "download"
 msgstr "下载"
 
 #: minigalaxy/ui/gametile.py:473
-msgid "downloading.."
+msgid "downloading…"
 msgstr "正在下载…"
 
 #: minigalaxy/ui/gametile.py:465
-msgid "in queue.."
+msgid "in queue…"
 msgstr "队列中…"
 
 #: minigalaxy/ui/gametile.py:453
@@ -369,7 +369,7 @@ msgid "install"
 msgstr "安装"
 
 #: minigalaxy/ui/gametile.py:483
-msgid "installing.."
+msgid "installing…"
 msgstr "正在安装…"
 
 #: minigalaxy/ui/gametile.py:497 minigalaxy/ui/gametile.py:528
@@ -377,11 +377,11 @@ msgid "play"
 msgstr "开始游戏"
 
 #: minigalaxy/ui/gametile.py:515
-msgid "uninstalling.."
+msgid "uninstalling…"
 msgstr "正在卸载…"
 
 #: minigalaxy/ui/gametile.py:537
-msgid "updating.."
+msgid "updating…"
 msgstr "正在更新…"
 
 #: minigalaxy/installer.py:33
