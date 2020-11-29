@@ -157,6 +157,7 @@ Feel free to join the [Minigalaxy Discord](https://discord.gg/RC4cXVD) if you wo
 Expect to see the following issues:
 
 * Some games will always show there is an update available.
+* The option to open the store page for games doesn't work at the moment.
 
 ## Special thanks
 
