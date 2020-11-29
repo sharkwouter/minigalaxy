@@ -1,15 +1,12 @@
 import os
 import shutil
 import subprocess
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
 
 
-def install_game(game, installer, main_window=None):
+def install_game(game, installer):
     error_message = ""
     tmp_dir = ""
     if not error_message:
@@ -24,14 +21,9 @@ def install_game(game, installer, main_window=None):
         error_message = copy_thumbnail(game)
     if not error_message:
         error_message = remove_installer(installer)
-    print(error_message)
+    if error_message:
+        print(error_message)
     return error_message
-
-
-def __show_installation_error(game, message, main_window=None):
-    error_message = [_("Failed to install {}").format(game.name), message]
-    print("{}: {}".format(error_message[0], error_message[1]))
-    main_window.show_error(error_message[0], error_message[1])
 
 
 def verify_installer_integrity(game, installer):

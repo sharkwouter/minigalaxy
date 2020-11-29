@@ -10,7 +10,6 @@ import re
 import urllib.parse
 from gi.repository.GdkPixbuf import Pixbuf
 from enum import Enum
-from zipfile import BadZipFile
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 from minigalaxy.config import Config
@@ -286,12 +285,12 @@ class GameTile(Gtk.Box):
             failed_state = self.state.DOWNLOADABLE
             success_state = self.state.INSTALLED
         GLib.idle_add(self.update_to_state, processing_state)
-        try:
-            error_mesage = install_game(self.game, installer, main_window=self.parent.parent)
+        err_msg = install_game(self.game, installer)
+        if not err_msg:
             GLib.idle_add(self.update_to_state, success_state)
             install_success = True
-        except (FileNotFoundError, BadZipFile) as e:
-            print(e)
+        else:
+            self.parent.parent.show_error(_("Failed to install {}").format(self.game.name), err_msg)
             GLib.idle_add(self.update_to_state, failed_state)
             install_success = False
         return install_success
