@@ -79,7 +79,7 @@ def extract_installer(game, installer, temp_dir):
        (process.returncode in [1] and "(attempting to process anyway)" not in stderr):
         error_message = _("The installation of {} failed. Please try again.").format(installer)
     elif len(os.listdir(temp_dir)) == 0:
-        error_message = _("{} could not be unzipped.")
+        error_message = _("{} could not be unzipped.".format(installer))
     return error_message
 
 
