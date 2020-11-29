@@ -84,13 +84,8 @@ def extract_installer(game, installer, temp_dir):
 
 
 def move_and_overwrite(game, temp_dir, target_dir):
-    # Make sure the install directory exists
-    error_message = ""
-    library_dir = Config.get("install_dir")
-    if not os.path.exists(library_dir):
-        os.makedirs(library_dir, mode=0o755)
-
     # Copy the game files into the correct directory
+    error_message = ""
     if game.platform == "linux":
         source_dir = os.path.join(temp_dir, "data/noarch")
     else:
@@ -114,10 +109,13 @@ def move_and_overwrite(game, temp_dir, target_dir):
 def copy_thumbnail(game):
     error_message = ""
     # Copy thumbnail
-    shutil.copyfile(
-        os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
-        os.path.join(game.install_dir, "thumbnail.jpg"),
-    )
+    try:
+        shutil.copyfile(
+                        os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
+                        os.path.join(game.install_dir, "thumbnail.jpg"),
+                        )
+    except Exception as e:
+        error_message = e
     return error_message
 
 
