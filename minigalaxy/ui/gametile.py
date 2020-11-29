@@ -287,7 +287,7 @@ class GameTile(Gtk.Box):
             success_state = self.state.INSTALLED
         GLib.idle_add(self.update_to_state, processing_state)
         try:
-            install_game(self.game, installer, main_window=self.parent.parent)
+            error_mesage = install_game(self.game, installer, main_window=self.parent.parent)
             GLib.idle_add(self.update_to_state, success_state)
             install_success = True
         except (FileNotFoundError, BadZipFile) as e:
