@@ -437,12 +437,12 @@ class GameTile(Gtk.Box):
             return
         if self.game.install_dir and os.path.exists(self.game.install_dir):
             self.update_to_state(self.state.INSTALLED)
+            check_update_thread = threading.Thread(target=self.__check_for_update_dlc())
+            check_update_thread.start()
         elif self.get_keep_executable_path():
             self.update_to_state(self.state.INSTALLABLE)
         else:
             self.update_to_state(self.state.DOWNLOADABLE)
-        check_update_thread = threading.Thread(target=self.__check_for_update_dlc())
-        check_update_thread.start()
 
     def update_to_state(self, state):
         self.current_state = state
