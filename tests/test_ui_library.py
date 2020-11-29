@@ -116,6 +116,24 @@ class TestLibrary(TestCase):
         obs = len(test_library.games)
         self.assertEqual(exp, obs)
 
+    def test4_add_games_from_api(self):
+        self_games = []
+        for game in SELF_GAMES:
+            self_games.append(Game(name=game, game_id=int(SELF_GAMES[game]),))
+        api_games = []
+        url_nr = 1
+        for game in API_GAMES:
+            api_games.append(Game(name=game, game_id=int(API_GAMES[game]), url="http://test_url{}".format(str(url_nr))))
+            url_nr += 1
+        api_mock = MagicMock()
+        api_mock.get_library.return_value = api_games
+        test_library = Library(MagicMock(), api_mock)
+        test_library.games = self_games
+        test_library._Library__add_games_from_api()
+        exp = "http://test_url1"
+        obs = test_library.games[0].url
+        self.assertEqual(exp, obs)
+
 
 del sys.modules['gi']
 del sys.modules['gi.repository']
