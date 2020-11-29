@@ -107,7 +107,7 @@ class Library(Gtk.Viewport):
         library_dir = Config.get("install_dir")
         if not os.path.exists(library_dir):
             os.makedirs(library_dir, mode=0o755)
-        directories = library_dir
+        directories = os.listdir(library_dir)
         games = []
         for directory in directories:
             full_path = os.path.join(Config.get("install_dir"), directory)
@@ -144,10 +144,10 @@ class Library(Gtk.Viewport):
         return games
 
     def __add_games_from_api(self):
-        try:
-            retrieved_games = self.api.get_library()
+        retrieved_games = self.api.get_library()
+        if retrieved_games:
             self.offline = False
-        except:
+        else:
             retrieved_games = []
             self.offline = True
             GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
