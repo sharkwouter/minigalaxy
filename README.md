@@ -14,6 +14,8 @@ The most important features of Minigalaxy:
 
 In addition to that, Minigalaxy also allows you to:
 
+- Update your games
+- Install and update DLC
 - Select in which language you'd prefer to download your games
 - Change where games are installed
 - Search your GOG Linux library
@@ -35,6 +37,8 @@ Currently Minigalaxy can be displayed in the following languages:
 - Norwegian Nynorsk
 - Polish
 - Russian
+- Simplified Chinese
+- Spanish
 - Taiwanese Mandarin
 - Turkish
 
@@ -152,18 +156,21 @@ Feel free to join the [Minigalaxy Discord](https://discord.gg/RC4cXVD) if you wo
 
 Expect to see the following issues:
 
-* Changing the installation directory makes Minigalaxy unable to detect previously installed games
-* Updating games has not been implemented yet
+* Some games will always show there is an update available.
+* The option to open the store page for games doesn't work at the moment.
 
 ## Special thanks
 
 Special thanks goes out to all contributors:
 
+- makson96 for multiple code contributions
 - Odelpasso for multiple code contributions
+- SvdB-nonp for multiple code contributions
 - tim77 for packaging Minigalaxy for Fedora, Flathub and multiple code contributions
 - larslindq for multiple code contributions
 - BlindJerobine for translating to German and adding the support option
 - JoshuaFern for packaging Minigalaxy for NixOS and for contributing code
+- sgn for fixing a bug
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
@@ -172,6 +179,8 @@ Special thanks goes out to all contributors:
 - EsdrasTarsis for translating to Brazilian Portuguese
 - protheory8 for translating to Russian
 - LordPilum for translating to Norwegian Nynorsk
+- dummyx for translating to simplified Chinese
+- juanborda for translating to Spanish
 - jubalh for packaging Minigalaxy for openSUSE
 - gasinvein for packaging Minigalaxy for flathub
 - metafarion for packaging Minigalaxy for Gentoo

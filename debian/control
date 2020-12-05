@@ -18,6 +18,8 @@ Description: Simple GOG Linux client
  Allows you to download and play Linux games from the gog.com game store.
  .
  Besides installing games, it offers the following feature:
+  - Update your games
+  - Install and update DLC
   - Select in which language you'd prefer to download your games
   - Change where games are installed
   - Search your GOG Linux library

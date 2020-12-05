@@ -1,13 +1,6 @@
 **1.0.0 (unreleased)**
-- Add the following translations:
-    - Simplified Chinese (thanks to dummyx)
-    - Spanish (thanks to juanborda)
-- Update the following translations:
-    - Dutch
-    - Russian (thanks to tim77)
-    - Taiwanese Mandarin (thanks to s8321414)
 - Games can now be updated (thanks to mdgomes and makson96)
-- DLC can now be installed (thanks to makson96)
+- DLC can now be installed and updated (thanks to makson96)
 - The installed filter now also shows games which are downloading (thanks to makson96)
 - Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)
 - Create new config file if old one is unreadable (thanks to SvdB-nonp)
@@ -17,6 +10,21 @@
 - Fix crash on flaky internet connection (thanks to makson96)
 - Use 755 permissions for all directories created by Minigalaxy
 - Remove cached files when cancelling a download (thanks to svdB-nonp)
+- Installed games should no longer be shown twice (thanks to makson96)
+
+- Add the following translations:
+    - Simplified Chinese (thanks to dummyx)
+    - Spanish (thanks to juanborda)
+
+- Update the following translations:
+    - Brazilian Portuguese (thanks to EsdrasTarsis)
+    - Dutch
+    - French (thanks to Thomasb22)
+    - German (thanks to BlindJerobine)
+    - Norwegian Bokmål (thanks to kimmalmo)
+    - Russian (thanks to protheory8)
+    - Taiwanese Mandarin (thanks to s8321414)
+    - Turkish (thanks to fuzunspm)
 
 **0.9.4**
 - Added the following translations:
