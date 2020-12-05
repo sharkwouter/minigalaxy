@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-14 11:48+0100\n"
+"POT-Creation-Date: 2020-12-05 16:41+0100\n"
 "PO-Revision-Date: 2020-11-14 20:16+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,19 +17,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.1\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-#: data/ui/about.ui:20
-msgid ""
-"<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
-"<a href=\"https://github.com/BlindJerobine\">BlindJerobine</a>\n"
-"<a href=\"https://github.com/EsdrasTarsis\">Esdras Tarsis</a>\n"
-"<a href=\"https://github.com/fuzunspm\">Hüseyin Fahri Uzun</a>\n"
-"<a href=\"https://github.com/LordPilum\">Jan Kjetil Myklebust</a>\n"
-"<a href=\"https://github.com/s8321414\">Jeff Huang</a>\n"
-"<a href=\"https://github.com/kimmalmo\">kimmalmo</a>\n"
-"<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
-"<a href=\"https://github.com/thomasb22\">thomasb22</a>"
-msgstr ""
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -47,11 +34,11 @@ msgctxt "about"
 msgid "About"
 msgstr "关于"
 
-#: minigalaxy/ui/gametile.py:122
+#: minigalaxy/ui/gametile.py:125
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "确定要取消下载 {} 吗？"
 
-#: minigalaxy/ui/gametile.py:136
+#: minigalaxy/ui/gametile.py:139
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
 msgstr "确定要卸载 %s 吗？"
@@ -69,17 +56,13 @@ msgstr "取消"
 msgid "Chinese"
 msgstr "汉语"
 
-#: minigalaxy/ui/library.py:146
+#: minigalaxy/ui/library.py:149
 msgid "Couldn't connect to GOG servers"
 msgstr "无法连接至 GOG 服务器"
 
-#: minigalaxy/ui/gametile.py:151
+#: minigalaxy/ui/gametile.py:154
 msgid "Couldn't open support page"
 msgstr "无法打开支持页面"
-
-#: minigalaxy/launcher.py:45
-msgid "Couldn't start subprocess"
-msgstr "无法启动子进程"
 
 #: data/ui/gametile.ui:108
 msgid "DLC"
@@ -89,7 +72,7 @@ msgstr "DLC"
 msgid "Danish"
 msgstr "丹麦语"
 
-#: minigalaxy/ui/gametile.py:212 minigalaxy/ui/gametile.py:239
+#: minigalaxy/ui/gametile.py:215 minigalaxy/ui/gametile.py:242
 msgid "Download error"
 msgstr "下载错误"
 
@@ -105,11 +88,11 @@ msgstr "英语"
 msgid "Failed to install {}"
 msgstr "安装 {} 失败"
 
-#: minigalaxy/ui/library.py:146
+#: minigalaxy/ui/library.py:149
 msgid "Failed to retrieve library"
 msgstr "获取游戏库失败"
 
-#: minigalaxy/launcher.py:59
+#: minigalaxy/launcher.py:28 minigalaxy/ui/gametile.py:121
 msgid "Failed to start {}:"
 msgstr "启动 {} 失败："
 
@@ -185,11 +168,7 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "退出登录"
 
-#: minigalaxy/launcher.py:56
-msgid "No error message was returned"
-msgstr "未返回错误信息"
-
-#: minigalaxy/launcher.py:33
+#: minigalaxy/launcher.py:156
 msgid "No executable was found in {}"
 msgstr "在 {} 内未找到可执行文件"
 
@@ -203,7 +182,7 @@ msgctxt "open_files"
 msgid "Open Files"
 msgstr "打开文件"
 
-#: minigalaxy/ui/gametile.py:152
+#: minigalaxy/ui/gametile.py:155
 msgid "Please check your internet connection"
 msgstr "请检查网络连接"
 
@@ -313,7 +292,7 @@ msgctxt "preferred_language_tooltip"
 msgid "The preferred language for downloading games in"
 msgstr "下载游戏时优先选择的语言"
 
-#: minigalaxy/ui/gametile.py:213
+#: minigalaxy/ui/gametile.py:216
 msgid ""
 "There was an error when trying to fetch the download link!\n"
 "{}"
@@ -352,35 +331,35 @@ msgctxt "show_windows_games_tooltip"
 msgid "Whether Windows games are shown in the library or not"
 msgstr "是否在游戏库内显示 Windows 游戏"
 
-#: minigalaxy/ui/gametile.py:441
+#: minigalaxy/ui/gametile.py:451
 msgid "download"
 msgstr "下载"
 
-#: minigalaxy/ui/gametile.py:473
+#: minigalaxy/ui/gametile.py:483
 msgid "downloading…"
 msgstr "正在下载…"
 
-#: minigalaxy/ui/gametile.py:465
+#: minigalaxy/ui/gametile.py:475
 msgid "in queue…"
 msgstr "队列中…"
 
-#: minigalaxy/ui/gametile.py:453
+#: minigalaxy/ui/gametile.py:463
 msgid "install"
 msgstr "安装"
 
-#: minigalaxy/ui/gametile.py:483
+#: minigalaxy/ui/gametile.py:493
 msgid "installing…"
 msgstr "正在安装…"
 
-#: minigalaxy/ui/gametile.py:497 minigalaxy/ui/gametile.py:528
+#: minigalaxy/ui/gametile.py:507 minigalaxy/ui/gametile.py:538
 msgid "play"
 msgstr "开始游戏"
 
-#: minigalaxy/ui/gametile.py:515
+#: minigalaxy/ui/gametile.py:525
 msgid "uninstalling…"
 msgstr "正在卸载…"
 
-#: minigalaxy/ui/gametile.py:537
+#: minigalaxy/ui/gametile.py:547
 msgid "updating…"
 msgstr "正在更新…"
 
@@ -399,3 +378,9 @@ msgstr "{} 路径不可用"
 #: minigalaxy/installer.py:19
 msgid "{} was corrupted. Please download it again."
 msgstr "{} 已损坏，请重新下载。"
+
+#~ msgid "Couldn't start subprocess"
+#~ msgstr "无法启动子进程"
+
+#~ msgid "No error message was returned"
+#~ msgstr "未返回错误信息"
