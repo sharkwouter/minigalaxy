@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-27 19:51+0100\n"
+"POT-Creation-Date: 2020-12-05 16:41+0100\n"
 "PO-Revision-Date: 2020-11-14 12:33+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -341,32 +341,32 @@ msgid "download"
 msgstr "Herunterladen"
 
 #: minigalaxy/ui/gametile.py:483
-msgid "downloading.."
-msgstr "Lädt herunter..."
+msgid "downloading…"
+msgstr "Lädt herunter…"
 
 #: minigalaxy/ui/gametile.py:475
-msgid "in queue.."
-msgstr "In der Warteschlange.."
+msgid "in queue…"
+msgstr "In der Warteschlange…"
 
 #: minigalaxy/ui/gametile.py:463
 msgid "install"
 msgstr "Installieren"
 
 #: minigalaxy/ui/gametile.py:493
-msgid "installing.."
-msgstr "Wird installiert..."
+msgid "installing…"
+msgstr "Wird installiert…"
 
 #: minigalaxy/ui/gametile.py:507 minigalaxy/ui/gametile.py:538
 msgid "play"
 msgstr "Spielen"
 
 #: minigalaxy/ui/gametile.py:525
-msgid "uninstalling.."
-msgstr "Wird deinstalliert..."
+msgid "uninstalling…"
+msgstr "Wird deinstalliert…"
 
 #: minigalaxy/ui/gametile.py:547
-msgid "updating.."
-msgstr "Aktualisiere.."
+msgid "updating…"
+msgstr "Aktualisiere…"
 
 #: minigalaxy/installer.py:33
 msgid "{} could not be unzipped."

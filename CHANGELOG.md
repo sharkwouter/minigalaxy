@@ -1,4 +1,8 @@
-**1.0.0 (unreleased)**
+**1.1.0**
+- Add the following translations:
+    - Swedish (thanks to Newbytee)
+
+**1.0.0**
 - Games can now be updated (thanks to mdgomes and makson96)
 - DLC can now be installed and updated (thanks to makson96)
 - The installed filter now also shows games which are downloading (thanks to makson96)
