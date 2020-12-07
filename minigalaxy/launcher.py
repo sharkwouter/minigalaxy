@@ -51,12 +51,13 @@ def get_execute_command(game) -> list:
 
 def determine_launcher_type(files):
     launcher_type = "unknown"
-    if "unins000.exe" in files:
-        launcher_type = "windows"
-    elif "dosbox" in files and shutil.which("dosbox"):
+    lowercase_files = [file_or_dir.lower() for file_or_dir in files]
+    if "dosbox" in lowercase_files and shutil.which("dosbox"):
         launcher_type = "dosbox"
-    elif "scummvm" in files and shutil.which("scummvm"):
+    elif "scummvm" in lowercase_files and shutil.which("scummvm"):
         launcher_type = "scummvm"
+    elif "unins000.exe" in files:
+        launcher_type = "windows"
     elif "prefix" in files and shutil.which("wine"):
         launcher_type = "wine"
     elif "start.sh" in files:
