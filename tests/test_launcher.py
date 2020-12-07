@@ -41,6 +41,19 @@ class Test(TestCase):
         obs = launcher.determine_launcher_type(files)
         self.assertEqual(exp, obs)
 
+    @mock.patch('shutil.which')
+    def test6_determine_launcher_type(self, mock_shutil_which):
+        mock_shutil_which.return_value = True
+        files = ["CD", "CONFIG", "DATA", "DOS4GW.EXE", "DOSBOX", "DOSBox Configuration.lnk", "dosboxStonekeep.conf",
+                 "dosboxStonekeep_settings.conf", "dosboxStonekeep_single.conf", "EULA.txt", "GameuxInstallHelper.dll",
+                 "goggame-1207658671.dll", "goggame-1207658671.hashdb", "goggame-1207658671.ico",
+                 "goggame-1207658671.info", "gog.ico", "Launch Settings.lnk", "Launch Stonekeep.lnk", "manual.pdf",
+                 "PATCH", "prefix", "README.TXT", "SETUP.EXE", "SK.EXE", "Support.ico", "thumbnail.jpg", "unins000.dat",
+                 "unins000.exe", "unins000.msg", "webcache.zip"]
+        exp = "dosbox"
+        obs = launcher.determine_launcher_type(files)
+        self.assertEqual(exp, obs)
+
     @mock.patch('glob.glob')
     def test1_get_windows_exe_cmd(self, mock_glob):
         mock_glob.return_value = ["/test/install/dir/start.exe", "/test/install/dir/unins000.exe"]
@@ -50,10 +63,23 @@ class Test(TestCase):
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
-    def test_get_dosbox_exe_cmd(self):
+    def test1_get_dosbox_exe_cmd(self):
         files = ['thumbnail.jpg', 'docs', 'support', 'dosbox_bbb_single.conf', 'dosbox_aaa.conf', 'dosbox']
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ["dosbox", "-conf", "dosbox_aaa.conf", "-conf", "dosbox_bbb_single.conf", "-no-console", "-c", "exit"]
+        obs = launcher.get_dosbox_exe_cmd(game, files)
+        self.assertEqual(exp, obs)
+
+    def test2_get_dosbox_exe_cmd(self):
+        files = ["CD", "CONFIG", "DATA", "DOS4GW.EXE", "DOSBOX", "DOSBox Configuration.lnk", "dosboxStonekeep.conf",
+                 "dosboxStonekeep_settings.conf", "dosboxStonekeep_single.conf", "EULA.txt", "GameuxInstallHelper.dll",
+                 "goggame-1207658671.dll", "goggame-1207658671.hashdb", "goggame-1207658671.ico",
+                 "goggame-1207658671.info", "gog.ico", "Launch Settings.lnk", "Launch Stonekeep.lnk", "manual.pdf",
+                 "PATCH", "prefix", "README.TXT", "SETUP.EXE", "SK.EXE", "Support.ico", "thumbnail.jpg", "unins000.dat",
+                 "unins000.exe", "unins000.msg", "webcache.zip"]
+        game = Game("Test Game", install_dir="/test/install/dir")
+        exp = ["dosbox", "-conf", "dosboxStonekeep.conf", "-conf", "dosboxStonekeep_single.conf", "-no-console", "-c",
+               "exit"]
         obs = launcher.get_dosbox_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
