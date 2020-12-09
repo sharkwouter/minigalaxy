@@ -2,9 +2,10 @@
 Name=Minigalaxy
 GenericName=GOG client
 Comment=A simple GOG Linux client
+GenericName[ru]=Клиент GOG
+Comment[ru]=Простой клиент Linux для GOG
 Exec=minigalaxy
 Icon=io.github.sharkwouter.Minigalaxy
 Type=Application
 Keywords=galaxy;gaming;games;game;old;good;gog;
 Categories=Game;
-
