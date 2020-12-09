@@ -217,6 +217,32 @@
                 <property name="top_attach">5</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes" context="keep_window_maximized">Always keep Minigalaxy maximized</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes" context="keep_window_maximized" comments="Has to end with &quot;: &quot;">Keep window maximized: </property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">6</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSwitch" id="switch_keep_window_maximized">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">6</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>

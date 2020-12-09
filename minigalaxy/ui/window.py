@@ -41,6 +41,8 @@ class Window(Gtk.ApplicationWindow):
         self.set_default_icon_list([icon])
 
         # Show the window
+        if Config.get("keep_window_maximized"):
+            self.maximize()
         self.show_all()
 
         # Create the thumbnails directory
