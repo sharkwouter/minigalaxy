@@ -310,7 +310,7 @@ class GameTile(Gtk.Box):
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
     def __check_for_update_dlc(self):
-        if self.game.installed_version and self.game.id and not self.offline:
+        if self.game.is_installed() and self.game.id and not self.offline:
             game_version = self.api.get_version(self.game)
             update_available = self.game.is_update_available(game_version)
             if update_available:
@@ -434,7 +434,7 @@ class GameTile(Gtk.Box):
                               self.state.UPDATING, self.state.DOWNLOADING]
         if self.current_state in dont_act_in_states:
             return
-        if self.game.install_dir and os.path.exists(self.game.install_dir):
+        if self.game.is_installed():
             self.update_to_state(self.state.INSTALLED)
             check_update_thread = threading.Thread(target=self.__check_for_update_dlc())
             check_update_thread.start()
