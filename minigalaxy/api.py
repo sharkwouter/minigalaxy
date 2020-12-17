@@ -125,15 +125,15 @@ class Api:
         return self.redirect_uri
 
     # Get Extrainfo about a game
-    def get_info(self, game: Game) -> tuple:
+    def get_info(self, game: Game) -> dict:
         request_url = "https://api.gog.com/products/{}?expand=downloads,expanded_dlcs,description,screenshots,videos," \
                       "related_products,changelog ".format(str(game.id))
         response = self.__request(request_url)
         return response
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game, operating_system="linux", dlc=False, dlc_installers="") -> tuple:
-        if dlc:
+    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> tuple:
+        if dlc_installers:
             installers = dlc_installers
         else:
             response = self.get_info(game)
@@ -172,6 +172,23 @@ class Api:
             Config.set("username", username)
         return username
 
+    def get_version(self, game: Game, dlc_name="") -> str:
+        version = "0"
+        response = self.get_info(game)
+        if dlc_name:
+            installers = {}
+            for dlc in response["expanded_dlcs"]:
+                if dlc["title"] == dlc_name:
+                    installers = dlc["downloads"]["installers"]
+                    break
+        else:
+            installers = response["downloads"]["installers"]
+        for installer in installers:
+            if installer["os"] == game.platform:
+                version = installer["version"]
+                break
+        return version
+
     def can_connect(self) -> bool:
         url = "https://embed.gog.com"
         try:
@@ -181,7 +198,7 @@ class Api:
         return True
 
     # Make a request with the active token
-    def __request(self, url: str = None, params: dict = None) -> tuple:
+    def __request(self, url: str = None, params: dict = None) -> dict:
         # Refresh the token if needed
         if self.active_token_expiration_time < time.time():
             print("Refreshing token")
@@ -190,7 +207,7 @@ class Api:
 
         # Make the request
         headers = {
-            'Authorization': "Bearer " + self.active_token,
+            'Authorization': "Bearer {}".format(str(self.active_token)),
         }
         response = SESSION.get(url, headers=headers, params=params)
         if self.debug:
