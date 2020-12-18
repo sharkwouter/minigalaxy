@@ -40,13 +40,6 @@ class Preferences(Gtk.Dialog):
             _("Keep installers after downloading a game.\nInstallers are stored in: {}").format(installer_dir)
         )
 
-        # Only allow showing Windows games if wine is available
-        if not shutil.which("wine"):
-            self.switch_show_windows_games.set_sensitive(False)
-            self.switch_show_windows_games.set_tooltip_text(
-                _("Install Wine to enable this feature")
-            )
-
     def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)
         for lang in SUPPORTED_DOWNLOAD_LANGUAGES:
@@ -109,8 +102,12 @@ class Preferences(Gtk.Dialog):
         Config.set("show_fps", self.switch_show_fps.get_active())
 
         if self.switch_show_windows_games.get_active() != Config.get("show_windows_games"):
-            Config.set("show_windows_games", self.switch_show_windows_games.get_active())
-            self.parent.reset_library()
+            if self.switch_show_windows_games.get_active() and not shutil.which("wine"):
+                self.parent.show_error(_("Wine wasn't found. Showing Windows games cannot be enabled."))
+                Config.set("show_windows_games", False)
+            else:
+                Config.set("show_windows_games", self.switch_show_windows_games.get_active())
+                self.parent.reset_library()
 
         # Only change the install_dir is it was actually changed
         if self.button_file_chooser.get_filename() != Config.get("install_dir"):
@@ -118,16 +115,7 @@ class Preferences(Gtk.Dialog):
                 DownloadManager.cancel_all_downloads()
                 self.parent.reset_library()
             else:
-                dialog = Gtk.MessageDialog(
-                    parent=self,
-                    modal=True,
-                    destroy_with_parent=True,
-                    message_type=Gtk.MessageType.ERROR,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=_("{} isn't a usable path").format(self.button_file_chooser.get_filename())
-                )
-                dialog.run()
-                dialog.destroy()
+                self.parent.show_error(_("{} isn't a usable path").format(self.button_file_chooser.get_filename()))
         self.destroy()
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
