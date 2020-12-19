@@ -44,7 +44,7 @@ class Game:
         json_dict = self.load_minigalaxy_info_json()
         if dlc_title:
             if "dlcs" in json_dict:
-                if dlc_title in json_dict["dlc"]:
+                if dlc_title in json_dict["dlcs"]:
                     if "version" in json_dict["dlcs"][dlc_title]:
                         installed = True
         else:
@@ -63,7 +63,7 @@ class Game:
         json_dict = self.load_minigalaxy_info_json()
         if dlc_title:
             if "dlcs" in json_dict:
-                if dlc_title in json_dict["dlc"]:
+                if dlc_title in json_dict["dlcs"]:
                     if "version" in json_dict["dlcs"][dlc_title]:
                         installed_version = json_dict["dlcs"][dlc_title]["version"]
         else:
