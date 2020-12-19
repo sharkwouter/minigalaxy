@@ -289,7 +289,7 @@ class GameTile(Gtk.Box):
         if not err_msg:
             GLib.idle_add(self.update_to_state, success_state)
             install_success = True
-            self.game.set_status("version", self.api.get_version(dlc_title), dlc_title)
+            self.game.set_status("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title=dlc_title)
         else:
             self.parent.parent.show_error(_("Failed to install {}").format(self.game.name), err_msg)
             GLib.idle_add(self.update_to_state, failed_state)
@@ -311,11 +311,12 @@ class GameTile(Gtk.Box):
 
     def __check_for_update_dlc(self):
         if self.game.is_installed() and self.game.id and not self.offline:
-            game_version = self.api.get_version(self.game)
+            game_info = self.api.get_info(self.game)
+            game_version = self.api.get_version(self.game, gameinfo=game_info)
             update_available = self.game.is_update_available(game_version)
             if update_available:
                 self.update_to_state(self.state.UPDATABLE)
-            self.__check_for_dlc()
+            self.__check_for_dlc(game_info)
         if self.offline:
             self.menu_button_dlc.hide()
 
@@ -345,8 +346,7 @@ class GameTile(Gtk.Box):
             GLib.idle_add(self.update_to_state, self.state.INSTALLED)
         self.__check_for_update_dlc()
 
-    def __check_for_dlc(self):
-        game_info = self.api.get_info(self.game)
+    def __check_for_dlc(self, game_info):
         dlcs = game_info["expanded_dlcs"]
         for dlc in dlcs:
             if dlc["is_installable"] and dlc["id"] in self.parent.owned_products_ids:

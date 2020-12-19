@@ -48,15 +48,12 @@ class Game:
                     if "version" in json_dict["dlcs"][dlc_title]:
                         installed = True
         else:
-            if "version" in json_dict:
+            if self.install_dir and os.path.exists(self.install_dir):
                 installed = True
         # Start: Code for compatibility with minigalaxy 1.0
         if dlc_title and not installed:
             status = self.legacy_get_dlc_status(dlc_title)
             installed = True if status in ["installed", "updatable"] else False
-        if not dlc_title and not installed:
-            if self.install_dir and os.path.exists(self.install_dir):
-                installed = True
         # End: Code for compatibility with minigalaxy 1.0
         return installed
 
@@ -72,16 +69,14 @@ class Game:
         else:
             if "version" in json_dict:
                 installed_version = json_dict["version"]
+            else:
+                installed_version = self.fallback_read_installed_version()
         if version_from_api != installed_version:
             update_available = True
         # Start: Code for compatibility with minigalaxy 1.0
-        if dlc_title and not update_available:
+        if dlc_title and installed_version == "0":
             status = self.legacy_get_dlc_status(dlc_title, version_from_api)
             update_available = True if status in ["updatable"] else False
-        if not dlc_title and update_available:
-            installed_version = self.legacy_read_installed_version()
-            if version_from_api == installed_version:
-                update_available = False
         # End: Code for compatibility with minigalaxy 1.0
         return update_available
 
@@ -109,11 +104,7 @@ class Game:
                     status = dlc_status_list[2]
         return status
 
-    # This function is for compatibility with minigalaxy 1.0. It can be removed, when decision to break compatibility
-    # is taken.
-    # This is not a big deal. After removal of this function all games from minigalaxy 1.0 will
-    # be marked as update available.
-    def legacy_read_installed_version(self):
+    def fallback_read_installed_version(self):
         gameinfo = os.path.join(self.install_dir, "gameinfo")
         gameinfo_list = []
         if os.path.isfile(gameinfo):
@@ -122,7 +113,7 @@ class Game:
         if len(gameinfo_list) > 1:
             version = gameinfo_list[1].strip()
         else:
-            version = ""
+            version = "0"
         return version
 
     def set_status(self, key, value, dlc_title=""):

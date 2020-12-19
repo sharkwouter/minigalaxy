@@ -172,17 +172,18 @@ class Api:
             Config.set("username", username)
         return username
 
-    def get_version(self, game: Game, dlc_name="") -> str:
+    def get_version(self, game: Game, gameinfo=None, dlc_name="") -> str:
+        if gameinfo is None:
+            gameinfo = self.get_info(game)
         version = "0"
-        response = self.get_info(game)
         if dlc_name:
             installers = {}
-            for dlc in response["expanded_dlcs"]:
+            for dlc in gameinfo["expanded_dlcs"]:
                 if dlc["title"] == dlc_name:
                     installers = dlc["downloads"]["installers"]
                     break
         else:
-            installers = response["downloads"]["installers"]
+            installers = gameinfo["downloads"]["installers"]
         for installer in installers:
             if installer["os"] == game.platform:
                 version = installer["version"]
