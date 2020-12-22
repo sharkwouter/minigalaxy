@@ -39,6 +39,7 @@ class GameTile(Gtk.Box):
     menu_button_update = Gtk.Template.Child()
     menu_button_dlc = Gtk.Template.Child()
     dlc_horizontal_box = Gtk.Template.Child()
+    menu_button_options = Gtk.Template.Child()
 
     state = Enum('state',
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
@@ -508,6 +509,7 @@ class GameTile(Gtk.Box):
             self.image.set_sensitive(True)
             self.menu_button.show()
             self.button_cancel.hide()
+            self.menu_button_options.show()
             self.game.install_dir = self.__get_install_dir()
 
             if self.game.platform == "linux":
