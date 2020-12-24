@@ -31,7 +31,7 @@ def verify_installer_integrity(game, installer):
     if not os.path.exists(installer):
         error_message = _("{} failed to download.").format(installer)
     if not error_message:
-        if game.platform == "linux":
+        if game.platform == "linux" and Config.get("OS_Version") == "linux":
             try:
                 print("Executing integrity check for {}".format(installer))
                 os.chmod(installer, 0o744)
@@ -60,7 +60,7 @@ def make_tmp_dir(game):
 def extract_installer(game, installer, temp_dir):
     # Extract the installer
     error_message = ""
-    if game.platform == "linux":
+    if game.platform == "linux" and Config.get("OS_Version") == "linux":
         command = ["unzip", "-qq", installer, "-d", temp_dir]
     else:
         # Set the prefix for Windows games
@@ -69,7 +69,7 @@ def extract_installer(game, installer, temp_dir):
             os.makedirs(prefix_dir, mode=0o755)
 
         # It's possible to set install dir as argument before installation
-        command = ["WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir)]
+        command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir)]
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     process.wait()
     stdout, stderr = process.communicate()
@@ -86,7 +86,7 @@ def extract_installer(game, installer, temp_dir):
 def move_and_overwrite(game, temp_dir, target_dir):
     # Copy the game files into the correct directory
     error_message = ""
-    if game.platform == "linux":
+    if game.platform == "linux" and Config.get("OS_Version") == "linux":
         source_dir = os.path.join(temp_dir, "data/noarch")
     else:
         source_dir = temp_dir

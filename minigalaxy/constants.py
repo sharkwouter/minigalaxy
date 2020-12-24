@@ -33,7 +33,8 @@ DEFAULT_CONFIGURATION = {
     "keep_installers": False,
     "stay_logged_in": True,
     "show_fps": False,
-    "show_windows_games": False
+    "show_windows_games": False,
+    "OS_Version": "linux"
 }
 
 # Game IDs to ignore when received by the API
