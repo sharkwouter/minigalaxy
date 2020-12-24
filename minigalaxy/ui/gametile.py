@@ -21,6 +21,7 @@ from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.paths import ICON_UPDATE_PATH
 from minigalaxy.api import NoDownloadLinkFound
+from minigalaxy.ui.os_version import OS_Version
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -114,6 +115,10 @@ class GameTile(Gtk.Box):
             install_thread = threading.Thread(target=self.__install_game)
             install_thread.start()
         elif self.current_state == self.state.DOWNLOADABLE:
+            if self.api.get_os_game(self.game) == "linux":
+                self.__show_os_version()
+            else:
+                Config.set("OS_Version", "windows")
             download_thread = threading.Thread(target=self.__download_game)
             download_thread.start()
         if err_msg:
@@ -162,6 +167,11 @@ class GameTile(Gtk.Box):
     def on_menu_button_update(self, widget):
         download_thread = threading.Thread(target=self.__download_update)
         download_thread.start()
+
+    def __show_os_version(self):
+        os_version_window = OS_Version(self)
+        os_version_window.run()
+        os_version_window.destroy()
 
     def load_thumbnail(self):
         if self.__set_image():

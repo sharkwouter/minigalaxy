@@ -132,7 +132,8 @@ class Api:
         return response
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> tuple:
+    def get_download_info(self, game: Game, dlc_installers="") -> tuple:
+        operating_system = Config.get("OS_Version")
         if dlc_installers:
             installers = dlc_installers
         else:
@@ -217,3 +218,11 @@ class Api:
             print("Response body: {}".format(response.text))
             print("")
         return response.json()
+
+    # Get os version version for which game
+    def get_os_game(self,game):
+        response = self.get_info(game)
+        installers = response["downloads"]["installers"]
+        for installer in installers:
+            game_os = installer["os"]
+        return game_os
