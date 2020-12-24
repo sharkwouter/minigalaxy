@@ -115,10 +115,7 @@ class GameTile(Gtk.Box):
             install_thread = threading.Thread(target=self.__install_game)
             install_thread.start()
         elif self.current_state == self.state.DOWNLOADABLE:
-            if self.api.get_os_game(self.game) == "linux":
-                self.__show_os_version()
-            else:
-                Config.set("OS_Version", "windows")
+            self.available_version()
             download_thread = threading.Thread(target=self.__download_game)
             download_thread.start()
         if err_msg:
@@ -172,6 +169,14 @@ class GameTile(Gtk.Box):
         os_version_window = OS_Version(self)
         os_version_window.run()
         os_version_window.destroy()
+
+    def available_version(self):
+        os_version = self.api.get_os_game(self.game)
+        if Config.get("show_windows_games") == True:
+            if os_version == "linux":
+                self.__show_os_version()
+            else:
+                Config.set("OS_Version", "windows")
 
     def load_thumbnail(self):
         if self.__set_image():
