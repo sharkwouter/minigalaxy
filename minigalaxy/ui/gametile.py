@@ -291,7 +291,7 @@ class GameTile(Gtk.Box):
             install_success = True
             self.game.set_status("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title=dlc_title)
         else:
-            self.parent.parent.show_error(_("Failed to install {}").format(self.game.name), err_msg)
+            GLib.idle_add(self.parent.parent.show_error, _("Failed to install {}").format(self.game.name), err_msg)
             GLib.idle_add(self.update_to_state, failed_state)
             install_success = False
         return install_success
