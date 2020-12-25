@@ -69,7 +69,7 @@ def extract_installer(game, installer, temp_dir):
             os.makedirs(prefix_dir, mode=0o755)
 
         # It's possible to set install dir as argument before installation
-        command = ["WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir)]
+        command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir)]
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     process.wait()
     stdout, stderr = process.communicate()
