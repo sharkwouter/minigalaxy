@@ -78,7 +78,7 @@ def get_windows_exe_cmd(game, files):
             with open(file, 'r') as info_file:
                 info = json.loads(info_file.read())
                 # if we have the workingDir property, start the executable at that directory
-                if "workingDir" in info["playTasks"][0]:
+                if "workingDir" in info["playTasks"][0] and info["playTasks"][0]["workingDir"]:
                     exe_cmd = ["wine", "start","/b","/wait","/d", info["playTasks"][0]["workingDir"], info["playTasks"][0]["path"]]
                 else:
                     exe_cmd = ["wine", info["playTasks"][0]["path"]]
