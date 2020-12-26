@@ -11,7 +11,7 @@ Standards-Version: 4.5.0
 Rules-Requires-Root: no
 Vcs-Git: https://github.com/sharkwouter/minigalaxy.git
 Vcs-Browser: https://github.com/sharkwouter/minigalaxy
-Homepage: https://github.com/sharkwouter/minigalaxy
+Homepage: https://sharkwouter.github.io/minigalaxy/
 
 Package: minigalaxy
 Architecture: all
