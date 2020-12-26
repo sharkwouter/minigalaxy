@@ -145,7 +145,7 @@ class Api:
                 possible_downloads.append(installer)
         if not possible_downloads:
             if operating_system == "linux":
-                return self.get_download_info(game, "windows")
+                return self.get_download_info(game)
             else:
                 raise NoDownloadLinkFound("Error: {} with id {} couldn't be installed".format(game.name, game.id))
 

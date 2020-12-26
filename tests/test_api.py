@@ -8,6 +8,7 @@ m_config = MagicMock()
 sys.modules['minigalaxy.constants'] = m_constants
 sys.modules['minigalaxy.config'] = m_config
 from minigalaxy.api import Api
+from minigalaxy.game import Game
 
 API_GET_INFO_TOONSTRUCK = {'downloads': {'installers': [{'id': 'installer_windows_en', 'name': 'Toonstruck', 'os': 'windows', 'language': 'en', 'language_full': 'English', 'version': '1.0', 'total_size': 939524096, 'files': [{'id': 'en1installer0', 'size': 1048576, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer0'}, {'id': 'en1installer1', 'size': 938475520, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer1'}]},
                                     {'id': 'installer_mac_en', 'name': 'Toonstruck', 'os': 'mac', 'language': 'en', 'language_full': 'English', 'version': 'gog-3', 'total_size': 975175680, 'files': [{'id': 'en2installer0', 'size': 975175680, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en2installer0'}]},
@@ -50,7 +51,8 @@ class TestApi(TestCase):
         api.get_info.return_value = API_GET_INFO_TOONSTRUCK
         m_config.Config.get.return_value = "pl"
         exp = {'id': 'installer_linux_en', 'name': 'Toonstruck', 'os': 'linux', 'language': 'en', 'language_full': 'English', 'version': 'gog-2', 'total_size': 963641344, 'files': [{'id': 'en3installer0', 'size': 963641344, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en3installer0'}]}
-        obs = api.get_download_info("Test Game")
+        test_game = Game("Test Game")
+        obs = api.get_download_info(test_game)
         self.assertEqual(exp, obs)
 
     def test2_get_download_info(self):
@@ -59,7 +61,8 @@ class TestApi(TestCase):
         api.get_info.return_value = API_GET_INFO_TOONSTRUCK
         m_config.Config.get.return_value = "fr"
         exp = {'id': 'installer_linux_fr', 'name': 'Toonstruck', 'os': 'linux', 'language': 'fr', 'language_full': 'français', 'version': 'gog-2', 'total_size': 1011875840, 'files': [{'id': 'fr3installer0', 'size': 1011875840, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr3installer0'}]}
-        obs = api.get_download_info("Test Game")
+        test_game = Game("Test Game")
+        obs = api.get_download_info(test_game)
         self.assertEqual(exp, obs)
     
     def test3_get_download_info(self):
@@ -69,15 +72,16 @@ class TestApi(TestCase):
                                     {'id': 'installer_mac_en', 'name': 'Toonstruck', 'os': 'mac', 'language': 'en', 'language_full': 'English', 'version': 'gog-3', 'total_size': 975175680, 'files': [{'id': 'en2installer0', 'size': 975175680, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en2installer0'}]},
                                     {'id': 'installer_windows_fr', 'name': 'Toonstruck', 'os': 'windows', 'language': 'fr', 'language_full': 'français', 'version': '1.0', 'total_size': 985661440, 'files': [{'id': 'fr1installer0', 'size': 1048576, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr1installer0'}, {'id': 'fr1installer1', 'size': 984612864, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr1installer1'}]},
                                     {'id': 'installer_mac_fr', 'name': 'Toonstruck', 'os': 'mac', 'language': 'fr', 'language_full': 'français', 'version': 'gog-3', 'total_size': 1023410176, 'files': [{'id': 'fr2installer0', 'size': 1023410176, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr2installer0'}]}]}}
-        m_config.Config.get.return_value = "en"
+        m_config.Config.get.side_effect = ["linux", "en"]
         exp = {'id': 'installer_windows_en', 'name': 'Toonstruck', 'os': 'windows', 'language': 'en', 'language_full': 'English', 'version': '1.0', 'total_size': 939524096, 'files': [{'id': 'en1installer0', 'size': 1048576, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer0'}, {'id': 'en1installer1', 'size': 938475520, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer1'}]}
-        obs = api.get_download_info("Test Game")
+        test_game = Game("Test Game")
+        obs = api.get_download_info(test_game)
         self.assertEqual(exp, obs)
 
     def test4_get_download_info(self):
         api = Api()
         dlc_test_installer = API_GET_INFO_TOONSTRUCK["downloads"]["installers"]
-        m_config.Config.get.return_value = "en"
+        m_config.Config.get.side_effect = ["linux", "en"]
         exp = {'id': 'installer_linux_en', 'name': 'Toonstruck', 'os': 'linux', 'language': 'en', 'language_full': 'English', 'version': 'gog-2', 'total_size': 963641344, 'files': [{'id': 'en3installer0', 'size': 963641344, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en3installer0'}]}
         obs = api.get_download_info("Test Game", dlc_installers=dlc_test_installer)
         self.assertEqual(exp, obs)
