@@ -1,18 +1,19 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: minigalaxy
+Upstream-Contact: Wouter Wijsman <wwijsman@live.nl>
 Source: https://github.com/sharkwouter/minigalaxy
 
 Files: *
-Copyright: 2019 Wouter Wijsman <wwijsman@live.nl>
+Copyright: 2019-2020 Wouter Wijsman <wwijsman@live.nl>
 License: GPL-3+
 
-Files: data/minigalaxy.png
+Files: data/icons/*
 Copyright: 2014 Epic Runes <https://opengameart.org/users/epic-runes>
 License: CC-BY-3.0
 
-Files: data/minigalaxy.metainfo.xml
- data/minigalaxy.desktop
-Copyright: 2019 Wouter Wijsman <wwijsman@live.nl
+Files: data/io.github.sharkwouter.Minigalaxy.metainfo.xml
+       data/io.github.sharkwouter.Minigalaxy.desktop
+Copyright: 2019-2020 Wouter Wijsman <wwijsman@live.nl
 License: CC0-1.0
 
 License: GPL-3+
