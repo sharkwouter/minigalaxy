@@ -131,6 +131,7 @@ On other distributions Minigalaxy can be downloaded and started with the followi
 <pre>
 git clone https://github.com/sharkwouter/minigalaxy.git
 cd minigalaxy
+scripts/compile-translations.sh
 bin/minigalaxy
 </pre>
 
