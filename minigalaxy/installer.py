@@ -1,10 +1,12 @@
 import os
 import shutil
 import subprocess
+import time
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
-
+from minigalaxy.download import Download
+from minigalaxy.download_manager import DownloadManager
 
 def install_game(game, installer):
     error_message = ""
@@ -69,12 +71,17 @@ def extract_installer(game, installer, temp_dir):
             os.makedirs(prefix_dir, mode=0o755)
 
         # It's possible to set install dir as argument before installation
-        command = ["WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir)]
+        command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir)]
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     process.wait()
     stdout, stderr = process.communicate()
     stdout = stdout.decode("utf-8")
     stderr = stderr.decode("utf-8")
+
+    # I don't find a better place :/
+    if Config.get("OS_Version") == "windows":
+        install_dxvk(game)
+
     if (process.returncode not in [0, 1]) or \
        (process.returncode in [1] and "(attempting to process anyway)" not in stderr):
         error_message = _("The installation of {} failed. Please try again.").format(installer)
@@ -139,3 +146,34 @@ def remove_installer(installer):
 
 def uninstall_game(game):
     shutil.rmtree(game.install_dir, ignore_errors=True)
+
+# For each installation of Windows game, download the latest version fo DXVK and install it.
+def install_dxvk(game):
+    ## Better approach possible with request and regex - Not so familiar :/
+    curl_command = 'curl -s https://github.com/doitsujin/dxvk/releases/latest 2>&1 | grep -Po [0-9]+\.[0-9]+\.[0-9]+'
+    version = subprocess.check_output(curl_command, shell=True)
+    version = version.decode("utf-8").strip()
+
+    prefix_dir = os.path.join(game.install_dir, "prefix")
+    dxvk_dir = os.path.join(CACHE_DIR, "DXVK")
+    dxvk_path = os.path.join(dxvk_dir, 'dxvk-{}.tar.gz'.format(version))
+
+    link = 'https://github.com/doitsujin/dxvk/releases/download/v{}/dxvk-{}.tar.gz'.format(version, version)
+    dxvk_script = os.path.join(dxvk_dir, "dxvk-{}".format(version))
+
+    if not os.path.exists(dxvk_dir):
+        os.makedirs(dxvk_dir, mode=0o755)
+
+    if not os.path.exists(dxvk_script):
+        download = Download(link, dxvk_path)
+        DownloadManager.download_now(download)
+
+        time.sleep(10) # I think there is better approach instead of this ugly thing
+
+        command = ["tar", "-xf", dxvk_path, "-C", dxvk_dir]
+        process = subprocess.Popen(command)
+        process.wait()
+
+    # Install
+    install = ["env", "WINEPREFIX={}".format(prefix_dir), "{}/setup_dxvk.sh".format(dxvk_script), "install"]
+    process = subprocess.Popen(install)
