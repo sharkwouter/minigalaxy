@@ -85,6 +85,13 @@ class Window(Gtk.ApplicationWindow):
 
         self.show_all()
 
+    @Gtk.Template.Callback("on_window_state_event")
+    def on_window_state_event(self, widget, event):
+        if event.new_window_state & Gdk.WindowState.MAXIMIZED:
+            Config.set("keep_window_maximized", True)
+        else:
+            Config.set("keep_window_maximized", False)
+
     @Gtk.Template.Callback("on_header_sync_clicked")
     def sync_library(self, _=""):
         if self.library.offline:
@@ -124,13 +131,6 @@ class Window(Gtk.ApplicationWindow):
         response = dialog.run()
         dialog.destroy()
         return response == Gtk.ResponseType.OK
-
-    def close_window(self):
-        if window.get_state() & Gdk.WindowState.MAXIMIZED != 0:
-            Config.set("keep_window_maximized", True)
-        else:
-            Config.set("keep_window_maximized", False)
-        self.destroy()
 
     """
     The API remembers the authentication token and uses it
