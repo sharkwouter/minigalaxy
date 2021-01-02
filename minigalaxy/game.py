@@ -41,12 +41,9 @@ class Game:
 
     def is_installed(self, dlc_title="") -> bool:
         installed = False
-        json_dict = self.load_minigalaxy_info_json()
         if dlc_title:
-            if "dlcs" in json_dict:
-                if dlc_title in json_dict["dlcs"]:
-                    if "version" in json_dict["dlcs"][dlc_title]:
-                        installed = True
+            dlc_version = self.get_status("version", dlc_title)
+            installed = True if dlc_version else False
         else:
             if self.install_dir and os.path.exists(self.install_dir):
                 installed = True
