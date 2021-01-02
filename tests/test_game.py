@@ -330,6 +330,17 @@ en-US
         obs = game.is_installed(dlc_title="Not Present DLC")
         self.assertEqual(exp, obs)
 
+    @unittest.mock.patch('os.path.isfile')
+    def test_get_status(self, mock_isfile):
+        mock_isfile.side_effect = [True]
+        json_content = '{"example_key": "example_value"}'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test")
+            game_get_status = game.get_status("example_key")
+        expected = "example_value"
+        observed = game_get_status
+        self.assertEqual(expected, observed)
+
 
 if __name__ == '__main__':
     unittest.main()
