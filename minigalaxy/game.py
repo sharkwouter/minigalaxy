@@ -2,6 +2,8 @@ import os
 import re
 import json
 
+from minigalaxy.config import Config
+
 
 class Game:
     def __init__(self, name: str, url: str = "", game_id: int = 0, install_dir: str = "", image_url="",
@@ -137,6 +139,11 @@ class Game:
                 if key in json_dict["dlcs"][dlc_title]:
                     value = json_dict["dlcs"][dlc_title][key]
         return value
+
+    def set_install_dir(self):
+        if not self.install_dir:
+            self.install_dir = os.path.join(Config.get("install_dir"), self.get_install_directory_name())
+            self.status_file_path = os.path.join(self.install_dir, self.status_file_name)
 
     def __str__(self):
         return self.name
