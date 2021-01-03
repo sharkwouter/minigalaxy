@@ -1,9 +1,12 @@
 import unittest
+import sys
 from unittest.mock import MagicMock, mock_open, patch
+m_config = MagicMock()
+sys.modules['minigalaxy.config'] = m_config
 from minigalaxy.game import Game
 
 
-class MyTestCase(unittest.TestCase):
+class TestGame(unittest.TestCase):
     def test_strip_within_comparison(self):
         game1 = Game("!@#$%^&*(){}[]\"'_-<>.,;:")
         game2 = Game("")
@@ -177,12 +180,12 @@ en-US
         self.assertEqual(expected, observed)
 
     @unittest.mock.patch('os.path.isfile')
-    def test1_set_status(self, mock_isfile):
+    def test1_set_info(self, mock_isfile):
         mock_isfile.return_value = True
         json_content = '{"version": "gog-2"}'
         with patch("builtins.open", mock_open(read_data=json_content)) as m:
             game = Game("Game Name test2")
-            game.set_status("version", "gog-3")
+            game.set_info("version", "gog-3")
         mock_c = m.mock_calls
         write_string = ""
         for kall in mock_c:
@@ -194,12 +197,12 @@ en-US
         self.assertEqual(expected, observed)
 
     @unittest.mock.patch('os.path.isfile')
-    def test2_set_status(self, mock_isfile):
+    def test2_set_dlc_info(self, mock_isfile):
         mock_isfile.return_value = False
         dlc_name = "Neverwinter Nights: Wyvern Crown of Cormyr"
         with patch("builtins.open", mock_open()) as m:
             game = Game("Neverwinter Nights")
-            game.set_status("version", "82.8193.20.1", dlc_title=dlc_name)
+            game.set_dlc_info("version", "82.8193.20.1", dlc_name)
         mock_c = m.mock_calls
         write_string = ""
         for kall in mock_c:
@@ -330,6 +333,44 @@ en-US
         obs = game.is_installed(dlc_title="Not Present DLC")
         self.assertEqual(exp, obs)
 
+    @unittest.mock.patch('os.path.isfile')
+    def test_get_info(self, mock_isfile):
+        mock_isfile.side_effect = [True]
+        json_content = '{"example_key": "example_value"}'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test")
+            game_get_status = game.get_info("example_key")
+        expected = "example_value"
+        observed = game_get_status
+        self.assertEqual(expected, observed)
 
-if __name__ == '__main__':
-    unittest.main()
+    @unittest.mock.patch('os.path.isfile')
+    def test_get_dlc_info(self, mock_isfile):
+        mock_isfile.side_effect = [True]
+        json_content = '{"dlcs": {"example_dlc" : {"example_key": "example_value"}}}'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test")
+            game_get_status = game.get_dlc_info("example_key", "example_dlc")
+        expected = "example_value"
+        observed = game_get_status
+        self.assertEqual(expected, observed)
+
+    def test1_set_install_dir(self):
+        m_config.Config.get.return_value = "/home/user/GOG Games"
+        game = Game("Neverwinter Nights")
+        game.set_install_dir()
+        exp = "/home/user/GOG Games/Neverwinter Nights"
+        obs = game.install_dir
+        self.assertEqual(exp, obs)
+
+    def test2_set_install_dir(self):
+        m_config.Config.get.return_value = "/home/user/GOG Games"
+        game = Game("Neverwinter Nights")
+        game.set_install_dir()
+        exp = "/home/user/GOG Games/Neverwinter Nights/minigalaxy-info.json"
+        obs = game.status_file_path
+        self.assertEqual(exp, obs)
+
+
+del sys.modules["minigalaxy.config"]
+del sys.modules["minigalaxy.game"]

@@ -2,6 +2,8 @@ import os
 import re
 import json
 
+from minigalaxy.config import Config
+
 
 class Game:
     def __init__(self, name: str, url: str = "", game_id: int = 0, install_dir: str = "", image_url="",
@@ -41,43 +43,35 @@ class Game:
 
     def is_installed(self, dlc_title="") -> bool:
         installed = False
-        json_dict = self.load_minigalaxy_info_json()
         if dlc_title:
-            if "dlcs" in json_dict:
-                if dlc_title in json_dict["dlcs"]:
-                    if "version" in json_dict["dlcs"][dlc_title]:
-                        installed = True
+            dlc_version = self.get_dlc_info("version", dlc_title)
+            installed = True if dlc_version else False
+            # Start: Code for compatibility with minigalaxy 1.0
+            if not installed:
+                status = self.legacy_get_dlc_status(dlc_title)
+                installed = True if status in ["installed", "updatable"] else False
+            # End: Code for compatibility with minigalaxy 1.0
         else:
             if self.install_dir and os.path.exists(self.install_dir):
                 installed = True
-        # Start: Code for compatibility with minigalaxy 1.0
-        if dlc_title and not installed:
-            status = self.legacy_get_dlc_status(dlc_title)
-            installed = True if status in ["installed", "updatable"] else False
-        # End: Code for compatibility with minigalaxy 1.0
         return installed
 
     def is_update_available(self, version_from_api, dlc_title="") -> bool:
         update_available = False
-        installed_version = "0"
-        json_dict = self.load_minigalaxy_info_json()
         if dlc_title:
-            if "dlcs" in json_dict:
-                if dlc_title in json_dict["dlcs"]:
-                    if "version" in json_dict["dlcs"][dlc_title]:
-                        installed_version = json_dict["dlcs"][dlc_title]["version"]
+            installed_version = self.get_dlc_info("version", dlc_title)
+            # Start: Code for compatibility with minigalaxy 1.0
+            if not installed_version:
+                status = self.legacy_get_dlc_status(dlc_title, version_from_api)
+                update_available = True if status in ["updatable"] else False
+            # End: Code for compatibility with minigalaxy 1.0
         else:
-            if "version" in json_dict:
-                installed_version = json_dict["version"]
-            else:
+            installed_version = self.get_info("version")
+            if not installed_version:
                 installed_version = self.fallback_read_installed_version()
-        if version_from_api != installed_version:
+        if installed_version and version_from_api != installed_version:
             update_available = True
-        # Start: Code for compatibility with minigalaxy 1.0
-        if dlc_title and installed_version == "0":
-            status = self.legacy_get_dlc_status(dlc_title, version_from_api)
-            update_available = True if status in ["updatable"] else False
-        # End: Code for compatibility with minigalaxy 1.0
+
         return update_available
 
     # This function is for compatibility with minigalaxy 1.0. It can be removed, when decision to break compatibility
@@ -116,17 +110,40 @@ class Game:
             version = "0"
         return version
 
-    def set_status(self, key, value, dlc_title=""):
+    def set_info(self, key, value):
         json_dict = self.load_minigalaxy_info_json()
-        if dlc_title:
-            if "dlcs" not in json_dict:
-                json_dict["dlcs"] = {}
-            if dlc_title not in json_dict["dlcs"]:
-                json_dict["dlcs"][dlc_title] = {}
-            json_dict["dlcs"][dlc_title][key] = value
-        else:
-            json_dict[key] = value
+        json_dict[key] = value
         self.save_minigalaxy_info_json(json_dict)
+
+    def set_dlc_info(self, key, value, dlc_title):
+        json_dict = self.load_minigalaxy_info_json()
+        if "dlcs" not in json_dict:
+            json_dict["dlcs"] = {}
+        if dlc_title not in json_dict["dlcs"]:
+            json_dict["dlcs"][dlc_title] = {}
+        json_dict["dlcs"][dlc_title][key] = value
+        self.save_minigalaxy_info_json(json_dict)
+
+    def get_info(self, key):
+        value = ""
+        json_dict = self.load_minigalaxy_info_json()
+        if key in json_dict:
+            value = json_dict[key]
+        return value
+
+    def get_dlc_info(self, key, dlc_title):
+        value = ""
+        json_dict = self.load_minigalaxy_info_json()
+        if "dlcs" in json_dict:
+            if dlc_title in json_dict["dlcs"]:
+                if key in json_dict["dlcs"][dlc_title]:
+                    value = json_dict["dlcs"][dlc_title][key]
+        return value
+
+    def set_install_dir(self):
+        if not self.install_dir:
+            self.install_dir = os.path.join(Config.get("install_dir"), self.get_install_directory_name())
+            self.status_file_path = os.path.join(self.install_dir, self.status_file_name)
 
     def __str__(self):
         return self.name

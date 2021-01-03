@@ -142,7 +142,7 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_open_clicked")
     def on_menu_button_open_files(self, widget):
-        self.__set_install_dir()
+        self.game.set_install_dir()
         subprocess.call(["xdg-open", self.game.install_dir])
 
     @Gtk.Template.Callback("on_menu_button_support_clicked")
@@ -179,7 +179,7 @@ class GameTile(Gtk.Box):
         return True
 
     def __set_image(self):
-        self.__set_install_dir()
+        self.game.set_install_dir()
         thumbnail_install_dir = os.path.join(self.game.install_dir, "thumbnail.jpg")
         thumbnail_cache_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
         if os.path.isfile(thumbnail_install_dir):
@@ -267,7 +267,7 @@ class GameTile(Gtk.Box):
         return download_success
 
     def __install_game(self):
-        self.__set_install_dir()
+        self.game.set_install_dir()
         install_success = self.__install()
         if install_success:
             self.__check_for_dlc(self.api.get_info(self.game))
@@ -291,7 +291,10 @@ class GameTile(Gtk.Box):
         if not err_msg:
             GLib.idle_add(self.update_to_state, success_state)
             install_success = True
-            self.game.set_status("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title=dlc_title)
+            if dlc_title:
+                self.game.set_dlc_info("version", self.api.get_version(self.game, dlc_title=dlc_title), dlc_title)
+            else:
+                self.game.set_info("version", self.api.get_version(self.game))
         else:
             GLib.idle_add(self.parent.parent.show_error, _("Failed to install {}").format(self.game.name), err_msg)
             GLib.idle_add(self.update_to_state, failed_state)
@@ -425,13 +428,8 @@ class GameTile(Gtk.Box):
         self.set_center_widget(self.progress_bar)
         self.progress_bar.set_fraction(0.0)
 
-    def __set_install_dir(self):
-        if not self.game.install_dir:
-            self.game.install_dir = os.path.join(Config.get("install_dir"), self.game.get_install_directory_name())
-            self.game.status_file_path = os.path.join(self.game.install_dir, self.game.status_file_name)
-
     def reload_state(self):
-        self.__set_install_dir()
+        self.game.set_install_dir()
         dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING,
                               self.state.UPDATING, self.state.DOWNLOADING]
         if self.current_state in dont_act_in_states:
@@ -496,7 +494,7 @@ class GameTile(Gtk.Box):
             self.menu_button.hide()
             self.button_cancel.hide()
 
-            self.__set_install_dir()
+            self.game.set_install_dir()
 
             if self.progress_bar:
                 self.progress_bar.destroy()
@@ -510,7 +508,7 @@ class GameTile(Gtk.Box):
             self.image.set_sensitive(True)
             self.menu_button.show()
             self.button_cancel.hide()
-            self.__set_install_dir()
+            self.game.set_install_dir()
 
             if self.game.platform == "linux":
                 self.menu_button_settings.hide()
