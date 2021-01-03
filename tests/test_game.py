@@ -177,12 +177,12 @@ en-US
         self.assertEqual(expected, observed)
 
     @unittest.mock.patch('os.path.isfile')
-    def test1_set_status(self, mock_isfile):
+    def test1_set_info(self, mock_isfile):
         mock_isfile.return_value = True
         json_content = '{"version": "gog-2"}'
         with patch("builtins.open", mock_open(read_data=json_content)) as m:
             game = Game("Game Name test2")
-            game.set_status("version", "gog-3")
+            game.set_info("version", "gog-3")
         mock_c = m.mock_calls
         write_string = ""
         for kall in mock_c:
@@ -194,12 +194,12 @@ en-US
         self.assertEqual(expected, observed)
 
     @unittest.mock.patch('os.path.isfile')
-    def test2_set_status(self, mock_isfile):
+    def test2_set_dlc_info(self, mock_isfile):
         mock_isfile.return_value = False
         dlc_name = "Neverwinter Nights: Wyvern Crown of Cormyr"
         with patch("builtins.open", mock_open()) as m:
             game = Game("Neverwinter Nights")
-            game.set_status("version", "82.8193.20.1", dlc_title=dlc_name)
+            game.set_dlc_info("version", "82.8193.20.1", dlc_name)
         mock_c = m.mock_calls
         write_string = ""
         for kall in mock_c:
@@ -331,12 +331,23 @@ en-US
         self.assertEqual(exp, obs)
 
     @unittest.mock.patch('os.path.isfile')
-    def test_get_status(self, mock_isfile):
+    def test_get_info(self, mock_isfile):
         mock_isfile.side_effect = [True]
         json_content = '{"example_key": "example_value"}'
         with patch("builtins.open", mock_open(read_data=json_content)):
             game = Game("Game Name test")
-            game_get_status = game.get_status("example_key")
+            game_get_status = game.get_info("example_key")
+        expected = "example_value"
+        observed = game_get_status
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test_get_dlc_info(self, mock_isfile):
+        mock_isfile.side_effect = [True]
+        json_content = '{"dlcs": {"example_dlc" : {"example_key": "example_value"}}}'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test")
+            game_get_status = game.get_dlc_info("example_key", "example_dlc")
         expected = "example_value"
         observed = game_get_status
         self.assertEqual(expected, observed)
