@@ -1,9 +1,12 @@
 import unittest
+import sys
 from unittest.mock import MagicMock, mock_open, patch
+m_config = MagicMock()
+sys.modules['minigalaxy.config'] = m_config
 from minigalaxy.game import Game
 
 
-class MyTestCase(unittest.TestCase):
+class TestGame(unittest.TestCase):
     def test_strip_within_comparison(self):
         game1 = Game("!@#$%^&*(){}[]\"'_-<>.,;:")
         game2 = Game("")
@@ -352,6 +355,22 @@ en-US
         observed = game_get_status
         self.assertEqual(expected, observed)
 
+    def test1_set_install_dir(self):
+        m_config.Config.get.return_value = "/home/user/GOG Games"
+        game = Game("Neverwinter Nights")
+        game.set_install_dir()
+        exp = "/home/user/GOG Games/Neverwinter Nights"
+        obs = game.install_dir
+        self.assertEqual(exp, obs)
 
-if __name__ == '__main__':
-    unittest.main()
+    def test2_set_install_dir(self):
+        m_config.Config.get.return_value = "/home/user/GOG Games"
+        game = Game("Neverwinter Nights")
+        game.set_install_dir()
+        exp = "/home/user/GOG Games/Neverwinter Nights/minigalaxy-info.json"
+        obs = game.status_file_path
+        self.assertEqual(exp, obs)
+
+
+del sys.modules["minigalaxy.config"]
+del sys.modules["minigalaxy.game"]

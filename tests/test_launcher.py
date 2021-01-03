@@ -1,7 +1,10 @@
 import subprocess
+import sys
 from unittest import TestCase, mock
 from unittest.mock import MagicMock
 
+m_config = MagicMock()
+sys.modules['minigalaxy.config'] = m_config
 from minigalaxy import launcher
 from minigalaxy.game import Game
 
@@ -146,3 +149,7 @@ makson    1006     2  0 lis24 ?        00:00:00 /bin/sh /home/makson/.paradoxlau
         exp = ""
         obs = launcher.check_if_game_start_process_spawned_final_process(err_msg, game)
         self.assertEqual(exp, obs)
+
+
+del sys.modules["minigalaxy.config"]
+del sys.modules["minigalaxy.game"]
