@@ -27,7 +27,7 @@ class Properties(Gtk.Dialog):
     entry_properties_command = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
-        Gtk.Dialog.__init__(self, title=_("Properties"))
+        Gtk.Dialog.__init__(self, title=_("Properties of {}".format(game.name)))
         self.parent = parent
         self.game = game
         self.api = api
