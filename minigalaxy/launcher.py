@@ -70,6 +70,9 @@ def get_windows_exe_cmd(game, files):
     exe_cmd = [""]
     prefix = os.path.join(game.install_dir, "prefix")
     os.environ["WINEPREFIX"] = prefix
+    command = game.get_info("command").split(" ")
+    var = game.get_info("variable").split(" ")
+    i = 0
 
     # Find game executable file
     for file in files:
@@ -88,6 +91,18 @@ def get_windows_exe_cmd(game, files):
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
         exe_cmd = ["wine", filename]
+
+    # Check if variable environment are set.
+    # Command can be empty
+    if var[0] != "":
+        while i < len(var):
+            if i < len(var):
+                exe_cmd.insert(i, var[i])
+                i = i + 1
+            else:
+                break
+
+    exe_cmd.extend(command)
     return exe_cmd
 
 
@@ -114,8 +129,24 @@ def get_scummvm_exe_cmd(game, files):
 
 
 def get_start_script_exe_cmd(game, files):
-    return [os.path.join(game.install_dir, "start.sh")]
+    command = game.get_info("command").split(" ")
+    var = game.get_info("variable").split(" ")
+    i = 0
 
+    exec_start = [os.path.join(game.install_dir, "start.sh")]
+
+    # Check if variable environment are set.
+    # Command can be empty
+    if var[0] != "":
+        while i < len(var):
+            if i < len(var):
+                exec_start.insert(i, var[i])
+                i = i + 1
+            else:
+                break
+
+    exec_start.extend(command)
+    return exec_start
 
 def get_final_resort_exe_cmd(game, files):
     # This is the final resort, applies to FTL

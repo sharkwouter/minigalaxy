@@ -38,12 +38,18 @@ class Properties(Gtk.Dialog):
         # Disable/Enable buttons
         self.button_sensitive(game)
 
+        # Retrieve variable & command each time Properties is open
+        self.entry_properties_variable.set_text(self.game.get_info("variable"))
+        self.entry_properties_command.set_text(self.game.get_info("command"))
+
     @Gtk.Template.Callback("on_button_properties_cancel_clicked")
     def cancel_pressed(self, button):
         self.destroy()
 
     @Gtk.Template.Callback("on_button_properties_ok_clicked")
     def ok_pressed(self, button):
+        self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
+        self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.destroy()
 
     @Gtk.Template.Callback("on_button_properties_settings_clicked")
