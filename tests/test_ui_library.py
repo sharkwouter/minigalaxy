@@ -2,8 +2,6 @@ import sys
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-from minigalaxy.game import Game
-
 m_gtk = MagicMock()
 m_gi = MagicMock()
 m_window = MagicMock()
@@ -46,7 +44,7 @@ sys.modules['minigalaxy.ui.window'] = m_window
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.gametile'] = m_gametile
 sys.modules['minigalaxy.config'] = m_config
-
+from minigalaxy.game import Game
 from minigalaxy.ui.library import Library
 
 SELF_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath A Steel Sky": "1207658695",
@@ -140,4 +138,5 @@ del sys.modules['gi.repository']
 del sys.modules['minigalaxy.ui.window']
 del sys.modules['minigalaxy.ui.preferences']
 del sys.modules['minigalaxy.ui.gametile']
-del sys.modules['minigalaxy.config']
+del sys.modules["minigalaxy.config"]
+del sys.modules["minigalaxy.game"]

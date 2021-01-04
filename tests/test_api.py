@@ -116,3 +116,4 @@ class TestApi(TestCase):
 
 del sys.modules['minigalaxy.constants']
 del sys.modules['minigalaxy.config']
+del sys.modules["minigalaxy.game"]

@@ -21,6 +21,8 @@ def install_game(game, installer):
         error_message = copy_thumbnail(game)
     if not error_message:
         error_message = remove_installer(installer)
+    else:
+        remove_installer(installer)
     if error_message:
         print(error_message)
     return error_message
