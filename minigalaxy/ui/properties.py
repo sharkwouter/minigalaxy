@@ -42,6 +42,9 @@ class Properties(Gtk.Dialog):
         self.entry_properties_variable.set_text(self.game.get_info("variable"))
         self.entry_properties_command.set_text(self.game.get_info("command"))
 
+        # Keep switch FPS disabled/enabled
+        self.switch_properties_show_fps.set_active(self.game.get_info("show_fps"))
+
     @Gtk.Template.Callback("on_button_properties_cancel_clicked")
     def cancel_pressed(self, button):
         self.destroy()
@@ -50,6 +53,7 @@ class Properties(Gtk.Dialog):
     def ok_pressed(self, button):
         self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
         self.game.set_info("command", str(self.entry_properties_command.get_text()))
+        self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
         self.destroy()
 
     @Gtk.Template.Callback("on_button_properties_settings_clicked")

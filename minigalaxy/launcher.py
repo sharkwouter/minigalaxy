@@ -19,7 +19,7 @@ def start_game(game):
     error_message = ""
     process = None
     if not error_message:
-        error_message = set_fps_display()
+        error_message = set_fps_display(game)
     if not error_message:
         error_message, process = run_game_subprocess(game)
     if not error_message:
@@ -161,10 +161,10 @@ def get_final_resort_exe_cmd(game, files):
     return exe_cmd
 
 
-def set_fps_display():
+def set_fps_display(game):
     error_message = ""
     # Enable FPS Counter for Nvidia or AMD (Mesa) users
-    if Config.get("show_fps"):
+    if game.get_info("show_fps"):
         os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users + OpenGL/Vulkan games
         os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users + OpenGL games
         os.environ["VK_INSTANCE_LAYERS"] = "VK_LAYER_MESA_overlay"  # For AMDGPU users + Vulkan games
