@@ -70,11 +70,11 @@ def get_exe_cmd_with_var_command(game, exe_cmd):
     command_list = game.get_info("command").split()
     var_list = game.get_info("variable").split()
 
-    if not(var_list) or var_list[0] == "env":
-        exe_cmd = var_list + exe_cmd + command_list
-    else:
-        var_list.insert(0, "env")
-        exe_cmd = var_list + exe_cmd + command_list
+    if var_list:
+        if var_list[0] not in ["env"]:
+            var_list.insert(0, "env")
+
+    exe_cmd = var_list + exe_cmd + command_list
     return exe_cmd
 
 def get_windows_exe_cmd(game, files):
