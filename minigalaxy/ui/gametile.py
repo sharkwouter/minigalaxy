@@ -320,10 +320,10 @@ class GameTile(Gtk.Box):
             game_version = self.api.get_version(self.game, gameinfo=game_info)
             update_available = self.game.is_update_available(game_version)
             if update_available:
-                self.update_to_state(self.state.UPDATABLE)
+                GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
             self.__check_for_dlc(game_info)
         if self.offline:
-            self.menu_button_dlc.hide()
+            GLib.idle_add(self.menu_button_dlc.hide)
 
     def __update(self):
         install_success = self.__install(update=True)
@@ -358,11 +358,11 @@ class GameTile(Gtk.Box):
                 d_installer = dlc["downloads"]["installers"]
                 d_icon = dlc["images"]["sidebarIcon"]
                 d_name = dlc["title"]
-                self.update_gtk_box_for_dlc(d_icon, d_name, d_installer)
+                GLib.idle_add(self.update_gtk_box_for_dlc, d_icon, d_name, d_installer)
                 if dlc not in self.game.dlcs:
                     self.game.dlcs.append(dlc)
         if self.game.dlcs:
-            self.menu_button_dlc.show()
+            GLib.idle_add(self.menu_button_dlc.show)
 
     def update_gtk_box_for_dlc(self, icon, title, installer):
         if title not in self.dlc_dict:
@@ -436,7 +436,7 @@ class GameTile(Gtk.Box):
             return
         if self.game.is_installed():
             self.update_to_state(self.state.INSTALLED)
-            check_update_thread = threading.Thread(target=self.__check_for_update_dlc())
+            check_update_thread = threading.Thread(target=self.__check_for_update_dlc)
             check_update_thread.start()
         elif self.get_keep_executable_path():
             self.update_to_state(self.state.INSTALLABLE)
