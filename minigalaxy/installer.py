@@ -53,8 +53,6 @@ def make_tmp_dir(game):
     error_message = ""
     extract_dir = os.path.join(CACHE_DIR, "extract")
     temp_dir = os.path.join(extract_dir, str(game.id))
-    if os.path.exists(extract_dir):
-        shutil.rmtree(extract_dir, ignore_errors=True)
     os.makedirs(temp_dir, mode=0o755)
     return error_message, temp_dir
 
