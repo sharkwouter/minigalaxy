@@ -51,9 +51,10 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_ok_clicked")
     def ok_pressed(self, button):
-        self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
-        self.game.set_info("command", str(self.entry_properties_command.get_text()))
-        self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
+        if self.game.is_installed():
+            self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
+            self.game.set_info("command", str(self.entry_properties_command.get_text()))
+            self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
         self.destroy()
 
     @Gtk.Template.Callback("on_button_properties_settings_clicked")
@@ -62,8 +63,14 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_open_files_clicked")
     def on_menu_button_open_files(self, widget):
-        self.game.set_install_dir()
-        subprocess.call(["xdg-open", self.game.install_dir])
+        try:
+            self.game.set_install_dir()
+            subprocess.call(["xdg-open", self.game.install_dir])
+        except:
+            self.parent.parent.show_error(
+                _("Couldn't open game's directory"),
+                _("Please check if the game is installed")
+            )
 
     @Gtk.Template.Callback("on_button_properties_support_clicked")
     def on_menu_button_support(self, widget):

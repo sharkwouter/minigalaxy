@@ -65,14 +65,17 @@ def determine_launcher_type(files):
         launcher_type = "final_resort"
     return launcher_type
 
+def get_exe_cmd_with_var_command(game, exe_cmd):
+    command_list = game.get_info("command").split()
+    var_list = game.get_info("variable").split()
+    var_list.insert(0, "env") # env must be still in the 1st place
+    exe_cmd = var_list + exe_cmd + command_list
+    return exe_cmd
 
 def get_windows_exe_cmd(game, files):
     exe_cmd = [""]
     prefix = os.path.join(game.install_dir, "prefix")
     os.environ["WINEPREFIX"] = prefix
-    command = game.get_info("command").split(" ")
-    var = game.get_info("variable").split(" ")
-    i = 0
 
     # Find game executable file
     for file in files:
@@ -92,17 +95,7 @@ def get_windows_exe_cmd(game, files):
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
         exe_cmd = ["wine", filename]
 
-    # Check if variable environment are set.
-    # Command can be empty
-    if var[0] != "":
-        while i < len(var):
-            if i < len(var):
-                exe_cmd.insert(i, var[i])
-                i = i + 1
-            else:
-                break
-
-    exe_cmd.extend(command)
+    exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
     return exe_cmd
 
 
@@ -129,23 +122,8 @@ def get_scummvm_exe_cmd(game, files):
 
 
 def get_start_script_exe_cmd(game, files):
-    command = game.get_info("command").split(" ")
-    var = game.get_info("variable").split(" ")
-    i = 0
-
     exec_start = [os.path.join(game.install_dir, "start.sh")]
-
-    # Check if variable environment are set.
-    # Command can be empty
-    if var[0] != "":
-        while i < len(var):
-            if i < len(var):
-                exec_start.insert(i, var[i])
-                i = i + 1
-            else:
-                break
-
-    exec_start.extend(command)
+    exec_start = get_exe_cmd_with_var_command(game, exec_start)
     return exec_start
 
 def get_final_resort_exe_cmd(game, files):
