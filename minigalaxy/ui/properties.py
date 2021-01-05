@@ -63,14 +63,8 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_open_files_clicked")
     def on_menu_button_open_files(self, widget):
-        try:
-            self.game.set_install_dir()
-            subprocess.call(["xdg-open", self.game.install_dir])
-        except:
-            self.parent.parent.show_error(
-                _("Couldn't open game's directory"),
-                _("Please check if the game is installed")
-            )
+        self.game.set_install_dir()
+        subprocess.call(["xdg-open", self.game.install_dir])
 
     @Gtk.Template.Callback("on_button_properties_support_clicked")
     def on_menu_button_support(self, widget):
@@ -84,7 +78,13 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_store_clicked")
     def on_menu_button_store(self, widget):
-        webbrowser.open(self.gogBaseUrl + self.game.url)
+        try:
+            webbrowser.open(self.gogBaseUrl + self.game.url)
+        except:
+            self.parent.parent.show_error(
+                _("Couldn't open store page"),
+                _("Please check your internet connection")
+            )
 
     def load_thumbnail(self):
         thumbnail_cache_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))

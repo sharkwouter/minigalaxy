@@ -46,6 +46,7 @@ def get_execute_command(game) -> list:
     else:
         # If no executable was found at all, raise an error
         raise FileNotFoundError()
+    exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
     return exe_cmd
 
 
@@ -68,8 +69,12 @@ def determine_launcher_type(files):
 def get_exe_cmd_with_var_command(game, exe_cmd):
     command_list = game.get_info("command").split()
     var_list = game.get_info("variable").split()
-    var_list.insert(0, "env") # env must be still in the 1st place
-    exe_cmd = var_list + exe_cmd + command_list
+
+    if not(var_list) or var_list[0] == "env":
+        exe_cmd = var_list + exe_cmd + command_list
+    else:
+        var_list.insert(0, "env")
+        exe_cmd = var_list + exe_cmd + command_list
     return exe_cmd
 
 def get_windows_exe_cmd(game, files):
@@ -95,7 +100,6 @@ def get_windows_exe_cmd(game, files):
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
         exe_cmd = ["wine", filename]
 
-    exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
     return exe_cmd
 
 
@@ -123,7 +127,6 @@ def get_scummvm_exe_cmd(game, files):
 
 def get_start_script_exe_cmd(game, files):
     exec_start = [os.path.join(game.install_dir, "start.sh")]
-    exec_start = get_exe_cmd_with_var_command(game, exec_start)
     return exec_start
 
 def get_final_resort_exe_cmd(game, files):
