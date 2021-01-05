@@ -5,7 +5,7 @@
   <template class="About" parent="GtkAboutDialog">
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
-    <property name="program_name">MiniGalaxy</property>
+    <property name="program_name">Minigalaxy</property>
     <property name="copyright">Copyright © 2019-2020 Wouter Wijsman</property>
     <property name="comments" translatable="yes" context="short_description" comments="A short description of what Minigalaxy is">A simple GOG client for Linux</property>
     <property name="website">https://github.com/sharkwouter/minigalaxy</property>
