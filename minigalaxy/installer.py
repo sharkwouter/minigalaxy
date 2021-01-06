@@ -19,10 +19,10 @@ def install_game(game, installer):
         error_message = move_and_overwrite(game, tmp_dir, game.install_dir)
     if not error_message:
         error_message = copy_thumbnail(game)
-
-    if not Config.get("keep_installers"):
+    if not error_message:
+        error_message = remove_installer(installer)
+    else:
         remove_installer(installer)
-
     if error_message:
         print(error_message)
     return error_message
@@ -122,8 +122,14 @@ def copy_thumbnail(game):
 
 
 def remove_installer(installer):
-    directory = os.path.dirname(installer)
-    shutil.rmtree(directory, ignore_errors=True)
+    error_message = ""
+    if not Config.get("keep_installers"):
+        installer_directory = os.path.dirname(installer)
+        if os.path.isdir(installer_directory):
+            shutil.rmtree(installer_directory, ignore_errors=True)
+        else:
+            error_message = "No installer directory is present: {}".format(installer_directory)
+    return error_message
 
 
 def uninstall_game(game):
