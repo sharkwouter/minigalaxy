@@ -123,19 +123,12 @@ def copy_thumbnail(game):
 
 def remove_installer(installer):
     error_message = ""
-    if Config.get("keep_installers"):
-        keep_dir = os.path.join(Config.get("install_dir"), "installer")
-        download_dir = os.path.join(CACHE_DIR, "download")
-        if not os.path.exists(keep_dir):
-            os.makedirs(keep_dir, mode=0o755)
-        try:
-            # It's needed for multiple files
-            for file in os.listdir(download_dir):
-                shutil.move(download_dir + '/' + file, keep_dir + '/' + file)
-        except Exception as ex:
-            print("Encountered error while copying {} to {}. Got error: {}".format(installer, keep_dir, ex))
-    elif os.path.exists(installer):
-        os.remove(installer)
+    if not Config.get("keep_installers"):
+        installer_directory = os.path.dirname(installer)
+        if os.path.isdir(installer_directory):
+            shutil.rmtree(installer_directory, ignore_errors=True)
+        else:
+            error_message = "No installer directory is present: {}".format(installer_directory)
     return error_message
 
 
