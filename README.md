@@ -39,6 +39,7 @@ Currently Minigalaxy can be displayed in the following languages:
 - Russian
 - Simplified Chinese
 - Spanish
+- Swedish
 - Taiwanese Mandarin
 - Turkish
 
@@ -153,13 +154,6 @@ Currently help is needed with the following:
 
 Feel free to join the [Minigalaxy Discord](https://discord.gg/RC4cXVD) if you would like to help out.
 
-## Known issues
-
-Expect to see the following issues:
-
-* Some games will always show there is an update available.
-* The option to open the store page for games doesn't work at the moment.
-
 ## Special thanks
 
 Special thanks goes out to all contributors:
@@ -169,6 +163,7 @@ Special thanks goes out to all contributors:
 - SvdB-nonp for multiple code contributions
 - tim77 for packaging Minigalaxy for Fedora, Flathub and multiple code contributions
 - larslindq for multiple code contributions
+- TotalCaesar659 for multiple code contributions
 - BlindJerobine for translating to German and adding the support option
 - JoshuaFern for packaging Minigalaxy for NixOS and for contributing code
 - sgn for fixing a bug
