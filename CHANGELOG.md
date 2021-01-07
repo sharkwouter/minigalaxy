@@ -1,6 +1,19 @@
-**1.1.0**
+**1.0.1**
+- Open maximized if the window was maximized when last closed (thanks to TotalCaesar659)
+- Kept installers are now stored in ~/.cache/minigalaxy/download
+- Fix about window displaying wrong version number
+- Fix show store page button not showing anymore (thanks to makson96)
+- Fix the download manager crashing when an installer has been damaged during downloading (thanks to makson96)
+- Fix games showing an update is available while the latest version is installed (thanks to makson96)
+- Fix loading the library taking a long time when many games are installed (thanks to makson96)
+- Fix Gex not launching
+
 - Add the following translations:
     - Swedish (thanks to Newbytee)
+
+- Update the following translations:
+   - Polish (thanks to ArturWroblewski)
+   - Russian (thanks to TotalCaesar659)
 
 **1.0.0**
 - Games can now be updated (thanks to mdgomes and makson96)
