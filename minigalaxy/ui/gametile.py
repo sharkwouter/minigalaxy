@@ -368,7 +368,7 @@ class GameTile(Gtk.Box):
         if title not in self.dlc_dict:
             dlc_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             image = Gtk.Image()
-            image.set_from_icon_name("gtk-cdrom", 1)
+            image.set_from_icon_name("media-optical-symbolic.symbolic", 1)
             dlc_box.pack_start(image, False, True, 0)
             label = Gtk.Label(label=title, xalign=0)
             dlc_box.pack_start(label, True, True, 0)
@@ -381,13 +381,13 @@ class GameTile(Gtk.Box):
             self.get_async_image_dlc_icon(icon, title)
         download_info = self.api.get_download_info(self.game, dlc_installers=installer)
         if self.game.is_installed(dlc_title=title):
-            icon_name = "gtk-ok"
+            icon_name = "emblem-default-symbolic.symbolic"
             self.dlc_dict[title][0].set_sensitive(False)
         elif self.game.is_update_available(version_from_api=download_info["version"], dlc_title=title):
             icon_name = ICON_UPDATE_PATH
             self.dlc_dict[title][0].set_sensitive(True)
         else:
-            icon_name = "gtk-goto-bottom"
+            icon_name = "go-bottom-symbolic.symbolic"
             self.dlc_dict[title][0].set_sensitive(True)
         install_button_image = Gtk.Image()
         if icon_name in [ICON_UPDATE_PATH]:
