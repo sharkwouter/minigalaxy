@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface domain="minigalaxy">
   <requires lib="gtk+" version="3.20"/>
   <template class="About" parent="GtkAboutDialog">
@@ -15,6 +15,7 @@
 &lt;a href="https://github.com/Odelpasso"&gt;Maxime Lombard&lt;/a&gt;
 &lt;a href="https://github.com/SvdB-nonp"&gt;SvdB-nonp&lt;/a&gt;
 &lt;a href="https://github.com/larslindq"&gt;Lars Lindqvist&lt;/a&gt;
+&lt;a href="https://github.com/TotalCaesar659"&gt;TotalCaesar659&lt;/a&gt;
 &lt;a href="https://github.com/tim77"&gt;Artem Polishchuk&lt;/a&gt;
 &lt;a href="https://github.com/BlindJerobine"&gt;BlindJerobine&lt;/a&gt;
 &lt;a href="https://github.com/JoshuaFern"&gt;Joshua Fern&lt;/a&gt;
@@ -30,7 +31,8 @@
 &lt;a href="https://github.com/thomasb22"&gt;thomasb22&lt;/a&gt;
 &lt;a href="https://github.com/tim77"&gt;Artem Polishchuk&lt;/a&gt;
 &lt;a href="https://github.com/dummyx"&gt;dummyx&lt;/a&gt;
-&lt;a href="https://github.com/juanborda"&gt;JB&lt;/a&gt;</property>
+&lt;a href="https://github.com/juanborda"&gt;JB&lt;/a&gt;
+&lt;a href="https://github.com/Newbytee"&gt;Newbytee&lt;/a&gt;</property>
     <property name="artists">&lt;a href="https://opengameart.org/users/epic-runes"&gt;Epic Runes&lt;/a&gt;</property>
     <property name="logo_icon_name">image-missing</property>
     <property name="license_type">gpl-3-0</property>
