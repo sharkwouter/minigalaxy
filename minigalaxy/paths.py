@@ -28,6 +28,22 @@ ICON_UPDATE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/upda
 if not os.path.exists(ICON_UPDATE_PATH):
     ICON_UPDATE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/update_available.png"))
 
+ICON_CANCEL_PATH_SVG = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/process-stop.svg"))
+if not os.path.exists(ICON_CANCEL_PATH_SVG):
+    ICON_CANCEL_PATH_SVG = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/process-stop.svg"))
+
+ICON_OK_PATH_SVG = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/dialog-apply.svg"))
+if not os.path.exists(ICON_OK_PATH_SVG):
+    ICON_OK_PATH_SVG = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/dialog-apply.svg"))
+
+ICON_DOWNLOAD_PATH_SVG = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/go-bottom.svg"))
+if not os.path.exists(ICON_DOWNLOAD_PATH_SVG):
+    ICON_DOWNLOAD_PATH_SVG = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/go-bottom.svg"))
+
+ICON_CDROM_PATH_SVG = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/media-optical.svg"))
+if not os.path.exists(ICON_CDROM_PATH_SVG):
+    ICON_CDROM_PATH_SVG = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/media-optical.svg"))
+
 LOCALE_DIR = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/mo"))
 if not os.path.exists(LOCALE_DIR):
     LOCALE_DIR = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/translations"))

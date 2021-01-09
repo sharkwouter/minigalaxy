@@ -8,7 +8,6 @@ import threading
 import subprocess
 import re
 import urllib.parse
-from gi.repository.GdkPixbuf import Pixbuf
 from enum import Enum
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
@@ -20,6 +19,10 @@ from minigalaxy.installer import uninstall_game, install_game
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.paths import ICON_UPDATE_PATH
+from minigalaxy.paths import ICON_CANCEL_PATH_SVG
+from minigalaxy.paths import ICON_OK_PATH_SVG
+from minigalaxy.paths import ICON_DOWNLOAD_PATH_SVG
+from minigalaxy.paths import ICON_CDROM_PATH_SVG
 from minigalaxy.api import NoDownloadLinkFound
 
 
@@ -35,6 +38,7 @@ class GameTile(Gtk.Box):
     menu_button_settings = Gtk.Template.Child()
     wine_icon = Gtk.Template.Child()
     update_icon = Gtk.Template.Child()
+    cancel_icon = Gtk.Template.Child()
     menu_button_store = Gtk.Template.Child()
     menu_button_update = Gtk.Template.Child()
     menu_button_dlc = Gtk.Template.Child()
@@ -85,6 +89,10 @@ class GameTile(Gtk.Box):
 
         if not self.game.url:
             self.menu_button_store.hide()
+
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(ICON_CANCEL_PATH_SVG, -1, 22, True)
+        self.cancel_icon.set_from_pixbuf(pixbuf)
+        self.button_cancel.set_image(self.cancel_icon)
 
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):
@@ -368,7 +376,8 @@ class GameTile(Gtk.Box):
         if title not in self.dlc_dict:
             dlc_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             image = Gtk.Image()
-            image.set_from_icon_name("media-optical-symbolic.symbolic", 1)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(ICON_CDROM_PATH_SVG, -1, 22, True)
+            image.set_from_pixbuf(pixbuf)
             dlc_box.pack_start(image, False, True, 0)
             label = Gtk.Label(label=title, xalign=0)
             dlc_box.pack_start(label, True, True, 0)
@@ -381,19 +390,20 @@ class GameTile(Gtk.Box):
             self.get_async_image_dlc_icon(icon, title)
         download_info = self.api.get_download_info(self.game, dlc_installers=installer)
         if self.game.is_installed(dlc_title=title):
-            icon_name = "emblem-default-symbolic.symbolic"
+            icon_name = ICON_OK_PATH_SVG
             self.dlc_dict[title][0].set_sensitive(False)
         elif self.game.is_update_available(version_from_api=download_info["version"], dlc_title=title):
             icon_name = ICON_UPDATE_PATH
             self.dlc_dict[title][0].set_sensitive(True)
         else:
-            icon_name = "go-bottom-symbolic.symbolic"
+            icon_name = ICON_DOWNLOAD_PATH_SVG
             self.dlc_dict[title][0].set_sensitive(True)
         install_button_image = Gtk.Image()
         if icon_name in [ICON_UPDATE_PATH]:
             install_button_image.set_from_file(ICON_UPDATE_PATH)
         else:
-            install_button_image.set_from_icon_name(icon_name, 1)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(icon_name, -1, 22, True)
+            install_button_image.set_from_pixbuf(pixbuf)
         self.dlc_dict[title][0].set_image(install_button_image)
 
     def get_async_image_dlc_icon(self, icon, title):
@@ -404,7 +414,7 @@ class GameTile(Gtk.Box):
 
     def set_proper_dlc_icon(self, source, async_res, user_data):
         response = source.read_finish(async_res)
-        pixbuf = Pixbuf.new_from_stream(response)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_stream(response)
         self.dlc_dict[user_data][1].set_from_pixbuf(pixbuf)
 
     def set_progress(self, percentage: int):
