@@ -42,11 +42,14 @@ class Api:
         response = SESSION.get(request_url, params=params)
 
         response_params = response.json()
-        self.active_token = response_params['access_token']
-        expires_in = response_params["expires_in"]
-        self.active_token_expiration_time = time.time() + int(expires_in)
-
-        return response_params['refresh_token']
+        if "access_token" in response_params and "expires_in" in response_params and "refresh_token" in response_params:
+            self.active_token = response_params["access_token"]
+            expires_in = response_params["expires_in"]
+            self.active_token_expiration_time = time.time() + int(expires_in)
+            response_token = response_params["refresh_token"]
+        else:
+            response_token = ""
+        return response_token
 
     # Get a token based on the code returned by the login screen
     def __get_token(self, login_code: str) -> str:
