@@ -20,7 +20,6 @@ from minigalaxy.launcher import start_game, config_game
 from minigalaxy.installer import uninstall_game, install_game
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
-from minigalaxy.paths import ICON_UPDATE_PATH
 from minigalaxy.api import NoDownloadLinkFound
 
 
@@ -377,7 +376,7 @@ class GameTile(Gtk.Box):
             dlc_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             dlc_box.set_spacing(8)
             image = Gtk.Image()
-            image.set_from_icon_name("media-optical-symbolic.symbolic", 1)
+            image.set_from_icon_name("media-optical", Gtk.IconSize.BUTTON)
             dlc_box.pack_start(image, False, True, 0)
             label = Gtk.Label(label=title, xalign=0)
             dlc_box.pack_start(label, True, True, 0)
@@ -390,19 +389,16 @@ class GameTile(Gtk.Box):
             self.get_async_image_dlc_icon(icon, title)
         download_info = self.api.get_download_info(self.game, dlc_installers=installer)
         if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=title):
-            icon_name = ICON_UPDATE_PATH
+            icon_name = "emblem-synchronizing"
             self.dlc_dict[title][0].set_sensitive(True)
         elif self.game.is_installed(dlc_title=title):
-            icon_name = "emblem-default-symbolic.symbolic"
+            icon_name = "object-select"
             self.dlc_dict[title][0].set_sensitive(False)
         else:
-            icon_name = "go-bottom-symbolic.symbolic"
+            icon_name = "document-save"
             self.dlc_dict[title][0].set_sensitive(True)
         install_button_image = Gtk.Image()
-        if icon_name in [ICON_UPDATE_PATH]:
-            install_button_image.set_from_file(ICON_UPDATE_PATH)
-        else:
-            install_button_image.set_from_icon_name(icon_name, 1)
+        install_button_image.set_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
         self.dlc_dict[title][0].set_image(install_button_image)
 
     def get_async_image_dlc_icon(self, icon, title):
@@ -552,7 +548,7 @@ class GameTile(Gtk.Box):
 
         elif state == self.state.UPDATABLE:
             self.update_icon.show()
-            self.update_icon.set_from_file(ICON_UPDATE_PATH)
+            self.update_icon.set_from_icon_name("emblem-synchronizing", Gtk.IconSize.LARGE_TOOLBAR)
             self.button.set_label(_("play"))
             self.menu_button.show()
             tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")

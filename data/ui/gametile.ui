@@ -201,7 +201,7 @@
               <object class="GtkImage" id="cancel_icon">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="stock">gtk-cancel</property>
+                <property name="icon-name">process-stop</property>
               </object>
             </child>
           </object>
