@@ -163,6 +163,6 @@ class Window(Gtk.ApplicationWindow):
                 exit(0)
             if response == Gtk.ResponseType.NONE:
                 result = login.get_result()
-                authenticated = self.api.authenticate(refresh_token=token, login_code=result)
+                authenticated = self.api.authenticate(login_code=result)
 
         Config.set("refresh_token", authenticated)
