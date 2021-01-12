@@ -156,4 +156,5 @@ class Library(Gtk.Viewport):
                 self.games.append(game)
             elif self.games[self.games.index(game)].id == 0:
                 self.games[self.games.index(game)].id = game.id
+                self.games[self.games.index(game)].image_url = game.image_url
             self.games[self.games.index(game)].url = game.url
