@@ -367,6 +367,7 @@ class GameTile(Gtk.Box):
     def update_gtk_box_for_dlc(self, icon, title, installer):
         if title not in self.dlc_dict:
             dlc_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+            dlc_box.set_spacing(8)
             image = Gtk.Image()
             image.set_from_icon_name("media-optical-symbolic.symbolic", 1)
             dlc_box.pack_start(image, False, True, 0)
