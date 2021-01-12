@@ -110,14 +110,16 @@ def move_and_overwrite(game, temp_dir, target_dir):
 
 def copy_thumbnail(game):
     error_message = ""
+    new_thumbnail_path = os.path.join(game.install_dir, "thumbnail.jpg")
     # Copy thumbnail
-    try:
-        shutil.copyfile(
-                        os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
-                        os.path.join(game.install_dir, "thumbnail.jpg"),
-                        )
-    except Exception as e:
-        error_message = e
+    if not os.path.isfile(new_thumbnail_path):
+        try:
+            shutil.copyfile(
+                            os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
+                            new_thumbnail_path,
+                            )
+        except Exception as e:
+            error_message = e
     return error_message
 
 
