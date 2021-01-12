@@ -381,12 +381,12 @@ class GameTile(Gtk.Box):
             dlc_box.show_all()
             self.get_async_image_dlc_icon(icon, title)
         download_info = self.api.get_download_info(self.game, dlc_installers=installer)
-        if self.game.is_installed(dlc_title=title):
-            icon_name = "emblem-default-symbolic.symbolic"
-            self.dlc_dict[title][0].set_sensitive(False)
-        elif self.game.is_update_available(version_from_api=download_info["version"], dlc_title=title):
+        if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=title):
             icon_name = ICON_UPDATE_PATH
             self.dlc_dict[title][0].set_sensitive(True)
+        elif self.game.is_installed(dlc_title=title):
+            icon_name = "emblem-default-symbolic.symbolic"
+            self.dlc_dict[title][0].set_sensitive(False)
         else:
             icon_name = "go-bottom-symbolic.symbolic"
             self.dlc_dict[title][0].set_sensitive(True)
