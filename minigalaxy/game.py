@@ -69,7 +69,7 @@ class Game:
             installed_version = self.get_info("version")
             if not installed_version:
                 installed_version = self.fallback_read_installed_version()
-        if installed_version and version_from_api != installed_version:
+        if installed_version and version_from_api and version_from_api != installed_version:
             update_available = True
 
         return update_available
