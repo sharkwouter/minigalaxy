@@ -7,6 +7,7 @@ import webbrowser
 import threading
 import subprocess
 import re
+import time
 import urllib.parse
 from gi.repository.GdkPixbuf import Pixbuf
 from enum import Enum
@@ -72,7 +73,8 @@ class GameTile(Gtk.Box):
             os.makedirs(CACHE_DIR, mode=0o755)
 
         self.reload_state()
-        self.load_thumbnail()
+        load_thumbnail_thread = threading.Thread(target=self.load_thumbnail)
+        load_thumbnail_thread.start()
 
         # Start download if Minigalaxy was closed while downloading this game
         self.resume_download_if_expected()
@@ -165,33 +167,39 @@ class GameTile(Gtk.Box):
         download_thread.start()
 
     def load_thumbnail(self):
-        if self.__set_image():
-            return True
-        if not self.game.image_url or not self.game.id:
-            return False
+        set_result = self.__set_image()
+        if not set_result:
+            tries = 10
+            performed_try = 0
+            while performed_try < tries:
+                if self.game.image_url and self.game.id:
+                    # Download the thumbnail
+                    image_url = "https:{}_196.jpg".format(self.game.image_url)
+                    thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
 
-        # Download the thumbnail
-        image_url = "https:{}_196.jpg".format(self.game.image_url)
-        thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
-
-        download = Download(image_url, thumbnail, finish_func=self.__set_image)
-        DownloadManager.download_now(download)
-        return True
+                    download = Download(image_url, thumbnail, finish_func=self.__set_image)
+                    DownloadManager.download_now(download)
+                    set_result = True
+                    break
+                performed_try += 1
+                time.sleep(1)
+        return set_result
 
     def __set_image(self):
+        set_result = False
         self.game.set_install_dir()
         thumbnail_install_dir = os.path.join(self.game.install_dir, "thumbnail.jpg")
         thumbnail_cache_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
         if os.path.isfile(thumbnail_install_dir):
             GLib.idle_add(self.image.set_from_file, thumbnail_install_dir)
-            return True
+            set_result = True
         elif os.path.isfile(thumbnail_cache_dir):
             GLib.idle_add(self.image.set_from_file, thumbnail_cache_dir)
             # Copy image to
             if os.path.isdir(os.path.dirname(thumbnail_install_dir)):
                 shutil.copy2(thumbnail_cache_dir, thumbnail_install_dir)
-            return True
-        return False
+            set_result = True
+        return set_result
 
     def get_keep_executable_path(self):
         keep_path = ""
