@@ -7,6 +7,7 @@ import webbrowser
 import threading
 import subprocess
 import re
+import time
 import urllib.parse
 from gi.repository.GdkPixbuf import Pixbuf
 from enum import Enum
@@ -83,8 +84,8 @@ class GameTile(Gtk.Box):
             self.wine_icon.set_from_file(ICON_WINE_PATH)
             self.wine_icon.show()
 
-        if not self.game.url:
-            self.menu_button_store.hide()
+        store_button_thread = threading.Thread(target=self.__show_store_button_when_url_ready)
+        store_button_thread.start()
 
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):
@@ -428,6 +429,16 @@ class GameTile(Gtk.Box):
         self.progress_bar.set_vexpand(False)
         self.set_center_widget(self.progress_bar)
         self.progress_bar.set_fraction(0.0)
+
+    def __show_store_button_when_url_ready(self):
+        tries = 10
+        performed_try = 0
+        GLib.idle_add(self.menu_button_store.hide)
+        while performed_try < tries:
+            if self.game.url:
+                GLib.idle_add(self.menu_button_store.show)
+            performed_try += 1
+            time.sleep(1)
 
     def reload_state(self):
         self.game.set_install_dir()
