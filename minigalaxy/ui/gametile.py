@@ -437,6 +437,7 @@ class GameTile(Gtk.Box):
         while performed_try < tries:
             if self.game.url:
                 GLib.idle_add(self.menu_button_store.show)
+                break
             performed_try += 1
             time.sleep(1)
 
