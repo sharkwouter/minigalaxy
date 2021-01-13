@@ -1,3 +1,13 @@
+**1.0.2**
+- Fix updating sometimes crashing
+- Fix some games always showing an update is available
+- Fix DLC not downloading (thanks to stephanlachnit)
+- Fix DLC update option not showing up (thanks to makson96)
+- Fix show store page button not showing anymore (thanks to makson96)
+- Fix missing thumbnails not being downloaded for already installed games (thanks to makson96)
+- Fix the login screen crashing in some cases (thanks to makson96)
+- Use the system's icon theme for icons used (thanks to stephanlachnit and makson96)
+
 **1.0.1**
 - Open maximized if the window was maximized when last closed (thanks to TotalCaesar659)
 - Kept installers are now stored in ~/.cache/minigalaxy/download

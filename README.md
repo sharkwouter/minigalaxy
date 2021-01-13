@@ -166,6 +166,7 @@ Special thanks goes out to all contributors:
 - TotalCaesar659 for multiple code contributions
 - BlindJerobine for translating to German and adding the support option
 - JoshuaFern for packaging Minigalaxy for NixOS and for contributing code
+- stephanlachnit for upstreaming to Debian and multiple code contributions
 - sgn for fixing a bug
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
