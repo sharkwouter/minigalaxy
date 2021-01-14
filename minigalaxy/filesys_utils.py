@@ -30,14 +30,14 @@ def _copy_move_and_overwrite(source, target, copy_or_move=""):
             if copy_or_move == "copy":
                 shutil.copy2(file_to_copy, dst_file)
             elif copy_or_move == "move":
-                shutil.copy2(file_to_copy, dst_file)
+                shutil.move(file_to_copy, dst_file)
             else:
                 err_msg = "Unknown operation: {}".format(copy_or_move)
                 break
     return err_msg
 
 
-def check_if_accordance_with_lists(target):
+def _check_if_accordance_with_lists(target):
     err_msd = ""
     if not target:
         err_msd = "Operation on no file was requested."
@@ -59,7 +59,7 @@ def check_if_accordance_with_lists(target):
 
 
 def remove(target="", recursive=False):
-    err_msg = check_if_accordance_with_lists(target)
+    err_msg = _check_if_accordance_with_lists(target)
     if not err_msg:
         if not os.path.exists(target):
             err_msg = "No such a file or directory: {}".format(target)
@@ -80,7 +80,7 @@ def copy(source="", target="", recursive=False, overwrite=False):
     if not source:
         err_msg = "No source file or directory was given."
     if not err_msg:
-        err_msg = check_if_accordance_with_lists(target)
+        err_msg = _check_if_accordance_with_lists(target)
     if not err_msg:
         if not os.path.exists(source):
             err_msg = "No such a file or directory: {}".format(source)
