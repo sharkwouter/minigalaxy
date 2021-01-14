@@ -1,5 +1,5 @@
 **1.0.2**
-- Fix updating sometimes crashing
+- Fix updates sometimes not working
 - Fix some games always showing an update is available
 - Fix DLC not downloading (thanks to stephanlachnit)
 - Fix DLC update option not showing up (thanks to makson96)
