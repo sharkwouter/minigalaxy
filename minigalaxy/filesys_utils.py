@@ -58,6 +58,24 @@ def _check_if_accordance_with_lists(target):
     return err_msd
 
 
+def _check_if_ok_for_copy_or_move(source="", target="", recursive=False, overwrite=False):
+    err_msg = ""
+    if not source:
+        err_msg = "No source file or directory was given."
+    if not err_msg:
+        err_msg = _check_if_accordance_with_lists(target)
+    if not err_msg:
+        if not os.path.exists(source):
+            err_msg = "No such a file or directory: {}".format(source)
+        elif not os.path.isdir(os.path.dirname(target)):
+            err_msg = "Directory for target operation doesn't exists: {}".format(os.path.dirname(target))
+        elif os.path.isdir(source) and not recursive:
+            err_msg = "Non recursive requested on directory:{}".format(target)
+        elif os.path.exists(target) and not overwrite:
+            err_msg = "Non overwrite operation, but target exists:{}".format(target)
+    return err_msg
+
+
 def remove(target="", recursive=False):
     err_msg = _check_if_accordance_with_lists(target)
     if not err_msg:
@@ -76,23 +94,22 @@ def remove(target="", recursive=False):
 
 
 def copy(source="", target="", recursive=False, overwrite=False):
-    err_msg = ""
-    if not source:
-        err_msg = "No source file or directory was given."
+    err_msg = _check_if_ok_for_copy_or_move(source, target, recursive, overwrite)
     if not err_msg:
-        err_msg = _check_if_accordance_with_lists(target)
-    if not err_msg:
-        if not os.path.exists(source):
-            err_msg = "No such a file or directory: {}".format(source)
-        elif not os.path.isdir(os.path.dirname(target)):
-            err_msg = "Directory for target copy doesnt exists: {}".format(os.path.dirname(target))
-        elif os.path.isdir(source) and not recursive:
-            err_msg = "Non recursive removal requested on directory:{}".format(target)
-        elif os.path.exists(target) and not overwrite:
-            err_msg = "Non overwrite operation, but target exists:{}".format(target)
-        elif os.path.isfile(source) or os.path.islink(source):
+        if os.path.isfile(source) or os.path.islink(source):
             shutil.copy2(source, target)
         elif os.path.isdir(source):
             err_msg = _copy_move_and_overwrite(source, target, copy_or_move="copy")
     return err_msg
 
+
+def move(source="", target="", recursive=False, overwrite=False):
+    err_msg = _check_if_ok_for_copy_or_move(source, target, recursive, overwrite)
+    if not err_msg:
+        err_msg = _check_if_accordance_with_lists(source)
+    if not err_msg:
+        if os.path.isfile(source) or os.path.islink(source):
+            shutil.move(source, target)
+        elif os.path.isdir(source):
+            err_msg = _copy_move_and_overwrite(source, target, copy_or_move="move")
+    return err_msg
