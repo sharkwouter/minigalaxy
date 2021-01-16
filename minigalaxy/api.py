@@ -33,28 +33,17 @@ class Api:
 
     # Get a new token with the refresh token received when authenticating the last time
     def __refresh_token(self, refresh_token: str) -> str:
-        request_url = "https://auth.gog.com/token"
         params = {
             'client_id': self.client_id,
             'client_secret': self.client_secret,
             'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
         }
-        response = SESSION.get(request_url, params=params)
-
-        response_params = response.json()
-        if "access_token" in response_params and "expires_in" in response_params and "refresh_token" in response_params:
-            self.active_token = response_params["access_token"]
-            expires_in = response_params["expires_in"]
-            self.active_token_expiration_time = time.time() + int(expires_in)
-            response_token = response_params["refresh_token"]
-        else:
-            response_token = ""
+        response_token = self.__get_refresh_token(params)
         return response_token
 
     # Get a token based on the code returned by the login screen
     def __get_token(self, login_code: str) -> str:
-        request_url = "https://auth.gog.com/token"
         params = {
             'client_id': self.client_id,
             'client_secret': self.client_secret,
@@ -62,14 +51,21 @@ class Api:
             'code': login_code,
             'redirect_uri': self.redirect_uri,
         }
+        response_token = self.__get_refresh_token(params)
+        return response_token
+
+    def __get_refresh_token(self, params: dict) -> str:
+        request_url = "https://auth.gog.com/token"
         response = SESSION.get(request_url, params=params)
-
         response_params = response.json()
-        self.active_token = response_params['access_token']
-        expires_in = response_params["expires_in"]
-        self.active_token_expiration_time = time.time() + int(expires_in)
-
-        return response_params['refresh_token']
+        if "access_token" in response_params and "expires_in" in response_params and "refresh_token" in response_params:
+            self.active_token = response_params["access_token"]
+            expires_in = response_params["expires_in"]
+            self.active_token_expiration_time = time.time() + int(expires_in)
+            refresh_token = response_params["refresh_token"]
+        else:
+            refresh_token = ""
+        return refresh_token
 
     # Get all Linux games in the library of the user. Ignore other platforms and movies
     def get_library(self):
