@@ -1,6 +1,7 @@
 import subprocess
 import os
 import shutil
+import json
 from minigalaxy.config import Config
 from minigalaxy.paths import CONFIG_DIR, CACHE_DIR
 
@@ -112,4 +113,31 @@ def move(source="", target="", recursive=False, overwrite=False):
             shutil.move(source, target)
         elif os.path.isdir(source):
             err_msg = _copy_move_and_overwrite(source, target, copy_or_move="move")
+    return err_msg
+
+
+def write_json(json_content, json_file_path):
+    err_msg = _check_if_accordance_with_lists(json_file_path)
+    if not err_msg:
+        if not os.path.isdir(os.path.dirname(json_file_path)):
+            err_msg = "Directory for target operation doesn't exists: {}".format(os.path.dirname(json_file_path))
+        else:
+            json_file = open(json_file_path, 'w')
+            json.dump(json_content, json_file)
+            json_file.close()
+    return err_msg
+
+
+def write_file(file_content, file_path, overwrite=False, append=False):
+    err_msg = _check_if_accordance_with_lists(file_path)
+    if not err_msg:
+        if not os.path.isdir(os.path.dirname(file_path)):
+            err_msg = "Directory for target operation doesn't exists: {}".format(os.path.dirname(file_path))
+        elif not overwrite and os.path.exists(file_path):
+            err_msg = "Non overwrite operation, but target exists:{}".format(file_path)
+        else:
+            write_mode = "a" if append else "w"
+            file_to_write = open(file_path, write_mode)
+            file_to_write.write(file_content)
+            file_to_write.close()
     return err_msg
