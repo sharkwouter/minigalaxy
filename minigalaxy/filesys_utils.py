@@ -21,6 +21,8 @@ def _get_black_list():
 
 def _copy_move_and_overwrite(source, target, copy_or_move=""):
     err_msg = ""
+    source = os.path.abspath(source)
+    target = os.path.abspath(target)
     for src_dir, dirs, files in os.walk(source):
         destination_dir = src_dir.replace(source, target, 1)
         if not os.path.exists(destination_dir):
@@ -40,6 +42,7 @@ def _copy_move_and_overwrite(source, target, copy_or_move=""):
 
 def _check_if_accordance_with_lists(target):
     err_msd = ""
+    target = os.path.abspath(target)
     if not target:
         err_msd = "Operation on no file was requested."
     inside_white_list = False
@@ -61,6 +64,8 @@ def _check_if_accordance_with_lists(target):
 
 def _check_if_ok_for_copy_or_move(source="", target="", recursive=False, overwrite=False):
     err_msg = ""
+    source = os.path.abspath(source)
+    target = os.path.abspath(target)
     if not source:
         err_msg = "No source file or directory was given."
     if not err_msg:
@@ -78,6 +83,7 @@ def _check_if_ok_for_copy_or_move(source="", target="", recursive=False, overwri
 
 
 def remove(target="", recursive=False):
+    target = os.path.abspath(target)
     err_msg = _check_if_accordance_with_lists(target)
     if not err_msg:
         if not os.path.exists(target):
@@ -95,6 +101,8 @@ def remove(target="", recursive=False):
 
 
 def copy(source="", target="", recursive=False, overwrite=False):
+    source = os.path.abspath(source)
+    target = os.path.abspath(target)
     err_msg = _check_if_ok_for_copy_or_move(source, target, recursive, overwrite)
     if not err_msg:
         if os.path.isfile(source) or os.path.islink(source):
@@ -105,6 +113,8 @@ def copy(source="", target="", recursive=False, overwrite=False):
 
 
 def move(source="", target="", recursive=False, overwrite=False):
+    source = os.path.abspath(source)
+    target = os.path.abspath(target)
     err_msg = _check_if_ok_for_copy_or_move(source, target, recursive, overwrite)
     if not err_msg:
         err_msg = _check_if_accordance_with_lists(source)
@@ -117,6 +127,7 @@ def move(source="", target="", recursive=False, overwrite=False):
 
 
 def write_json(json_content, json_file_path):
+    json_file_path = os.path.abspath(json_file_path)
     err_msg = _check_if_accordance_with_lists(json_file_path)
     if not err_msg:
         if not os.path.isdir(os.path.dirname(json_file_path)):
@@ -129,6 +140,7 @@ def write_json(json_content, json_file_path):
 
 
 def write_file(file_content, file_path, overwrite=False, append=False):
+    file_path = os.path.abspath(file_path)
     err_msg = _check_if_accordance_with_lists(file_path)
     if not err_msg:
         if not os.path.isdir(os.path.dirname(file_path)):
