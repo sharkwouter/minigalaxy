@@ -46,6 +46,31 @@ class Test(TestCase):
         obs = filesys_utils._check_if_accordance_with_lists("/home/user")
         self.assertEqual(exp, obs)
 
+    @unittest.mock.patch("minigalaxy.filesys_utils._get_white_list")
+    @unittest.mock.patch("minigalaxy.filesys_utils._get_black_list")
+    def test3__check_if_accordance_with_lists(self, m_get_black_list, m_get_white_list):
+        m_get_white_list.return_value = ["/home/user/GoG Games"]
+        m_get_black_list.return_value = ["/home/user"]
+        exp = ""
+        obs = filesys_utils._check_if_accordance_with_lists("/home/user/GoG Games")
+        self.assertEqual(exp, obs)
+
+    @unittest.mock.patch("minigalaxy.filesys_utils._check_if_accordance_with_lists")
+    @unittest.mock.patch("os.path.exists")
+    @unittest.mock.patch("os.path.isdir")
+    def test1__check_if_ok_for_copy_or_move(self, m_os_path_isdir, m_os_path_exists, m_check_if_accordance_with_lists):
+        source = "/home/user/.cache/minigalaxy/game1"
+        target = "/home/user/GoG Games/game1"
+        recursive = False
+        overwrite = False
+        m_check_if_accordance_with_lists.return_value = ""
+        m_os_path_exists.side_effect = [True, False]
+        m_os_path_isdir.side_effect = [True, False]
+        exp = ""
+        obs = filesys_utils._check_if_ok_for_copy_or_move(source=source, target=target, recursive=recursive,
+                                                          overwrite=overwrite)
+        self.assertEqual(exp, obs)
+
 
 del sys.modules['minigalaxy.constants']
 del sys.modules['minigalaxy.config']
