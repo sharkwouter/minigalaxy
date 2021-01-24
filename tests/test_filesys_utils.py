@@ -3,9 +3,7 @@ import unittest
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-m_constants = MagicMock()
 m_config = MagicMock()
-sys.modules['minigalaxy.constants'] = m_constants
 sys.modules['minigalaxy.config'] = m_config
 from minigalaxy import filesys_utils
 
@@ -71,7 +69,69 @@ class Test(TestCase):
                                                           overwrite=overwrite)
         self.assertEqual(exp, obs)
 
+    @unittest.mock.patch("minigalaxy.filesys_utils._check_if_accordance_with_lists")
+    @unittest.mock.patch("os.path.exists")
+    @unittest.mock.patch("os.path.isdir")
+    def test2__check_if_ok_for_copy_or_move(self, m_os_path_isdir, m_os_path_exists, m_check_if_accordance_with_lists):
+        source = "/home/user/.cache/minigalaxy/game1"
+        target = "/home/user/GoG Games/game1"
+        recursive = False
+        overwrite = False
+        m_check_if_accordance_with_lists.return_value = ""
+        m_os_path_exists.side_effect = [False, False]
+        m_os_path_isdir.side_effect = [True, False]
+        exp = "No such a file or directory: /home/user/.cache/minigalaxy/game1"
+        obs = filesys_utils._check_if_ok_for_copy_or_move(source=source, target=target, recursive=recursive,
+                                                          overwrite=overwrite)
+        self.assertEqual(exp, obs)
 
-del sys.modules['minigalaxy.constants']
+    @unittest.mock.patch("minigalaxy.filesys_utils._check_if_accordance_with_lists")
+    @unittest.mock.patch("os.path.exists")
+    @unittest.mock.patch("os.path.isdir")
+    def test3__check_if_ok_for_copy_or_move(self, m_os_path_isdir, m_os_path_exists, m_check_if_accordance_with_lists):
+        source = "/home/user/.cache/minigalaxy/game1"
+        target = "/home/user/GoG Games/game1"
+        recursive = False
+        overwrite = False
+        m_check_if_accordance_with_lists.return_value = ""
+        m_os_path_exists.side_effect = [True, False]
+        m_os_path_isdir.side_effect = [False, False]
+        exp = "Directory for target operation doesn't exists: /home/user/GoG Games"
+        obs = filesys_utils._check_if_ok_for_copy_or_move(source=source, target=target, recursive=recursive,
+                                                          overwrite=overwrite)
+        self.assertEqual(exp, obs)
+
+    @unittest.mock.patch("minigalaxy.filesys_utils._check_if_accordance_with_lists")
+    @unittest.mock.patch("os.path.exists")
+    @unittest.mock.patch("os.path.isdir")
+    def test4__check_if_ok_for_copy_or_move(self, m_os_path_isdir, m_os_path_exists, m_check_if_accordance_with_lists):
+        source = "/home/user/.cache/minigalaxy/game1"
+        target = "/home/user/GoG Games/game1"
+        recursive = False
+        overwrite = False
+        m_check_if_accordance_with_lists.return_value = ""
+        m_os_path_exists.side_effect = [True, False]
+        m_os_path_isdir.side_effect = [True, True]
+        exp = "Non recursive requested on directory:/home/user/GoG Games/game1"
+        obs = filesys_utils._check_if_ok_for_copy_or_move(source=source, target=target, recursive=recursive,
+                                                          overwrite=overwrite)
+        self.assertEqual(exp, obs)
+
+    @unittest.mock.patch("minigalaxy.filesys_utils._check_if_accordance_with_lists")
+    @unittest.mock.patch("os.path.exists")
+    @unittest.mock.patch("os.path.isdir")
+    def test5__check_if_ok_for_copy_or_move(self, m_os_path_isdir, m_os_path_exists, m_check_if_accordance_with_lists):
+        source = "/home/user/.cache/minigalaxy/game1"
+        target = "/home/user/GoG Games/game1"
+        recursive = False
+        overwrite = False
+        m_check_if_accordance_with_lists.return_value = ""
+        m_os_path_exists.side_effect = [True, True]
+        m_os_path_isdir.side_effect = [True, False]
+        exp = "Non overwrite operation, but target exists:/home/user/GoG Games/game1"
+        obs = filesys_utils._check_if_ok_for_copy_or_move(source=source, target=target, recursive=recursive,
+                                                          overwrite=overwrite)
+        self.assertEqual(exp, obs)
+
+
 del sys.modules['minigalaxy.config']
-# del sys.modules["minigalaxy.game"]
