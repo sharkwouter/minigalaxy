@@ -5,7 +5,6 @@ import re
 import json
 import glob
 from minigalaxy.translation import _
-from minigalaxy.config import Config
 
 
 def config_game(game):
@@ -14,6 +13,11 @@ def config_game(game):
     os.environ["WINEPREFIX"] = prefix
     subprocess.Popen(['wine', 'winecfg'])
 
+def regedit_game(game):
+    prefix = os.path.join(game.install_dir, "prefix")
+
+    os.environ["WINEPREFIX"] = prefix
+    subprocess.Popen(['wine', 'regedit'])
 
 def start_game(game):
     error_message = ""

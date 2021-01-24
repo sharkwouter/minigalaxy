@@ -8,7 +8,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib
 from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
-from minigalaxy.launcher import config_game
+from minigalaxy.launcher import config_game, regedit_game
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "properties.ui"))
 class Properties(Gtk.Dialog):
@@ -21,7 +21,8 @@ class Properties(Gtk.Dialog):
     button_properties_support = Gtk.Template.Child()
     button_properties_store = Gtk.Template.Child()
     button_properties_open_files = Gtk.Template.Child()
-    button_properties_settings = Gtk.Template.Child()
+    button_properties_winecfg = Gtk.Template.Child()
+    button_properties_regedit = Gtk.Template.Child()
     switch_properties_show_fps = Gtk.Template.Child()
     entry_properties_variable = Gtk.Template.Child()
     entry_properties_command = Gtk.Template.Child()
@@ -57,9 +58,13 @@ class Properties(Gtk.Dialog):
             self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
         self.destroy()
 
-    @Gtk.Template.Callback("on_button_properties_settings_clicked")
-    def on_menu_button_settings(self, widget):
+    @Gtk.Template.Callback("on_button_properties_winecfg_clicked")
+    def on_menu_button_winecfg(self, widget):
         config_game(self.game)
+
+    @Gtk.Template.Callback("on_button_properties_regedit_clicked")
+    def on_menu_button_regedit(self, widget):
+        regedit_game(self.game)
 
     @Gtk.Template.Callback("on_button_properties_open_files_clicked")
     def on_menu_button_open_files(self, widget):
@@ -93,11 +98,11 @@ class Properties(Gtk.Dialog):
     def button_sensitive(self, game):
         if not game.is_installed():
             self.button_properties_open_files.set_sensitive(False)
-            self.button_properties_settings.set_sensitive(False)
+            self.button_properties_winecfg.set_sensitive(False)
             self.entry_properties_command.set_sensitive(False)
             self.entry_properties_variable.set_sensitive(False)
             self.button_properties_support.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
         else:
             if game.platform == 'linux':
-                self.button_properties_settings.set_sensitive(False)
+                self.button_properties_winecfg.set_sensitive(False)
