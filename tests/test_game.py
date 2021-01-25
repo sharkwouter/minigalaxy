@@ -380,4 +380,3 @@ en-US
 
 del sys.modules["minigalaxy.config"]
 del sys.modules["minigalaxy.game"]
-del sys.modules["minigalaxy.filesys_utils"]
