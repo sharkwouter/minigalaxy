@@ -69,6 +69,7 @@ class Preferences(Gtk.Dialog):
     def __save_install_dir_choice(self) -> bool:
         choice = self.button_file_chooser.get_filename()
         old_dir = Config.get("install_dir")
+        Config.set("install_dir", choice)
         if choice == old_dir:
             result = True
         else:
@@ -81,10 +82,10 @@ class Preferences(Gtk.Dialog):
                 if not err_msg:
                     err_msg = filesys_utils.remove(write_test_file)
             if not err_msg:
-                Config.set("install_dir", choice)
                 result = True
             else:
                 print(err_msg)
+                Config.set("install_dir", old_dir)
                 result = False
         return result
 

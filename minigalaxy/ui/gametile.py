@@ -196,7 +196,7 @@ class GameTile(Gtk.Box):
             GLib.idle_add(self.image.set_from_file, thumbnail_cache_dir)
             # Copy image to
             if os.path.isdir(os.path.dirname(thumbnail_install_dir)):
-                filesys_utils.copy(thumbnail_cache_dir, thumbnail_install_dir)
+                filesys_utils.copy(thumbnail_cache_dir, thumbnail_install_dir, recursive=True)
             set_result = True
         return set_result
 
