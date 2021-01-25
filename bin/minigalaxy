@@ -15,6 +15,7 @@ if os.path.isdir(os.path.join(LAUNCH_PATH, "../minigalaxy")):
 
 from minigalaxy.version import VERSION
 from minigalaxy.paths import CONFIG_DIR, CACHE_DIR
+from minigalaxy import filesys_utils
 
 
 def usage():
@@ -43,10 +44,8 @@ def parse_args():
             usage()
             sys.exit()
         elif o == "--reset":
-            # I will let this out of filesys_utils for now, because it depends on Config module and the reset reason
-            # might be that config is broken.
-            shutil.rmtree(CONFIG_DIR, ignore_errors=True)
-            shutil.rmtree(CACHE_DIR, ignore_errors=True)
+            filesys_utils.remove(CONFIG_DIR, recursive=True)
+            filesys_utils.remove(CACHE_DIR, recursive=True)
 
 
 def main():
