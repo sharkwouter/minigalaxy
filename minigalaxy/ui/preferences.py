@@ -8,6 +8,7 @@ from minigalaxy.paths import UI_DIR
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES
 from minigalaxy.config import Config
 from minigalaxy.download_manager import DownloadManager
+from minigalaxy import filesys_utils
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "preferences.ui"))
@@ -69,30 +70,23 @@ class Preferences(Gtk.Dialog):
         choice = self.button_file_chooser.get_filename()
         old_dir = Config.get("install_dir")
         if choice == old_dir:
-            return True
-
-        if not os.path.exists(choice):
-            try:
-                os.makedirs(choice, mode=0o755)
-            except:
-                return False
+            result = True
         else:
-            write_test_file = os.path.join(choice, "write_test.txt")
-            try:
-                with open(write_test_file, "w") as file:
-                    file.write("test")
-                    file.close()
-                os.remove(write_test_file)
-            except:
-                return False
-        # Remove the old directory if it is empty
-        try:
-            os.rmdir(old_dir)
-        except OSError:
-            pass
-
-        Config.set("install_dir", choice)
-        return True
+            err_msg = ""
+            if not os.path.exists(choice):
+                err_msg = filesys_utils.mkdir(choice, parents=True)
+            if not err_msg:
+                write_test_file = os.path.join(choice, "write_test.txt")
+                err_msg = filesys_utils.write_file("", write_test_file)
+                if not err_msg:
+                    err_msg = filesys_utils.remove(write_test_file)
+            if not err_msg:
+                Config.set("install_dir", choice)
+                result = True
+            else:
+                print(err_msg)
+                result = False
+        return result
 
     @Gtk.Template.Callback("on_button_save_clicked")
     def save_pressed(self, button):

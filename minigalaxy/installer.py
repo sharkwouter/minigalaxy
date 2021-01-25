@@ -1,9 +1,9 @@
 import os
-import shutil
 import subprocess
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
+from minigalaxy import filesys_utils
 
 
 def install_game(game, installer):
@@ -54,8 +54,8 @@ def make_tmp_dir(game):
     extract_dir = os.path.join(CACHE_DIR, "extract")
     temp_dir = os.path.join(extract_dir, str(game.id))
     if os.path.exists(temp_dir):
-        shutil.rmtree(temp_dir, ignore_errors=True)
-    os.makedirs(temp_dir, mode=0o755)
+        filesys_utils.remove(temp_dir, recursive=True)
+    filesys_utils.mkdir(temp_dir, parents=True)
     return error_message, temp_dir
 
 
@@ -68,7 +68,7 @@ def extract_installer(game, installer, temp_dir):
         # Set the prefix for Windows games
         prefix_dir = os.path.join(game.install_dir, "prefix")
         if not os.path.exists(prefix_dir):
-            os.makedirs(prefix_dir, mode=0o755)
+            filesys_utils.mkdir(prefix_dir, parents=True)
 
         # It's possible to set install dir as argument before installation
         command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir)]
@@ -86,53 +86,35 @@ def extract_installer(game, installer, temp_dir):
 
 
 def move_and_overwrite(game, temp_dir, target_dir):
-    # Copy the game files into the correct directory
-    error_message = ""
     if game.platform == "linux":
         source_dir = os.path.join(temp_dir, "data/noarch")
     else:
         source_dir = temp_dir
-    for src_dir, dirs, files in os.walk(source_dir):
-        destination_dir = src_dir.replace(source_dir, target_dir, 1)
-        if not os.path.exists(destination_dir):
-            os.makedirs(destination_dir)
-        for src_file in files:
-            file_to_copy = os.path.join(src_dir, src_file)
-            dst_file = os.path.join(destination_dir, src_file)
-            if os.path.exists(dst_file):
-                os.remove(dst_file)
-            shutil.move(file_to_copy, destination_dir)
-
+    err_msg = filesys_utils.move(source_dir, target_dir)
     # Remove the temporary directory
-    shutil.rmtree(temp_dir, ignore_errors=True)
-    return error_message
+    filesys_utils.remove(temp_dir, recursive=True)
+    return err_msg
 
 
 def copy_thumbnail(game):
-    error_message = ""
+    err_msg = ""
     new_thumbnail_path = os.path.join(game.install_dir, "thumbnail.jpg")
     # Copy thumbnail
     if not os.path.isfile(new_thumbnail_path):
-        try:
-            shutil.copyfile(
-                            os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
-                            new_thumbnail_path,
-                            )
-        except Exception as e:
-            error_message = e
-    return error_message
+        err_msg = filesys_utils.copy(os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)), new_thumbnail_path)
+    return err_msg
 
 
 def remove_installer(installer):
-    error_message = ""
+    err_msg = ""
     if not Config.get("keep_installers"):
         installer_directory = os.path.dirname(installer)
         if os.path.isdir(installer_directory):
-            shutil.rmtree(installer_directory, ignore_errors=True)
+            err_msg = filesys_utils.remove(installer_directory, recursive=True)
         else:
-            error_message = "No installer directory is present: {}".format(installer_directory)
-    return error_message
+            err_msg = "No installer directory is present: {}".format(installer_directory)
+    return err_msg
 
 
 def uninstall_game(game):
-    shutil.rmtree(game.install_dir, ignore_errors=True)
+    filesys_utils.remove(game.install_dir, recursive=True)

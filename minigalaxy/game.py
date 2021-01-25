@@ -3,6 +3,7 @@ import re
 import json
 
 from minigalaxy.config import Config
+from minigalaxy import filesys_utils
 
 
 class Game:
@@ -33,9 +34,7 @@ class Game:
         return json_dict
 
     def save_minigalaxy_info_json(self, json_dict):
-        status_file = open(self.status_file_path, 'w')
-        json.dump(json_dict, status_file)
-        status_file.close()
+        filesys_utils.write_json(json_dict, self.status_file_path)
 
     @staticmethod
     def __strip_string(string):

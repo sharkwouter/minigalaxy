@@ -153,3 +153,16 @@ def write_file(file_content, file_path, overwrite=False, append=False):
             file_to_write.write(file_content)
             file_to_write.close()
     return err_msg
+
+
+def mkdir(target, parents=False):
+    target = os.path.abspath(target)
+    err_msg = _check_if_accordance_with_lists(target)
+    if not err_msg:
+        if not os.path.isdir(os.path.dirname(target)) and not parents:
+            err_msg = "Directory for target operation doesn't exists: {}".format(os.path.dirname(target))
+        elif os.path.exists(target):
+            err_msg = "Target directory already exists: {}".format(target)
+        else:
+            os.makedirs(target, mode=0o755)
+    return err_msg

@@ -1,4 +1,3 @@
-import copy
 import os
 import re
 import json
@@ -13,6 +12,7 @@ from minigalaxy.config import Config
 from minigalaxy.game import Game
 from minigalaxy.ui.gametile import GameTile
 from minigalaxy.translation import _
+from minigalaxy import filesys_utils
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "library.ui"))
@@ -106,7 +106,7 @@ class Library(Gtk.Viewport):
         # Make sure the install directory exists
         library_dir = Config.get("install_dir")
         if not os.path.exists(library_dir):
-            os.makedirs(library_dir, mode=0o755)
+            filesys_utils.mkdir(library_dir, parents=True)
         directories = os.listdir(library_dir)
         games = []
         for directory in directories:

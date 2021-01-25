@@ -3,6 +3,7 @@ import sys
 from unittest.mock import MagicMock, mock_open, patch
 m_config = MagicMock()
 sys.modules['minigalaxy.config'] = m_config
+from minigalaxy import filesys_utils
 from minigalaxy.game import Game
 
 
@@ -179,9 +180,11 @@ en-US
         observed = dlc_status
         self.assertEqual(expected, observed)
 
+    @unittest.mock.patch("minigalaxy.filesys_utils._check_if_accordance_with_lists")
     @unittest.mock.patch('os.path.isfile')
-    def test1_set_info(self, mock_isfile):
+    def test1_set_info(self, mock_isfile, m_check_if_accordance_with_lists):
         mock_isfile.return_value = True
+        m_check_if_accordance_with_lists.return_value = ""
         json_content = '{"version": "gog-2"}'
         with patch("builtins.open", mock_open(read_data=json_content)) as m:
             game = Game("Game Name test2")
@@ -196,9 +199,11 @@ en-US
         observed = write_string
         self.assertEqual(expected, observed)
 
+    @unittest.mock.patch("minigalaxy.filesys_utils._check_if_accordance_with_lists")
     @unittest.mock.patch('os.path.isfile')
-    def test2_set_dlc_info(self, mock_isfile):
+    def test2_set_dlc_info(self, mock_isfile, m_check_if_accordance_with_lists):
         mock_isfile.return_value = False
+        m_check_if_accordance_with_lists.return_value = ""
         dlc_name = "Neverwinter Nights: Wyvern Crown of Cormyr"
         with patch("builtins.open", mock_open()) as m:
             game = Game("Neverwinter Nights")
@@ -287,7 +292,9 @@ en-US
         observed = jscon_dict
         self.assertEqual(expected, observed)
 
-    def test_save_minigalaxy_info_json(self):
+    @unittest.mock.patch("minigalaxy.filesys_utils._check_if_accordance_with_lists")
+    def test_save_minigalaxy_info_json(self, m_check_if_accordance_with_lists):
+        m_check_if_accordance_with_lists.return_value = ""
         json_dict = {"version": "gog-2"}
         with patch("builtins.open", mock_open()) as m:
             game = Game("Neverwinter Nights")
@@ -374,3 +381,4 @@ en-US
 
 del sys.modules["minigalaxy.config"]
 del sys.modules["minigalaxy.game"]
+del sys.modules["minigalaxy.filesys_utils"]

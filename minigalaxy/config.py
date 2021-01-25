@@ -4,6 +4,7 @@ import json
 import time
 from minigalaxy.paths import CONFIG_DIR, CONFIG_FILE_PATH
 from minigalaxy.constants import DEFAULT_CONFIGURATION
+from minigalaxy import filesys_utils
 
 
 # Make sure you never spawn two instances of this class
@@ -42,21 +43,17 @@ class __Config:
     def __create_config_file(self) -> dict:
         # Make sure the configuration directory exists before creating the configuration file
         if not os.path.exists(CONFIG_DIR):
-            os.makedirs(CONFIG_DIR, mode=0o755)
-        with open(self.__config_file, "w") as file:
-            file.write(json.dumps(DEFAULT_CONFIGURATION))
-            file.close()
+            filesys_utils.mkdir(CONFIG_DIR, parents=True)
+        filesys_utils.write_json(DEFAULT_CONFIGURATION, self.__config_file)
 
         # Make sure the default installation path exists
         if not os.path.isdir(DEFAULT_CONFIGURATION['install_dir']):
-            os.makedirs(DEFAULT_CONFIGURATION['install_dir'], mode=0o755)
+            filesys_utils.mkdir(DEFAULT_CONFIGURATION['install_dir'], parents=True)
 
         return DEFAULT_CONFIGURATION
 
     def __update_config_file(self):
-        with open(self.__config_file, "w") as file:
-            file.write(json.dumps(self.__config))
-            file.close()
+        filesys_utils.write_json(self.__config, self.__config_file)
 
     def __add_missing_config_entries(self):
         # Make sure all config values in the default configuration are available

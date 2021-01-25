@@ -1,5 +1,4 @@
 import os
-import shutil
 import time
 import threading
 import queue
@@ -7,6 +6,7 @@ from requests.exceptions import ConnectionError
 from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION
 from minigalaxy.download import Download
+from minigalaxy import filesys_utils
 
 
 class __DownloadManger:
@@ -97,17 +97,17 @@ class __DownloadManger:
             self.__cancel = False
             download.cancel()
             self.__current_download = None
-            os.remove(download.save_location)
+            filesys_utils.remove(download.save_location)
 
     def prepare_location(self, save_location):
         # Make sure the directory exists
         save_directory = os.path.dirname(save_location)
         if not os.path.isdir(save_directory):
-            os.makedirs(save_directory, mode=0o755)
+            filesys_utils.mkdir(save_directory, parents=True)
 
         # Fail if the file already exists
         if os.path.isdir(save_location):
-            shutil.rmtree(save_location)
+            filesys_utils.remove(save_location, recursive=True)
             print("{} is a directory. Will remove it, to make place for installer.".format(save_location))
 
     def get_start_point_and_download_mode(self, download):
@@ -120,7 +120,7 @@ class __DownloadManger:
                 download_mode = 'ab'
                 start_point = os.stat(download.save_location).st_size
             else:
-                os.remove(download.save_location)
+                filesys_utils.remove(download.save_location)
         return start_point, download_mode
 
     def download_operation(self, download, start_point, download_mode):

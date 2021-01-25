@@ -1,4 +1,3 @@
-import shutil
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib, Gdk, GdkPixbuf, Gio
@@ -21,6 +20,7 @@ from minigalaxy.installer import uninstall_game, install_game
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound
+from minigalaxy import filesys_utils
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -69,7 +69,7 @@ class GameTile(Gtk.Box):
         self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
         self.keep_path = os.path.join(self.keep_dir, self.game.get_install_directory_name())
         if not os.path.exists(CACHE_DIR):
-            os.makedirs(CACHE_DIR, mode=0o755)
+            filesys_utils.mkdir(CACHE_DIR, parents=True)
 
         self.reload_state()
         load_thumbnail_thread = threading.Thread(target=self.load_thumbnail)
@@ -128,7 +128,7 @@ class GameTile(Gtk.Box):
             DownloadManager.cancel_download(self.download)
             for filename in os.listdir(self.download_dir):
                 if self.game.get_install_directory_name() in filename:
-                    os.remove(os.path.join(self.download_dir, filename))
+                    filesys_utils.remove(os.path.join(self.download_dir, filename))
 
     @Gtk.Template.Callback("on_menu_button_settings_clicked")
     def on_menu_button_settings(self, widget):
@@ -196,7 +196,7 @@ class GameTile(Gtk.Box):
             GLib.idle_add(self.image.set_from_file, thumbnail_cache_dir)
             # Copy image to
             if os.path.isdir(os.path.dirname(thumbnail_install_dir)):
-                shutil.copy2(thumbnail_cache_dir, thumbnail_install_dir)
+                filesys_utils.copy(thumbnail_cache_dir, thumbnail_install_dir)
             set_result = True
         return set_result
 
