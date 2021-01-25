@@ -3,7 +3,6 @@ import sys
 from unittest.mock import MagicMock, mock_open, patch
 m_config = MagicMock()
 sys.modules['minigalaxy.config'] = m_config
-from minigalaxy import filesys_utils
 from minigalaxy.game import Game
 
 

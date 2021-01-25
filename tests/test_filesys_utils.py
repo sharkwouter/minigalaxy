@@ -1,19 +1,26 @@
 import sys
 import unittest
 from unittest import TestCase
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch, mock_open
 
-m_config = MagicMock()
-sys.modules['minigalaxy.config'] = m_config
+m_paths = MagicMock()
+m_paths.CONFIG_DIR = "/home/user/.config/minigalaxy"
+m_paths.CACHE_DIR = "/home/user/.cache/minigalaxy"
+sys.modules['minigalaxy.paths'] = m_paths
 from minigalaxy import filesys_utils
 
 
 class Test(TestCase):
-# This is not working yet
-#    def test__get_white_list(self):
-#        m_config.Config.get.return_value = "/home/user/GoG Games"
+
+# For some reasons tis doesn't work well for now.
+#    @unittest.mock.patch("os.path.exists")
+#    def test__get_white_list(self, m_os_path_exists):
+#        m_os_path_exists.side_effect = [True]
+#        json_content = '{"install_dir": "/home/user/GoG Games"}'
+#        with patch("builtins.open", mock_open(read_data=json_content)):
+#            from minigalaxy import filesys_utils
+#            obs = filesys_utils._get_white_list()
 #        exp = ["/home/user/GoG Games", "/home/user/.config/minigalaxy", "/home/user/.cache/minigalaxy"]
-#        obs = filesys_utils._get_white_list()
 #        self.assertEqual(exp, obs)
 
     @unittest.mock.patch("subprocess.check_output")
@@ -113,7 +120,7 @@ class Test(TestCase):
         m_check_if_accordance_with_lists.return_value = ""
         m_os_path_exists.side_effect = [True, False]
         m_os_path_isdir.side_effect = [True, True]
-        exp = "Non recursive requested on directory:/home/user/GoG Games/game1"
+        exp = "Non recursive requested on directory: /home/user/GoG Games/game1"
         obs = filesys_utils._check_if_ok_for_copy_or_move(source=source, target=target, recursive=recursive,
                                                           overwrite=overwrite)
         self.assertEqual(exp, obs)
@@ -135,4 +142,5 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
 
-#del sys.modules['minigalaxy.config']
+if "minigalaxy.paths" in sys.modules:
+    del sys.modules["minigalaxy.paths"]

@@ -2,12 +2,18 @@ import subprocess
 import os
 import shutil
 import json
-from minigalaxy.config import Config
-from minigalaxy.paths import CONFIG_DIR, CACHE_DIR
+from minigalaxy.paths import CONFIG_DIR, CACHE_DIR, CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
 
 
 def _get_white_list():
-    return [Config.get("install_dir"), CONFIG_DIR, CACHE_DIR]
+    json_config = {"install_dir": DEFAULT_INSTALL_DIR}
+    if os.path.exists(CONFIG_FILE_PATH):
+        with open(CONFIG_FILE_PATH, "r") as file:
+            try:
+                json_config = json.loads(file.read())
+            except json.decoder.JSONDecodeError:
+                pass
+    return [json_config["install_dir"], CONFIG_DIR, CACHE_DIR]
 
 
 def _get_black_list():
@@ -76,7 +82,7 @@ def _check_if_ok_for_copy_or_move(source="", target="", recursive=False, overwri
         elif not os.path.isdir(os.path.dirname(target)):
             err_msg = "Directory for target operation doesn't exists: {}".format(os.path.dirname(target))
         elif os.path.isdir(source) and not recursive:
-            err_msg = "Non recursive requested on directory:{}".format(target)
+            err_msg = "Non recursive requested on directory: {}".format(target)
         elif os.path.exists(target) and not overwrite:
             err_msg = "Non overwrite operation, but target exists:{}".format(target)
     return err_msg

@@ -90,7 +90,7 @@ def move_and_overwrite(game, temp_dir, target_dir):
         source_dir = os.path.join(temp_dir, "data/noarch")
     else:
         source_dir = temp_dir
-    err_msg = filesys_utils.move(source_dir, target_dir)
+    err_msg = filesys_utils.move(source_dir, target_dir, recursive=True)
     # Remove the temporary directory
     filesys_utils.remove(temp_dir, recursive=True)
     return err_msg

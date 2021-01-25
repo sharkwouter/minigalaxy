@@ -20,11 +20,13 @@ class TestConfig(TestCase):
         obs = lang
         self.assertEqual(exp, obs)
 
+    @mock.patch("minigalaxy.filesys_utils._check_if_accordance_with_lists")
     @mock.patch('os.path.isdir')
     @mock.patch('os.path.exists')
-    def test_create_config(self, mock_exists, mock_isdir):
+    def test_create_config(self, mock_exists, mock_isdir, m_check_if_accordance_with_lists):
         mock_exists.side_effect = [False, True]
         mock_isdir.return_value = True
+        m_check_if_accordance_with_lists.return_value = ""
         with patch("builtins.open", mock_open()) as mock_config:
             from minigalaxy.config import Config
         mock_c = mock_config.mock_calls
