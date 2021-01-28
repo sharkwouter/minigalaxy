@@ -166,7 +166,6 @@ class Api:
         return download_info
 
     def get_real_download_link(self, url):
-        self.get_download_file_md5(url)
         return self.__request(url)['downlink']
 
     def get_download_file_md5(self, url):
