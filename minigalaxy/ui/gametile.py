@@ -215,6 +215,8 @@ class GameTile(Gtk.Box):
     def get_download_info(self):
         try:
             download_info = self.api.get_download_info(self.game)
+            self.game.md5sum = self.api.get_download_file_md5(download_info["files"][0]["downlink"])
+            print(self.game.md5sum)
             result = True
         except NoDownloadLinkFound as e:
             print(e)
