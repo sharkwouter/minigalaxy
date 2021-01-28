@@ -2,6 +2,7 @@ import os
 import time
 from urllib.parse import urlencode
 import requests
+import xml.etree.ElementTree as ET
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
 from minigalaxy.config import Config
@@ -165,7 +166,14 @@ class Api:
         return download_info
 
     def get_real_download_link(self, url):
+        self.get_download_file_md5(url)
         return self.__request(url)['downlink']
+
+    def get_download_file_md5(self, url):
+        xml_link = self.__request(url)['checksum']
+        xml_string = SESSION.get(xml_link).text
+        root = ET.fromstring(xml_string)
+        return root.attrib['md5']
 
     def get_user_info(self) -> str:
         username = Config.get("username")
