@@ -127,12 +127,10 @@ class GameTile(Gtk.Box):
         if self.parent.parent.show_question(question):
             self.prevent_resume_on_startup()
             DownloadManager.cancel_download(self.download)
-            try:
+            if os.path.exists(self.download_dir):
                 for filename in os.listdir(self.download_dir):
                     if self.game.get_install_directory_name() in filename:
-                            os.remove(os.path.join(self.download_dir, filename))
-            except FileNotFoundError:
-                pass
+                        filesys_utils.remove(os.path.join(self.download_dir, filename))
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
