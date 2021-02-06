@@ -5,7 +5,6 @@ import re
 import json
 import glob
 from minigalaxy.translation import _
-from minigalaxy.config import Config
 
 
 def config_game(game):
@@ -14,12 +13,17 @@ def config_game(game):
     os.environ["WINEPREFIX"] = prefix
     subprocess.Popen(['wine', 'winecfg'])
 
+def regedit_game(game):
+    prefix = os.path.join(game.install_dir, "prefix")
+
+    os.environ["WINEPREFIX"] = prefix
+    subprocess.Popen(['wine', 'regedit'])
 
 def start_game(game):
     error_message = ""
     process = None
     if not error_message:
-        error_message = set_fps_display()
+        error_message = set_fps_display(game)
     if not error_message:
         error_message, process = run_game_subprocess(game)
     if not error_message:
@@ -46,6 +50,7 @@ def get_execute_command(game) -> list:
     else:
         # If no executable was found at all, raise an error
         raise FileNotFoundError()
+    exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
     return exe_cmd
 
 
@@ -65,6 +70,16 @@ def determine_launcher_type(files):
         launcher_type = "final_resort"
     return launcher_type
 
+def get_exe_cmd_with_var_command(game, exe_cmd):
+    command_list = game.get_info("command").split()
+    var_list = game.get_info("variable").split()
+
+    if var_list:
+        if var_list[0] not in ["env"]:
+            var_list.insert(0, "env")
+
+    exe_cmd = var_list + exe_cmd + command_list
+    return exe_cmd
 
 def get_windows_exe_cmd(game, files):
     exe_cmd = [""]
@@ -88,6 +103,7 @@ def get_windows_exe_cmd(game, files):
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
         exe_cmd = ["wine", filename]
+
     return exe_cmd
 
 
@@ -114,8 +130,8 @@ def get_scummvm_exe_cmd(game, files):
 
 
 def get_start_script_exe_cmd(game, files):
-    return [os.path.join(game.install_dir, "start.sh")]
-
+    exec_start = [os.path.join(game.install_dir, "start.sh")]
+    return exec_start
 
 def get_final_resort_exe_cmd(game, files):
     # This is the final resort, applies to FTL
@@ -130,10 +146,10 @@ def get_final_resort_exe_cmd(game, files):
     return exe_cmd
 
 
-def set_fps_display():
+def set_fps_display(game):
     error_message = ""
     # Enable FPS Counter for Nvidia or AMD (Mesa) users
-    if Config.get("show_fps"):
+    if game.get_info("show_fps"):
         os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users + OpenGL/Vulkan games
         os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users + OpenGL games
         os.environ["VK_INSTANCE_LAYERS"] = "VK_LAYER_MESA_overlay"  # For AMDGPU users + Vulkan games

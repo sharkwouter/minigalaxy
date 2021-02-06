@@ -113,6 +113,20 @@ class TestApi(TestCase):
         obs = api.get_version(game, gameinfo=API_GET_INFO_TOONSTRUCK, dlc_name=dlc_name)
         self.assertEqual(exp, obs)
 
+    def test_get_download_file_md5(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().text = '''<file name="gog_tis_100_2.0.0.3.sh" available="1" notavailablemsg="" md5="8acedf66c0d2986e7dee9af912b7df4f" chunks="4" timestamp="2015-07-30 17:11:12" total_size="36717998">
+    <chunk id="0" from="0" to="10485759" method="md5">7e62ce101221ccdae2e9bff5c16ed9e0</chunk>
+    <chunk id="1" from="10485760" to="20971519" method="md5">b80960a2546ce647bffea87f85385535</chunk>
+    <chunk id="2" from="20971520" to="31457279" method="md5">5464b4499cd4368bb83ea35f895d3560</chunk>
+    <chunk id="3" from="31457280" to="36717997" method="md5">0261b9225fc10c407df083f6d254c47b</chunk>
+</file>'''
+        exp = "8acedf66c0d2986e7dee9af912b7df4f"
+        obs = api.get_download_file_md5("url")
+        self.assertEqual(exp, obs)
+
 
 del sys.modules['minigalaxy.constants']
 del sys.modules['minigalaxy.config']

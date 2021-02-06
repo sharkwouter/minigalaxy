@@ -7,10 +7,11 @@ from minigalaxy import filesys_utils
 
 
 class Game:
-    def __init__(self, name: str, url: str = "", game_id: int = 0, install_dir: str = "", image_url="",
-                 platform="linux", dlcs=None):
+    def __init__(self, name: str, url: str = "", md5sum: str = "", game_id: int = 0, install_dir: str = "",
+                 image_url="", platform="linux", dlcs=None):
         self.name = name
         self.url = url
+        self.md5sum = md5sum
         self.id = game_id
         self.install_dir = install_dir
         self.image_url = image_url

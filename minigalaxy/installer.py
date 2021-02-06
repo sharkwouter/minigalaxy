@@ -1,5 +1,6 @@
 import os
 import subprocess
+import hashlib
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
@@ -33,18 +34,15 @@ def verify_installer_integrity(game, installer):
     if not os.path.exists(installer):
         error_message = _("{} failed to download.").format(installer)
     if not error_message:
-        if game.platform == "linux":
-            try:
-                print("Executing integrity check for {}".format(installer))
-                os.chmod(installer, 0o744)
-                result = subprocess.run([installer, "--check"])
-                if not result.returncode == 0:
-                    error_message = _("{} was corrupted. Please download it again.").format(installer)
-            except Exception as ex:
-                # Any exception means the archive doesn't work, so we don't care with the error is
-                print("Error, exception encountered: {}".format(ex))
-                error_message = _("{} was corrupted. Please download it again.").format(installer)
-        # TODO: Add verification for other platform
+        hash_md5 = hashlib.md5()
+        with open(installer, "rb") as installer_file:
+            for chunk in iter(lambda: installer_file.read(4096), b""):
+                hash_md5.update(chunk)
+        calculated_checksum = hash_md5.hexdigest()
+        if game.md5sum == calculated_checksum:
+            print("{} integrity is preserved. MD5 is: {}".format(installer, calculated_checksum))
+        else:
+            error_message = _("{} was corrupted. Please download it again.").format(installer)
     return error_message
 
 
