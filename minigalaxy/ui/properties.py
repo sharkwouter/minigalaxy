@@ -92,8 +92,10 @@ class Properties(Gtk.Dialog):
             )
 
     def load_thumbnail(self):
-        thumbnail_cache_dir = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
-        GLib.idle_add(self.image.set_from_file, thumbnail_cache_dir)
+        thumbnail_path = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
+        if not os.path.isfile(thumbnail_path) and self.game.is_installed:
+            thumbnail_path = os.path.join(self.game.install_dir, "thumbnail.jpg")
+        GLib.idle_add(self.image.set_from_file, thumbnail_path)
 
     def button_sensitive(self, game):
         if not game.is_installed():
