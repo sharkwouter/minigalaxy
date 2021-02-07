@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.38.2 -->
 <interface domain="minigalaxy">
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkPopover" id="dlc_popover">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <child>
       <object class="GtkBox" id="dlc_horizontal_box">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <placeholder/>
@@ -16,23 +16,23 @@
     </child>
   </object>
   <object class="GtkPopover" id="menu">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkMenuButton" id="menu_button_dlc">
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="relief">none</property>
             <property name="direction">left</property>
             <property name="popover">dlc_popover</property>
             <child>
               <object class="GtkLabel" id="label_button_dlc">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="label" translatable="yes">DLC</property>
               </object>
             </child>
@@ -46,8 +46,8 @@
         <child>
           <object class="GtkModelButton" id="menu_button_update">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes">Update</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="on_menu_button_update_clicked" swapped="no"/>
@@ -61,8 +61,8 @@
         <child>
           <object class="GtkModelButton" id="menu_button_uninstall">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes">Uninstall</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="on_menu_button_uninstall_clicked" swapped="no"/>
@@ -76,8 +76,8 @@
         <child>
           <object class="GtkModelButton" id="menu_button_properties">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes">Properties</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="on_menu_button_properties_clicked" swapped="no"/>
@@ -92,9 +92,9 @@
     </child>
   </object>
   <template class="GameTile" parent="GtkBox">
-    <property name="width_request">196</property>
+    <property name="width-request">171</property>
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="halign">start</property>
     <property name="valign">start</property>
     <property name="hexpand">False</property>
@@ -103,40 +103,40 @@
     <child>
       <object class="GtkOverlay">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <child>
           <object class="GtkImage" id="image">
-            <property name="width_request">196</property>
-            <property name="height_request">110</property>
+            <property name="width-request">171</property>
+            <property name="height-request">110</property>
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="icon_name">dialog-warning-symbolic</property>
+            <property name="can-focus">False</property>
+            <property name="icon-name">dialog-warning-symbolic</property>
             <property name="icon_size">0</property>
           </object>
           <packing>
-            <property name="pass_through">True</property>
+            <property name="pass-through">True</property>
             <property name="index">-1</property>
           </packing>
         </child>
         <child type="overlay">
           <object class="GtkMenuButton" id="menu_button">
-            <property name="can_focus">True</property>
-            <property name="has_focus">True</property>
-            <property name="focus_on_click">False</property>
-            <property name="receives_default">True</property>
-            <property name="no_show_all">True</property>
+            <property name="can-focus">True</property>
+            <property name="has-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="no-show-all">True</property>
             <property name="halign">end</property>
             <property name="valign">start</property>
             <property name="relief">none</property>
-            <property name="use_popover">False</property>
+            <property name="use-popover">False</property>
             <property name="popover">menu</property>
             <child>
               <object class="GtkImage" id="menu_icon">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="halign">center</property>
                 <property name="valign">center</property>
-                <property name="icon_name">applications-system-symbolic</property>
+                <property name="icon-name">applications-system-symbolic</property>
                 <property name="icon_size">3</property>
               </object>
             </child>
@@ -147,11 +147,11 @@
         </child>
         <child type="overlay">
           <object class="GtkButton" id="button_cancel">
-            <property name="can_focus">True</property>
-            <property name="has_focus">True</property>
-            <property name="focus_on_click">False</property>
-            <property name="receives_default">True</property>
-            <property name="no_show_all">True</property>
+            <property name="can-focus">True</property>
+            <property name="has-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="no-show-all">True</property>
             <property name="halign">end</property>
             <property name="valign">start</property>
             <property name="relief">none</property>
@@ -159,8 +159,8 @@
             <child>
               <object class="GtkImage" id="cancel_icon">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">process-stop</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">process-stop</property>
               </object>
             </child>
           </object>
@@ -170,11 +170,11 @@
         </child>
         <child type="overlay">
           <object class="GtkImage" id="wine_icon">
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="halign">start</property>
             <property name="valign">start</property>
-            <property name="margin_start">2</property>
-            <property name="margin_top">2</property>
+            <property name="margin-start">2</property>
+            <property name="margin-top">2</property>
           </object>
           <packing>
             <property name="index">2</property>
@@ -182,11 +182,11 @@
         </child>
         <child type="overlay">
           <object class="GtkImage" id="update_icon">
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="halign">start</property>
             <property name="valign">start</property>
-            <property name="margin_start">2</property>
-            <property name="margin_top">2</property>
+            <property name="margin-start">2</property>
+            <property name="margin-top">2</property>
           </object>
           <packing>
             <property name="index">3</property>
@@ -201,10 +201,10 @@
     </child>
     <child>
       <object class="GtkButton" id="button">
-        <property name="width_request">196</property>
+        <property name="width-request">171</property>
         <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="receives_default">True</property>
+        <property name="can-focus">True</property>
+        <property name="receives-default">True</property>
         <property name="halign">center</property>
         <property name="valign">end</property>
         <signal name="clicked" handler="on_button_clicked" swapped="no"/>
@@ -215,7 +215,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">False</property>
-        <property name="pack_type">end</property>
+        <property name="pack-type">end</property>
         <property name="position">1</property>
       </packing>
     </child>
