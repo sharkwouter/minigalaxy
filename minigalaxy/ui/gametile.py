@@ -6,8 +6,7 @@ import os
 import threading
 import re
 import time
-import urllib.parse, urllib.request
-import json
+import urllib.parse
 from PIL import Image
 from gi.repository.GdkPixbuf import Pixbuf
 from enum import Enum
@@ -148,13 +147,6 @@ class GameTile(Gtk.Box):
         download_thread = threading.Thread(target=self.__download_update)
         download_thread.start()
 
-    def new_url_image(self):
-        info_json = urllib.request.urlopen("https://gamesdb.gog.com/platforms/gog/external_releases/{}".format(self.game.id))
-        data = json.loads(info_json.read())
-        image = data['game']['vertical_cover']['url_format']
-        url = image.replace('{formatter}.{ext}', '.jpg')
-        return url
-
     def load_thumbnail(self):
         set_result = self.__set_image()
         if not set_result:
@@ -163,7 +155,7 @@ class GameTile(Gtk.Box):
             while performed_try < tries:
                 if self.game.image_url and self.game.id:
                     # Download the thumbnail
-                    image_url = self.new_url_image()
+                    image_url = self.api.get_url_galaxy_image(self.game)
                     thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
                     download = Download(image_url, thumbnail, finish_func=self.__set_image)
                     DownloadManager.download_now(download)
@@ -186,8 +178,7 @@ class GameTile(Gtk.Box):
             image = Image.open(thumbnail_cache_dir)
             w, h = image.size
             if w > 171:
-                (width, height) = (image.width // 2, image.height // 2)
-                image.thumbnail((width, height))
+                image.thumbnail((171, 241))
                 image.save(thumbnail_cache_dir, quality=100)
             GLib.idle_add(self.image.set_from_file, thumbnail_cache_dir)
             # Copy image to

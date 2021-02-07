@@ -1,6 +1,7 @@
 import os
 import time
 from urllib.parse import urlencode
+import json
 import requests
 import xml.etree.ElementTree as ET
 from minigalaxy.game import Game
@@ -67,6 +68,15 @@ class Api:
         else:
             refresh_token = ""
         return refresh_token
+
+    # Use info from https://gamesdb.gog.com/platforms/gog/external_releases/ used by Galaxy API
+    def get_url_galaxy_image(self, game: Game):
+        request_url = "https://gamesdb.gog.com/platforms/gog/external_releases/{}".format(game.id)
+        response = SESSION.get(request_url)
+        response_params = response.json()
+        image = response_params['game']['vertical_cover']['url_format']
+        url = image.replace('{formatter}.{ext}', '.jpg')
+        return url
 
     # Get all Linux games in the library of the user. Ignore other platforms and movies
     def get_library(self):
