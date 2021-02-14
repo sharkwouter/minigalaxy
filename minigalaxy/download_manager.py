@@ -10,7 +10,6 @@ from minigalaxy.download import Download
 
 
 class __DownloadManger:
-
     def __init__(self):
         self.__queue = queue.Queue()
         self.__current_download = None
