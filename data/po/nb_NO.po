@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-06 21:15+0200\n"
+"POT-Creation-Date: 2020-12-05 16:41+0100\n"
 "PO-Revision-Date: 2020-04-11 13:17+0200\n"
 "Last-Translator: Kim Malmo <berencamlost@msn.com>\n"
 "Language-Team: \n"
@@ -34,11 +34,11 @@ msgctxt "about"
 msgid "About"
 msgstr "Om"
 
-#: minigalaxy/ui/gametile.py:114
+#: minigalaxy/ui/gametile.py:125
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Er du sikker på at du vil avbryte nedlastingen av {}?"
 
-#: minigalaxy/ui/gametile.py:132
+#: minigalaxy/ui/gametile.py:139
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Er du sikker på at du vil avinstallere %s?"
@@ -56,21 +56,25 @@ msgstr "Avbryt"
 msgid "Chinese"
 msgstr "Kinesisk"
 
-#: minigalaxy/ui/library.py:150
+#: minigalaxy/ui/library.py:149
 msgid "Couldn't connect to GOG servers"
 msgstr "Kunne ikke koble til GOG tjenerne"
 
-#: minigalaxy/ui/gametile.py:156
+#: minigalaxy/ui/gametile.py:154
 msgid "Couldn't open support page"
 msgstr "Kunne ikke åpne siden for støtte"
 
-#: minigalaxy/launcher.py:45
-msgid "Couldn't start subprocess"
-msgstr "Kunne ikke starte underprosess"
+#: data/ui/gametile.ui:108
+msgid "DLC"
+msgstr ""
 
 #: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr "Dansk"
+
+#: minigalaxy/ui/gametile.py:215 minigalaxy/ui/gametile.py:242
+msgid "Download error"
+msgstr "Feil ved nedlasting"
 
 #: minigalaxy/constants.py:11
 msgid "Dutch"
@@ -80,15 +84,15 @@ msgstr "Nederlandsk"
 msgid "English"
 msgstr "Engelsk"
 
-#: minigalaxy/installer.py:79
+#: minigalaxy/installer.py:86
 msgid "Failed to install {}"
-msgstr "Kunne ikke starte {}:"
+msgstr "Kunne ikke installere {}:"
 
-#: minigalaxy/ui/library.py:150
+#: minigalaxy/ui/library.py:149
 msgid "Failed to retrieve library"
 msgstr "Kunne ikke hente bibliotek"
 
-#: minigalaxy/launcher.py:59
+#: minigalaxy/launcher.py:28 minigalaxy/ui/gametile.py:121
 msgid "Failed to start {}:"
 msgstr "Kunne ikke starte {}:"
 
@@ -166,11 +170,7 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "Logg ut"
 
-#: minigalaxy/launcher.py:56
-msgid "No error message was returned"
-msgstr "Ingen feilmelding ble returnert"
-
-#: minigalaxy/launcher.py:33
+#: minigalaxy/launcher.py:156
 msgid "No executable was found in {}"
 msgstr "Ingen kjørbar fil funnet i {}"
 
@@ -179,12 +179,12 @@ msgid "Norwegian"
 msgstr "Norsk"
 
 #. Opens the directory the game is installed in
-#: data/ui/gametile.ui:45
+#: data/ui/gametile.ui:58
 msgctxt "open_files"
 msgid "Open Files"
 msgstr "Åpne filer"
 
-#: minigalaxy/ui/gametile.py:158
+#: minigalaxy/ui/gametile.py:155
 msgid "Please check your internet connection"
 msgstr "Vennligst sjekk internettforbindelsen din"
 
@@ -229,7 +229,7 @@ msgid "Save"
 msgstr "Lagre"
 
 #. Open winecfg settings for Windows games
-#: data/ui/gametile.ui:59
+#: data/ui/gametile.ui:72
 msgctxt "Wine Settings"
 msgid "Settings"
 msgstr "Innstillinger"
@@ -272,13 +272,13 @@ msgid "Stay logged in:"
 msgstr "Forbli pålogget:"
 
 #. Open store page
-#: data/ui/gametile.ui:17
+#: data/ui/gametile.ui:30
 msgctxt "store"
 msgid "Store Page"
 msgstr "Butikkside"
 
 #. Opens the official support webpage
-#: data/ui/gametile.ui:31
+#: data/ui/gametile.ui:44
 msgctxt "support"
 msgid "Support"
 msgstr "Støtte"
@@ -287,10 +287,22 @@ msgstr "Støtte"
 msgid "Swedish"
 msgstr "Svensk"
 
+#: minigalaxy/installer.py:61
+msgid "The installation of {} failed. Please try again."
+msgstr "Feil ved installasjon av {}. Vennligst prøv igjen."
+
 #: data/ui/preferences.ui:67
 msgctxt "preferred_language_tooltip"
 msgid "The preferred language for downloading games in"
 msgstr "Foretrukket språk for nedlasting av spill"
+
+#: minigalaxy/ui/gametile.py:216
+msgid ""
+"There was an error when trying to fetch the download link!\n"
+"{}"
+msgstr ""
+"Det oppstod en feil ved henting av nedlastingslenken!\n"
+"{}"
 
 #: data/ui/preferences.ui:92
 msgctxt "install_path_tooltip"
@@ -302,10 +314,16 @@ msgid "Turkish"
 msgstr "Tyrkisk"
 
 #. Removes the game files from the local machine
-#: data/ui/gametile.ui:73
+#: data/ui/gametile.ui:123
 msgctxt "uninstall"
 msgid "Uninstall"
 msgstr "Avinstaller"
+
+#. Updates game
+#: data/ui/gametile.ui:86
+msgctxt "update"
+msgid "Update"
+msgstr "Oppdater"
 
 #: data/ui/preferences.ui:145
 msgctxt "stay_logged_in_tooltip"
@@ -318,35 +336,39 @@ msgctxt "show_windows_games_tooltip"
 msgid "Whether Windows games are shown in the library or not"
 msgstr "Om Windows spill skal vises i bibloteket eller ikke"
 
-#: minigalaxy/ui/gametile.py:277
+#: minigalaxy/ui/gametile.py:451
 msgid "download"
 msgstr "last ned"
 
-#: minigalaxy/ui/gametile.py:309
-msgid "downloading.."
-msgstr "laster ned..."
+#: minigalaxy/ui/gametile.py:483
+msgid "downloading…"
+msgstr "laster ned…"
 
-#: minigalaxy/ui/gametile.py:301
-msgid "in queue.."
-msgstr "i kø.."
+#: minigalaxy/ui/gametile.py:475
+msgid "in queue…"
+msgstr "i kø…"
 
-#: minigalaxy/ui/gametile.py:289
+#: minigalaxy/ui/gametile.py:463
 msgid "install"
 msgstr "installer"
 
-#: minigalaxy/ui/gametile.py:319
-msgid "installing.."
-msgstr "installerer.."
+#: minigalaxy/ui/gametile.py:493
+msgid "installing…"
+msgstr "installerer…"
 
-#: minigalaxy/ui/gametile.py:333
+#: minigalaxy/ui/gametile.py:507 minigalaxy/ui/gametile.py:538
 msgid "play"
 msgstr "spill"
 
-#: minigalaxy/ui/gametile.py:348
-msgid "uninstalling.."
-msgstr "avinstallerer.."
+#: minigalaxy/ui/gametile.py:525
+msgid "uninstalling…"
+msgstr "avinstallerer…"
 
-#: minigalaxy/installer.py:32 minigalaxy/installer.py:33
+#: minigalaxy/ui/gametile.py:547
+msgid "updating…"
+msgstr "oppdaterer…"
+
+#: minigalaxy/installer.py:33
 msgid "{} could not be unzipped."
 msgstr "{} kunne ikke pakkes ut."
 
@@ -361,6 +383,12 @@ msgstr "{} er ikke en brukbar sti"
 #: minigalaxy/installer.py:19
 msgid "{} was corrupted. Please download it again."
 msgstr "{} ble ødelagt. Vennligst last ned på nytt."
+
+#~ msgid "Couldn't start subprocess"
+#~ msgstr "Kunne ikke starte underprosess"
+
+#~ msgid "No error message was returned"
+#~ msgstr "Ingen feilmelding ble returnert"
 
 #~ msgid "Minigalaxy is now running in offline mode"
 #~ msgstr "Minigalaxy kjører i frakoblet modus"

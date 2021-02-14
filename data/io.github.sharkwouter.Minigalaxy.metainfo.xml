@@ -41,8 +41,62 @@
     </provides>
 
     <releases>
-        <release version="0.9.5" date="2020-07-09">
+        <release version="1.0.2" date="2021-01-14">
             <description>
+                <p>Implements the following changes:</p>
+                <ul>
+                    <li>Fix updates sometimes not working</li>
+                    <li>Fix some games always showing an update is available</li>
+                    <li>Fix DLC not downloading (thanks to stephanlachnit)</li>
+                    <li>Fix DLC update option not showing up (thanks to makson96)</li>
+                    <li>Fix show store page button not showing anymore (thanks to makson96)</li>
+                    <li>Fix missing thumbnails not being downloaded for already installed games (thanks to makson96)</li>
+                    <li>Fix the login screen crashing in some cases (thanks to makson96)</li>
+                    <li>Use the system's icon theme for icons used (thanks to stephanlachnit and makson96)</li>
+                </ul>
+            </description>
+        </release>
+        <release version="1.0.1" date="2021-01-07">
+            <description>
+                <p>Implements the following changes:</p>
+                <ul>
+                    <li>Open maximized if the window was maximized when last closed (thanks to TotalCaesar659)</li>
+                    <li>Kept installers are now stored in ~/.cache/minigalaxy/download</li>
+                    <li>Fix about window displaying wrong version number</li>
+                    <li>Fix show store page button not showing anymore (thanks to makson96)</li>
+                    <li>Fix the download manager crashing when an installer has been damaged during downloading (thanks to makson96)</li>
+                    <li>Fix games showing an update is available while the latest version is installed (thanks to makson96)</li>
+                    <li>Fix loading the library taking a long time when many games are installed (thanks to makson96)</li>
+                    <li>Fix Gex not launching</li>
+                </ul>
+                <p>Added the following translations:</p>
+                <ul>
+                    <li>Swedish (thanks to Newbytee)</li>
+                </ul>
+                <p>Updated the following translations:</p>
+                <ul>
+                    <li>Polish (thanks to ArturWroblewski)</li>
+                    <li>Russian (thanks to TotalCaesar659)</li>
+                </ul>
+            </description>
+        </release>
+        <release version="1.0.0" date="2020-11-29">
+            <description>
+                <p>Implements the following changes:</p>
+                <ul>
+                    <li>Games can now be updated (thanks to mdgomes and makson96)</li>
+                    <li>DLC can now be installed and updated (thanks to makson96)</li>
+                    <li>The installed filter now also shows games which are downloading (thanks to makson96)</li>
+                    <li>Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)</li>
+                    <li>Create new config file if old one is unreadable (thanks to SvdB-nonp)</li>
+                    <li>Fix some Windows games not installing because of the directory name used (thanks to SvdB-nonp)</li>
+                    <li>Fix some Windows games like Witcher 3 not launching because of the working directory not being set (thanks for kibun1)</li>
+                    <li>Clean up installation files for cancelled downloads (thanks to SvdB-nonp)</li>
+                    <li>Fix crash on flaky internet connection (thanks to makson96)</li>
+                    <li>Use 755 permissions for all directories created by Minigalaxy</li>
+                    <li>Remove cached files when cancelling a download (thanks to svdB-nonp)</li>
+                    <li>Installed games should no longer be shown twice (thanks to makson96)</li>
+                </ul>
                 <p>Added the following translations:</p>
                 <ul>
                     <li>Simplified Chinese (thanks to dummyx)</li>
@@ -50,10 +104,15 @@
                 </ul>
                 <p>Updated the following translations:</p>
                 <ul>
-                    <li>Russian (thanks to tim77)</li>
+                    <li>Brazilian Portuguese (thanks to EsdrasTarsis)</li>
+                    <li>Dutch</li>
+                    <li>French (thanks to Thomasb22)</li>
+                    <li>German (thanks to BlindJerobine)</li>
+                    <li>Norwegian Bokmål (thanks to kimmalmo)</li>
+                    <li>Russian (thanks to protheory8)</li>
+                    <li>Taiwanese Mandarin (thanks to s8321414)</li>
+                    <li>Turkish (thanks to fuzunspm</li>
                 </ul>
-                <p>Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)</p>
-                <p>Create new config file if old one is unreadable (thanks to SvdB-nonp)</p>
             </description>
         </release>
         <release version="0.9.4" date="2020-04-20">

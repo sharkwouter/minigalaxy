@@ -2,6 +2,7 @@ import os
 import time
 from urllib.parse import urlencode
 import requests
+import xml.etree.ElementTree as ET
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
 from minigalaxy.config import Config
@@ -18,6 +19,8 @@ class Api:
         self.client_id = "46899977096215655"
         self.client_secret = "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
         self.debug = os.environ.get("MG_DEBUG")
+        self.active_token = False
+        self.active_token_expiration_time = time.time()
 
     # use a method to authenticate, based on the information we have
     # Returns an empty string if no information was entered
@@ -31,25 +34,17 @@ class Api:
 
     # Get a new token with the refresh token received when authenticating the last time
     def __refresh_token(self, refresh_token: str) -> str:
-        request_url = "https://auth.gog.com/token"
         params = {
             'client_id': self.client_id,
             'client_secret': self.client_secret,
             'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
         }
-        response = SESSION.get(request_url, params=params)
-
-        response_params = response.json()
-        self.active_token = response_params['access_token']
-        expires_in = response_params["expires_in"]
-        self.active_token_expiration_time = time.time() + int(expires_in)
-
-        return response_params['refresh_token']
+        response_token = self.__get_refresh_token(params)
+        return response_token
 
     # Get a token based on the code returned by the login screen
     def __get_token(self, login_code: str) -> str:
-        request_url = "https://auth.gog.com/token"
         params = {
             'client_id': self.client_id,
             'client_secret': self.client_secret,
@@ -57,14 +52,21 @@ class Api:
             'code': login_code,
             'redirect_uri': self.redirect_uri,
         }
+        response_token = self.__get_refresh_token(params)
+        return response_token
+
+    def __get_refresh_token(self, params: dict) -> str:
+        request_url = "https://auth.gog.com/token"
         response = SESSION.get(request_url, params=params)
-
         response_params = response.json()
-        self.active_token = response_params['access_token']
-        expires_in = response_params["expires_in"]
-        self.active_token_expiration_time = time.time() + int(expires_in)
-
-        return response_params['refresh_token']
+        if "access_token" in response_params and "expires_in" in response_params and "refresh_token" in response_params:
+            self.active_token = response_params["access_token"]
+            expires_in = response_params["expires_in"]
+            self.active_token_expiration_time = time.time() + int(expires_in)
+            refresh_token = response_params["refresh_token"]
+        else:
+            refresh_token = ""
+        return refresh_token
 
     # Get all Linux games in the library of the user. Ignore other platforms and movies
     def get_library(self):
@@ -95,12 +97,20 @@ class Api:
                         continue
                     if not product["url"]:
                         print("{} ({}) has no store page url".format(product["title"], product['id']))
-                    game = Game(name=product["title"], url=product["url"], game_id=product["id"], image_url=product["image"], platform=platform)
+                    game = Game(name=product["title"], url=product["url"], game_id=product["id"],
+                                image_url=product["image"], platform=platform)
                     games.append(game)
             if current_page == total_pages:
                 all_pages_processed = True
             current_page += 1
         return games
+
+    def get_owned_products_ids(self):
+        if not self.active_token:
+            return
+        url2 = "https://embed.gog.com/user/data/games"
+        response2 = self.__request(url2)
+        return response2["owned"]
 
     # Generate the URL for the login page for GOG
     def get_login_url(self) -> str:
@@ -116,18 +126,21 @@ class Api:
         return self.redirect_uri
 
     # Get Extrainfo about a game
-    def get_info(self, game: Game) -> tuple:
-        request_url = "https://api.gog.com/products/" + str(game.id) + "?expand=downloads,expanded_dlcs,description," \
-                                                                       "screenshots,videos,related_products,changelog "
+    def get_info(self, game: Game) -> dict:
+        request_url = "https://api.gog.com/products/{}?expand=downloads,expanded_dlcs,description,screenshots,videos," \
+                      "related_products,changelog ".format(str(game.id))
         response = self.__request(request_url)
-
         return response
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game, operating_system="linux") -> tuple:
-        response = self.get_info(game)
+    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> tuple:
+        if dlc_installers:
+            installers = dlc_installers
+        else:
+            response = self.get_info(game)
+            installers = response["downloads"]["installers"]
         possible_downloads = []
-        for installer in response["downloads"]["installers"]:
+        for installer in installers:
             if installer["os"] == operating_system:
                 possible_downloads.append(installer)
         if not possible_downloads:
@@ -151,6 +164,12 @@ class Api:
     def get_real_download_link(self, url):
         return self.__request(url)['downlink']
 
+    def get_download_file_md5(self, url):
+        xml_link = self.__request(url)['checksum']
+        xml_string = SESSION.get(xml_link).text
+        root = ET.fromstring(xml_string)
+        return root.attrib['md5']
+
     def get_user_info(self) -> str:
         username = Config.get("username")
         if not username:
@@ -159,6 +178,24 @@ class Api:
             username = response["username"]
             Config.set("username", username)
         return username
+
+    def get_version(self, game: Game, gameinfo=None, dlc_name="") -> str:
+        if gameinfo is None:
+            gameinfo = self.get_info(game)
+        version = "0"
+        if dlc_name:
+            installers = {}
+            for dlc in gameinfo["expanded_dlcs"]:
+                if dlc["title"] == dlc_name:
+                    installers = dlc["downloads"]["installers"]
+                    break
+        else:
+            installers = gameinfo["downloads"]["installers"]
+        for installer in installers:
+            if installer["os"] == game.platform:
+                version = installer["version"]
+                break
+        return version
 
     def can_connect(self) -> bool:
         url = "https://embed.gog.com"
@@ -169,7 +206,7 @@ class Api:
         return True
 
     # Make a request with the active token
-    def __request(self, url: str = None, params: dict = None) -> tuple:
+    def __request(self, url: str = None, params: dict = None) -> dict:
         # Refresh the token if needed
         if self.active_token_expiration_time < time.time():
             print("Refreshing token")
@@ -178,7 +215,7 @@ class Api:
 
         # Make the request
         headers = {
-            'Authorization': "Bearer " + self.active_token,
+            'Authorization': "Bearer {}".format(str(self.active_token)),
         }
         response = SESSION.get(url, headers=headers, params=params)
         if self.debug:

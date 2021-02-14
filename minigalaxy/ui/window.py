@@ -2,7 +2,7 @@ import os
 import gi
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gtk, Gdk, GdkPixbuf
 from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
@@ -41,11 +41,13 @@ class Window(Gtk.ApplicationWindow):
         self.set_default_icon_list([icon])
 
         # Show the window
+        if Config.get("keep_window_maximized"):
+            self.maximize()
         self.show_all()
 
         # Create the thumbnails directory
         if not os.path.exists(THUMBNAIL_DIR):
-            os.makedirs(THUMBNAIL_DIR)
+            os.makedirs(THUMBNAIL_DIR, mode=0o755)
 
         # Interact with the API
         self.__authenticate()
@@ -82,6 +84,13 @@ class Window(Gtk.ApplicationWindow):
         self.sync_library()
 
         self.show_all()
+
+    @Gtk.Template.Callback("on_window_state_event")
+    def on_window_state_event(self, widget, event):
+        if event.new_window_state & Gdk.WindowState.MAXIMIZED:
+            Config.set("keep_window_maximized", True)
+        else:
+            Config.set("keep_window_maximized", False)
 
     @Gtk.Template.Callback("on_header_sync_clicked")
     def sync_library(self, _=""):
@@ -154,6 +163,6 @@ class Window(Gtk.ApplicationWindow):
                 exit(0)
             if response == Gtk.ResponseType.NONE:
                 result = login.get_result()
-                authenticated = self.api.authenticate(refresh_token=token, login_code=result)
+                authenticated = self.api.authenticate(login_code=result)
 
         Config.set("refresh_token", authenticated)

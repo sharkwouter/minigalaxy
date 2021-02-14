@@ -29,6 +29,7 @@ class Library(Gtk.Viewport):
         self.search_string = ""
         self.offline = False
         self.games = []
+        self.owned_products_ids = []
 
     def reset(self):
         self.games = []
@@ -44,6 +45,7 @@ class Library(Gtk.Viewport):
 
     def __update_library(self):
         GLib.idle_add(self.__load_tile_states)
+        self.owned_products_ids = self.api.get_owned_products_ids()
         # Get already installed games first
         self.games = self.__get_installed_games()
         GLib.idle_add(self.__create_gametiles)
@@ -59,7 +61,6 @@ class Library(Gtk.Viewport):
             tile.reload_state()
 
     def filter_library(self, widget: Gtk.Widget = None):
-        self.__load_tile_states()
         if isinstance(widget, Gtk.Switch):
             self.show_installed_only = widget.get_active()
         elif isinstance(widget, Gtk.SearchEntry):
@@ -68,13 +69,14 @@ class Library(Gtk.Viewport):
 
     def __filter_library_func(self, child):
         tile = child.get_children()[0]
-        # Hide games which aren't installed while in offline mode
-        if not tile.game.install_dir and self.offline:
+        if self.search_string.lower() not in str(tile).lower():
             return False
-        if tile.current_state == tile.state.INSTALLED and self.show_installed_only or not self.show_installed_only:
-            if self.search_string.lower() in str(tile).lower():
-                return True
-        return False
+
+        if self.show_installed_only:
+            if tile.current_state in [tile.state.DOWNLOADABLE, tile.state.INSTALLABLE]:
+                return False
+
+        return True
 
     def sort_library(self):
         self.flowbox.set_sort_func(self.__sort_library_func)
@@ -86,35 +88,27 @@ class Library(Gtk.Viewport):
 
     def __create_gametiles(self) -> None:
         games_with_tiles = []
-        games_with_removed_tiles = []
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
-            if tile.current_state == tile.state.INSTALLED:
-                if not tile.game.image_url:
-                    games_with_removed_tiles.append(copy.deepcopy(tile.game))
-                    self.flowbox.remove(tile)
-                    continue
             if tile.game in self.games:
                 games_with_tiles.append(tile.game)
 
         for game in self.games:
-            if game in games_with_tiles:
-                continue
-            if game in games_with_removed_tiles:
-                for tile_game in games_with_removed_tiles:
-                    if game == tile_game:
-                        game.install_dir = tile_game.install_dir
-                        break
-            self.__add_gametile(game)
+            if game not in games_with_tiles:
+                self.__add_gametile(game)
 
     def __add_gametile(self, game):
-        self.flowbox.add(GameTile(self, game, self.api))
+        self.flowbox.add(GameTile(self, game))
         self.sort_library()
         self.flowbox.show_all()
 
     def __get_installed_games(self) -> List[Game]:
+        # Make sure the install directory exists
+        library_dir = Config.get("install_dir")
+        if not os.path.exists(library_dir):
+            os.makedirs(library_dir, mode=0o755)
+        directories = os.listdir(library_dir)
         games = []
-        directories = os.listdir(Config.get("install_dir"))
         for directory in directories:
             full_path = os.path.join(Config.get("install_dir"), directory)
             # Only scan directories
@@ -150,18 +144,17 @@ class Library(Gtk.Viewport):
         return games
 
     def __add_games_from_api(self):
-        try:
-            retrieved_games = self.api.get_library()
+        retrieved_games = self.api.get_library()
+        if retrieved_games:
             self.offline = False
-        except:
+        else:
+            retrieved_games = []
             self.offline = True
             GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
-            return
         for game in retrieved_games:
-            if game in self.games:
-                # Make sure the game id is set if the game is installed
-                for installed_game in self.games:
-                    if game == installed_game:
-                        self.games.remove(installed_game)
-                        break
-            self.games.append(game)
+            if game not in self.games:
+                self.games.append(game)
+            elif self.games[self.games.index(game)].id == 0:
+                self.games[self.games.index(game)].id = game.id
+            self.games[self.games.index(game)].image_url = game.image_url
+            self.games[self.games.index(game)].url = game.url

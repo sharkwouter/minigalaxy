@@ -1,11 +1,57 @@
-**0.9.5 (unreleased)**
+**1.0.2**
+- Fix updates sometimes not working
+- Fix some games always showing an update is available
+- Fix DLC not downloading (thanks to stephanlachnit)
+- Fix DLC update option not showing up (thanks to makson96)
+- Fix show store page button not showing anymore (thanks to makson96)
+- Fix missing thumbnails not being downloaded for already installed games (thanks to makson96)
+- Fix the login screen crashing in some cases (thanks to makson96)
+- Use the system's icon theme for icons used (thanks to stephanlachnit and makson96)
+
+**1.0.1**
+- Open maximized if the window was maximized when last closed (thanks to TotalCaesar659)
+- Kept installers are now stored in ~/.cache/minigalaxy/download
+- Fix about window displaying wrong version number
+- Fix show store page button not showing anymore (thanks to makson96)
+- Fix the download manager crashing when an installer has been damaged during downloading (thanks to makson96)
+- Fix games showing an update is available while the latest version is installed (thanks to makson96)
+- Fix loading the library taking a long time when many games are installed (thanks to makson96)
+- Fix Gex not launching
+
+- Add the following translations:
+    - Swedish (thanks to Newbytee)
+
+- Update the following translations:
+   - Polish (thanks to ArturWroblewski)
+   - Russian (thanks to TotalCaesar659)
+
+**1.0.0**
+- Games can now be updated (thanks to mdgomes and makson96)
+- DLC can now be installed and updated (thanks to makson96)
+- The installed filter now also shows games which are downloading (thanks to makson96)
+- Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)
+- Create new config file if old one is unreadable (thanks to SvdB-nonp)
+- Fix some Windows games not installing because of the directory name used (thanks to SvdB-nonp)
+- Fix some Windows games like Witcher 3 not launching because of the working directory not being set (thanks for kibun1)
+- Clean up installation files for cancelled downloads (thanks to SvdB-nonp)
+- Fix crash on flaky internet connection (thanks to makson96)
+- Use 755 permissions for all directories created by Minigalaxy
+- Remove cached files when cancelling a download (thanks to svdB-nonp)
+- Installed games should no longer be shown twice (thanks to makson96)
+
 - Add the following translations:
     - Simplified Chinese (thanks to dummyx)
     - Spanish (thanks to juanborda)
+
 - Update the following translations:
-    - Russian (thanks to tim77)
-- Fix crash on some systems where /usr/bin is linked to /bin (thanks to sgn)
-- Create new config file if old one is unreadable (thanks to SvdB-nonp)
+    - Brazilian Portuguese (thanks to EsdrasTarsis)
+    - Dutch
+    - French (thanks to Thomasb22)
+    - German (thanks to BlindJerobine)
+    - Norwegian Bokmål (thanks to kimmalmo)
+    - Russian (thanks to protheory8)
+    - Taiwanese Mandarin (thanks to s8321414)
+    - Turkish (thanks to fuzunspm)
 
 **0.9.4**
 - Added the following translations:
