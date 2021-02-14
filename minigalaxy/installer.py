@@ -7,6 +7,30 @@ from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
 
 
+def get_availablediskspace(location):
+    """Check disk space available to the user. This method uses the absolute path so
+    symlinks to disks with sufficient space are correctly measured. Note this is
+    a linux-specific command."""
+    absolute_location = os.path.realpath(location)
+    disk_status = os.statvfs(os.path.dirname(absolute_location))
+    available_diskspace = disk_status.f_frsize * disk_status.f_bavail
+    return available_diskspace
+
+
+def check_diskspace(installer_size, location):
+    """This method will return True when the disk space available is sufficient
+    for the Download and Install. If not sufficient, it returns False."""
+    magic_ratio = 1.5
+    installed_game_size = int(float(installer_size) * magic_ratio)
+    total_required_disk_space = installer_size + installed_game_size
+    diskspace_available = get_availablediskspace(location)
+    print(total_required_disk_space)
+    print(diskspace_available)
+    # Reserved space can be used to mimic a full disk or prevent filling a disk completely.
+    reserved_space = 0
+    return False if diskspace_available < (total_required_disk_space + reserved_space) else True
+
+
 def install_game(game, installer):
     error_message = ""
     tmp_dir = ""

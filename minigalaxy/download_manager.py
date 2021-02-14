@@ -10,16 +10,6 @@ from minigalaxy.download import Download
 
 
 class __DownloadManger:
-    #TODO: Move static method to ui.gametile?
-    @staticmethod
-    def get_availablediskspace(location):
-        """Check disk space available to the user. This method uses the absolute path so
-        symlinks to disks with sufficient space are correctly measured. Note this is
-        a linux-specific command."""
-        absolute_location = os.path.realpath(location)
-        disk_status = os.statvfs(os.path.dirname(absolute_location))
-        available_diskspace = disk_status.f_frsize * disk_status.f_bavail
-        return available_diskspace
 
     def __init__(self):
         self.__queue = queue.Queue()
@@ -30,15 +20,6 @@ class __DownloadManger:
         download_thread = threading.Thread(target=self.__download_thread)
         download_thread.daemon = True
         download_thread.start()
-
-    def check_diskspace(self, file_size, downloaded_size, location):
-        """This method will return True when the disk space available is sufficient
-        for the Download. If not sufficient, it returns False."""
-        download_remaining = file_size - downloaded_size
-        diskspace_available = self.get_availablediskspace(location)
-        # Reserved space can be used to mimic a full disk or prevent filling a disk completely.
-        reserved_space = 0
-        return False if diskspace_available < (download_remaining + reserved_space) else True
 
     def download(self, download):
         if isinstance(download, Download):
