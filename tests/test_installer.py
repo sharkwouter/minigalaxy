@@ -12,11 +12,13 @@ from minigalaxy.translation import _
 class Test(TestCase):
     @mock.patch('os.path.exists')
     @mock.patch('hashlib.md5')
-    def test1_verify_installer_integrity(self, mock_hash, mock_is_file):
+    @mock.patch('os.listdir')
+    def test1_verify_installer_integrity(self, mock_listdir, mock_hash, mock_is_file):
         md5_sum = "5cc68247b61ba31e37e842fd04409d98"
         installer_name = "beneath_a_steel_sky_en_gog_2_20150.sh"
         mock_is_file.return_value = True
         mock_hash().hexdigest.return_value = md5_sum
+        mock_listdir.return_value = [installer_name]
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky",
                     md5sum={installer_name: md5_sum})
         installer_path = "/home/user/.cache/minigalaxy/download/" \
@@ -28,12 +30,14 @@ class Test(TestCase):
 
     @mock.patch('os.path.exists')
     @mock.patch('hashlib.md5')
-    def test2_verify_installer_integrity(self, mock_hash, mock_is_file):
+    @mock.patch('os.listdir')
+    def test2_verify_installer_integrity(self, mock_listdir, mock_hash, mock_is_file):
         md5_sum = "5cc68247b61ba31e37e842fd04409d98"
         installer_name = "beneath_a_steel_sky_en_gog_2_20150.sh"
         corrupted_md5_sum = "99999947b61ba31e37e842fd04409d98"
         mock_is_file.return_value = True
         mock_hash().hexdigest.return_value = corrupted_md5_sum
+        mock_listdir.return_value = [installer_name]
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky",
                     md5sum={installer_name: md5_sum})
         installer_path = "/home/user/.cache/minigalaxy/download/" \
