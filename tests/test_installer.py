@@ -42,7 +42,7 @@ class Test(TestCase):
                     md5sum={installer_name: md5_sum})
         installer_path = "/home/user/.cache/minigalaxy/download/" \
                          "Beneath a Steel Sky/{}".format(installer_name)
-        exp = _("{} was corrupted. Please download it again.").format(installer_path)
+        exp = _("{} was corrupted. Please download it again.").format(installer_name)
         with patch("builtins.open", mock_open(read_data=b"aaaa")):
             obs = installer.verify_installer_integrity(game, installer_path)
         self.assertEqual(exp, obs)

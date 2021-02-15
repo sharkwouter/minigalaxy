@@ -41,10 +41,10 @@ def verify_installer_integrity(game, installer):
                     hash_md5.update(chunk)
             calculated_checksum = hash_md5.hexdigest()
             if installer_file_name in game.md5sum:
-                if game.md5sum[os.path.basename(installer_file_name)] == calculated_checksum:
-                    print("{} integrity is preserved. MD5 is: {}".format(installer, calculated_checksum))
+                if game.md5sum[installer_file_name] == calculated_checksum:
+                    print("{} integrity is preserved. MD5 is: {}".format(installer_file_name, calculated_checksum))
                 else:
-                    error_message = _("{} was corrupted. Please download it again.").format(installer)
+                    error_message = _("{} was corrupted. Please download it again.").format(installer_file_name)
                     break
             else:
                 print("Warning. No info about correct {} MD5 checksum".format(installer_file_name))
