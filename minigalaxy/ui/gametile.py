@@ -234,7 +234,6 @@ class GameTile(Gtk.Box):
                 download_success = False
                 break
             total_file_size += int(self.api.get_file_size(file_info["downlink"]))
-            self.api.get_file_size(file_info["downlink"])
             try:
                 # Extract the filename from the download url (filename is between %2F and &token)
                 download_path = os.path.join(self.download_dir, urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1)))
