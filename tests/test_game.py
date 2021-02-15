@@ -287,7 +287,8 @@ en-US
         observed = jscon_dict
         self.assertEqual(expected, observed)
 
-    def test_save_minigalaxy_info_json(self):
+    @unittest.mock.patch("minigalaxy.config.Config")
+    def test_save_minigalaxy_info_json(self, mock_config):
         json_dict = {"version": "gog-2"}
         with patch("builtins.open", mock_open()) as m:
             game = Game("Neverwinter Nights")
