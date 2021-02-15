@@ -6,7 +6,7 @@ from minigalaxy.config import Config
 
 
 class Game:
-    def __init__(self, name: str, url: str = "", md5sum: str = "", game_id: int = 0, install_dir: str = "",
+    def __init__(self, name: str, url: str = "", md5sum: dict = {}, game_id: int = 0, install_dir: str = "",
                  image_url="", platform="linux", dlcs=None):
         self.name = name
         self.url = url
