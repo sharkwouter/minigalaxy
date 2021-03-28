@@ -227,7 +227,6 @@ class GameTile(Gtk.Box):
         for key, file_info in enumerate(download_info['files']):
             try:
                 download_url = self.api.get_real_download_link(file_info["downlink"])
-                self.game.md5sum = self.api.get_download_file_md5(file_info["downlink"])
             except ValueError as e:
                 print(e)
                 GLib.idle_add(self.parent.parent.show_error, _("Download error"), _(str(e)))
@@ -243,6 +242,7 @@ class GameTile(Gtk.Box):
             except AttributeError:
                 if key > 0:
                     download_path = "{}-{}.bin".format(self.download_path, key)
+            self.game.md5sum[os.path.basename(download_path)] = self.api.get_download_file_md5(file_info["downlink"])
             download = Download(
                 url=download_url,
                 save_location=download_path,
