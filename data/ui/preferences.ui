@@ -204,7 +204,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSwitch" id="ignore_disk_space_check">
+              <object class="GtkSwitch" id="switch_ignore_disk_space_check">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="halign">start</property>
