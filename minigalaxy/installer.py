@@ -25,7 +25,7 @@ def check_diskspace(installer_size, location):
     total_required_disk_space = installer_size + installed_game_size
     diskspace_available = get_availablediskspace(location)
     # Reserved space can be used to mimic a full disk or prevent filling a disk completely.
-    reserved_space = 0
+    reserved_space = 500*1024*1024
     return False if diskspace_available < (total_required_disk_space + reserved_space) else True
 
 
