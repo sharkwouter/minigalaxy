@@ -77,6 +77,36 @@ class Test(TestCase):
         obs = installer.extract_installer(game, installer_path, temp_dir)
         self.assertEqual(exp, obs)
 
+    @mock.patch('os.statvfs')
+    def test_get_availablediskspace(self, mock_os_statvfs):
+        frsize = 4096
+        bavail = 29699296
+        mock_os_statvfs().f_frsize = frsize
+        mock_os_statvfs().f_bavail = bavail
+        exp = frsize * bavail
+        obs = installer.get_availablediskspace("/")
+        self.assertEqual(exp, obs)
+
+    @mock.patch('os.statvfs')
+    def test1_check_diskspace(self, mock_os_statvfs):
+        frsize = 4096
+        bavail = 29699296
+        mock_os_statvfs().f_frsize = frsize
+        mock_os_statvfs().f_bavail = bavail
+        exp = True
+        obs = installer.check_diskspace(524288000, "/")
+        self.assertEqual(exp, obs)
+
+    @mock.patch('os.statvfs')
+    def test2_check_diskspace(self, mock_os_statvfs):
+        frsize = 4096
+        bavail = 296992
+        mock_os_statvfs().f_frsize = frsize
+        mock_os_statvfs().f_bavail = bavail
+        exp = False
+        obs = installer.check_diskspace(524288000, "/")
+        self.assertEqual(exp, obs)
+
 
 del sys.modules["minigalaxy.config"]
 del sys.modules["minigalaxy.game"]
