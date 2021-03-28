@@ -34,7 +34,8 @@ DEFAULT_CONFIGURATION = {
     "stay_logged_in": True,
     "show_fps": False,
     "show_windows_games": False,
-    "keep_window_maximized": False
+    "keep_window_maximized": False,
+    "ignore_disk_space_check": False
 }
 
 # Game IDs to ignore when received by the API
