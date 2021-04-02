@@ -1,9 +1,6 @@
-import sys
 from unittest import TestCase, mock
-from unittest.mock import MagicMock, patch, mock_open
+from unittest.mock import patch, mock_open
 
-m_config = MagicMock()
-sys.modules['minigalaxy.config'] = m_config
 from minigalaxy.game import Game
 from minigalaxy import installer
 from minigalaxy.translation import _
@@ -76,7 +73,3 @@ class Test(TestCase):
         exp = "The installation of /home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh failed. Please try again."
         obs = installer.extract_installer(game, installer_path, temp_dir)
         self.assertEqual(exp, obs)
-
-
-del sys.modules["minigalaxy.config"]
-del sys.modules["minigalaxy.game"]
