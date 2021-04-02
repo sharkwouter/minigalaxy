@@ -510,7 +510,7 @@ class GameTile(Gtk.Box):
 
         elif state == self.state.INSTALLED:
             self.button.set_label(_("play"))
-            # self.button.get_style_context().add_class("suggested-action")
+            self.button.get_style_context().add_class("suggested-action")
             self.button.set_sensitive(True)
             self.image.set_sensitive(True)
             self.menu_button.show()
@@ -525,6 +525,7 @@ class GameTile(Gtk.Box):
 
         elif state == self.state.UNINSTALLING:
             self.button.set_label(_("uninstalling…"))
+            self.button.get_style_context().remove_class("suggested-action")
             self.button.set_sensitive(False)
             self.image.set_sensitive(False)
             self.menu_button.hide()

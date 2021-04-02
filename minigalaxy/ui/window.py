@@ -28,13 +28,13 @@ class Window(Gtk.ApplicationWindow):
     def __init__(self, name="Minigalaxy"):
         Gtk.ApplicationWindow.__init__(self, title=name)
         self.api = Api()
-        self.show_installed_only = False
         self.search_string = ""
         self.offline = False
 
         # Set library
         self.library = Library(self, self.api)
         self.window_library.add(self.library)
+        self.header_installed.set_active(Config.get("installed_filter"))
 
         # Set the icon
         icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_IMAGE_PATH)
@@ -57,6 +57,7 @@ class Window(Gtk.ApplicationWindow):
     @Gtk.Template.Callback("filter_library")
     def filter_library(self, switch, _=""):
         self.library.filter_library(switch)
+        Config.set("installed_filter", switch.get_active())
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
