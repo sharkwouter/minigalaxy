@@ -15,6 +15,8 @@ class TestConfig(TestCase):
         config = JSON_DEFAULT_CONFIGURATION
         with patch("builtins.open", mock_open(read_data=config)):
             from minigalaxy.config import Config
+            Config.first_run = True
+            Config._Config__config = DEFAULT_CONFIGURATION
             lang = Config.get("lang")
         exp = "en"
         obs = lang
@@ -44,6 +46,7 @@ class TestConfig(TestCase):
         config = JSON_DEFAULT_CONFIGURATION
         with patch("builtins.open", mock_open(read_data=config)):
             from minigalaxy.config import Config
+            Config.first_run = True
             Config.set("lang", "pl")
             lang = Config.get("lang")
         exp = "pl"
@@ -56,6 +59,7 @@ class TestConfig(TestCase):
         config = JSON_DEFAULT_CONFIGURATION
         with patch("builtins.open", mock_open(read_data=config)):
             from minigalaxy.config import Config
+            Config.first_run = True
             Config.unset("lang")
             lang = Config.get("lang")
         exp = None
