@@ -280,6 +280,7 @@ en-US
         json_content = '{"example_key": "example_value"}'
         with patch("builtins.open", mock_open(read_data=json_content)):
             game = Game("Game Name test")
+            game.set_info = MagicMock()
             game_get_status = game.get_info("example_key")
         expected = "example_value"
         observed = game_get_status
@@ -291,6 +292,7 @@ en-US
         json_content = '{"example_key": "example_value"}'
         with patch("builtins.open", mock_open(read_data=json_content)):
             game = Game("Game Name test")
+            game.set_info = MagicMock()
             game.load_minigalaxy_info_json = MagicMock()
             game.load_minigalaxy_info_json.return_value = {}
             game_get_status = game.get_info("example_key")
@@ -317,6 +319,7 @@ en-US
         json_content = '{"dlcs": {"example_dlc" : {"example_key": "example_value"}}}'
         with patch("builtins.open", mock_open(read_data=json_content)):
             game = Game("Game Name test")
+            game.set_dlc_info = MagicMock()
             game_get_status = game.get_dlc_info("example_key", "example_dlc")
         expected = "example_value"
         observed = game_get_status
@@ -328,6 +331,7 @@ en-US
         json_content = '{"dlcs": {"example_dlc" : {"example_key": "example_value"}}}'
         with patch("builtins.open", mock_open(read_data=json_content)):
             game = Game("Game Name test")
+            game.set_dlc_info = MagicMock()
             game.load_minigalaxy_info_json = MagicMock()
             game.load_minigalaxy_info_json.return_value = {}
             game_get_status = game.get_dlc_info("example_key", "example_dlc")

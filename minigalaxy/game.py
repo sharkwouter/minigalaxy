@@ -7,11 +7,11 @@ from minigalaxy.paths import CONFIG_DIR
 
 
 class Game:
-    def __init__(self, name: str, url: str = "", md5sum: dict = {}, game_id: int = 0, install_dir: str = "",
+    def __init__(self, name: str, url: str = "", md5sum=None, game_id: int = 0, install_dir: str = "",
                  image_url="", platform="linux", dlcs=None):
         self.name = name
         self.url = url
-        self.md5sum = md5sum
+        self.md5sum = {} if md5sum is None else md5sum
         self.id = game_id
         self.install_dir = install_dir
         self.image_url = image_url
@@ -61,6 +61,7 @@ class Game:
             installed_version = self.get_info("version")
             if not installed_version:
                 installed_version = self.fallback_read_installed_version()
+                self.set_info("version", installed_version)
         if installed_version and version_from_api and version_from_api != installed_version:
             update_available = True
 
@@ -99,11 +100,13 @@ class Game:
             value = json_dict[key]
         # Start: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
         elif os.path.isfile(os.path.join(self.install_dir, "minigalaxy-info.json")):
-            staus_file = open(self.status_file_path, 'r')
+            staus_file = open(os.path.join(self.install_dir, "minigalaxy-info.json"), 'r')
             json_dict = json.load(staus_file)
             staus_file.close()
             if key in json_dict:
                 value = json_dict[key]
+                # Lets move this value to new config
+                self.set_info(key, value)
         # End: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
         return value
 
@@ -116,13 +119,15 @@ class Game:
                     value = json_dict["dlcs"][dlc_title][key]
         # Start: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
         if os.path.isfile(os.path.join(self.install_dir, "minigalaxy-info.json")) and not value:
-            staus_file = open(self.status_file_path, 'r')
+            staus_file = open(os.path.join(self.install_dir, "minigalaxy-info.json"), 'r')
             json_dict = json.load(staus_file)
             staus_file.close()
             if "dlcs" in json_dict:
                 if dlc_title in json_dict["dlcs"]:
                     if key in json_dict["dlcs"][dlc_title]:
                         value = json_dict["dlcs"][dlc_title][key]
+                        # Lets move this value to new config
+                        self.set_dlc_info(key, value, dlc_title)
         # End: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
         return value
 
