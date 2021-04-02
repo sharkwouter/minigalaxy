@@ -1,6 +1,10 @@
 import unittest
 import sys
+import os
 from unittest.mock import MagicMock, mock_open, patch
+
+from minigalaxy.paths import CONFIG_DIR
+
 m_config = MagicMock()
 sys.modules['minigalaxy.config'] = m_config
 from minigalaxy.game import Game
@@ -368,7 +372,7 @@ en-US
         m_config.Config.get.return_value = "/home/user/GOG Games"
         game = Game("Neverwinter Nights")
         game.set_install_dir()
-        exp = "/home/user/GOG Games/Neverwinter Nights/minigalaxy-info.json"
+        exp = os.path.join(CONFIG_DIR, "Neverwinter Nights.json")
         obs = game.status_file_path
         self.assertEqual(exp, obs)
 

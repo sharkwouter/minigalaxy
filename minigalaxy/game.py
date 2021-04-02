@@ -3,6 +3,7 @@ import re
 import json
 
 from minigalaxy.config import Config
+from minigalaxy.paths import CONFIG_DIR
 
 
 class Game:
@@ -16,8 +17,8 @@ class Game:
         self.image_url = image_url
         self.platform = platform
         self.dlcs = [] if dlcs is None else dlcs
-        self.status_file_name = "minigalaxy-info.json"
-        self.status_file_path = os.path.join(self.install_dir, self.status_file_name)
+        self.status_file_name = "{}.json".format(self.get_install_directory_name())
+        self.status_file_path = os.path.join(CONFIG_DIR, self.status_file_name)
 
     def get_stripped_name(self):
         return self.__strip_string(self.name)
@@ -144,7 +145,6 @@ class Game:
     def set_install_dir(self):
         if not self.install_dir:
             self.install_dir = os.path.join(Config.get("install_dir"), self.get_install_directory_name())
-            self.status_file_path = os.path.join(self.install_dir, self.status_file_name)
 
     def __str__(self):
         return self.name
