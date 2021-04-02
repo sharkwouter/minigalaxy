@@ -255,7 +255,7 @@ en-US
 
     @unittest.mock.patch('os.path.isfile')
     def test_get_dlc_info(self, mock_isfile):
-        mock_isfile.side_effect = [True]
+        mock_isfile.side_effect = [True, False]
         json_content = '{"dlcs": {"example_dlc" : {"example_key": "example_value"}}}'
         with patch("builtins.open", mock_open(read_data=json_content)):
             game = Game("Game Name test")
@@ -264,21 +264,89 @@ en-US
         observed = game_get_status
         self.assertEqual(expected, observed)
 
-    def test1_set_install_dir(self):
-        m_config.Config.get.return_value = "/home/user/GOG Games"
-        game = Game("Neverwinter Nights")
+    def test_set_install_dir(self):
+        install_directory = "/home/user/GOG Games"
+        install_game_name = "Neverwinter Nights"
+        m_config.Config.get.return_value = install_directory
+        game = Game(install_game_name)
         game.set_install_dir()
-        exp = "/home/user/GOG Games/Neverwinter Nights"
+        exp = os.path.join(install_directory, install_game_name)
         obs = game.install_dir
         self.assertEqual(exp, obs)
 
-    def test2_set_install_dir(self):
-        m_config.Config.get.return_value = "/home/user/GOG Games"
-        game = Game("Neverwinter Nights")
-        game.set_install_dir()
-        exp = os.path.join(CONFIG_DIR, "Neverwinter Nights.json")
-        obs = game.status_file_path
-        self.assertEqual(exp, obs)
+    @unittest.mock.patch('os.path.isfile')
+    def test1_get_info_legacy(self, mock_isfile):
+        mock_isfile.side_effect = [False, True]
+        json_content = '{"example_key": "example_value"}'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test")
+            game_get_status = game.get_info("example_key")
+        expected = "example_value"
+        observed = game_get_status
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test2_get_info_legacy(self, mock_isfile):
+        mock_isfile.side_effect = [True, True]
+        json_content = '{"example_key": "example_value"}'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test")
+            game.load_minigalaxy_info_json = MagicMock()
+            game.load_minigalaxy_info_json.return_value = {}
+            game_get_status = game.get_info("example_key")
+        expected = "example_value"
+        observed = game_get_status
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test3_get_info_legacy(self, mock_isfile):
+        mock_isfile.side_effect = [True, True]
+        json_content = '{"example_key": "example_value_legacy"}'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test")
+            game.load_minigalaxy_info_json = MagicMock()
+            game.load_minigalaxy_info_json.return_value = {"example_key": "example_value"}
+            game_get_status = game.get_info("example_key")
+        expected = "example_value"
+        observed = game_get_status
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test1_get_dlc_info_legacy(self, mock_isfile):
+        mock_isfile.side_effect = [False, True]
+        json_content = '{"dlcs": {"example_dlc" : {"example_key": "example_value"}}}'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test")
+            game_get_status = game.get_dlc_info("example_key", "example_dlc")
+        expected = "example_value"
+        observed = game_get_status
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test2_get_dlc_info_legacy(self, mock_isfile):
+        mock_isfile.side_effect = [True, True]
+        json_content = '{"dlcs": {"example_dlc" : {"example_key": "example_value"}}}'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test")
+            game.load_minigalaxy_info_json = MagicMock()
+            game.load_minigalaxy_info_json.return_value = {}
+            game_get_status = game.get_dlc_info("example_key", "example_dlc")
+        expected = "example_value"
+        observed = game_get_status
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    def test3_get_dlc_info_legacy(self, mock_isfile):
+        mock_isfile.side_effect = [True, True]
+        json_content = '{"dlcs": {"example_dlc" : {"example_key": "example_value_legacy"}}}'
+        with patch("builtins.open", mock_open(read_data=json_content)):
+            game = Game("Game Name test")
+            game.load_minigalaxy_info_json = MagicMock()
+            game.load_minigalaxy_info_json.return_value = {"dlcs": {"example_dlc": {"example_key": "example_value"}}}
+            game_get_status = game.get_dlc_info("example_key", "example_dlc")
+        expected = "example_value"
+        observed = game_get_status
+        self.assertEqual(expected, observed)
 
 
 del sys.modules["minigalaxy.config"]

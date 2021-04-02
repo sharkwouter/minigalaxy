@@ -97,6 +97,14 @@ class Game:
         json_dict = self.load_minigalaxy_info_json()
         if key in json_dict:
             value = json_dict[key]
+        # Start: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
+        elif os.path.isfile(os.path.join(self.install_dir, "minigalaxy-info.json")):
+            staus_file = open(self.status_file_path, 'r')
+            json_dict = json.load(staus_file)
+            staus_file.close()
+            if key in json_dict:
+                value = json_dict[key]
+        # End: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
         return value
 
     def get_dlc_info(self, key, dlc_title):
@@ -106,6 +114,16 @@ class Game:
             if dlc_title in json_dict["dlcs"]:
                 if key in json_dict["dlcs"][dlc_title]:
                     value = json_dict["dlcs"][dlc_title][key]
+        # Start: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
+        if os.path.isfile(os.path.join(self.install_dir, "minigalaxy-info.json")) and not value:
+            staus_file = open(self.status_file_path, 'r')
+            json_dict = json.load(staus_file)
+            staus_file.close()
+            if "dlcs" in json_dict:
+                if dlc_title in json_dict["dlcs"]:
+                    if key in json_dict["dlcs"][dlc_title]:
+                        value = json_dict["dlcs"][dlc_title][key]
+        # End: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
         return value
 
     def set_install_dir(self):
