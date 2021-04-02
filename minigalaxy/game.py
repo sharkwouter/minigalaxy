@@ -48,11 +48,6 @@ class Game:
         if dlc_title:
             dlc_version = self.get_dlc_info("version", dlc_title)
             installed = True if dlc_version else False
-            # Start: Code for compatibility with minigalaxy 1.0
-            if not installed:
-                status = self.legacy_get_dlc_status(dlc_title)
-                installed = True if status in ["installed", "updatable"] else False
-            # End: Code for compatibility with minigalaxy 1.0
         else:
             if self.install_dir and os.path.exists(self.install_dir):
                 installed = True
@@ -62,11 +57,6 @@ class Game:
         update_available = False
         if dlc_title:
             installed_version = self.get_dlc_info("version", dlc_title)
-            # Start: Code for compatibility with minigalaxy 1.0
-            if not installed_version:
-                status = self.legacy_get_dlc_status(dlc_title, version_from_api)
-                update_available = True if status in ["updatable"] else False
-            # End: Code for compatibility with minigalaxy 1.0
         else:
             installed_version = self.get_info("version")
             if not installed_version:
@@ -75,30 +65,6 @@ class Game:
             update_available = True
 
         return update_available
-
-    # This function is for compatibility with minigalaxy 1.0. It can be removed, when decision to break compatibility
-    # is taken.
-    # This is not a big deal. After removal of this function all DLCs from minigalaxy 1.0 will be marked as uninstalled.
-    def legacy_get_dlc_status(self, dlc_title, available_version="0"):
-        dlc_status_list = ["not-installed", "installed", "updatable"]
-        dlc_status_file_name = "minigalaxy-dlc.json"
-        dlc_status_file_path = os.path.join(self.install_dir, dlc_status_file_name)
-        json_list = ["", ""]
-        status = dlc_status_list[0]
-        if os.path.isfile(dlc_status_file_path):
-            dlc_staus_file = open(dlc_status_file_path, 'r')
-            json_list = json.load(dlc_staus_file)
-            dlc_status_dict = json_list[0]
-            dlc_staus_file.close()
-            if dlc_title in dlc_status_dict:
-                status = dlc_status_dict[dlc_title]
-        if status == dlc_status_list[1]:
-            installed_version_dict = json_list[1]
-            if dlc_title in installed_version_dict:
-                installed_version = installed_version_dict[dlc_title]
-                if available_version != installed_version:
-                    status = dlc_status_list[2]
-        return status
 
     def fallback_read_installed_version(self):
         gameinfo = os.path.join(self.install_dir, "gameinfo")
