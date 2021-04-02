@@ -27,6 +27,7 @@ class TestConfig(TestCase):
         mock_isdir.return_value = True
         with patch("builtins.open", mock_open()) as mock_config:
             from minigalaxy.config import Config
+            Config.get("")
         mock_c = mock_config.mock_calls
         write_string = ""
         for kall in mock_c:
