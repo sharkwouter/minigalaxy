@@ -11,15 +11,20 @@ from minigalaxy.constants import DEFAULT_CONFIGURATION
 # The config file is only read once upon starting up
 class __Config:
     def __init__(self):
+        self.first_run = False
+        self.__config = {}
         self.__config_file = CONFIG_FILE_PATH
-        self.__config = self.__load_config_file()
-        self.__add_missing_config_entries()
         self.__update_required = False
 
-        # Update the config file regularly to reflect the self.__config dictionary
-        keep_config_synced_thread = threading.Thread(target=self.__keep_config_synced)
-        keep_config_synced_thread.daemon = True
-        keep_config_synced_thread.start()
+    def first_run_init(self):
+        if not self.first_run:
+            self.first_run = True
+            self.__config = self.__load_config_file()
+            self.__add_missing_config_entries()
+            # Update the config file regularly to reflect the self.__config dictionary
+            keep_config_synced_thread = threading.Thread(target=self.__keep_config_synced)
+            keep_config_synced_thread.daemon = True
+            keep_config_synced_thread.start()
 
     def __keep_config_synced(self):
         while True:
@@ -70,16 +75,19 @@ class __Config:
             self.__config = self.__load_config_file()
 
     def set(self, key, value):
+        self.first_run_init()
         self.__config[key] = value
         self.__update_required = True
 
     def get(self, key):
+        self.first_run_init()
         try:
             return self.__config[key]
         except KeyError:
             return None
 
     def unset(self, key):
+        self.first_run_init()
         try:
             del self.__config[key]
             self.__update_required = True

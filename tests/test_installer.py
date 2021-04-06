@@ -1,9 +1,6 @@
-import sys
 from unittest import TestCase, mock
-from unittest.mock import MagicMock, patch, mock_open
+from unittest.mock import patch, mock_open
 
-m_config = MagicMock()
-sys.modules['minigalaxy.config'] = m_config
 from minigalaxy.game import Game
 from minigalaxy import installer
 from minigalaxy.translation import _
@@ -106,7 +103,3 @@ class Test(TestCase):
         exp = False
         obs = installer.check_diskspace(524288000, "/")
         self.assertEqual(exp, obs)
-
-
-del sys.modules["minigalaxy.config"]
-del sys.modules["minigalaxy.game"]

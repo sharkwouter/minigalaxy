@@ -1,10 +1,7 @@
 import subprocess
-import sys
 from unittest import TestCase, mock
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, mock_open, patch
 
-m_config = MagicMock()
-sys.modules['minigalaxy.config'] = m_config
 from minigalaxy import launcher
 from minigalaxy.game import Game
 
@@ -50,6 +47,64 @@ class Test(TestCase):
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'start.exe', 'unins000.exe']
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ["wine", "start.exe"]
+        obs = launcher.get_windows_exe_cmd(game, files)
+        self.assertEqual(exp, obs)
+
+    @mock.patch('builtins.open', new_callable=mock_open, read_data="")
+    @mock.patch('os.chdir')
+    def test2_get_windows_exe_cmd(self, mock_os_chdir, mo):
+        goggame_1414471894_info_content = """{
+        "buildId": "53350324452482937",
+        "clientId": "53185732904249211",
+        "gameId": "1414471894",
+        "language": "Russian",
+        "languages": [
+        "ru-RU"
+        ],
+        "name": "Metro Exodus - Sam's Story",
+        "osBitness": [
+        "64"
+        ],
+        "playTasks": [],
+        "rootGameId": "1407287452",
+        "version": 1
+        }"""
+        goggame_1407287452_info_content = """{
+        "buildId": "53350324452482937",
+        "clientId": "53185732904249211",
+        "gameId": "1407287452",
+        "language": "Russian",
+        "languages": [
+        "ru-RU"
+        ],
+        "name": "Metro Exodus",
+        "osBitness": [
+        "64"
+        ],
+        "playTasks": [
+        {
+        "category": "game",
+        "isPrimary": true,
+        "languages": [
+        "ru-RU"
+        ],
+        "name": "Metro Exodus",
+        "osBitness": [
+        "64"
+        ],
+        "path": "MetroExodus.exe",
+        "type": "FileTask"
+        }
+        ],
+        "rootGameId": "1407287452",
+        "version": 1
+        }"""
+        handlers = (mock_open(read_data=goggame_1414471894_info_content).return_value, mock_open(read_data=goggame_1407287452_info_content).return_value)
+        mo.side_effect = handlers
+        files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'MetroExodus.exe', 'unins000.exe',
+                 'goggame-1407287452.info', 'goggame-1414471894.info']
+        game = Game("Test Game", install_dir="/test/install/dir")
+        exp = ["wine", "MetroExodus.exe"]
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
@@ -149,7 +204,3 @@ makson    1006     2  0 lis24 ?        00:00:00 /bin/sh /home/makson/.paradoxlau
         exp = ""
         obs = launcher.check_if_game_start_process_spawned_final_process(err_msg, game)
         self.assertEqual(exp, obs)
-
-
-del sys.modules["minigalaxy.config"]
-del sys.modules["minigalaxy.game"]
