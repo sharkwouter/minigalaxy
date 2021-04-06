@@ -34,7 +34,8 @@ DEFAULT_CONFIGURATION = {
     "stay_logged_in": True,
     "show_fps": False,
     "show_windows_games": False,
-    "keep_window_maximized": False
+    "keep_window_maximized": False,
+    "installed_filter": False
 }
 
 # Game IDs to ignore when received by the API
@@ -42,6 +43,7 @@ IGNORE_GAME_IDS = [
     1424856371,  # Hotline Miami 2: Wrong Number - Digital Comics
     1980301910,  # The Witcher Goodies Collection
     2005648906,  # Spring Sale Goodies Collection #1
+    1486144755,  # Cyberpunk 2077 Goodies Collection
 ]
 
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB

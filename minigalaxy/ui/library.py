@@ -25,7 +25,7 @@ class Library(Gtk.Viewport):
         Gtk.Viewport.__init__(self)
         self.parent = parent
         self.api = api
-        self.show_installed_only = False
+        self.show_installed_only = Config.get("installed_filter")
         self.search_string = ""
         self.offline = False
         self.games = []

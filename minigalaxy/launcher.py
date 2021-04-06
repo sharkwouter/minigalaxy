@@ -13,11 +13,13 @@ def config_game(game):
     os.environ["WINEPREFIX"] = prefix
     subprocess.Popen(['wine', 'winecfg'])
 
+
 def regedit_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
 
     os.environ["WINEPREFIX"] = prefix
     subprocess.Popen(['wine', 'regedit'])
+
 
 def start_game(game):
     error_message = ""
@@ -70,6 +72,7 @@ def determine_launcher_type(files):
         launcher_type = "final_resort"
     return launcher_type
 
+
 def get_exe_cmd_with_var_command(game, exe_cmd):
     command_list = game.get_info("command").split()
     var_list = game.get_info("variable").split()
@@ -80,6 +83,7 @@ def get_exe_cmd_with_var_command(game, exe_cmd):
 
     exe_cmd = var_list + exe_cmd + command_list
     return exe_cmd
+
 
 def get_windows_exe_cmd(game, files):
     exe_cmd = [""]
@@ -93,10 +97,12 @@ def get_windows_exe_cmd(game, files):
             with open(file, 'r') as info_file:
                 info = json.loads(info_file.read())
                 # if we have the workingDir property, start the executable at that directory
-                if "workingDir" in info["playTasks"][0] and info["playTasks"][0]["workingDir"]:
-                    exe_cmd = ["wine", "start","/b","/wait","/d", info["playTasks"][0]["workingDir"], info["playTasks"][0]["path"]]
-                else:
-                    exe_cmd = ["wine", info["playTasks"][0]["path"]]
+                if info["playTasks"]:
+                    if "workingDir" in info["playTasks"][0] and info["playTasks"][0]["workingDir"]:
+                        exe_cmd = ["wine", "start", "/b", "/wait", "/d", info["playTasks"][0]["workingDir"],
+                                   info["playTasks"][0]["path"]]
+                    else:
+                        exe_cmd = ["wine", info["playTasks"][0]["path"]]
     if exe_cmd == [""]:
         # in case no goggame info file was found
         executables = glob.glob(game.install_dir + '/*.exe')
@@ -130,16 +136,19 @@ def get_scummvm_exe_cmd(game, files):
 
 
 def get_start_script_exe_cmd(game, files):
-    exec_start = [os.path.join(game.install_dir, "start.sh")]
+    start_sh = "start.sh"
+    exec_start = [os.path.join(game.install_dir, start_sh)] if start_sh in files else [""]
     return exec_start
+
 
 def get_final_resort_exe_cmd(game, files):
     # This is the final resort, applies to FTL
     exe_cmd = [""]
-    game_files = os.listdir("game")
+    game_dir = "game"
+    game_files = os.listdir(os.path.join(game.install_dir, game_dir)) if game_dir in files else []
     for file in game_files:
         if re.match(r'^goggame-[0-9]*\.info$', file):
-            os.chdir(os.path.join(game.install_dir, "game"))
+            os.chdir(os.path.join(game.install_dir, game_dir))
             with open(file, 'r') as info_file:
                 info = json.loads(info_file.read())
                 exe_cmd = ["./{}".format(info["playTasks"][0]["path"])]
