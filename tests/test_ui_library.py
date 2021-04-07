@@ -7,7 +7,6 @@ m_gi = MagicMock()
 m_window = MagicMock()
 m_preferences = MagicMock()
 m_gametile = MagicMock()
-m_config = MagicMock()
 
 
 class UnitTestGtkTemplate:
@@ -43,14 +42,13 @@ sys.modules['gi'] = m_gi
 sys.modules['minigalaxy.ui.window'] = m_window
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.gametile'] = m_gametile
-sys.modules['minigalaxy.config'] = m_config
 from minigalaxy.game import Game
 from minigalaxy.ui.library import Library
 
 SELF_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath A Steel Sky": "1207658695",
               "Stellaris (English)": "1508702879"}
 API_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath a Steel Sky": "1207658695",
-            "Dragonsphere": "1207658927", "Warsow": "1207659121", "Outlast": "1207660064", "Xenonauts": "1207664803",
+             "Dragonsphere": "1207658927", "Warsow": "1207659121", "Outlast": "1207660064", "Xenonauts": "1207664803",
              "Wasteland 2": "1207665783", "Baldur's Gate: Enhanced Edition": "1207666353",
              "Baldur's Gate II: Enhanced Edition": "1207666373", "Toonstruck": "1207666633",
              "Icewind Dale: Enhanced Edition": "1207666683", "Pillars of Eternity": "1207666813",
@@ -138,5 +136,3 @@ del sys.modules['gi.repository']
 del sys.modules['minigalaxy.ui.window']
 del sys.modules['minigalaxy.ui.preferences']
 del sys.modules['minigalaxy.ui.gametile']
-del sys.modules["minigalaxy.config"]
-del sys.modules["minigalaxy.game"]

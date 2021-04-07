@@ -156,6 +156,12 @@ class Game:
         return False
 
     def __lt__(self, other):
+        # Sort installed games before not installed ones
+        if self.is_installed() != other.is_installed():
+            if self.is_installed():
+                return True
+            else:
+                return False
         names = [str(self), str(other)]
         names.sort()
         if names[0] == str(self):

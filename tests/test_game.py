@@ -354,4 +354,3 @@ en-US
 
 
 del sys.modules["minigalaxy.config"]
-del sys.modules["minigalaxy.game"]
