@@ -216,7 +216,7 @@ def check_if_game_start_process_spawned_final_process(error_message, game):
             continue
         if not ps_split[1].isdigit():
             continue
-        if int(ps_split[1]) > os.getpid() and game.name in ps:
+        if int(ps_split[1]) > os.getpid() and game.get_install_directory_name() in ps:
             error_message = ""
             break
     return error_message
