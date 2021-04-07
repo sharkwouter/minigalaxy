@@ -1,3 +1,4 @@
+import urllib
 import gi
 import os
 import subprocess
@@ -5,7 +6,8 @@ import webbrowser
 
 gi.require_version('Gtk', '3.0')
 
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk, GLib, Gio
+from gi.repository.GdkPixbuf import Pixbuf, InterpType
 from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
 from minigalaxy.launcher import config_game, regedit_game
@@ -26,15 +28,18 @@ class Properties(Gtk.Dialog):
     switch_properties_show_fps = Gtk.Template.Child()
     entry_properties_variable = Gtk.Template.Child()
     entry_properties_command = Gtk.Template.Child()
+    label_game_description = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent, modal=True)
         self.parent = parent
         self.game = game
         self.api = api
+        self.gamesdb_info = self.api.get_gamesdb_info(self.game)
 
-        #Show the image
+        # Show the image
         self.load_thumbnail()
+        self.load_description()
 
         # Disable/Enable buttons
         self.button_sensitive(game)
@@ -92,10 +97,26 @@ class Properties(Gtk.Dialog):
             )
 
     def load_thumbnail(self):
-        thumbnail_path = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
-        if not os.path.isfile(thumbnail_path) and self.game.is_installed:
-            thumbnail_path = os.path.join(self.game.install_dir, "thumbnail.jpg")
-        GLib.idle_add(self.image.set_from_file, thumbnail_path)
+        if self.gamesdb_info["cover"]:
+            response = urllib.request.urlopen(self.gamesdb_info["cover"])
+            input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
+            pixbuf = Pixbuf.new_from_stream(input_stream, None)
+            pixbuf = pixbuf.scale_simple(340, 480, InterpType.BILINEAR)
+            GLib.idle_add(self.image.set_from_pixbuf, pixbuf)
+        else:
+            thumbnail_path = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
+            if not os.path.isfile(thumbnail_path) and self.game.is_installed:
+                thumbnail_path = os.path.join(self.game.install_dir, "thumbnail.jpg")
+            GLib.idle_add(self.image.set_from_file, thumbnail_path)
+
+    def load_description(self):
+        if self.gamesdb_info["summary"]:
+            description_len = 500
+            if len(self.gamesdb_info["summary"]) > description_len:
+                description = "{}...".format(self.gamesdb_info["summary"][:description_len])
+            else:
+                description = self.gamesdb_info["summary"]
+            GLib.idle_add(self.label_game_description.set_text, description)
 
     def button_sensitive(self, game):
         if not game.is_installed():

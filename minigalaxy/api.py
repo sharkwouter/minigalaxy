@@ -224,3 +224,23 @@ class Api:
             print("Response body: {}".format(response.text))
             print("")
         return response.json()
+
+    @staticmethod
+    def __request_gamesdb(game: Game):
+        request_url = "https://gamesdb.gog.com/platforms/gog/external_releases/{}".format(game.id)
+        response = SESSION.get(request_url)
+        return response.json()
+
+    def get_gamesdb_info(self, game: Game) -> dict:
+        gamesdb_dict = {"cover": "", "vertical_cover": "", "background": ""}
+        response_json = self.__request_gamesdb(game)
+        if "game" in response_json:
+            for gamesdb_key in gamesdb_dict:
+                if gamesdb_key in response_json['game']:
+                    gamesdb_dict[gamesdb_key] = response_json["game"][gamesdb_key]["url_format"].replace(
+                        '{formatter}.{ext}', '.png')
+            gamesdb_dict["summary"] = response_json["game"]["summary"]["*"]
+        else:
+            gamesdb_dict["summary"] = " "
+        print(gamesdb_dict)
+        return gamesdb_dict
