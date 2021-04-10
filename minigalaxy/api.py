@@ -228,8 +228,12 @@ class Api:
     @staticmethod
     def __request_gamesdb(game: Game):
         request_url = "https://gamesdb.gog.com/platforms/gog/external_releases/{}".format(game.id)
-        response = SESSION.get(request_url)
-        return response.json()
+        try:
+            response = SESSION.get(request_url)
+            respones_dict = response.json()
+        except (requests.exceptions.ConnectionError, ValueError):
+            respones_dict = {}
+        return respones_dict
 
     def get_gamesdb_info(self, game: Game) -> dict:
         gamesdb_dict = {"cover": "", "vertical_cover": "", "background": ""}
@@ -241,6 +245,6 @@ class Api:
                         '{formatter}.{ext}', '.png')
             gamesdb_dict["summary"] = response_json["game"]["summary"]["*"]
         else:
-            gamesdb_dict["summary"] = " "
+            gamesdb_dict["summary"] = ""
         print(gamesdb_dict)
         return gamesdb_dict
