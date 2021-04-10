@@ -133,7 +133,7 @@ class Api:
         return response
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> tuple:
+    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> dict:
         if dlc_installers:
             installers = dlc_installers
         else:
@@ -197,7 +197,8 @@ class Api:
                 break
         return version
 
-    def can_connect(self) -> bool:
+    @staticmethod
+    def can_connect() -> bool:
         url = "https://embed.gog.com"
         try:
             SESSION.get(url, timeout=5)
@@ -246,5 +247,4 @@ class Api:
             gamesdb_dict["summary"] = response_json["game"]["summary"]["*"]
         else:
             gamesdb_dict["summary"] = ""
-        print(gamesdb_dict)
         return gamesdb_dict

@@ -5,12 +5,12 @@ import subprocess
 import webbrowser
 
 gi.require_version('Gtk', '3.0')
-
 from gi.repository import Gtk, GLib, Gio
 from gi.repository.GdkPixbuf import Pixbuf, InterpType
 from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
 from minigalaxy.launcher import config_game, regedit_game
+
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "properties.ui"))
 class Properties(Gtk.Dialog):
@@ -31,7 +31,8 @@ class Properties(Gtk.Dialog):
     label_game_description = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
-        Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent, modal=True)
+        Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
+                            modal=True)
         self.parent = parent
         self.game = game
         self.api = api
@@ -80,7 +81,7 @@ class Properties(Gtk.Dialog):
     def on_menu_button_support(self, widget):
         try:
             webbrowser.open(self.api.get_info(self.game)['links']['support'], new=2)
-        except:
+        except webbrowser.Error:
             self.parent.parent.show_error(
                 _("Couldn't open support page"),
                 _("Please check your internet connection")
@@ -90,7 +91,7 @@ class Properties(Gtk.Dialog):
     def on_menu_button_store(self, widget):
         try:
             webbrowser.open(self.gogBaseUrl + self.game.url)
-        except:
+        except webbrowser.Error:
             self.parent.parent.show_error(
                 _("Couldn't open store page"),
                 _("Please check your internet connection")
