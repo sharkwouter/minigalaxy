@@ -57,7 +57,8 @@ class Window(Gtk.ApplicationWindow):
     @Gtk.Template.Callback("filter_library")
     def filter_library(self, switch, _=""):
         self.library.filter_library(switch)
-        Config.set("installed_filter", switch.get_active())
+        if switch == self.header_installed:
+            Config.set("installed_filter", switch.get_active())
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
