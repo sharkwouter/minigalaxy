@@ -244,7 +244,13 @@ class Api:
                 if gamesdb_key in response_json['game']:
                     gamesdb_dict[gamesdb_key] = response_json["game"][gamesdb_key]["url_format"].replace(
                         '{formatter}.{ext}', '.png')
-            gamesdb_dict["summary"] = response_json["game"]["summary"]["*"]
+            gamesdb_dict["summary"] = {}
+            for summary_key in response_json["game"]["summary"]:
+                gamesdb_dict["summary"][summary_key] = response_json["game"]["summary"][summary_key]
+            gamesdb_dict["genre"] = {}
+            for genre_key in response_json["game"]["genres"][0]["name"]:
+                gamesdb_dict["genre"][genre_key] = response_json["game"]["genres"][0]["name"][genre_key]
         else:
-            gamesdb_dict["summary"] = ""
+            gamesdb_dict["summary"] = {}
+            gamesdb_dict["genre"] = {}
         return gamesdb_dict

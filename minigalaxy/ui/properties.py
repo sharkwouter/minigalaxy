@@ -10,6 +10,7 @@ from gi.repository.GdkPixbuf import Pixbuf, InterpType
 from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
 from minigalaxy.launcher import config_game, regedit_game
+from minigalaxy.config import Config
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "properties.ui"))
@@ -111,12 +112,22 @@ class Properties(Gtk.Dialog):
             GLib.idle_add(self.image.set_from_file, thumbnail_path)
 
     def load_description(self):
+        lang = Config.get("lang")
         if self.gamesdb_info["summary"]:
-            description_len = 500
-            if len(self.gamesdb_info["summary"]) > description_len:
-                description = "{}...".format(self.gamesdb_info["summary"][:description_len])
+            desc_lang = "*"
+            for summary_key in self.gamesdb_info["summary"].keys():
+                if lang in summary_key:
+                    desc_lang = summary_key
+            description_len = 470
+            if len(self.gamesdb_info["summary"][desc_lang]) > description_len:
+                description = "{}...".format(self.gamesdb_info["summary"][desc_lang][:description_len])
             else:
-                description = self.gamesdb_info["summary"]
+                description = self.gamesdb_info["summary"][desc_lang]
+            genre_lang = "*"
+            for genre_key in self.gamesdb_info["genre"].keys():
+                if lang in genre_key:
+                    genre_lang = genre_key
+            description = "{}: {}\n{}".format(_("Genre"), self.gamesdb_info["genre"][genre_lang], description)
             GLib.idle_add(self.label_game_description.set_text, description)
 
     def button_sensitive(self, game):
