@@ -95,7 +95,8 @@ class Library(Gtk.Viewport):
 
         for game in self.games:
             if game not in games_with_tiles:
-                self.__add_gametile(game)
+                if Config.get("show_hidden_games") or not game.get_info("hide_game"):
+                        self.__add_gametile(game)
 
     def __add_gametile(self, game):
         self.flowbox.add(GameTile(self, game))

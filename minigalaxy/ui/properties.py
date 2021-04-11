@@ -24,6 +24,7 @@ class Properties(Gtk.Dialog):
     button_properties_winecfg = Gtk.Template.Child()
     button_properties_regedit = Gtk.Template.Child()
     switch_properties_show_fps = Gtk.Template.Child()
+    switch_properties_hide_game = Gtk.Template.Child()
     entry_properties_variable = Gtk.Template.Child()
     entry_properties_command = Gtk.Template.Child()
 
@@ -46,6 +47,9 @@ class Properties(Gtk.Dialog):
         # Keep switch FPS disabled/enabled
         self.switch_properties_show_fps.set_active(self.game.get_info("show_fps"))
 
+        # Keep switch game shown/hidden
+        self.switch_properties_hide_game.set_active(self.game.get_info("hide_game"))
+
     @Gtk.Template.Callback("on_button_properties_cancel_clicked")
     def cancel_pressed(self, button):
         self.destroy()
@@ -56,6 +60,7 @@ class Properties(Gtk.Dialog):
             self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
             self.game.set_info("command", str(self.entry_properties_command.get_text()))
             self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
+            self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
         self.destroy()
 
     @Gtk.Template.Callback("on_button_properties_winecfg_clicked")
@@ -105,6 +110,7 @@ class Properties(Gtk.Dialog):
             self.entry_properties_variable.set_sensitive(False)
             self.button_properties_regedit.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
+            self.switch_properties_hide_game.set_sensitive(False)
 
         if game.platform == 'linux':
             self.button_properties_winecfg.hide()

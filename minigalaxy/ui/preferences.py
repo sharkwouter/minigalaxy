@@ -19,6 +19,7 @@ class Preferences(Gtk.Dialog):
     label_keep_installers = Gtk.Template.Child()
     switch_keep_installers = Gtk.Template.Child()
     switch_stay_logged_in = Gtk.Template.Child()
+    switch_show_hidden_games = Gtk.Template.Child()
     switch_show_windows_games = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
@@ -30,6 +31,7 @@ class Preferences(Gtk.Dialog):
         self.button_file_chooser.set_filename(Config.get("install_dir"))
         self.switch_keep_installers.set_active(Config.get("keep_installers"))
         self.switch_stay_logged_in.set_active(Config.get("stay_logged_in"))
+        self.switch_show_hidden_games.set_active(Config.get("show_hidden_games"))
         self.switch_show_windows_games.set_active(Config.get("show_windows_games"))
 
         # Set tooltip for keep installers label
@@ -97,6 +99,10 @@ class Preferences(Gtk.Dialog):
         self.__save_language_choice()
         Config.set("keep_installers", self.switch_keep_installers.get_active())
         Config.set("stay_logged_in", self.switch_stay_logged_in.get_active())
+
+        if self.switch_show_hidden_games.get_active() != Config.get("show_hidden_games"):
+            Config.set("show_hidden_games", self.switch_show_hidden_games.get_active())
+            self.parent.reset_library()
 
         if self.switch_show_windows_games.get_active() != Config.get("show_windows_games"):
             if self.switch_show_windows_games.get_active() and not shutil.which("wine"):
