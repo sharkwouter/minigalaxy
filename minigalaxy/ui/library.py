@@ -144,13 +144,12 @@ class Library(Gtk.Viewport):
         return games
 
     def __add_games_from_api(self):
-        retrieved_games = self.api.get_library()
-        if retrieved_games:
+        retrieved_games, err_msg = self.api.get_library()
+        if not err_msg:
             self.offline = False
         else:
-            retrieved_games = []
             self.offline = True
-            GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _("Couldn't connect to GOG servers"))
+            GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _(err_msg))
         for game in retrieved_games:
             if game not in self.games:
                 self.games.append(game)
