@@ -60,7 +60,8 @@ class Properties(Gtk.Dialog):
             self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
             self.game.set_info("command", str(self.entry_properties_command.get_text()))
             self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
-            self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
+        self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
+        self.parent.filter_library()
         self.destroy()
 
     @Gtk.Template.Callback("on_button_properties_winecfg_clicked")

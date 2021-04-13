@@ -11,7 +11,6 @@ from minigalaxy.paths import UI_DIR
 from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.game import Game
-from minigalaxy.launcher import config_game
 from minigalaxy.ui.gametile import GameTile
 from minigalaxy.translation import _
 
@@ -68,7 +67,7 @@ class Library(Gtk.Viewport):
             self.search_string = widget.get_text()
         self.flowbox.set_filter_func(self.__filter_library_func)
 
-    def __filter_library_func(self, child, game):
+    def __filter_library_func(self, child):
         tile = child.get_children()[0]
         if self.search_string.lower() not in str(tile).lower():
             return False
@@ -77,7 +76,7 @@ class Library(Gtk.Viewport):
             if tile.current_state in [tile.state.DOWNLOADABLE, tile.state.INSTALLABLE]:
                 return False
 
-        if Config.get("show_hidden_games") and not game.get_info("hide_game"):
+        if not Config.get("show_hidden_games") and tile.game.get_info("hide_game"):
             return False
 
         return True
@@ -100,8 +99,6 @@ class Library(Gtk.Viewport):
         for game in self.games:
             if game not in games_with_tiles:
                 self.__add_gametile(game)
-                #if Config.get("show_hidden_games") or not game.get_info("hide_game"):
-                        #self.__add_gametile(game)
 
     def __add_gametile(self, game):
         self.flowbox.add(GameTile(self, game))
