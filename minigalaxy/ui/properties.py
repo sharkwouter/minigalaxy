@@ -110,7 +110,6 @@ class Properties(Gtk.Dialog):
             self.entry_properties_variable.set_sensitive(False)
             self.button_properties_regedit.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
-            self.switch_properties_hide_game.set_sensitive(False)
 
         if game.platform == 'linux':
             self.button_properties_winecfg.hide()
