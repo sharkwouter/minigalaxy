@@ -84,14 +84,26 @@ class TestApi(TestCase):
 
     def test1_get_library(self):
         api = Api()
-        api.active_token = "True"
+        api.active_token = True
         response_dict = {'totalPages': 1, 'products': [{'id': 1097893768, 'title': 'Neverwinter Nights: Enhanced Edition', 'image': '//images-2.gog-statics.com/8706f7fb87a4a41bc34254f3b49f59f96cf13d067b2c8bbfd8d41c327392052a', 'url': '/game/neverwinter_nights_enhanced_edition_pack', 'worksOn': {'Windows': True, 'Mac': True, 'Linux': True}}]}
         api.active_token_expiration_time = time.time() + 10.0
         response_mock = MagicMock()
         response_mock.json.return_value = response_dict
         m_constants.SESSION.get.return_value = response_mock
         exp = "Neverwinter Nights: Enhanced Edition"
-        obs = api.get_library()[0].name
+        retrieved_games, err_msg = api.get_library()
+        obs = retrieved_games[0].name
+        self.assertEqual(exp, obs)
+
+    def test2_get_library(self):
+        api = Api()
+        api.active_token = False
+        api.active_token_expiration_time = time.time() + 10.0
+        response_mock = MagicMock()
+        response_mock.json.return_value = {}
+        m_constants.SESSION.get.return_value = response_mock
+        exp = "Couldn't connect to GOG servers"
+        retrieved_games, obs = api.get_library()
         self.assertEqual(exp, obs)
 
     def test1_get_version(self):

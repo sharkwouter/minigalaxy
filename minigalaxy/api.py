@@ -70,40 +70,41 @@ class Api:
 
     # Get all Linux games in the library of the user. Ignore other platforms and movies
     def get_library(self):
-        if not self.active_token:
-            return
-
+        err_msg = ""
         games = []
-        current_page = 1
-        all_pages_processed = False
-        url = "https://embed.gog.com/account/getFilteredProducts"
+        if self.active_token:
+            current_page = 1
+            all_pages_processed = False
+            url = "https://embed.gog.com/account/getFilteredProducts"
 
-        while not all_pages_processed:
-            params = {
-                'mediaType': 1,  # 1 means game
-                'page': current_page,
-            }
-            response = self.__request(url, params=params)
-            total_pages = response["totalPages"]
+            while not all_pages_processed:
+                params = {
+                    'mediaType': 1,  # 1 means game
+                    'page': current_page,
+                }
+                response = self.__request(url, params=params)
+                total_pages = response["totalPages"]
 
-            for product in response["products"]:
-                if product["id"] not in IGNORE_GAME_IDS:
-                    # Only support Linux unless the show_windows_games setting is enabled
-                    if product["worksOn"]["Linux"]:
-                        platform = "linux"
-                    elif Config.get("show_windows_games"):
-                        platform = "windows"
-                    else:
-                        continue
-                    if not product["url"]:
-                        print("{} ({}) has no store page url".format(product["title"], product['id']))
-                    game = Game(name=product["title"], url=product["url"], game_id=product["id"],
-                                image_url=product["image"], platform=platform)
-                    games.append(game)
-            if current_page == total_pages:
-                all_pages_processed = True
-            current_page += 1
-        return games
+                for product in response["products"]:
+                    if product["id"] not in IGNORE_GAME_IDS:
+                        # Only support Linux unless the show_windows_games setting is enabled
+                        if product["worksOn"]["Linux"]:
+                            platform = "linux"
+                        elif Config.get("show_windows_games"):
+                            platform = "windows"
+                        else:
+                            continue
+                        if not product["url"]:
+                            print("{} ({}) has no store page url".format(product["title"], product['id']))
+                        game = Game(name=product["title"], url=product["url"], game_id=product["id"],
+                                    image_url=product["image"], platform=platform)
+                        games.append(game)
+                if current_page == total_pages:
+                    all_pages_processed = True
+                current_page += 1
+        else:
+            err_msg = "Couldn't connect to GOG servers"
+        return games, err_msg
 
     def get_owned_products_ids(self):
         if not self.active_token:

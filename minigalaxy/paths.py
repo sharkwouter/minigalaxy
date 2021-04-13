@@ -6,6 +6,7 @@ if LAUNCH_DIR == "/bin" or LAUNCH_DIR == "/sbin":
     LAUNCH_DIR = "/usr" + LAUNCH_DIR
 
 CONFIG_DIR = os.path.join(os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config')), "minigalaxy")
+CONFIG_GAMES_DIR = os.path.join(CONFIG_DIR, "games")
 CONFIG_FILE_PATH = os.path.join(CONFIG_DIR, "config.json")
 CACHE_DIR = os.path.join(os.getenv('XDG_CACHE_HOME', os.path.expanduser('~/.cache')), "minigalaxy")
 

@@ -204,3 +204,23 @@ makson    1006     2  0 lis24 ?        00:00:00 /bin/sh /home/makson/.paradoxlau
         exp = ""
         obs = launcher.check_if_game_start_process_spawned_final_process(err_msg, game)
         self.assertEqual(exp, obs)
+
+    @mock.patch('os.getpid')
+    @mock.patch('subprocess.check_output')
+    def test3_check_if_game_start_process_spawned_final_process(self, mock_check_output, mock_getpid):
+        mock_check_output.return_value = b"""UID        PID  PPID  C STIME TTY          TIME CMD
+root     12486     2  0 17:47 ?        00:00:00 [kworker/u17:3-kcryptd]
+root     12543     2  0 17:53 ?        00:00:00 [kworker/u17:1-kcryptd]
+root     12617     2  0 18:02 ?        00:00:00 [kworker/5:1-ata_sff]
+root     12652     2  0 18:07 ?        00:00:00 [kworker/0:0-events]
+root     12682     2  0 18:08 ?        00:00:00 [kworker/5:2-ata_sff]
+root     12699     2  0 18:08 ?        00:00:00 [kworker/u17:0-kcryptd]
+makson   12783  6690  1 18:09 pts/4    00:00:01 /usr/bin/python3 build/scripts-3.7/minigalaxy
+makson   12866  1378  0 18:09 pts/4    00:00:00 /bin/sh /home/makson/.paradoxlauncher/launcher-v2.2021.1/Paradox Launcher --pdxlGameDir /home/makson/GOG Games/Imperator Rome/game/launcher --gameDir /home/makson/GOG Games/Imperator Rome/game/launcher
+"""
+        mock_getpid.return_value = 1000
+        err_msg = "Error Message"
+        game = Game("Imperator: Rome", install_dir="/home/makson/GOG Games")
+        exp = ""
+        obs = launcher.check_if_game_start_process_spawned_final_process(err_msg, game)
+        self.assertEqual(exp, obs)
