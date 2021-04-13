@@ -255,11 +255,10 @@ class GameTile(Gtk.Box):
             self.download.append(download)
 
         ds_ok = check_diskspace(total_file_size, Config.get("install_dir"))
-        if ds_ok or Config.get("ignore_disk_space_check"):
+        if ds_ok:
             DownloadManager.download(self.download)
-            ds_msg_title = "Download warning" if not ds_ok else ""
-            ds_msg_text = "There seems to be not enough free disk space to install game. Will try to proceed anyway." \
-                if not ds_ok else ""
+            ds_msg_title = ""
+            ds_msg_text = ""
         else:
             ds_msg_title = "Download error"
             ds_msg_text = "Not enough disk space to install game."

@@ -35,8 +35,7 @@ DEFAULT_CONFIGURATION = {
     "show_fps": False,
     "show_windows_games": False,
     "keep_window_maximized": False,
-    "installed_filter": False,
-    "ignore_disk_space_check": False
+    "installed_filter": False
 }
 
 # Game IDs to ignore when received by the API

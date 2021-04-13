@@ -190,30 +190,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="ignore_disk_space_check_tooltip">Ignore checking if there is enough free space for game to be installed.</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes" context="ignore_disk_space_check" comments="Has to end with &quot;: &quot;">Ignore disk space check: </property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">5</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
-              <object class="GtkSwitch" id="switch_ignore_disk_space_check">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">5</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <placeholder/>

@@ -20,7 +20,6 @@ class Preferences(Gtk.Dialog):
     switch_keep_installers = Gtk.Template.Child()
     switch_stay_logged_in = Gtk.Template.Child()
     switch_show_windows_games = Gtk.Template.Child()
-    switch_ignore_disk_space_check = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
 
@@ -32,7 +31,6 @@ class Preferences(Gtk.Dialog):
         self.switch_keep_installers.set_active(Config.get("keep_installers"))
         self.switch_stay_logged_in.set_active(Config.get("stay_logged_in"))
         self.switch_show_windows_games.set_active(Config.get("show_windows_games"))
-        self.switch_ignore_disk_space_check.set_active(Config.get("ignore_disk_space_check"))
 
         # Set tooltip for keep installers label
         installer_dir = os.path.join(self.button_file_chooser.get_filename(), "installer")
@@ -107,9 +105,6 @@ class Preferences(Gtk.Dialog):
             else:
                 Config.set("show_windows_games", self.switch_show_windows_games.get_active())
                 self.parent.reset_library()
-
-        if self.switch_ignore_disk_space_check.get_active() != Config.get("ignore_disk_space_check"):
-            Config.set("ignore_disk_space_check", self.switch_ignore_disk_space_check.get_active())
 
         # Only change the install_dir is it was actually changed
         if self.button_file_chooser.get_filename() != Config.get("install_dir"):
