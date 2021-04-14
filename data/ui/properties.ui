@@ -10,8 +10,18 @@
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
-<property name="orientation">horizontal</property>
-        <property name="spacing">2</property>
+        <property name="orientation">horizontal</property>
+        <property name="spacing">18</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkImage" id="image">
             <property name="visible">True</property>
@@ -29,18 +39,20 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
+            <property name="spacing">18</property>
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="spacing">5</property>
+                <property name="spacing">6</property>
                 <property name="homogeneous">True</property>
                 <child>
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="row_spacing">5</property>
-                    <property name="column_spacing">5</property>
+                    <property name="margin_top">18</property>
+                    <property name="row_spacing">6</property>
+                    <property name="column_spacing">12</property>
                     <property name="row_homogeneous">True</property>
                     <property name="column_homogeneous">True</property>
                     <child>
@@ -74,7 +86,7 @@
                       <object class="GtkSwitch" id="switch_properties_show_fps">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="halign">center</property>
+                        <property name="halign">start</property>
                         <property name="valign">center</property>
                       </object>
                       <packing>
@@ -86,6 +98,7 @@
                       <object class="GtkEntry" id="entry_properties_command">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="halign">start</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -96,6 +109,7 @@
                       <object class="GtkEntry" id="entry_properties_variable">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="halign">start</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -106,7 +120,9 @@
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes">Show FPS in game:</property>
+                        <property name="justify">fill</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -117,7 +133,9 @@
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Variables flag</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Variables flag:</property>
+                        <property name="justify">fill</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -128,7 +146,9 @@
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Commands flag</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Commands flag:</property>
+                        <property name="justify">fill</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -208,6 +228,8 @@
               <object class="GtkButtonBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_bottom">18</property>
+                <property name="spacing">12</property>
                 <property name="layout_style">end</property>
                 <child>
                   <object class="GtkButton" id="button_properties_cancel">
