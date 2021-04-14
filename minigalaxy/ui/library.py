@@ -76,6 +76,9 @@ class Library(Gtk.Viewport):
             if tile.current_state in [tile.state.DOWNLOADABLE, tile.state.INSTALLABLE]:
                 return False
 
+        if not Config.get("show_hidden_games") and tile.game.get_info("hide_game"):
+            return False
+
         return True
 
     def sort_library(self):
