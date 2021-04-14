@@ -65,8 +65,9 @@ class TestLibrary(TestCase):
         api_games = []
         for game in API_GAMES:
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
+        err_msg = ""
         api_mock = MagicMock()
-        api_mock.get_library.return_value = api_games
+        api_mock.get_library.return_value = api_games, err_msg
         test_library = Library(MagicMock(), api_mock)
         test_library.games = self_games
         test_library._Library__add_games_from_api()
@@ -81,8 +82,9 @@ class TestLibrary(TestCase):
         api_games = []
         for game in API_GAMES:
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
+        err_msg = ""
         api_mock = MagicMock()
-        api_mock.get_library.return_value = api_games
+        api_mock.get_library.return_value = api_games, err_msg
         test_library = Library(MagicMock(), api_mock)
         test_library.games = self_games
         test_library._Library__add_games_from_api()
@@ -100,8 +102,9 @@ class TestLibrary(TestCase):
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
         api_gmae_with_id = Game(name="Game without ID", game_id=1234567890)
         api_games.append(api_gmae_with_id)
+        err_msg = ""
         api_mock = MagicMock()
-        api_mock.get_library.return_value = api_games
+        api_mock.get_library.return_value = api_games, err_msg
         test_library = Library(MagicMock(), api_mock)
         test_library.games = self_games
         test_library._Library__add_games_from_api()
@@ -121,8 +124,9 @@ class TestLibrary(TestCase):
         for game in API_GAMES:
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]), url="http://test_url{}".format(str(url_nr))))
             url_nr += 1
+        err_msg = ""
         api_mock = MagicMock()
-        api_mock.get_library.return_value = api_games
+        api_mock.get_library.return_value = api_games, err_msg
         test_library = Library(MagicMock(), api_mock)
         test_library.games = self_games
         test_library._Library__add_games_from_api()
