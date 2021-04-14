@@ -1,9 +1,11 @@
 import os
 import re
 import json
+import shutil
 
 from minigalaxy.config import Config
 from minigalaxy.paths import CONFIG_GAMES_DIR
+from minigalaxy.constants import ADAPTED_GAMES
 
 
 class Game:
@@ -19,6 +21,7 @@ class Game:
         self.dlcs = [] if dlcs is None else dlcs
         self.status_file_name = "{}.json".format(self.get_install_directory_name())
         self.status_file_path = os.path.join(CONFIG_GAMES_DIR, self.status_file_name)
+        self.adapted = self.get_is_adapted()
 
     def get_stripped_name(self):
         return self.__strip_string(self.name)
@@ -80,6 +83,26 @@ class Game:
         else:
             version = "0"
         return version
+
+    def get_is_adapted(self):
+        is_adapted = False
+        adapted_names = []
+        adapted_require = []
+        adapted_game_nr = -1
+        for adapted_game in ADAPTED_GAMES:
+            adapted_game_nr += 1
+            adapted_names.append(adapted_game["name"])
+            adapted_require.append(adapted_game["require"])
+        if self.platform == "windows":
+            if self.get_info("adapted"):
+                is_adapted = True
+            elif not self.is_installed() and self.name in adapted_names:
+                is_adapted = True
+        if is_adapted:
+            for require in adapted_require[adapted_game_nr]:
+                if not shutil.which(require):
+                    is_adapted = False
+        return is_adapted
 
     def set_info(self, key, value):
         json_dict = self.load_minigalaxy_info_json()

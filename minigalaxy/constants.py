@@ -46,6 +46,11 @@ IGNORE_GAME_IDS = [
     1486144755,  # Cyberpunk 2077 Goodies Collection
 ]
 
+# GOG provides only Windows support for those games, but we can make them native on Linux
+ADAPTED_GAMES = [
+    {"name": "Theme Hospital", "id": 1207659026, "require": ["dosbox"]}
+]
+
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 
 # This is the file size needed for the download manager to consider resuming worthwhile
