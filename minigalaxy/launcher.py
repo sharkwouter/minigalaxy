@@ -38,7 +38,7 @@ def start_game(game):
 
 def get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
-    launcher_type = determine_launcher_type(files)
+    launcher_type = determine_launcher_type(game, files)
     if launcher_type in ["windows"]:
         exe_cmd = get_windows_exe_cmd(game, files)
     elif launcher_type in ["dosbox"]:
@@ -47,6 +47,8 @@ def get_execute_command(game) -> list:
         exe_cmd = get_scummvm_exe_cmd(game, files)
     elif launcher_type in ["start_script", "wine"]:
         exe_cmd = get_start_script_exe_cmd(game, files)
+    elif launcher_type in ["adapted"]:
+        exe_cmd = get_adapted_exe_cmd(game, files)
     elif launcher_type in ["final_resort"]:
         exe_cmd = get_final_resort_exe_cmd(game, files)
     else:
@@ -56,9 +58,11 @@ def get_execute_command(game) -> list:
     return exe_cmd
 
 
-def determine_launcher_type(files):
+def determine_launcher_type(game, files):
     launcher_type = "unknown"
-    if "unins000.exe" in files:
+    if "minigalaxy-start.sh" in files and game.adapted:
+        launcher_type = "adapted"
+    elif "unins000.exe" in files:
         launcher_type = "windows"
     elif "dosbox" in files and shutil.which("dosbox"):
         launcher_type = "dosbox"
@@ -137,6 +141,12 @@ def get_scummvm_exe_cmd(game, files):
 
 def get_start_script_exe_cmd(game, files):
     start_sh = "start.sh"
+    exec_start = [os.path.join(game.install_dir, start_sh)] if start_sh in files else [""]
+    return exec_start
+
+
+def get_adapted_exe_cmd(game, files):
+    start_sh = "minigalaxy-start.sh"
     exec_start = [os.path.join(game.install_dir, start_sh)] if start_sh in files else [""]
     return exec_start
 

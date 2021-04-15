@@ -8,6 +8,7 @@ from minigalaxy.constants import SESSION, DOWNLOAD_CHUNK_SIZE
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
+from minigalaxy.custom_installers import theme_hospital
 
 
 def install_game(game, installer):
@@ -181,5 +182,7 @@ def extract_by_wine(game, installer, temp_dir):
 def additional_configuration(game):
     err_msg = ""
     if game.adapted:
+        if game.id in [1207659026]:
+            err_msg = theme_hospital.start(game)
         game.set_info("adapted", True)
     return err_msg
