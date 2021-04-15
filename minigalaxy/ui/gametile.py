@@ -136,7 +136,7 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
-        question = _("Are you sure you want to uninstall %s?" % self.game.name)
+        question = _("Are you sure you want to uninstall {}?").format(self.game.name)
         if self.parent.parent.show_question(question):
             uninstall_thread = threading.Thread(target=self.__uninstall_game)
             uninstall_thread.start()
