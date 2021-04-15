@@ -74,18 +74,18 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_logout_clicked")
     def logout(self, button):
-        # Unset everything which is specific to this user
-        self.HeaderBar.set_subtitle("")
-        Config.unset("username")
-        Config.unset("refresh_token")
-        self.hide()
-
-        # Show the login screen
-        self.__authenticate()
-        self.HeaderBar.set_subtitle(self.api.get_user_info())
-        self.sync_library()
-
-        self.show_all()
+        question = _("Do you really want to log out of GOG?") 
+        if self.show_question(question):
+            # Unset everything which is specific to this user
+            self.HeaderBar.set_subtitle("")
+            Config.unset("username")
+            Config.unset("refresh_token")
+            self.hide()
+            # Show the login screen
+            self.__authenticate()
+            self.HeaderBar.set_subtitle(self.api.get_user_info())
+            self.sync_library()
+            self.show_all()
 
     @Gtk.Template.Callback("on_window_state_event")
     def on_window_state_event(self, widget, event):
