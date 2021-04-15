@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-15 17:43+0300\n"
+"POT-Creation-Date: 2021-04-15 18:53+0300\n"
 "PO-Revision-Date: 2020-11-15 12:03+0100\n"
 "Last-Translator: Artem Polishchuk <ego.cordatus@gmail.com>\n"
 "Language-Team: \n"
@@ -39,6 +39,10 @@ msgstr "О Minigalaxy"
 #: minigalaxy/ui/gametile.py:126
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Вы уверены, что хотите отменить загрузку {}?"
+
+#: minigalaxy/ui/window.py:77
+msgid "Are you sure you want to log out of GOG?"
+msgstr "Вы уверены, что хотите выйти из GOG?"
 
 #: minigalaxy/ui/gametile.py:139
 msgid "Are you sure you want to uninstall {}?"
@@ -80,10 +84,6 @@ msgstr "DLC"
 #: minigalaxy/constants.py:10
 msgid "Danish"
 msgstr "Датский"
-
-#: minigalaxy/ui/window.py:77
-msgid "Do you really want to log out of GOG?"
-msgstr "Вы действительно хотите выйти из GOG?"
 
 #: minigalaxy/ui/gametile.py:204 minigalaxy/ui/gametile.py:231
 msgid "Download error"
