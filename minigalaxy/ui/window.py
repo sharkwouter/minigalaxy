@@ -4,7 +4,6 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
 from minigalaxy.ui.login import Login
-from minigalaxy.ui.logout import Logout
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
@@ -75,9 +74,18 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_logout_clicked")
     def logout(self, button):
-        logout_window = Logout(self)
-        logout_window.run()
-        logout_window.destroy()
+        question = _("Do you really want to log out of GOG?") 
+        if self.show_question(question):
+            # Unset everything which is specific to this user
+            self.HeaderBar.set_subtitle("")
+            Config.unset("username")
+            Config.unset("refresh_token")
+            self.hide()
+            # Show the login screen
+            self.__authenticate()
+            self.HeaderBar.set_subtitle(self.api.get_user_info())
+            self.sync_library()
+            self.show_all()
 
     @Gtk.Template.Callback("on_window_state_event")
     def on_window_state_event(self, widget, event):
