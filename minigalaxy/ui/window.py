@@ -1,4 +1,5 @@
 import os
+import locale
 
 from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
@@ -26,6 +27,10 @@ class Window(Gtk.ApplicationWindow):
 
     def __init__(self, name="Minigalaxy"):
         Gtk.ApplicationWindow.__init__(self, title=name)
+        current_locale = Config.get("locale")
+        if current_locale is not None:
+            locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
+
         self.api = Api()
         self.search_string = ""
         self.offline = False
