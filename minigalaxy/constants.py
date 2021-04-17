@@ -26,8 +26,26 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
     ["tr", _("Turkish")],
 ]
 
+SUPPORTED_LOCALES = [
+    ["nl", _("Dutch")],
+    ["en", _("English")],
+    ["fr", _("French")],
+    ["de", _("German")],
+    ["nb_NO", _("Norwegian Bokmål")],
+    ["nn_NO", _("Norwegian Nynorsk")],
+    ["pl", _("Polish")],
+    ["pt_BR", _("Portuguese")],
+    ["ru_RU", _("Russian")],
+    ["zh_CN", _("Simplified Chinese")],
+    ["es", _("Spanish")],
+    ["sv_SE", _("Swedish")],
+    ["zh_TW", _("Traditional Chinese")],
+    ["tr", _("Turkish")],
+]
+
 # The default values for new configuration files
 DEFAULT_CONFIGURATION = {
+    "locale": "",
     "lang": "en",
     "install_dir": DEFAULT_INSTALL_DIR,
     "keep_installers": False,
