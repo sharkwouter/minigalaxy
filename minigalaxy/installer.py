@@ -139,3 +139,5 @@ def remove_installer(installer):
 
 def uninstall_game(game):
     shutil.rmtree(game.install_dir, ignore_errors=True)
+    if os.path.isfile(game.status_file_path):
+        os.remove(game.status_file_path)
