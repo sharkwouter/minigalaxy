@@ -28,7 +28,7 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
 
 SUPPORTED_LOCALES = [
     ["nl", _("Dutch")],
-    ["en", _("English")],
+    ["en_US", _("English")],
     ["fr", _("French")],
     ["de", _("German")],
     ["nb_NO", _("Norwegian Bokmål")],

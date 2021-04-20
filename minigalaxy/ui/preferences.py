@@ -1,5 +1,8 @@
 import os
+import locale
 import shutil
+import subprocess
+from array import *
 from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES
@@ -27,7 +30,8 @@ class Preferences(Gtk.Dialog):
     def __init__(self, parent):
         Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
         self.parent = parent
-        
+
+        self.__get_system_locale_list()
         self.__set_locale_list()
         self.__set_language_list()
         self.button_file_chooser.set_filename(Config.get("install_dir"))
@@ -43,10 +47,27 @@ class Preferences(Gtk.Dialog):
             _("Keep installers after downloading a game.\nInstallers are stored in: {}").format(installer_dir)
         )
 
+    def find_system_locales(self) -> None:
+        out = subprocess.run(['locale', '-a'], stdout=subprocess.PIPE).stdout
+        try:
+            res = out.decode('utf-8')
+        except:
+            res = out.decode('latin-1')
+        return res.rstrip('\n').splitlines()
+
+    def __get_system_locale_list(self) -> None:
+        system_locale_list = array('i', [])
+        if __name__ == "__main__":
+            for loc in find_system_locales():
+                col = loc.partition('.')
+                lco = col[0]
+                system_locale_list.append[lco]
+
     def __set_locale_list(self) -> None:
         locales = Gtk.ListStore(str, str)
         for locale in SUPPORTED_LOCALES:
-            locales.append(locale)
+            if locale in system_locale_list:
+                locales.append(locale)
 
         self.combobox_program_language.set_model(locales)
         self.combobox_program_language.set_entry_text_column(1)
@@ -56,6 +77,8 @@ class Preferences(Gtk.Dialog):
 
         # Set the active option
         current_locale = Config.get("locale")
+        if current_locale is None:
+            current_locale = locale.getdefaultlocale()[0]
         for key in range(len(locales)):
             if locales[key][:1][0] == current_locale:
                 self.combobox_program_language.set_active(key)
@@ -83,8 +106,9 @@ class Preferences(Gtk.Dialog):
         current_locale = self.combobox_program_language.get_active_iter()
         if current_locale is not None:
             model = self.combobox_program_language.get_model()
-            locale, _ = model[current_locale][:2]
-            Config.set("locale", locale)
+            locale_choice, _ = model[current_locale][:2]
+            Config.set("locale", locale_choice)
+            locale.setlocale(locale.LC_ALL, (locale_choice, 'UTF-8'))
 
     def __save_language_choice(self) -> None:
         lang_choice = self.combobox_language.get_active_iter()
