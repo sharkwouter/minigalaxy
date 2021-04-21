@@ -40,6 +40,13 @@ class Window(Gtk.ApplicationWindow):
         icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_IMAGE_PATH)
         self.set_default_icon_list([icon])
 
+        # Set theme
+        settings = Gtk.Settings.get_default()
+        if Config.get("use_dark_theme") is True:
+            settings.set_property("gtk-application-prefer-dark-theme", True)
+        else:
+            settings.set_property("gtk-application-prefer-dark-theme", False)
+
         # Show the window
         if Config.get("keep_window_maximized"):
             self.maximize()
