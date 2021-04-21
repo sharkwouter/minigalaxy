@@ -43,7 +43,7 @@ def install_game(game, installer):
     if not error_message:
         error_message = verify_installer_integrity(game, installer)
     if not error_message:
-        error_message = verifie_disk_space(game, installer)
+        error_message = verify_disk_space(game, installer)
     if not error_message:
         error_message, tmp_dir = make_tmp_dir(game)
     if not error_message:
@@ -83,7 +83,7 @@ def verify_installer_integrity(game, installer):
     return error_message
 
 
-def verifie_disk_space(game, installer):
+def verify_disk_space(game, installer):
     err_msg = ""
     if game.platform == "linux":
         required_space = get_game_size_from_unzip(installer)

@@ -106,7 +106,7 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
     @mock.patch('os.statvfs')
-    def test1_verifie_disk_space(self, mock_os_statvfs):
+    def test1_verify_disk_space(self, mock_os_statvfs):
         frsize = 4096
         bavail = 29699
         mock_os_statvfs().f_frsize = frsize
@@ -117,7 +117,7 @@ class Test(TestCase):
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky", platform="linux")
         installer_file = "/beneath_a_steel_sky_en_gog_2_20150.sh"
         exp = "Not enough space to extract game. Required: 524288000 Available: 121647104"
-        obs = installer.verifie_disk_space(game, installer_file)
+        obs = installer.verify_disk_space(game, installer_file)
         installer.get_game_size_from_unzip = backup_installer
         self.assertEqual(exp, obs)
 
