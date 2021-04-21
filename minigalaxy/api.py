@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 import requests
 import xml.etree.ElementTree as ET
 from minigalaxy.game import Game
-from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
+from minigalaxy.constants import IGNORE_GAME_IDS, SESSION, SUPPORTED_GAME_IDS
 from minigalaxy.config import Config
 
 
@@ -88,7 +88,7 @@ class Api:
                 for product in response["products"]:
                     if product["id"] not in IGNORE_GAME_IDS:
                         # Only support Linux unless the show_windows_games setting is enabled
-                        if product["worksOn"]["Linux"]:
+                        if product["worksOn"]["Linux"] or product["id"] in SUPPORTED_GAME_IDS:
                             platform = "linux"
                         elif Config.get("show_windows_games"):
                             platform = "windows"

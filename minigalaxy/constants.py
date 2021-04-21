@@ -46,6 +46,10 @@ IGNORE_GAME_IDS = [
     2005648906,  # Spring Sale Goodies Collection #1
     1486144755,  # Cyberpunk 2077 Goodies Collection
 ]
+# Due to GOG bugs those games provides Linux installers but don't report Linux as supported OS
+SUPPORTED_GAME_IDS = [
+    2057748185,  # Wasteland 3
+]
 
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 
