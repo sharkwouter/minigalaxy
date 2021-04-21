@@ -167,7 +167,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="use_dark_theme_tooltip">Whether Minigalaxy shoul use the dark theme or not</property>
+                <property name="tooltip-text" translatable="yes" context="use_dark_theme_tooltip">Whether Minigalaxy should use dark theme or not</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
                 <property name="label" translatable="yes" context="use_dark_theme" comments="Has to end with &quot;: &quot;">Use dark theme: </property>
