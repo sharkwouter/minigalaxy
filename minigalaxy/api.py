@@ -171,6 +171,12 @@ class Api:
         root = ET.fromstring(xml_string)
         return root.attrib['md5']
 
+    def get_file_size(self, url):
+        xml_link = self.__request(url)['checksum']
+        xml_string = SESSION.get(xml_link).text
+        root = ET.fromstring(xml_string)
+        return root.attrib["total_size"]
+
     def get_user_info(self) -> str:
         username = Config.get("username")
         if not username:
