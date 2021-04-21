@@ -254,8 +254,7 @@ class GameTile(Gtk.Box):
             )
             self.download.append(download)
 
-        ds_ok = check_diskspace(total_file_size, Config.get("install_dir"))
-        if ds_ok:
+        if check_diskspace(total_file_size, Config.get("install_dir")):
             DownloadManager.download(self.download)
             ds_msg_title = ""
             ds_msg_text = ""
