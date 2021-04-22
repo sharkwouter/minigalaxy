@@ -8,6 +8,7 @@ m_config = MagicMock()
 sys.modules['minigalaxy.constants'] = m_constants
 sys.modules['minigalaxy.config'] = m_config
 from minigalaxy.api import Api
+from minigalaxy.game import Game
 
 API_GET_INFO_TOONSTRUCK = {'downloads': {'installers': [{'id': 'installer_windows_en', 'name': 'Toonstruck', 'os': 'windows', 'language': 'en', 'language_full': 'English', 'version': '1.0', 'total_size': 939524096, 'files': [{'id': 'en1installer0', 'size': 1048576, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer0'}, {'id': 'en1installer1', 'size': 938475520, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer1'}]},
                                     {'id': 'installer_mac_en', 'name': 'Toonstruck', 'os': 'mac', 'language': 'en', 'language_full': 'English', 'version': 'gog-3', 'total_size': 975175680, 'files': [{'id': 'en2installer0', 'size': 975175680, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en2installer0'}]},
@@ -49,8 +50,9 @@ class TestApi(TestCase):
         api.get_info = MagicMock()
         api.get_info.return_value = API_GET_INFO_TOONSTRUCK
         m_config.Config.get.return_value = "pl"
+        test_game = Game("Test Game")
         exp = {'id': 'installer_linux_en', 'name': 'Toonstruck', 'os': 'linux', 'language': 'en', 'language_full': 'English', 'version': 'gog-2', 'total_size': 963641344, 'files': [{'id': 'en3installer0', 'size': 963641344, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en3installer0'}]}
-        obs = api.get_download_info("Test Game")
+        obs = api.get_download_info(test_game)
         self.assertEqual(exp, obs)
 
     def test2_get_download_info(self):
@@ -58,8 +60,9 @@ class TestApi(TestCase):
         api.get_info = MagicMock()
         api.get_info.return_value = API_GET_INFO_TOONSTRUCK
         m_config.Config.get.return_value = "fr"
+        test_game = Game("Test Game")
         exp = {'id': 'installer_linux_fr', 'name': 'Toonstruck', 'os': 'linux', 'language': 'fr', 'language_full': 'français', 'version': 'gog-2', 'total_size': 1011875840, 'files': [{'id': 'fr3installer0', 'size': 1011875840, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr3installer0'}]}
-        obs = api.get_download_info("Test Game")
+        obs = api.get_download_info(test_game)
         self.assertEqual(exp, obs)
     
     def test3_get_download_info(self):
@@ -70,16 +73,18 @@ class TestApi(TestCase):
                                     {'id': 'installer_windows_fr', 'name': 'Toonstruck', 'os': 'windows', 'language': 'fr', 'language_full': 'français', 'version': '1.0', 'total_size': 985661440, 'files': [{'id': 'fr1installer0', 'size': 1048576, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr1installer0'}, {'id': 'fr1installer1', 'size': 984612864, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr1installer1'}]},
                                     {'id': 'installer_mac_fr', 'name': 'Toonstruck', 'os': 'mac', 'language': 'fr', 'language_full': 'français', 'version': 'gog-3', 'total_size': 1023410176, 'files': [{'id': 'fr2installer0', 'size': 1023410176, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr2installer0'}]}]}}
         m_config.Config.get.return_value = "en"
+        test_game = Game("Test Game")
         exp = {'id': 'installer_windows_en', 'name': 'Toonstruck', 'os': 'windows', 'language': 'en', 'language_full': 'English', 'version': '1.0', 'total_size': 939524096, 'files': [{'id': 'en1installer0', 'size': 1048576, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer0'}, {'id': 'en1installer1', 'size': 938475520, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer1'}]}
-        obs = api.get_download_info("Test Game")
+        obs = api.get_download_info(test_game)
         self.assertEqual(exp, obs)
 
     def test4_get_download_info(self):
         api = Api()
         dlc_test_installer = API_GET_INFO_TOONSTRUCK["downloads"]["installers"]
         m_config.Config.get.return_value = "en"
+        test_game = Game("Test Game")
         exp = {'id': 'installer_linux_en', 'name': 'Toonstruck', 'os': 'linux', 'language': 'en', 'language_full': 'English', 'version': 'gog-2', 'total_size': 963641344, 'files': [{'id': 'en3installer0', 'size': 963641344, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en3installer0'}]}
-        obs = api.get_download_info("Test Game", dlc_installers=dlc_test_installer)
+        obs = api.get_download_info(test_game, dlc_installers=dlc_test_installer)
         self.assertEqual(exp, obs)
 
     def test1_get_library(self):
@@ -108,21 +113,19 @@ class TestApi(TestCase):
 
     def test1_get_version(self):
         api = Api()
-        game = MagicMock()
-        game.platform = "linux"
+        test_game = Game("Test Game", platform="linux")
         exp = "gog-2"
-        obs = api.get_version(game, gameinfo=API_GET_INFO_TOONSTRUCK)
+        obs = api.get_version(test_game, gameinfo=API_GET_INFO_TOONSTRUCK)
         self.assertEqual(exp, obs)
 
     def test2_get_version(self):
         api = Api()
-        game = MagicMock()
-        game.platform = "linux"
+        test_game = Game("Test Game", platform="linux")
         dlc_name = "Test DLC"
         game_info = API_GET_INFO_TOONSTRUCK
         game_info["expanded_dlcs"] = [{"title": dlc_name, "downloads": {"installers": [{"os": "linux", "version": "1.2.3.4"}]}}]
         exp = "1.2.3.4"
-        obs = api.get_version(game, gameinfo=API_GET_INFO_TOONSTRUCK, dlc_name=dlc_name)
+        obs = api.get_version(test_game, gameinfo=API_GET_INFO_TOONSTRUCK, dlc_name=dlc_name)
         self.assertEqual(exp, obs)
 
     def test_get_download_file_md5(self):
@@ -137,6 +140,24 @@ class TestApi(TestCase):
 </file>'''
         exp = "8acedf66c0d2986e7dee9af912b7df4f"
         obs = api.get_download_file_md5("url")
+        self.assertEqual(exp, obs)
+
+    def test1_get_gamesdb_info(self):
+        api = Api()
+        api._Api__request_gamesdb = MagicMock()
+        api._Api__request_gamesdb.side_effect = [{}]
+        test_game = Game("Test Game")
+        exp = {"cover": "", "vertical_cover": "", "background": "", "genre": {}, "summary": {}}
+        obs = api.get_gamesdb_info(test_game)
+        self.assertEqual(exp, obs)
+
+    def test2_get_gamesdb_info(self):
+        api = Api()
+        api._Api__request_gamesdb = MagicMock()
+        api._Api__request_gamesdb.side_effect = [{'id': '51622789000874509', 'game_id': '51154268886064420', 'platform_id': 'gog', 'external_id': '1508702879', 'game': {'genres': [{'id': '51071904337940794', 'name': {'*': 'Strategy', 'en-US': 'Strategy'}, 'slug': 'strategy'}], 'summary': {'*': 'Stellaris description'}, 'visible_in_library': True, 'aggregated_rating': 78.5455, 'game_modes': [{'id': '53051895165351137', 'name': 'Single player', 'slug': 'single-player'}, {'id': '53051908711988230', 'name': 'Multiplayer', 'slug': 'multiplayer'}], 'horizontal_artwork': {'url_format': 'https://images.gog.com/742acfb77ec51ca48c9f96947bf1fc0ad8f0551c9c9f338021e8baa4f08e449f{formatter}.{ext}?namespace=gamesdb'}, 'background': {'url_format': 'https://images.gog.com/742acfb77ec51ca48c9f96947bf1fc0ad8f0551c9c9f338021e8baa4f08e449f{formatter}.{ext}?namespace=gamesdb'}, 'vertical_cover': {'url_format': 'https://images.gog.com/8d822a05746670fb2540e9c136f0efaed6a2d5ab698a9f8bd7f899d21f2022d2{formatter}.{ext}?namespace=gamesdb'}, 'cover': {'url_format': 'https://images.gog.com/8d822a05746670fb2540e9c136f0efaed6a2d5ab698a9f8bd7f899d21f2022d2{formatter}.{ext}?namespace=gamesdb'}, 'logo': {'url_format': 'https://images.gog.com/c50a5d26c42d84b4b884976fb89d10bb3e97ebda0c0450285d92b8c50844d788{formatter}.{ext}?namespace=gamesdb'}, 'icon': {'url_format': 'https://images.gog.com/c85cf82e6019dd52fcdf1c81d17687dd52807835f16aa938abd2a34e5d9b99d0{formatter}.{ext}?namespace=gamesdb'}, 'square_icon': {'url_format': 'https://images.gog.com/c3adc81bf37f1dd89c9da74c13967a08b9fd031af4331750dbc65ab0243493c8{formatter}.{ext}?namespace=gamesdb'}}}]
+        test_game = Game("Stellaris")
+        exp = {'cover': 'https://images.gog.com/8d822a05746670fb2540e9c136f0efaed6a2d5ab698a9f8bd7f899d21f2022d2.png?namespace=gamesdb', 'vertical_cover': 'https://images.gog.com/8d822a05746670fb2540e9c136f0efaed6a2d5ab698a9f8bd7f899d21f2022d2.png?namespace=gamesdb', 'background': 'https://images.gog.com/742acfb77ec51ca48c9f96947bf1fc0ad8f0551c9c9f338021e8baa4f08e449f.png?namespace=gamesdb', 'summary': {'*': 'Stellaris description'}, 'genre': {'*': 'Strategy', 'en-US': 'Strategy'}}
+        obs = api.get_gamesdb_info(test_game)
         self.assertEqual(exp, obs)
 
 

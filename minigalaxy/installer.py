@@ -11,11 +11,43 @@ from minigalaxy.config import Config
 from minigalaxy.custom_installers import theme_hospital
 
 
+def get_available_disk_space(location):
+    """Check disk space available to the user. This method uses the absolute path so
+    symlinks to disks with sufficient space are correctly measured. Note this is
+    a linux-specific command."""
+    absolute_location = os.path.realpath(location)
+    disk_status = os.statvfs(os.path.dirname(absolute_location))
+    available_diskspace = disk_status.f_frsize * disk_status.f_bavail
+    return available_diskspace
+
+
+def get_game_size_from_unzip(installer):
+    var = subprocess.Popen(['unzip', '-v', installer], stdout=subprocess.PIPE)
+    output = var.communicate()[0].decode("utf-8")
+    lines_list = output.split("\n")
+    if len(lines_list) > 2 and not lines_list[-1].strip():
+        last_line = lines_list[-2].strip()
+    else:
+        last_line = lines_list[-1].strip()
+    size_value = int(last_line.split()[0])
+    return size_value
+
+
+def check_diskspace(required_size, location):
+    """This method will return True when the disk space available is sufficient
+    for the Download and Install. If not sufficient, it returns False."""
+    installed_game_size = int(required_size)
+    diskspace_available = get_available_disk_space(location)
+    return False if diskspace_available < installed_game_size else True
+
+
 def install_game(game, installer):
     error_message = ""
     tmp_dir = ""
     if not error_message:
         error_message = verify_installer_integrity(game, installer)
+    if not error_message:
+        error_message = verify_disk_space(game, installer)
     if not error_message:
         error_message, tmp_dir = make_tmp_dir(game)
     if not error_message:
@@ -55,6 +87,16 @@ def verify_installer_integrity(game, installer):
             else:
                 print("Warning. No info about correct {} MD5 checksum".format(installer_file_name))
     return error_message
+
+
+def verify_disk_space(game, installer):
+    err_msg = ""
+    if game.platform == "linux":
+        required_space = get_game_size_from_unzip(installer)
+        if not check_diskspace(required_space, game.install_dir):
+            err_msg = _("Not enough space to extract game. Required: {} Available: {}"
+                        ).format(required_space, get_available_disk_space(game.install_dir))
+    return err_msg
 
 
 def make_tmp_dir(game):
@@ -145,6 +187,8 @@ def remove_installer(installer):
 
 def uninstall_game(game):
     shutil.rmtree(game.install_dir, ignore_errors=True)
+    if os.path.isfile(game.status_file_path):
+        os.remove(game.status_file_path)
 
 
 def extract_by_innoextract(installer, temp_dir):

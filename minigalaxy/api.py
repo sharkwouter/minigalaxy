@@ -136,7 +136,7 @@ class Api:
         return response
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> tuple:
+    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> dict:
         if dlc_installers:
             installers = dlc_installers
         else:
@@ -173,6 +173,12 @@ class Api:
         root = ET.fromstring(xml_string)
         return root.attrib['md5']
 
+    def get_file_size(self, url):
+        xml_link = self.__request(url)['checksum']
+        xml_string = SESSION.get(xml_link).text
+        root = ET.fromstring(xml_string)
+        return root.attrib["total_size"]
+
     def get_user_info(self) -> str:
         username = Config.get("username")
         if not username:
@@ -200,7 +206,8 @@ class Api:
                 break
         return version
 
-    def can_connect(self) -> bool:
+    @staticmethod
+    def can_connect() -> bool:
         url = "https://embed.gog.com"
         try:
             SESSION.get(url, timeout=5)
@@ -227,3 +234,32 @@ class Api:
             print("Response body: {}".format(response.text))
             print("")
         return response.json()
+
+    @staticmethod
+    def __request_gamesdb(game: Game):
+        request_url = "https://gamesdb.gog.com/platforms/gog/external_releases/{}".format(game.id)
+        try:
+            response = SESSION.get(request_url)
+            respones_dict = response.json()
+        except (requests.exceptions.ConnectionError, ValueError):
+            respones_dict = {}
+        return respones_dict
+
+    def get_gamesdb_info(self, game: Game) -> dict:
+        gamesdb_dict = {"cover": "", "vertical_cover": "", "background": ""}
+        response_json = self.__request_gamesdb(game)
+        if "game" in response_json:
+            for gamesdb_key in gamesdb_dict:
+                if gamesdb_key in response_json['game']:
+                    gamesdb_dict[gamesdb_key] = response_json["game"][gamesdb_key]["url_format"].replace(
+                        '{formatter}.{ext}', '.png')
+            gamesdb_dict["summary"] = {}
+            for summary_key in response_json["game"]["summary"]:
+                gamesdb_dict["summary"][summary_key] = response_json["game"]["summary"][summary_key]
+            gamesdb_dict["genre"] = {}
+            for genre_key in response_json["game"]["genres"][0]["name"]:
+                gamesdb_dict["genre"][genre_key] = response_json["game"]["genres"][0]["name"][genre_key]
+        else:
+            gamesdb_dict["summary"] = {}
+            gamesdb_dict["genre"] = {}
+        return gamesdb_dict

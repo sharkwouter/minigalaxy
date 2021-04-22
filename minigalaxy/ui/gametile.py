@@ -15,7 +15,7 @@ from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game, config_game
-from minigalaxy.installer import uninstall_game, install_game
+from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound
@@ -223,6 +223,7 @@ class GameTile(Gtk.Box):
         # Start the download for all files
         self.download = []
         number_of_files = len(download_info['files'])
+        total_file_size = 0
         for key, file_info in enumerate(download_info['files']):
             try:
                 download_url = self.api.get_real_download_link(file_info["downlink"])
@@ -231,6 +232,7 @@ class GameTile(Gtk.Box):
                 GLib.idle_add(self.parent.parent.show_error, _("Download error"), _(str(e)))
                 download_success = False
                 break
+            total_file_size += int(self.api.get_file_size(file_info["downlink"]))
             try:
                 # Extract the filename from the download url (filename is between %2F and &token)
                 download_path = os.path.join(self.download_dir, urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1)))
@@ -252,7 +254,16 @@ class GameTile(Gtk.Box):
             )
             self.download.append(download)
 
-        DownloadManager.download(self.download)
+        if check_diskspace(total_file_size, Config.get("install_dir")):
+            DownloadManager.download(self.download)
+            ds_msg_title = ""
+            ds_msg_text = ""
+        else:
+            ds_msg_title = "Download error"
+            ds_msg_text = "Not enough disk space to install game."
+            download_success = False
+        if ds_msg_title:
+            GLib.idle_add(self.parent.parent.show_error, _(ds_msg_title), _(ds_msg_text))
         return download_success
 
     def __install_game(self):
