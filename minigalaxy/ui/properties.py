@@ -1,3 +1,4 @@
+import shutil
 import urllib
 import gi
 import os
@@ -31,6 +32,9 @@ class Properties(Gtk.Dialog):
     entry_properties_variable = Gtk.Template.Child()
     entry_properties_command = Gtk.Template.Child()
     label_game_description = Gtk.Template.Child()
+    radiobutton_linux_type = Gtk.Template.Child()
+    radiobutton_windows_type = Gtk.Template.Child()
+    radiobutton_adapted_type = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
@@ -69,6 +73,12 @@ class Properties(Gtk.Dialog):
             self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
         self.parent.parent.filter_library()
+        if self.radiobutton_linux_type.get_active():
+            self.game.set_platform("linux")
+        elif self.radiobutton_windows_type.get_active():
+            self.game.set_platform("windows")
+        elif self.radiobutton_adapted_type.get_active():
+            self.game.set_platform("adapted")
         self.destroy()
 
     @Gtk.Template.Callback("on_button_properties_winecfg_clicked")
@@ -148,6 +158,18 @@ class Properties(Gtk.Dialog):
             self.button_properties_regedit.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
 
-        if game.platform == 'linux':
+        if game.platform in ["linux"]:
             self.button_properties_winecfg.hide()
             self.button_properties_regedit.hide()
+            self.radiobutton_linux_type.set_active(True)
+        elif game.platform in ["windows"]:
+            self.radiobutton_windows_type.set_active(True)
+        elif game.platform in ["adapted"]:
+            self.radiobutton_adapted_type.set_active(True)
+
+        if "linux" not in self.game.supported_platforms:
+            self.radiobutton_linux_type.set_sensitive(False)
+        if "windows" not in self.game.supported_platforms or not shutil.which("wine"):
+            self.radiobutton_windows_type.set_sensitive(False)
+        if "adapted" not in self.game.supported_platforms:
+            self.radiobutton_adapted_type.set_sensitive(False)

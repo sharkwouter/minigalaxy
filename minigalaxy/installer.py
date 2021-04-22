@@ -115,10 +115,10 @@ def extract_installer(game, installer, temp_dir):
     error_message = ""
     if game.platform == "linux":
         command = ["unzip", "-qq", installer, "-d", temp_dir]
-    else:
+    elif game.platform in ["adapted"]:
         command, error_message = extract_by_innoextract(installer, temp_dir)
-        if error_message:
-            command, error_message = extract_by_wine(game, installer, temp_dir)
+    else:
+        command, error_message = extract_by_wine(game, installer, temp_dir)
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     process.wait()
     stdout, stderr = process.communicate()
@@ -225,7 +225,7 @@ def extract_by_wine(game, installer, temp_dir):
 
 def additional_configuration(game):
     err_msg = ""
-    if game.adapted:
+    if game.platform in ["adapted"]:
         if game.id in [1207659026]:
             err_msg = theme_hospital.start(game)
         game.set_info("adapted", True)

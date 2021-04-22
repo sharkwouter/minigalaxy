@@ -60,7 +60,7 @@ def get_execute_command(game) -> list:
 
 def determine_launcher_type(game, files):
     launcher_type = "unknown"
-    if "minigalaxy-start.sh" in files and game.adapted:
+    if "minigalaxy-start.sh" in files and game.platform in ["adapted"]:
         launcher_type = "adapted"
     elif "unins000.exe" in files:
         launcher_type = "windows"
