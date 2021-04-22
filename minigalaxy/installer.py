@@ -2,9 +2,13 @@ import os
 import shutil
 import subprocess
 import hashlib
+import tarfile
+
+from minigalaxy.constants import SESSION, DOWNLOAD_CHUNK_SIZE
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
+from minigalaxy.custom_installers import theme_hospital
 
 
 def get_available_disk_space(location):
@@ -52,6 +56,8 @@ def install_game(game, installer):
         error_message = move_and_overwrite(game, tmp_dir, game.install_dir)
     if not error_message:
         error_message = copy_thumbnail(game)
+    if not error_message:
+        error_message = additional_configuration(game)
     if not error_message:
         error_message = remove_installer(installer)
     else:
@@ -109,14 +115,10 @@ def extract_installer(game, installer, temp_dir):
     error_message = ""
     if game.platform == "linux":
         command = ["unzip", "-qq", installer, "-d", temp_dir]
+    elif game.platform in ["adapted"]:
+        command, error_message = extract_by_innoextract(installer, temp_dir)
     else:
-        # Set the prefix for Windows games
-        prefix_dir = os.path.join(game.install_dir, "prefix")
-        if not os.path.exists(prefix_dir):
-            os.makedirs(prefix_dir, mode=0o755)
-
-        # It's possible to set install dir as argument before installation
-        command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir), "/VERYSILENT"]
+        command, error_message = extract_by_wine(game, installer, temp_dir)
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     process.wait()
     stdout, stderr = process.communicate()
@@ -136,7 +138,8 @@ def move_and_overwrite(game, temp_dir, target_dir):
     if game.platform == "linux":
         source_dir = os.path.join(temp_dir, "data/noarch")
     else:
-        source_dir = temp_dir
+        innoextract_dir = os.path.join(temp_dir, "minigalaxy_game_files")
+        source_dir = temp_dir if not os.path.isdir(innoextract_dir) else innoextract_dir
     for src_dir, dirs, files in os.walk(source_dir):
         destination_dir = src_dir.replace(source_dir, target_dir, 1)
         if not os.path.exists(destination_dir):
@@ -183,3 +186,44 @@ def uninstall_game(game):
     shutil.rmtree(game.install_dir, ignore_errors=True)
     if os.path.isfile(game.status_file_path):
         os.remove(game.status_file_path)
+
+
+def extract_by_innoextract(installer, temp_dir):
+    err_msg = ""
+    innoextract_ver = "1.9"
+    innoextract_tar = "innoextract-{}-linux.tar.xz".format(innoextract_ver)
+    innoextract_url = "https://constexpr.org/innoextract/files/{}".format(innoextract_tar)
+    download_request = SESSION.get(innoextract_url, stream=True, timeout=30)
+    with open(os.path.join(temp_dir, innoextract_tar), "wb") as save_file:
+        for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+            save_file.write(chunk)
+        save_file.close()
+    tar = tarfile.open(os.path.join(temp_dir, innoextract_tar))
+    tar.extractall(path=temp_dir)
+    tar.close()
+    innoextract_file = os.path.join(temp_dir, "innoextract-{}-linux".format(innoextract_ver), "bin", "amd64",
+                                    "innoextract")
+    os.chmod(innoextract_file, 0o775)
+    cmd = [innoextract_file, installer, "-d", os.path.join(temp_dir, "minigalaxy_game_files")]
+    return cmd, err_msg
+
+
+def extract_by_wine(game, installer, temp_dir):
+    err_msg = ""
+    # Set the prefix for Windows games
+    prefix_dir = os.path.join(game.install_dir, "prefix")
+    if not os.path.exists(prefix_dir):
+        os.makedirs(prefix_dir, mode=0o755)
+
+    # It's possible to set install dir as argument before installation
+    command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir), "/VERYSILENT"]
+    return command, err_msg
+
+
+def additional_configuration(game):
+    err_msg = ""
+    if game.platform in ["adapted"]:
+        if game.id in [1207659026]:
+            err_msg = theme_hospital.start(game)
+        game.set_info("adapted", True)
+    return err_msg

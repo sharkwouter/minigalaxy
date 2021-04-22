@@ -1,24 +1,28 @@
 import os
 import re
 import json
+import shutil
 
 from minigalaxy.config import Config
 from minigalaxy.paths import CONFIG_GAMES_DIR
+from minigalaxy.constants import ADAPTED_GAMES
 
 
 class Game:
     def __init__(self, name: str, url: str = "", md5sum=None, game_id: int = 0, install_dir: str = "",
-                 image_url="", platform="linux", dlcs=None):
+                 image_url="", platform="linux", supported_platforms: list = None, dlcs=None):
         self.name = name
         self.url = url
         self.md5sum = {} if md5sum is None else md5sum
         self.id = game_id
         self.install_dir = install_dir
         self.image_url = image_url
-        self.platform = platform
         self.dlcs = [] if dlcs is None else dlcs
         self.status_file_name = "{}.json".format(self.get_install_directory_name())
         self.status_file_path = os.path.join(CONFIG_GAMES_DIR, self.status_file_name)
+        self.platform = platform
+        self.supported_platforms = [platform] if supported_platforms is None else supported_platforms
+        self.check_adapted()
 
     def get_stripped_name(self):
         return self.__strip_string(self.name)
@@ -81,6 +85,26 @@ class Game:
             version = "0"
         return version
 
+    def check_adapted(self):
+        adapted_names = []
+        adapted_require = []
+        adapted_game_nr = -1
+        for adapted_game in ADAPTED_GAMES:
+            adapted_game_nr += 1
+            adapted_names.append(adapted_game["name"])
+            adapted_require.append(adapted_game["require"])
+        if self.name in adapted_names and "adapted" not in self.supported_platforms:
+            self.supported_platforms.append("adapted")
+            if not self.get_info("platform"):
+                self.set_platform("adapted")
+        if self.platform in "adapted" or "adapted" in self.supported_platforms:
+            for require in adapted_require[adapted_game_nr]:
+                if not shutil.which(require):
+                    if "adapted" in self.supported_platforms:
+                        self.supported_platforms.remove("adapted")
+                    self.set_platform("windows")
+                    break
+
     def set_info(self, key, value):
         json_dict = self.load_minigalaxy_info_json()
         json_dict[key] = value
@@ -136,6 +160,10 @@ class Game:
     def set_install_dir(self):
         if not self.install_dir:
             self.install_dir = os.path.join(Config.get("install_dir"), self.get_install_directory_name())
+
+    def set_platform(self, platform):
+        self.platform = platform
+        self.set_info("platform", platform)
 
     def __str__(self):
         return self.name

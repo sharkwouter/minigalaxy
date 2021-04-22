@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 import requests
 import xml.etree.ElementTree as ET
 from minigalaxy.game import Game
-from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
+from minigalaxy.constants import IGNORE_GAME_IDS, ADAPTED_GAMES, SESSION
 from minigalaxy.config import Config
 
 
@@ -84,21 +84,33 @@ class Api:
                 }
                 response = self.__request(url, params=params)
                 total_pages = response["totalPages"]
-
+                adapted_games_ids = []
+                for adapted_game in ADAPTED_GAMES:
+                    adapted_games_ids.append(adapted_game["id"])
                 for product in response["products"]:
                     if product["id"] not in IGNORE_GAME_IDS:
                         # Only support Linux unless the show_windows_games setting is enabled
                         if product["worksOn"]["Linux"]:
                             platform = "linux"
+                            supported_platforms = [platform, "windows"]
+                        elif product["id"] in adapted_games_ids:
+                            platform = "adapted"
+                            supported_platforms = [platform, "windows"]
                         elif Config.get("show_windows_games"):
                             platform = "windows"
+                            supported_platforms = [platform]
                         else:
                             continue
                         if not product["url"]:
                             print("{} ({}) has no store page url".format(product["title"], product['id']))
                         game = Game(name=product["title"], url=product["url"], game_id=product["id"],
-                                    image_url=product["image"], platform=platform)
-                        games.append(game)
+                                    image_url=product["image"], platform=platform,
+                                    supported_platforms=supported_platforms)
+                        game_cfg_platform = game.get_info("platform")
+                        if game_cfg_platform:
+                            game.platform = game_cfg_platform
+                        if Config.get("show_windows_games") or game.platform not in ["windows"]:
+                            games.append(game)
                 if current_page == total_pages:
                     all_pages_processed = True
                 current_page += 1
