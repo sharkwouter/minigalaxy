@@ -106,6 +106,9 @@ class Api:
                         game = Game(name=product["title"], url=product["url"], game_id=product["id"],
                                     image_url=product["image"], platform=platform,
                                     supported_platforms=supported_platforms)
+                        game_cfg_platform = game.get_info("platform")
+                        if game_cfg_platform:
+                            game.platform = game_cfg_platform
                         if Config.get("show_windows_games") or game.platform not in ["windows"]:
                             games.append(game)
                 if current_page == total_pages:

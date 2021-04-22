@@ -130,7 +130,11 @@ class Library(Gtk.Viewport):
                         game_id = 0
                     else:
                         game_id = int(game_id)
-                games.append(Game(name=name, game_id=game_id, install_dir=full_path))
+                game = Game(name=name, game_id=game_id, install_dir=full_path)
+                game_cfg_platform = game.get_info("platform")
+                if game_cfg_platform:
+                    game.platform = game_cfg_platform
+                games.append(game)
             else:
                 game_files = os.listdir(full_path)
                 for file in game_files:
@@ -143,6 +147,9 @@ class Library(Gtk.Viewport):
                                 install_dir=full_path,
                                 platform="windows"
                             )
+                            game_cfg_platform = game.get_info("platform")
+                            if game_cfg_platform:
+                                game.platform = game_cfg_platform
                             games.append(game)
         return games
 

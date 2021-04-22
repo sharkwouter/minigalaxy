@@ -20,7 +20,7 @@ class Game:
         self.dlcs = [] if dlcs is None else dlcs
         self.status_file_name = "{}.json".format(self.get_install_directory_name())
         self.status_file_path = os.path.join(CONFIG_GAMES_DIR, self.status_file_name)
-        self.platform = self.get_info("platform") if self.get_info("platform") else platform
+        self.platform = platform
         self.supported_platforms = [platform] if supported_platforms is None else supported_platforms
         self.check_adapted()
 
@@ -95,6 +95,8 @@ class Game:
             adapted_require.append(adapted_game["require"])
         if self.name in adapted_names and "adapted" not in self.supported_platforms:
             self.supported_platforms.append("adapted")
+            if not self.get_info("platform"):
+                self.set_platform("adapted")
         if self.platform in "adapted" or "adapted" in self.supported_platforms:
             for require in adapted_require[adapted_game_nr]:
                 if not shutil.which(require):
