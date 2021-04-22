@@ -157,6 +157,16 @@ class Properties(Gtk.Dialog):
             self.entry_properties_variable.set_sensitive(False)
             self.button_properties_regedit.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
+            if "linux" not in self.game.supported_platforms:
+                self.radiobutton_linux_type.set_sensitive(False)
+            if "windows" not in self.game.supported_platforms or not shutil.which("wine"):
+                self.radiobutton_windows_type.set_sensitive(False)
+            if "adapted" not in self.game.supported_platforms:
+                self.radiobutton_adapted_type.set_sensitive(False)
+        else:
+            self.radiobutton_linux_type.set_sensitive(False)
+            self.radiobutton_windows_type.set_sensitive(False)
+            self.radiobutton_adapted_type.set_sensitive(False)
 
         if game.platform in ["linux"]:
             self.button_properties_winecfg.hide()
@@ -166,10 +176,3 @@ class Properties(Gtk.Dialog):
             self.radiobutton_windows_type.set_active(True)
         elif game.platform in ["adapted"]:
             self.radiobutton_adapted_type.set_active(True)
-
-        if "linux" not in self.game.supported_platforms:
-            self.radiobutton_linux_type.set_sensitive(False)
-        if "windows" not in self.game.supported_platforms or not shutil.which("wine"):
-            self.radiobutton_windows_type.set_sensitive(False)
-        if "adapted" not in self.game.supported_platforms:
-            self.radiobutton_adapted_type.set_sensitive(False)

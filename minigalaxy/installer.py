@@ -124,9 +124,6 @@ def extract_installer(game, installer, temp_dir):
     stdout, stderr = process.communicate()
     stdout = stdout.decode("utf-8")
     stderr = stderr.decode("utf-8")
-    print(command)
-    print(stdout)
-    print(stderr)
     if (process.returncode not in [0, 1]) or \
        (process.returncode in [1] and "(attempting to process anyway)" not in stderr):
         error_message = _("The installation of {} failed. Please try again.").format(installer)
