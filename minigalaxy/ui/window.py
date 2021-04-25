@@ -28,8 +28,14 @@ class Window(Gtk.ApplicationWindow):
     def __init__(self, name="Minigalaxy"):
         Gtk.ApplicationWindow.__init__(self, title=name)
         current_locale = Config.get("locale")
-        if current_locale:
-            locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
+        default_locale = locale.getdefaultlocale()[0]
+        if current_locale == '':
+            locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
+        else:
+            try:
+                locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
+            except:
+                locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
 
         self.api = Api()
         self.search_string = ""
