@@ -7,8 +7,8 @@ m_constants = MagicMock()
 m_config = MagicMock()
 sys.modules['minigalaxy.constants'] = m_constants
 sys.modules['minigalaxy.config'] = m_config
-from minigalaxy.api import Api
-from minigalaxy.game import Game
+from minigalaxy.api import Api    # noqa: E402
+from minigalaxy.game import Game  # noqa: E402
 
 API_GET_INFO_TOONSTRUCK = {'downloads': {'installers': [{'id': 'installer_windows_en', 'name': 'Toonstruck', 'os': 'windows', 'language': 'en', 'language_full': 'English', 'version': '1.0', 'total_size': 939524096, 'files': [{'id': 'en1installer0', 'size': 1048576, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer0'}, {'id': 'en1installer1', 'size': 938475520, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer1'}]},
                                     {'id': 'installer_mac_en', 'name': 'Toonstruck', 'os': 'mac', 'language': 'en', 'language_full': 'English', 'version': 'gog-3', 'total_size': 975175680, 'files': [{'id': 'en2installer0', 'size': 975175680, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en2installer0'}]},

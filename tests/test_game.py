@@ -7,7 +7,7 @@ from minigalaxy.paths import CONFIG_DIR
 
 m_config = MagicMock()
 sys.modules['minigalaxy.config'] = m_config
-from minigalaxy.game import Game
+from minigalaxy.game import Game  # noqa: E402
 
 
 class TestGame(unittest.TestCase):

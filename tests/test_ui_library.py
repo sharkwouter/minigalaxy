@@ -51,8 +51,8 @@ sys.modules['gi'] = m_gi
 sys.modules['minigalaxy.ui.window'] = m_window
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.gametile'] = m_gametile
-from minigalaxy.game import Game
-from minigalaxy.ui.library import Library
+from minigalaxy.game import Game           # noqa: E402
+from minigalaxy.ui.library import Library  # noqa: E402
 
 SELF_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath A Steel Sky": "1207658695",
               "Stellaris (English)": "1508702879"}
