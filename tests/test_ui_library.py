@@ -32,6 +32,15 @@ class UnitTestGiRepository:
         class Viewport:
             pass
 
+    class Gdk:
+        pass
+
+    class GdkPixbuf:
+        pass
+
+    class Gio:
+        pass
+
     class GLib:
         pass
 

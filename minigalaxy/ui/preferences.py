@@ -1,6 +1,3 @@
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
 import os
 import shutil
 from minigalaxy.translation import _
@@ -8,6 +5,7 @@ from minigalaxy.paths import UI_DIR
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES
 from minigalaxy.config import Config
 from minigalaxy.download_manager import DownloadManager
+from minigalaxy.ui.gtk import Gtk
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "preferences.ui"))

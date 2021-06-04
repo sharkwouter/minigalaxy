@@ -2,16 +2,14 @@ import copy
 import os
 import re
 import json
-import gi
 import threading
 from typing import List
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib
 from minigalaxy.paths import UI_DIR
 from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.game import Game
 from minigalaxy.ui.gametile import GameTile
+from minigalaxy.ui.gtk import Gtk, GLib
 from minigalaxy.translation import _
 
 

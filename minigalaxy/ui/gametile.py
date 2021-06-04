@@ -1,13 +1,9 @@
 import shutil
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib, Gdk, GdkPixbuf, Gio
 import os
 import threading
 import re
 import time
 import urllib.parse
-from gi.repository.GdkPixbuf import Pixbuf
 from enum import Enum
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
@@ -19,6 +15,7 @@ from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound
+from minigalaxy.ui.gtk import Gtk, GLib, Gdk, Gio, GdkPixbuf
 from minigalaxy.ui.properties import Properties
 
 
@@ -402,7 +399,7 @@ class GameTile(Gtk.Box):
 
     def set_proper_dlc_icon(self, source, async_res, user_data):
         response = source.read_finish(async_res)
-        pixbuf = Pixbuf.new_from_stream(response)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_stream(response)
         self.dlc_dict[user_data][1].set_from_pixbuf(pixbuf)
 
     def set_progress(self, percentage: int):
