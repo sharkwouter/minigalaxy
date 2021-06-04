@@ -154,6 +154,4 @@ class Game:
         # Sort installed games before not installed ones
         if self.is_installed() != other.is_installed():
             return self.is_installed()
-        names = [str(self), str(other)]
-        names.sort()
-        return names[0] == str(self)
+        return str(self) < str(other)
