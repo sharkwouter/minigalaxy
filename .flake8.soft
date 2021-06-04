@@ -1,0 +1,5 @@
+[flake8]
+per-file-ignores =
+    # Because of their nature, tests have a lot of long strings
+    # Perhaps the situation can be improved in the future
+    tests/*: E501

@@ -19,7 +19,7 @@ jobs:
         pip install -r requirements-testing.txt
     - name: Lint with flake8
       run: |
-        flake8 . --count --show-source --statistics --exit-zero
+        flake8 . --append-config=.flake8.soft --count --show-source --statistics --exit-zero
     - name: Run unit tests
       run: |
         python -m unittest tests/*.py
