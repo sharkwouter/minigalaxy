@@ -127,7 +127,7 @@ class GameTile(Gtk.Box):
             try:
                 for filename in os.listdir(self.download_dir):
                     if self.game.get_install_directory_name() in filename:
-                            os.remove(os.path.join(self.download_dir, filename))
+                        os.remove(os.path.join(self.download_dir, filename))
             except FileNotFoundError:
                 pass
 
@@ -183,7 +183,8 @@ class GameTile(Gtk.Box):
         if os.path.exists(self.keep_path):
             if os.path.isdir(self.keep_path):
                 for fil in os.scandir(self.keep_path):
-                    if os.access(fil.path, os.X_OK) or os.path.splitext(fil)[-1] == ".exe" or os.path.splitext(fil)[-1] == ".sh":
+                    if os.access(fil.path, os.X_OK) or os.path.splitext(fil)[-1] == ".exe" or \
+                            os.path.splitext(fil)[-1] == ".sh":
                         keep_path = fil.path
             elif os.path.isfile(self.keep_path):
                 # This is only the case for installers that have been downloaded with versions <= 0.9.4
@@ -232,7 +233,8 @@ class GameTile(Gtk.Box):
             total_file_size += int(self.api.get_file_size(file_info["downlink"]))
             try:
                 # Extract the filename from the download url (filename is between %2F and &token)
-                download_path = os.path.join(self.download_dir, urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1)))
+                filename = urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1))
+                download_path = os.path.join(self.download_dir, filename)
                 if key == 0:
                     # If key = 0, denote the file as the executable's path
                     self.download_path = download_path
@@ -246,7 +248,7 @@ class GameTile(Gtk.Box):
                 finish_func=finish_func,
                 progress_func=self.set_progress,
                 cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
-                number=key+1,
+                number=key + 1,
                 out_of_amount=number_of_files
             )
             self.download.append(download)
@@ -406,7 +408,7 @@ class GameTile(Gtk.Box):
         if self.current_state == self.state.QUEUED:
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADING)
         if self.progress_bar:
-            GLib.idle_add(self.progress_bar.set_fraction, percentage/100)
+            GLib.idle_add(self.progress_bar.set_fraction, percentage / 100)
 
     def __uninstall_game(self):
         GLib.idle_add(self.update_to_state, self.state.UNINSTALLING)

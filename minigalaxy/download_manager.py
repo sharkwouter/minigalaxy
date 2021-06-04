@@ -155,7 +155,7 @@ class __DownloadManger:
 
         # Check if the first part of the file
         download_request = SESSION.get(download.url, stream=True)
-        size_to_check = DOWNLOAD_CHUNK_SIZE*5
+        size_to_check = DOWNLOAD_CHUNK_SIZE * 5
         for chunk in download_request.iter_content(chunk_size=size_to_check):
             with open(download.save_location, "rb") as file:
                 file_content = file.read(size_to_check)

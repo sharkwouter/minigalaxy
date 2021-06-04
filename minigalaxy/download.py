@@ -15,8 +15,8 @@ class Download:
         if self.__progress_func:
             if self.out_of_amount > 1:
                 # Change the percentage based on which number we are
-                progress_start = 100/self.out_of_amount*(self.number-1)
-                percentage = progress_start + percentage/self.out_of_amount
+                progress_start = 100 / self.out_of_amount * (self.number - 1)
+                percentage = progress_start + percentage / self.out_of_amount
                 percentage = int(percentage)
             self.__progress_func(percentage)
 

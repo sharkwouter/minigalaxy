@@ -79,7 +79,7 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_logout_clicked")
     def logout(self, button):
-        question = _("Do you really want to log out of GOG?") 
+        question = _("Do you really want to log out of GOG?")
         if self.show_question(question):
             # Unset everything which is specific to this user
             self.HeaderBar.set_subtitle("")
