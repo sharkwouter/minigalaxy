@@ -49,7 +49,7 @@ class Game:
         installed = False
         if dlc_title:
             dlc_version = self.get_dlc_info("version", dlc_title)
-            installed = True if dlc_version else False
+            installed = bool(dlc_version)
         else:
             if self.install_dir and os.path.exists(self.install_dir):
                 installed = True
@@ -160,6 +160,4 @@ class Game:
             return self.is_installed()
         names = [str(self), str(other)]
         names.sort()
-        if names[0] == str(self):
-            return True
-        return False
+        return names[0] == str(self)

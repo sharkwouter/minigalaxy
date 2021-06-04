@@ -34,7 +34,7 @@ def check_diskspace(required_size, location):
     for the Download and Install. If not sufficient, it returns False."""
     installed_game_size = int(required_size)
     diskspace_available = get_available_disk_space(location)
-    return False if diskspace_available < installed_game_size else True
+    return diskspace_available >= installed_game_size
 
 
 def install_game(game, installer):
