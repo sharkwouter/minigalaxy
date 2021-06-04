@@ -333,12 +333,14 @@ class GameTile(Gtk.Box):
                 self.image.set_tooltip_text(self.game.name)
 
     def __download_dlc(self, dlc_installers) -> None:
+        def finish_func():
+            self.__install_dlc(dlc_title=dlc_title)
+
         download_info = self.api.get_download_info(self.game, dlc_installers=dlc_installers)
         dlc_title = self.game.name
         for dlc in self.game.dlcs:
             if dlc["downloads"]["installers"] == dlc_installers:
                 dlc_title = dlc["title"]
-        finish_func = lambda: self.__install_dlc(dlc_title=dlc_title)
         cancel_to_state = self.state.INSTALLED
         result = self.__download(download_info, finish_func, cancel_to_state)
         if not result:

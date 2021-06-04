@@ -119,9 +119,9 @@ class Library(Gtk.Viewport):
             if os.path.isfile(gameinfo):
                 with open(gameinfo, 'r') as file:
                     name = file.readline().strip()
-                    version = file.readline().strip()
-                    version_dev = file.readline().strip()
-                    language = file.readline().strip()
+                    version = file.readline().strip()      # noqa: F841
+                    version_dev = file.readline().strip()  # noqa: F841
+                    language = file.readline().strip()     # noqa: F841
                     game_id = file.readline().strip()
                     if not game_id:
                         game_id = 0

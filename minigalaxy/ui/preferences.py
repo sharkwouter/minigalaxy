@@ -82,7 +82,7 @@ class Preferences(Gtk.Dialog):
         if not os.path.exists(choice):
             try:
                 os.makedirs(choice, mode=0o755)
-            except:
+            except Exception:
                 return False
         else:
             write_test_file = os.path.join(choice, "write_test.txt")
@@ -91,7 +91,7 @@ class Preferences(Gtk.Dialog):
                     file.write("test")
                     file.close()
                 os.remove(write_test_file)
-            except:
+            except Exception:
                 return False
         # Remove the old directory if it is empty
         try:

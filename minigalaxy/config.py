@@ -91,7 +91,7 @@ class __Config:
         try:
             del self.__config[key]
             self.__update_required = True
-        except:
+        except KeyError:
             pass
 
 
