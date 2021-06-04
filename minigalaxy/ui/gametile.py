@@ -442,108 +442,123 @@ class GameTile(Gtk.Box):
         else:
             self.update_to_state(self.state.DOWNLOADABLE)
 
+    def __state_downloadable(self):
+        self.button.set_label(_("download"))
+        self.button.set_sensitive(True)
+        self.image.set_sensitive(False)
+
+        # The user must have the possibilty to access
+        # to the store button even if the game is not installed
+        self.menu_button.show()
+        self.menu_button_update.hide()
+        self.menu_button_dlc.hide()
+        self.menu_button_uninstall.hide()
+
+        self.button_cancel.hide()
+
+        self.game.install_dir = ""
+
+        if self.progress_bar:
+            self.progress_bar.destroy()
+
+    def __state_installable(self):
+        self.button.set_label(_("install"))
+        self.button.set_sensitive(True)
+        self.image.set_sensitive(False)
+        self.menu_button.hide()
+        self.button_cancel.hide()
+
+        self.game.install_dir = ""
+
+        if self.progress_bar:
+            self.progress_bar.destroy()
+
+    def __state_queued(self):
+        self.button.set_label(_("in queue…"))
+        self.button.set_sensitive(False)
+        self.image.set_sensitive(False)
+        self.menu_button.hide()
+        self.button_cancel.show()
+        self.__create_progress_bar()
+
+    def __state_downloading(self):
+        self.button.set_label(_("downloading…"))
+        self.button.set_sensitive(False)
+        self.image.set_sensitive(False)
+        self.menu_button.hide()
+        self.button_cancel.show()
+        if not self.progress_bar:
+            self.__create_progress_bar()
+        self.progress_bar.show_all()
+
+    def __state_installing(self):
+        self.button.set_label(_("installing…"))
+        self.button.set_sensitive(False)
+        self.image.set_sensitive(True)
+        self.menu_button.hide()
+        self.button_cancel.hide()
+
+        self.game.set_install_dir()
+
+        if self.progress_bar:
+            self.progress_bar.destroy()
+
+        self.parent.filter_library()
+
+    def __state_installed(self):
+        self.button.set_label(_("play"))
+        self.button.get_style_context().add_class("suggested-action")
+        self.button.set_sensitive(True)
+        self.image.set_sensitive(True)
+        self.menu_button.show()
+        self.button_cancel.hide()
+        self.game.set_install_dir()
+
+        if self.progress_bar:
+            self.progress_bar.destroy()
+
+        self.menu_button_update.hide()
+        self.update_icon.hide()
+
+    def __state_uninstalling(self):
+        self.button.set_label(_("uninstalling…"))
+        self.button.get_style_context().remove_class("suggested-action")
+        self.button.set_sensitive(False)
+        self.image.set_sensitive(False)
+        self.menu_button.hide()
+        self.button_cancel.hide()
+
+        self.game.install_dir = ""
+
+        self.parent.filter_library()
+
+    def __state_updatable(self):
+        self.update_icon.show()
+        self.update_icon.set_from_icon_name("emblem-synchronizing", Gtk.IconSize.LARGE_TOOLBAR)
+        self.button.set_label(_("play"))
+        self.menu_button.show()
+        tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")
+        self.image.set_tooltip_text(tooltip_text)
+        self.menu_button_update.show()
+        if self.game.platform == "windows":
+            self.wine_icon.set_margin_left(22)
+
+    def __state_updating(self):
+        self.button.set_label(_("updating…"))
+
+    STATE_UPDATE_HANDLERS = {
+        state.DOWNLOADABLE: __state_downloadable,
+        state.INSTALLABLE: __state_installable,
+        state.QUEUED: __state_queued,
+        state.DOWNLOADING: __state_downloading,
+        state.INSTALLING: __state_installing,
+        state.INSTALLED: __state_installed,
+        state.UNINSTALLING: __state_uninstalling,
+        state.UPDATABLE: __state_updatable,
+        state.UPDATING: __state_updating,
+    }
+
     def update_to_state(self, state):
         self.current_state = state
-        if state == self.state.DOWNLOADABLE:
-            self.button.set_label(_("download"))
-            self.button.set_sensitive(True)
-            self.image.set_sensitive(False)
-
-            # The user must have the possibilty to access
-            # to the store button even if the game is not installed
-            self.menu_button.show()
-            self.menu_button_update.hide()
-            self.menu_button_dlc.hide()
-            self.menu_button_uninstall.hide()
-
-            self.button_cancel.hide()
-
-            self.game.install_dir = ""
-
-            if self.progress_bar:
-                self.progress_bar.destroy()
-
-        elif state == self.state.INSTALLABLE:
-            self.button.set_label(_("install"))
-            self.button.set_sensitive(True)
-            self.image.set_sensitive(False)
-            self.menu_button.hide()
-            self.button_cancel.hide()
-
-            self.game.install_dir = ""
-
-            if self.progress_bar:
-                self.progress_bar.destroy()
-
-        elif state == self.state.QUEUED:
-            self.button.set_label(_("in queue…"))
-            self.button.set_sensitive(False)
-            self.image.set_sensitive(False)
-            self.menu_button.hide()
-            self.button_cancel.show()
-            self.__create_progress_bar()
-
-        elif state == self.state.DOWNLOADING:
-            self.button.set_label(_("downloading…"))
-            self.button.set_sensitive(False)
-            self.image.set_sensitive(False)
-            self.menu_button.hide()
-            self.button_cancel.show()
-            if not self.progress_bar:
-                self.__create_progress_bar()
-            self.progress_bar.show_all()
-
-        elif state == self.state.INSTALLING:
-            self.button.set_label(_("installing…"))
-            self.button.set_sensitive(False)
-            self.image.set_sensitive(True)
-            self.menu_button.hide()
-            self.button_cancel.hide()
-
-            self.game.set_install_dir()
-
-            if self.progress_bar:
-                self.progress_bar.destroy()
-
-            self.parent.filter_library()
-
-        elif state == self.state.INSTALLED:
-            self.button.set_label(_("play"))
-            self.button.get_style_context().add_class("suggested-action")
-            self.button.set_sensitive(True)
-            self.image.set_sensitive(True)
-            self.menu_button.show()
-            self.button_cancel.hide()
-            self.game.set_install_dir()
-
-            if self.progress_bar:
-                self.progress_bar.destroy()
-
-            self.menu_button_update.hide()
-            self.update_icon.hide()
-
-        elif state == self.state.UNINSTALLING:
-            self.button.set_label(_("uninstalling…"))
-            self.button.get_style_context().remove_class("suggested-action")
-            self.button.set_sensitive(False)
-            self.image.set_sensitive(False)
-            self.menu_button.hide()
-            self.button_cancel.hide()
-
-            self.game.install_dir = ""
-
-            self.parent.filter_library()
-
-        elif state == self.state.UPDATABLE:
-            self.update_icon.show()
-            self.update_icon.set_from_icon_name("emblem-synchronizing", Gtk.IconSize.LARGE_TOOLBAR)
-            self.button.set_label(_("play"))
-            self.menu_button.show()
-            tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")
-            self.image.set_tooltip_text(tooltip_text)
-            self.menu_button_update.show()
-            if self.game.platform == "windows":
-                self.wine_icon.set_margin_left(22)
-
-        elif self.current_state == self.state.UPDATING:
-            self.button.set_label(_("updating…"))
+        if state in self.STATE_UPDATE_HANDLERS:
+            self.STATE_UPDATE_HANDLERS[state](self)
