@@ -10,12 +10,12 @@ from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
 from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.launcher import start_game, config_game
+from minigalaxy.launcher import start_game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound
-from minigalaxy.ui.gtk import Gtk, GLib, Gdk, Gio, GdkPixbuf
+from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
 from minigalaxy.ui.properties import Properties
 
 
