@@ -142,10 +142,7 @@ class Game:
 
     def __eq__(self, other):
         if self.id > 0 and other.id > 0:
-            if self.id == other.id:
-                return True
-            else:
-                return False
+            return self.id == other.id
         if self.name == other.name:
             return True
         # Compare names with special characters and capital letters removed
@@ -160,10 +157,7 @@ class Game:
     def __lt__(self, other):
         # Sort installed games before not installed ones
         if self.is_installed() != other.is_installed():
-            if self.is_installed():
-                return True
-            else:
-                return False
+            return self.is_installed()
         names = [str(self), str(other)]
         names.sort()
         if names[0] == str(self):
