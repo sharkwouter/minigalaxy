@@ -1,16 +1,13 @@
 import urllib
-import gi
 import os
 import subprocess
 import webbrowser
 
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GLib, Gio
-from gi.repository.GdkPixbuf import Pixbuf, InterpType
 from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
 from minigalaxy.launcher import config_game, regedit_game
 from minigalaxy.config import Config
+from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "properties.ui"))
@@ -108,8 +105,8 @@ class Properties(Gtk.Dialog):
         if self.gamesdb_info["cover"]:
             response = urllib.request.urlopen(self.gamesdb_info["cover"])
             input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
-            pixbuf = Pixbuf.new_from_stream(input_stream, None)
-            pixbuf = pixbuf.scale_simple(340, 480, InterpType.BILINEAR)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_stream(input_stream, None)
+            pixbuf = pixbuf.scale_simple(340, 480, GdkPixbuf.InterpType.BILINEAR)
             GLib.idle_add(self.image.set_from_pixbuf, pixbuf)
         else:
             thumbnail_path = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))

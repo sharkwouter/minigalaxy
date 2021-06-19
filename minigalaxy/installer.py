@@ -34,7 +34,7 @@ def check_diskspace(required_size, location):
     for the Download and Install. If not sufficient, it returns False."""
     installed_game_size = int(required_size)
     diskspace_available = get_available_disk_space(location)
-    return False if diskspace_available < installed_game_size else True
+    return diskspace_available >= installed_game_size
 
 
 def install_game(game, installer):
@@ -116,7 +116,8 @@ def extract_installer(game, installer, temp_dir):
             os.makedirs(prefix_dir, mode=0o755)
 
         # It's possible to set install dir as argument before installation
-        command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir), "/VERYSILENT"]
+        command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer,
+                   "/dir={}".format(temp_dir), "/VERYSILENT"]
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     process.wait()
     stdout, stderr = process.communicate()
@@ -159,10 +160,8 @@ def copy_thumbnail(game):
     # Copy thumbnail
     if not os.path.isfile(new_thumbnail_path):
         try:
-            shutil.copyfile(
-                            os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
-                            new_thumbnail_path,
-                            )
+            shutil.copyfile(os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
+                            new_thumbnail_path)
         except Exception as e:
             error_message = e
     return error_message

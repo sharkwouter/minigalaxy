@@ -29,17 +29,15 @@ class Game:
     def load_minigalaxy_info_json(self):
         json_dict = {}
         if os.path.isfile(self.status_file_path):
-            staus_file = open(self.status_file_path, 'r')
-            json_dict = json.load(staus_file)
-            staus_file.close()
+            with open(self.status_file_path, 'r') as status_file:
+                json_dict = json.load(status_file)
         return json_dict
 
     def save_minigalaxy_info_json(self, json_dict):
         if not os.path.exists(CONFIG_GAMES_DIR):
             os.makedirs(CONFIG_GAMES_DIR, mode=0o755)
-        status_file = open(self.status_file_path, 'w')
-        json.dump(json_dict, status_file)
-        status_file.close()
+        with open(self.status_file_path, 'w') as status_file:
+            json.dump(json_dict, status_file)
 
     @staticmethod
     def __strip_string(string):
@@ -49,7 +47,7 @@ class Game:
         installed = False
         if dlc_title:
             dlc_version = self.get_dlc_info("version", dlc_title)
-            installed = True if dlc_version else False
+            installed = bool(dlc_version)
         else:
             if self.install_dir and os.path.exists(self.install_dir):
                 installed = True
@@ -102,9 +100,8 @@ class Game:
             value = json_dict[key]
         # Start: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
         elif os.path.isfile(os.path.join(self.install_dir, "minigalaxy-info.json")):
-            staus_file = open(os.path.join(self.install_dir, "minigalaxy-info.json"), 'r')
-            json_dict = json.load(staus_file)
-            staus_file.close()
+            with open(os.path.join(self.install_dir, "minigalaxy-info.json"), 'r') as status_file:
+                json_dict = json.load(status_file)
             if key in json_dict:
                 value = json_dict[key]
                 # Lets move this value to new config
@@ -121,9 +118,8 @@ class Game:
                     value = json_dict["dlcs"][dlc_title][key]
         # Start: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
         if os.path.isfile(os.path.join(self.install_dir, "minigalaxy-info.json")) and not value:
-            staus_file = open(os.path.join(self.install_dir, "minigalaxy-info.json"), 'r')
-            json_dict = json.load(staus_file)
-            staus_file.close()
+            with open(os.path.join(self.install_dir, "minigalaxy-info.json"), 'r') as status_file:
+                json_dict = json.load(status_file)
             if "dlcs" in json_dict:
                 if dlc_title in json_dict["dlcs"]:
                     if key in json_dict["dlcs"][dlc_title]:
@@ -142,10 +138,7 @@ class Game:
 
     def __eq__(self, other):
         if self.id > 0 and other.id > 0:
-            if self.id == other.id:
-                return True
-            else:
-                return False
+            return self.id == other.id
         if self.name == other.name:
             return True
         # Compare names with special characters and capital letters removed
@@ -160,12 +153,5 @@ class Game:
     def __lt__(self, other):
         # Sort installed games before not installed ones
         if self.is_installed() != other.is_installed():
-            if self.is_installed():
-                return True
-            else:
-                return False
-        names = [str(self), str(other)]
-        names.sort()
-        if names[0] == str(self):
-            return True
-        return False
+            return self.is_installed()
+        return str(self) < str(other)

@@ -1,6 +1,6 @@
 import subprocess
 from unittest import TestCase, mock
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import MagicMock, mock_open
 
 from minigalaxy import launcher
 from minigalaxy.game import Game

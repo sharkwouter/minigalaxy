@@ -1,6 +1,3 @@
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
 import os
 import shutil
 from minigalaxy.translation import _
@@ -8,6 +5,7 @@ from minigalaxy.paths import UI_DIR
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES
 from minigalaxy.config import Config
 from minigalaxy.download_manager import DownloadManager
+from minigalaxy.ui.gtk import Gtk
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "preferences.ui"))
@@ -84,7 +82,7 @@ class Preferences(Gtk.Dialog):
         if not os.path.exists(choice):
             try:
                 os.makedirs(choice, mode=0o755)
-            except:
+            except Exception:
                 return False
         else:
             write_test_file = os.path.join(choice, "write_test.txt")
@@ -93,7 +91,7 @@ class Preferences(Gtk.Dialog):
                     file.write("test")
                     file.close()
                 os.remove(write_test_file)
-            except:
+            except Exception:
                 return False
         # Remove the old directory if it is empty
         try:

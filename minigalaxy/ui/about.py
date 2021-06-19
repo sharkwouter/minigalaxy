@@ -1,10 +1,8 @@
 import os
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf
 from minigalaxy.version import VERSION
 from minigalaxy.translation import _
 from minigalaxy.paths import LOGO_IMAGE_PATH, UI_DIR
+from minigalaxy.ui.gtk import Gtk, GdkPixbuf
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "about.ui"))
