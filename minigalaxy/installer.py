@@ -190,6 +190,8 @@ def move_and_overwrite(game, temp_dir, target_dir):
 
     # Remove the temporary directory
     shutil.rmtree(temp_dir, ignore_errors=True)
+    if game.platform in ["windows"] and "unins000.exe" not in os.listdir(game.install_dir):
+        open(os.path.join(game.install_dir, "unins000.exe"), "w").close()
     return error_message
 
 
