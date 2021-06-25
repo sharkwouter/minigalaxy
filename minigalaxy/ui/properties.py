@@ -7,11 +7,11 @@ import webbrowser
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib, Gio
 from gi.repository.GdkPixbuf import Pixbuf, InterpType
-from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR
+from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
 from minigalaxy.translation import _
 from minigalaxy.launcher import config_game, regedit_game
 from minigalaxy.config import Config
-
+from minigalaxy.installer import create_applications_file
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "properties.ui"))
 class Properties(Gtk.Dialog):
@@ -28,6 +28,7 @@ class Properties(Gtk.Dialog):
     button_properties_regedit = Gtk.Template.Child()
     switch_properties_show_fps = Gtk.Template.Child()
     switch_properties_hide_game = Gtk.Template.Child()
+    switch_properties_create_applications_file = Gtk.Template.Child()
     entry_properties_variable = Gtk.Template.Child()
     entry_properties_command = Gtk.Template.Child()
     label_game_description = Gtk.Template.Child()
@@ -50,13 +51,16 @@ class Properties(Gtk.Dialog):
         # Retrieve variable & command each time Properties is open
         self.entry_properties_variable.set_text(self.game.get_info("variable"))
         self.entry_properties_command.set_text(self.game.get_info("command"))
-
+        
         # Keep switch FPS disabled/enabled
         self.switch_properties_show_fps.set_active(self.game.get_info("show_fps"))
 
         # Keep switch game shown/hidden
         self.switch_properties_hide_game.set_active(self.game.get_info("hide_game"))
-
+        
+        # Keep switch create shortcut disabled/enabled
+        # WIP: Check if setting is enabled via Preferences globally
+        self.switch_properties_create_applications_file.set_active(self.game.get_info("create_applications_file"))
     @Gtk.Template.Callback("on_button_properties_cancel_clicked")
     def cancel_pressed(self, button):
         self.destroy()
@@ -67,6 +71,11 @@ class Properties(Gtk.Dialog):
             self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
             self.game.set_info("command", str(self.entry_properties_command.get_text()))
             self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
+            self.game.set_info("create_applications_file", self.switch_properties_create_applications_file.get_active())
+        if self.switch_properties_create_applications_file.get_active():
+            create_applications_file(self.game)
+        elif os.path.isfile(os.path.join(APPLICATIONS_DIR, self.game.name+".desktop")):
+            os.remove(os.path.join(APPLICATIONS_DIR, self.game.name+".desktop"))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
         self.parent.parent.filter_library()
         self.destroy()
@@ -147,7 +156,10 @@ class Properties(Gtk.Dialog):
             self.entry_properties_variable.set_sensitive(False)
             self.button_properties_regedit.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
+            self.switch_properties_create_applications_file.set_sensitive(False)
 
         if game.platform == 'linux':
             self.button_properties_winecfg.hide()
             self.button_properties_regedit.hide()
+        if game.platform != 'linux':
+            self.switch_properties_create_applications_file.hide()
