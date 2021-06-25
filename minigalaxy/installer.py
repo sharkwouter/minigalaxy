@@ -1,10 +1,10 @@
 import os
 import shutil
 import subprocess
-import hashlib
 import textwrap
+import hashlib
 from minigalaxy.translation import _
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, DESKTOP_DIR
+from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
 from minigalaxy.config import Config
 
 
@@ -52,9 +52,9 @@ def install_game(game, installer):
     if not error_message:
         error_message = move_and_overwrite(game, tmp_dir, game.install_dir)
     if not error_message:
-        error_message = create_desktop_file(game)
-    if not error_message:
         error_message = copy_thumbnail(game)
+    if not error_message and Config.get("create_applications_file"):
+        error_message = create_applications_file(game)
     if not error_message:
         error_message = remove_installer(installer)
     else:
@@ -154,33 +154,35 @@ def move_and_overwrite(game, temp_dir, target_dir):
     # Remove the temporary directory
     shutil.rmtree(temp_dir, ignore_errors=True)
     return error_message
+    
 
-def create_desktop_file(game):
+def create_applications_file(game):
     error_message = ""
     if game.platform == "linux":
-        desktop_file_path = os.path.join(DESKTOP_DIR, game.name+".desktop")
-        # Create desktop file
+        path_to_shortcut = os.path.join(APPLICATIONS_DIR, game.name+".desktop")
+        # Create desktop file definition
         desktop_context = {
-            "game_bin_path":os.path.join(game.install_dir,'start.sh'),
-            "game_name":game.name,
-            "game_icon_path":os.path.join(game.install_dir,'support/icon.png')
+            "game_bin_path": os.path.join(game.install_dir, 'start.sh'),
+            "game_name": game.name,
+            "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
             }
         desktop_definition = """\
-        [Desktop Entry]
-        Type=Application
-        Terminal=false
-        StartupNotify=true
-        Exec="{game_bin_path}"
-        Name={game_name}
-        Icon={game_icon_path}""".format(**desktop_context)
-        if not os.path.isfile(desktop_file_path):
+            [Desktop Entry]
+            Type=Application
+            Terminal=false
+            StartupNotify=true
+            Exec="{game_bin_path}"
+            Name={game_name}
+            Icon={game_icon_path}""".format(**desktop_context)
+        if not os.path.isfile(path_to_shortcut):
             try:
-                with open(desktop_file_path, 'w+') as desktop_file:
+                with open(path_to_shortcut, 'w+') as desktop_file:
                     desktop_file.writelines(textwrap.dedent(desktop_definition))
             except Exception as e:
-                os.remove(os.path.join(DESKTOP_DIR,game.name+".desktop"))
+                os.remove(path_to_shortcut)
                 error_message = e
     return error_message
+
 
 def copy_thumbnail(game):
     error_message = ""
@@ -212,5 +214,5 @@ def uninstall_game(game):
     shutil.rmtree(game.install_dir, ignore_errors=True)
     if os.path.isfile(game.status_file_path):
         os.remove(game.status_file_path)
-    if os.path.isfile(os.path.join(DESKTOP_DIR,game.name+".desktop")):
-        os.remove(os.path.join(DESKTOP_DIR,game.name+".desktop"))
+    if os.path.isfile(os.path.join(APPLICATIONS_DIR, game.name+".desktop")):
+        os.remove(os.path.join(APPLICATIONS_DIR, game.name+".desktop"))
