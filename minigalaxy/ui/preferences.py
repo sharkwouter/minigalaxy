@@ -18,6 +18,7 @@ class Preferences(Gtk.Dialog):
     button_file_chooser = Gtk.Template.Child()
     label_keep_installers = Gtk.Template.Child()
     switch_keep_installers = Gtk.Template.Child()
+    switch_create_applications_file = Gtk.Template.Child()
     switch_stay_logged_in = Gtk.Template.Child()
     switch_show_hidden_games = Gtk.Template.Child()
     switch_show_windows_games = Gtk.Template.Child()
@@ -31,6 +32,7 @@ class Preferences(Gtk.Dialog):
         self.__set_language_list()
         self.button_file_chooser.set_filename(Config.get("install_dir"))
         self.switch_keep_installers.set_active(Config.get("keep_installers"))
+        self.switch_create_applications_file.set_active(Config.get("create_applications_file"))
         self.switch_stay_logged_in.set_active(Config.get("stay_logged_in"))
         self.switch_use_dark_theme.set_active(Config.get("use_dark_theme"))
         self.switch_show_hidden_games.set_active(Config.get("show_hidden_games"))
@@ -104,11 +106,13 @@ class Preferences(Gtk.Dialog):
         Config.set("install_dir", choice)
         return True
 
+
     @Gtk.Template.Callback("on_button_save_clicked")
     def save_pressed(self, button):
         self.__save_language_choice()
         self.__save_theme_choice()
         Config.set("keep_installers", self.switch_keep_installers.get_active())
+        Config.set("create_applications_file", self.switch_create_applications_file.get_active())
         Config.set("stay_logged_in", self.switch_stay_logged_in.get_active())
         Config.set("show_hidden_games", self.switch_show_hidden_games.get_active())
         self.parent.library.filter_library()
