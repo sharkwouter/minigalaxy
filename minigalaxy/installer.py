@@ -52,7 +52,7 @@ def install_game(game, installer):
     if not error_message:
         error_message = extract_installer(game, installer, tmp_dir)
     if not error_message:
-        error_message = move_and_overwrite(game, tmp_dir, game.install_dir)
+        error_message = move_and_overwrite(game, tmp_dir)
     if not error_message:
         error_message = copy_thumbnail(game)
     if not error_message:
@@ -109,38 +109,56 @@ def make_tmp_dir(game):
 
 def extract_installer(game, installer, temp_dir):
     # Extract the installer
-    error_message = ""
     if game.platform in ["linux"]:
-        command = ["unzip", "-qq", installer, "-d", temp_dir]
+        err_msg = extract_linux(installer, temp_dir)
     else:
-        command, error_message = extract_by_innoextract(installer, temp_dir)
-        if error_message:
-            command, error_message = extract_by_wine(game, installer, temp_dir)
-    error_message = execute_extraction(command, temp_dir, installer)
-    if error_message and game.platform in ["windows"]:
-        command, error_message = extract_by_wine(game, installer, temp_dir)
-        error_message = execute_extraction(command, temp_dir, installer)
-    return error_message
+        err_msg = extract_windows(game, installer, temp_dir)
+    return err_msg
+
+
+def extract_linux(installer, temp_dir):
+    err_msg = ""
+    command = ["unzip", "-qq", installer, "-d", temp_dir]
+    stdout, stderr, exitcode = _exe_cmd(command)
+    if (exitcode not in [0, 1]) or \
+       (exitcode in [1] and "(attempting to process anyway)" not in stderr):
+        err_msg = _("The installation of {} failed. Please try again.").format(installer)
+    elif len(os.listdir(temp_dir)) == 0:
+        err_msg = _("{} could not be unzipped.".format(installer))
+    return err_msg
+
+
+def extract_windows(game, installer, temp_dir):
+    err_msg = extract_by_innoextract(installer, temp_dir)
+    if err_msg:
+        err_msg = extract_by_wine(game, installer, temp_dir)
+    return err_msg
 
 
 def extract_by_innoextract(installer, temp_dir):
     err_msg = ""
-    innoextract_ver = "1.9"
-    innoextract_tar = "innoextract-{}-linux.tar.xz".format(innoextract_ver)
-    innoextract_url = "https://constexpr.org/innoextract/files/{}".format(innoextract_tar)
-    download_request = SESSION.get(innoextract_url, stream=True, timeout=30)
-    with open(os.path.join(temp_dir, innoextract_tar), "wb") as save_file:
-        for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-            save_file.write(chunk)
-        save_file.close()
-    tar = tarfile.open(os.path.join(temp_dir, innoextract_tar))
-    tar.extractall(path=temp_dir)
-    tar.close()
-    innoextract_file = os.path.join(temp_dir, "innoextract-{}-linux".format(innoextract_ver), "bin", "amd64",
-                                    "innoextract")
-    os.chmod(innoextract_file, 0o775)
-    cmd = [innoextract_file, installer, "-d", os.path.join(temp_dir, "minigalaxy_game_files")]
-    return cmd, err_msg
+    if shutil.which("innoextract"):
+        innoextract_bin = "innoextract"
+    else:
+        innoextract_ver = "1.9"
+        innoextract_tar = "innoextract-{}-linux.tar.xz".format(innoextract_ver)
+        innoextract_url = "https://constexpr.org/innoextract/files/{}".format(innoextract_tar)
+        download_request = SESSION.get(innoextract_url, stream=True, timeout=30)
+        with open(os.path.join(temp_dir, innoextract_tar), "wb") as save_file:
+            for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                save_file.write(chunk)
+            save_file.close()
+        tar = tarfile.open(os.path.join(temp_dir, innoextract_tar))
+        tar.extractall(path=temp_dir)
+        tar.close()
+        innoextract_bin = os.path.join(temp_dir, "innoextract-{}-linux".format(innoextract_ver), "bin", "amd64",
+                                       "innoextract")
+        os.chmod(innoextract_bin, 0o775)
+    cmd = [innoextract_bin, installer, "-d", os.path.join(temp_dir, "minigalaxy_game_files")]
+    stdout, stderr, exitcode = _exe_cmd(cmd)
+    if exitcode not in [0]:
+        err_msg = _("Innoextract extraction failed.")
+    return err_msg
 
 
 def extract_by_wine(game, installer, temp_dir):
@@ -151,25 +169,13 @@ def extract_by_wine(game, installer, temp_dir):
         os.makedirs(prefix_dir, mode=0o755)
     # It's possible to set install dir as argument before installation
     command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir), "/VERYSILENT"]
-    return command, err_msg
-
-
-def execute_extraction(command, temp_dir, installer):
-    err_msg = ""
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    process.wait()
-    stdout, stderr = process.communicate()
-    stdout = stdout.decode("utf-8")
-    stderr = stderr.decode("utf-8")
-    if (process.returncode not in [0, 1]) or \
-       (process.returncode in [1] and "(attempting to process anyway)" not in stderr):
-        err_msg = _("The installation of {} failed. Please try again.").format(installer)
-    elif len(os.listdir(temp_dir)) == 0:
-        err_msg = _("{} could not be unzipped.".format(installer))
+    stdout, stderr, exitcode = _exe_cmd(command)
+    if exitcode not in [0]:
+        err_msg = _("Wine extraction failed.")
     return err_msg
 
 
-def move_and_overwrite(game, temp_dir, target_dir):
+def move_and_overwrite(game, temp_dir):
     # Copy the game files into the correct directory
     error_message = ""
     if game.platform == "linux":
@@ -177,16 +183,8 @@ def move_and_overwrite(game, temp_dir, target_dir):
     else:
         innoextract_dir = os.path.join(temp_dir, "minigalaxy_game_files")
         source_dir = temp_dir if not os.path.isdir(innoextract_dir) else innoextract_dir
-    for src_dir, dirs, files in os.walk(source_dir):
-        destination_dir = src_dir.replace(source_dir, target_dir, 1)
-        if not os.path.exists(destination_dir):
-            os.makedirs(destination_dir)
-        for src_file in files:
-            file_to_copy = os.path.join(src_dir, src_file)
-            dst_file = os.path.join(destination_dir, src_file)
-            if os.path.exists(dst_file):
-                os.remove(dst_file)
-            shutil.move(file_to_copy, destination_dir)
+    target_dir = game.install_dir
+    _mv(source_dir, target_dir)
 
     # Remove the temporary directory
     shutil.rmtree(temp_dir, ignore_errors=True)
@@ -223,3 +221,25 @@ def uninstall_game(game):
     shutil.rmtree(game.install_dir, ignore_errors=True)
     if os.path.isfile(game.status_file_path):
         os.remove(game.status_file_path)
+
+
+def _exe_cmd(cmd):
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process.wait()
+    stdout, stderr = process.communicate()
+    stdout = stdout.decode("utf-8")
+    stderr = stderr.decode("utf-8")
+    return stdout, stderr, process.returncode
+
+
+def _mv(source_dir, target_dir):
+    for src_dir, dirs, files in os.walk(source_dir):
+        destination_dir = src_dir.replace(source_dir, target_dir, 1)
+        if not os.path.exists(destination_dir):
+            os.makedirs(destination_dir)
+        for src_file in files:
+            file_to_copy = os.path.join(src_dir, src_file)
+            dst_file = os.path.join(destination_dir, src_file)
+            if os.path.exists(dst_file):
+                os.remove(dst_file)
+            shutil.move(file_to_copy, destination_dir)
