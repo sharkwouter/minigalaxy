@@ -511,6 +511,7 @@ class GameTile(Gtk.Box):
         self.button.set_sensitive(True)
         self.image.set_sensitive(True)
         self.menu_button.show()
+        self.menu_button_uninstall.show()
         self.button_cancel.hide()
         self.game.set_install_dir()
 
