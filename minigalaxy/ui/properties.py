@@ -54,6 +54,9 @@ class Properties(Gtk.Dialog):
         # Keep switch game shown/hidden
         self.switch_properties_hide_game.set_active(self.game.get_info("hide_game"))
 
+        # Center properties window
+        self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
+
     @Gtk.Template.Callback("on_button_properties_cancel_clicked")
     def cancel_pressed(self, button):
         self.destroy()
