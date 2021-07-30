@@ -274,8 +274,8 @@ def uninstall_game(game):
     shutil.rmtree(game.install_dir, ignore_errors=True)
     if os.path.isfile(game.status_file_path):
         os.remove(game.status_file_path)
-    if os.path.isfile(os.path.join(APPLICATIONS_DIR, game.name+".desktop")):
-        os.remove(os.path.join(APPLICATIONS_DIR, game.name+".desktop"))
+    if os.path.isfile(os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))):
+        os.remove(os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name)))
 
 
 def _exe_cmd(cmd):
