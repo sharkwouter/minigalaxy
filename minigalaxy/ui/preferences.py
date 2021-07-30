@@ -21,6 +21,7 @@ class Preferences(Gtk.Dialog):
     switch_stay_logged_in = Gtk.Template.Child()
     switch_show_hidden_games = Gtk.Template.Child()
     switch_show_windows_games = Gtk.Template.Child()
+    switch_create_applications_file = Gtk.Template.Child()
     switch_use_dark_theme = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
@@ -37,6 +38,7 @@ class Preferences(Gtk.Dialog):
         self.switch_use_dark_theme.set_active(Config.get("use_dark_theme"))
         self.switch_show_hidden_games.set_active(Config.get("show_hidden_games"))
         self.switch_show_windows_games.set_active(Config.get("show_windows_games"))
+        self.switch_create_applications_file.set_active(Config.get("create_applications_file"))
 
         # Set tooltip for keep installers label
         installer_dir = os.path.join(self.button_file_chooser.get_filename(), "installer")
@@ -151,6 +153,7 @@ class Preferences(Gtk.Dialog):
         Config.set("keep_installers", self.switch_keep_installers.get_active())
         Config.set("stay_logged_in", self.switch_stay_logged_in.get_active())
         Config.set("show_hidden_games", self.switch_show_hidden_games.get_active())
+        Config.set("create_applications_file", self.switch_create_applications_file.get_active())
         self.parent.library.filter_library()
 
         if self.switch_show_windows_games.get_active() != Config.get("show_windows_games"):
