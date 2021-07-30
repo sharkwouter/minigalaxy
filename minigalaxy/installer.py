@@ -2,9 +2,9 @@ import os
 import shutil
 import subprocess
 import hashlib
-
+import textwrap
 from minigalaxy.translation import _
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
+from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
 from minigalaxy.config import Config
 
 
@@ -54,7 +54,13 @@ def install_game(game, installer):
     if not error_message:
         error_message = copy_thumbnail(game)
     if not error_message:
+<<<<<<< HEAD
         error_message = remove_installer(game, installer)
+=======
+        error_message = create_applications_file(game)
+    if not error_message:
+        error_message = remove_installer(installer)
+>>>>>>> be2191d (adds create_desktop_dir option)
     else:
         remove_installer(game, installer)
     if not error_message:
@@ -201,6 +207,35 @@ def copy_thumbnail(game):
     return error_message
 
 
+def create_applications_file(game):
+    error_message = ""
+    preferences_switch = Config.get("create_applications_file")
+    if game.platform == "linux" and preferences_switch:
+        path_to_shortcut = os.path.join(APPLICATIONS_DIR, game.name+".desktop")
+        # Create desktop file definition
+        desktop_context = {
+            "game_bin_path": os.path.join(game.install_dir, 'start.sh'),
+            "game_name": game.name,
+            "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
+            }
+        desktop_definition = """\
+            [Desktop Entry]
+            Type=Application
+            Terminal=false
+            StartupNotify=true
+            Exec="{game_bin_path}"
+            Name={game_name}
+            Icon={game_icon_path}""".format(**desktop_context)
+        if not os.path.isfile(path_to_shortcut):
+            try:
+                with open(path_to_shortcut, 'w+') as desktop_file:
+                    desktop_file.writelines(textwrap.dedent(desktop_definition))
+            except Exception as e:
+                os.remove(path_to_shortcut)
+                error_message = e
+    return error_message
+
+
 def remove_installer(game, installer):
     error_message = ""
     if Config.get("keep_installers"):
@@ -233,6 +268,8 @@ def uninstall_game(game):
     shutil.rmtree(game.install_dir, ignore_errors=True)
     if os.path.isfile(game.status_file_path):
         os.remove(game.status_file_path)
+    if os.path.isfile(os.path.join(APPLICATIONS_DIR, game.name+".desktop")):
+        os.remove(os.path.join(APPLICATIONS_DIR, game.name+".desktop"))
 
 
 def _exe_cmd(cmd):
