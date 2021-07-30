@@ -211,7 +211,7 @@ def create_applications_file(game):
     error_message = ""
     preferences_switch = Config.get("create_applications_file")
     if game.platform == "linux" and preferences_switch:
-        path_to_shortcut = os.path.join(APPLICATIONS_DIR, game.name+".desktop")
+        path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))
         # Create desktop file definition
         desktop_context = {
             "game_bin_path": os.path.join(game.install_dir, 'start.sh'),
