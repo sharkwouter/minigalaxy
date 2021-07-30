@@ -3,9 +3,7 @@ import shutil
 import subprocess
 import hashlib
 import textwrap
-
 from minigalaxy.translation import _
-from minigalaxy.launcher import get_execute_command
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
 from minigalaxy.config import Config
 
@@ -57,6 +55,8 @@ def install_game(game, installer):
         error_message = copy_thumbnail(game)
     if not error_message:
         error_message = create_applications_file(game)
+    if not error_message:
+        error_message = remove_installer(installer)
     else:
         remove_installer(game, installer)
     if not error_message:
@@ -205,15 +205,12 @@ def copy_thumbnail(game):
 
 def create_applications_file(game):
     error_message = ""
-    if Config.get("create_applications_file"):
-        path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))
-        exe_cmd_list = get_execute_command(game)
-        for element in exe_cmd_list:
-          element = element.replace(" ", "\\ ")
-        exe_cmd = element
+    preferences_switch = Config.get("create_applications_file")
+    if game.platform == "linux" and preferences_switch:
+        path_to_shortcut = os.path.join(APPLICATIONS_DIR, game.name+".desktop")
         # Create desktop file definition
         desktop_context = {
-            "game_bin_path": exe_cmd,
+            "game_bin_path": os.path.join(game.install_dir, 'start.sh'),
             "game_name": game.name,
             "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
             }
@@ -222,7 +219,7 @@ def create_applications_file(game):
             Type=Application
             Terminal=false
             StartupNotify=true
-            Exec=/bin/bash -c "{game_bin_path}"
+            Exec="{game_bin_path}"
             Name={game_name}
             Icon={game_icon_path}""".format(**desktop_context)
         if not os.path.isfile(path_to_shortcut):
@@ -249,6 +246,33 @@ def remove_installer(game, installer):
         shutil.rmtree(installer_directory, ignore_errors=True)
     else:
         error_message = "No installer directory is present: {}".format(installer_directory)
+    if Config.get("create_applications_file") and not error_message:
+        path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))
+        exe_cmd_list = get_execute_command(game)
+        for element in exe_cmd_list:
+          element = element.replace(" ", "\\ ")
+        exe_cmd = element
+        # Create desktop file definition
+        desktop_context = {
+            "game_bin_path": exe_cmd,
+            "game_name": game.name,
+            "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
+            }
+        desktop_definition = """\
+            [Desktop Entry]
+            Type=Application
+            Terminal=false
+            StartupNotify=true
+            Exec=/bin/bash -c "{game_bin_path}"
+            Name={game_name}
+            Icon={game_icon_path}""".format(**desktop_context)
+        if not os.path.isfile(path_to_shortcut):
+            try:
+                with open(path_to_shortcut, 'w+') as desktop_file:
+                    desktop_file.writelines(textwrap.dedent(desktop_definition))
+            except Exception as e:
+                os.remove(path_to_shortcut)
+                error_message = e
     return error_message
 
 
