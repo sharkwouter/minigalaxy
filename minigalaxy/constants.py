@@ -56,7 +56,8 @@ DEFAULT_CONFIGURATION = {
     "show_hidden_games": False,
     "show_windows_games": False,
     "keep_window_maximized": False,
-    "installed_filter": False
+    "installed_filter": False,
+    "create_applications_file": False
 }
 
 # Game IDs to ignore when received by the API
