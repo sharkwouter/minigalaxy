@@ -4,6 +4,7 @@ import subprocess
 import hashlib
 import textwrap
 from minigalaxy.translation import _
+from minigalaxy.launcher import get_execute_command
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
 from minigalaxy.config import Config
 
@@ -209,12 +210,11 @@ def copy_thumbnail(game):
 
 def create_applications_file(game):
     error_message = ""
-    preferences_switch = Config.get("create_applications_file")
-    if game.platform == "linux" and preferences_switch:
+    if Config.get("create_applications_file"):
         path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))
         # Create desktop file definition
         desktop_context = {
-            "game_bin_path": os.path.join(game.install_dir, 'start.sh'),
+            "game_bin_path": get_execute_command(game),
             "game_name": game.name,
             "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
             }
