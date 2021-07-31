@@ -48,7 +48,7 @@ class GameTile(Gtk.Box):
         else:
             try:
                 locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
-            except:
+            except NoConfigLocale:
                 locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
         Gtk.Frame.__init__(self)
         Gtk.StyleContext.add_provider(self.button.get_style_context(),
