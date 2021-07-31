@@ -1,4 +1,5 @@
 import shutil
+import locale
 import os
 import threading
 import re
@@ -40,6 +41,15 @@ class GameTile(Gtk.Box):
                  ' UPDATING UPDATE_INSTALLABLE')
 
     def __init__(self, parent, game):
+        current_locale = Config.get("locale")
+        default_locale = locale.getdefaultlocale()[0]
+        if current_locale == '':
+            locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
+        else:
+            try:
+                locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
+            except:
+                locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
         Gtk.Frame.__init__(self)
         Gtk.StyleContext.add_provider(self.button.get_style_context(),
                                       CSS_PROVIDER,

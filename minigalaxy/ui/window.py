@@ -26,7 +26,6 @@ class Window(Gtk.ApplicationWindow):
     window_library = Gtk.Template.Child()
 
     def __init__(self, name="Minigalaxy"):
-        Gtk.ApplicationWindow.__init__(self, title=name)
         current_locale = Config.get("locale")
         default_locale = locale.getdefaultlocale()[0]
         if current_locale == '':
@@ -36,6 +35,7 @@ class Window(Gtk.ApplicationWindow):
                 locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
             except:
                 locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
+        Gtk.ApplicationWindow.__init__(self, title=name)
 
         self.api = Api()
         self.search_string = ""
