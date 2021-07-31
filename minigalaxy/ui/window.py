@@ -33,7 +33,7 @@ class Window(Gtk.ApplicationWindow):
         else:
             try:
                 locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
-            except:
+            except NameError:
                 locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
         Gtk.ApplicationWindow.__init__(self, title=name)
 
