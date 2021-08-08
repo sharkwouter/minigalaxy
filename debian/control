@@ -29,6 +29,7 @@ Depends: ${misc:Depends},
 Suggests: dosbox,
           scummvm,
           wine32 | wine32-development | wine-stable-i386 | wine-devel-i386 | wine-staging-i386,
+          innoextract,
 Description: Simple GOG Linux client
  Allows you to download and play Linux games from the gog.com game store.
  .
