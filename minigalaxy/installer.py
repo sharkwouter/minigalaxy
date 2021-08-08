@@ -120,8 +120,8 @@ def extract_linux(installer, temp_dir):
     err_msg = ""
     command = ["unzip", "-qq", installer, "-d", temp_dir]
     stdout, stderr, exitcode = _exe_cmd(command)
-    if (exitcode not in [0, 1]) or \
-       (exitcode in [1] and "(attempting to process anyway)" not in stderr):
+    if (exitcode not in [0]) and \
+       (exitcode not in [1] and "(attempting to process anyway)" not in stderr):
         err_msg = _("The installation of {} failed. Please try again.").format(installer)
     elif len(os.listdir(temp_dir)) == 0:
         err_msg = _("{} could not be unzipped.".format(installer))
