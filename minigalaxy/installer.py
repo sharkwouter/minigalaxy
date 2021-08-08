@@ -2,9 +2,7 @@ import os
 import shutil
 import subprocess
 import hashlib
-import tarfile
 
-from minigalaxy.constants import SESSION, DOWNLOAD_CHUNK_SIZE
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR
 from minigalaxy.config import Config
