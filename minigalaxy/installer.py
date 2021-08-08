@@ -137,21 +137,23 @@ def extract_windows(game, installer, temp_dir):
 
 def extract_by_innoextract(installer, temp_dir):
     err_msg = ""
-    inno_bin = _get_inno_bin(temp_dir)
-    inno_files_dir = os.path.join(temp_dir, "minigalaxy_game_files")
-    cmd = [inno_bin, installer, "-d", inno_files_dir]
-    stdout, stderr, exitcode = _exe_cmd(cmd)
-    if exitcode not in [0]:
-        err_msg = _("Innoextract extraction failed.")
+    if shutil.which("innoextract"):
+        inno_files_dir = os.path.join(temp_dir, "minigalaxy_game_files")
+        cmd = ["innoextract", installer, "-d", inno_files_dir]
+        stdout, stderr, exitcode = _exe_cmd(cmd)
+        if exitcode not in [0]:
+            err_msg = _("Innoextract extraction failed.")
+        else:
+            inno_app_dir = os.path.join(inno_files_dir, "app")
+            if os.path.isdir(inno_app_dir):
+                _mv(inno_app_dir, inno_files_dir)
+            innoextract_unneeded_dirs = ["__redist", "tmp", "commonappdata", "app"]
+            for unneeded_dir in innoextract_unneeded_dirs:
+                unneeded_dir_full_path = os.path.join(inno_files_dir, unneeded_dir)
+                if os.path.isdir(unneeded_dir_full_path):
+                    shutil.rmtree(unneeded_dir_full_path)
     else:
-        inno_app_dir = os.path.join(inno_files_dir, "app")
-        if os.path.isdir(inno_app_dir):
-            _mv(inno_app_dir, inno_files_dir)
-        innoextract_unneeded_dirs = ["__redist", "tmp", "commonappdata", "app"]
-        for unneeded_dir in innoextract_unneeded_dirs:
-            unneeded_dir_full_path = os.path.join(inno_files_dir, unneeded_dir)
-            if os.path.isdir(unneeded_dir_full_path):
-                shutil.rmtree(unneeded_dir_full_path)
+        err_msg = _("Innoextract not installed.")
     return err_msg
 
 
@@ -236,24 +238,3 @@ def _mv(source_dir, target_dir):
             if os.path.exists(dst_file):
                 os.remove(dst_file)
             shutil.move(file_to_copy, destination_dir)
-
-
-def _get_inno_bin(temp_dir):
-    if shutil.which("innoextract"):
-        inno_bin = "innoextract"
-    else:
-        innoextract_ver = "1.9"
-        innoextract_tar = "innoextract-{}-linux.tar.xz".format(innoextract_ver)
-        innoextract_url = "https://constexpr.org/innoextract/files/{}".format(innoextract_tar)
-        download_request = SESSION.get(innoextract_url, stream=True, timeout=30)
-        with open(os.path.join(temp_dir, innoextract_tar), "wb") as save_file:
-            for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-                save_file.write(chunk)
-            save_file.close()
-        tar = tarfile.open(os.path.join(temp_dir, innoextract_tar))
-        tar.extractall(path=temp_dir)
-        tar.close()
-        inno_bin = os.path.join(temp_dir, "innoextract-{}-linux".format(innoextract_ver), "bin", "amd64",
-                                "innoextract")
-        os.chmod(inno_bin, 0o775)
-    return inno_bin
