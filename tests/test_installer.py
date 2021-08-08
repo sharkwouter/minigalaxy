@@ -149,7 +149,9 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
-    def test1_extract_by_wine(self, mock_subprocess):
+    @mock.patch("os.path.exists")
+    def test1_extract_by_wine(self, mock_path_exists, mock_subprocess):
+        mock_path_exists.return_value = True
         mock_subprocess().returncode = 0
         mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
@@ -160,7 +162,9 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
-    def test2_extract_by_wine(self, mock_subprocess):
+    @mock.patch("os.path.exists")
+    def test2_extract_by_wine(self, mock_path_exists, mock_subprocess):
+        mock_path_exists.return_value = True
         mock_subprocess().returncode = 1
         mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
