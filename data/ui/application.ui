@@ -102,7 +102,7 @@
           <object class="GtkSwitch" id="header_installed">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="tooltip_text" translatable="yes" context="tooltil_installed" comments="Tooltip for the switch which allows only showing installed games or all games">Show only installed games</property>
+            <property name="tooltip_text" translatable="yes" context="tooltip_installed" comments="Tooltip for the switch which allows only showing installed games or all games">Show only installed games</property>
             <signal name="state-set" handler="filter_library" swapped="no"/>
           </object>
           <packing>
