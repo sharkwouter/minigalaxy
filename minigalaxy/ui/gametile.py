@@ -297,6 +297,9 @@ class GameTile(Gtk.Box):
             success_state = self.state.INSTALLED
         GLib.idle_add(self.update_to_state, processing_state)
         err_msg = install_game(self.game, installer)
+        print("!!!!!!!!!!!!!!!")
+        print(installer)
+        print("!!!!!!!!!!!!!!!")
         if not err_msg:
             GLib.idle_add(self.update_to_state, success_state)
             install_success = True
@@ -341,6 +344,10 @@ class GameTile(Gtk.Box):
                 self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
             else:
                 self.image.set_tooltip_text(self.game.name)
+        for dlc in self.game.dlcs:
+            download_info = self.api.get_download_info(self.game, dlc_installers=dlc["downloads"]["installers"])
+            if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=dlc["title"]):
+                self.__download_dlc(dlc["downloads"]["installers"])
 
     def __download_dlc(self, dlc_installers) -> None:
         def finish_func():
