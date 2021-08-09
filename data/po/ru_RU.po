@@ -85,7 +85,7 @@ msgid "Danish"
 msgstr "Датский"
 
 #: minigalaxy/ui/window.py:83
-msgid "Do you really want to log out of GOG?"
+msgid "Are you sure you want to log out of GOG?"
 msgstr ""
 
 #: minigalaxy/ui/gametile.py:202 minigalaxy/ui/gametile.py:230
@@ -207,8 +207,7 @@ msgid "OK"
 msgstr ""
 
 #: data/ui/properties.ui:211
-#, fuzzy
-msgid "Open Files"
+msgid "Open files"
 msgstr "Открыть Файлы"
 
 #: minigalaxy/ui/properties.py:91 minigalaxy/ui/properties.py:101
@@ -233,10 +232,10 @@ msgctxt "preferences"
 msgid "Preferences"
 msgstr "Параметры"
 
-#. Prefered language to download games in. Ends with ": ".
+#. Prefered language for downloading games in. Ends with ": ".
 #: data/ui/preferences.ui:68
-msgctxt "preferred_language"
-msgid "Preferred language: "
+msgctxt "preferred_game_language"
+msgid "Preferred game language: "
 msgstr "Предпочтительный язык: "
 
 #: data/ui/gametile.ui:81
@@ -287,7 +286,7 @@ msgstr "Показывать Windows игры: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:105
-msgctxt "tooltil_installed"
+msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Показывать только установленные игры"
 
@@ -320,7 +319,7 @@ msgid "The installation of {} failed. Please try again."
 msgstr "Не удалось установить {}. Пожалуйста попробуйте ещё раз."
 
 #: data/ui/preferences.ui:65
-msgctxt "preferred_language_tooltip"
+msgctxt "preferred_game_language_tooltip"
 msgid "The preferred language for downloading games in"
 msgstr "Язык, на котором Вы хотите скачивать игры"
 

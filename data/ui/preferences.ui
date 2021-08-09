@@ -62,10 +62,10 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="program_language_tooltip">The preferred language on Minigalaxy start</property>
+                <property name="tooltip-text" translatable="yes" context="language_tooltip">The preferred language on Minigalaxy start</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
-                <property name="label" translatable="yes" context="program_language" comments="Program language. Ends with &quot;: &quot;.">Program language: </property>
+                <property name="label" translatable="yes" context="language" comments="The preferred language on Minigalaxy start. Ends with &quot;: &quot;.">Language: </property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
@@ -87,10 +87,10 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="preferred_language_tooltip">The preferred language for downloading games in</property>
+                <property name="tooltip-text" translatable="yes" context="preferred_game_language_tooltip">The preferred language for downloading games in</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
-                <property name="label" translatable="yes" context="preferred_language" comments="Prefered language to download games in. Ends with &quot;: &quot;.">Preferred language: </property>
+                <property name="label" translatable="yes" context="preferred_game_language" comments="Prefered language for downloading games in. Ends with &quot;: &quot;.">Preferred game language: </property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
