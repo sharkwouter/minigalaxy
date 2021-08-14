@@ -57,6 +57,8 @@ def install_game(game, installer):
         error_message = remove_installer(installer)
     else:
         remove_installer(installer)
+    if not error_message:
+        error_message = postinstaller(game)
     if error_message:
         print(error_message)
     return error_message
@@ -208,6 +210,17 @@ def remove_installer(installer):
         else:
             error_message = "No installer directory is present: {}".format(installer_directory)
     return error_message
+
+
+def postinstaller(game):
+    err_msg = ""
+    postinst_script = os.path.join(game.install_dir, "support", "postinst.sh")
+    if os.path.isfile(postinst_script):
+        os.chmod(postinst_script, 0o775)
+        stdout, stderr, exitcode = _exe_cmd([postinst_script])
+        if exitcode not in [0]:
+            err_msg = "Postinstallation script failed: {}".format(postinst_script)
+    return err_msg
 
 
 def uninstall_game(game):
