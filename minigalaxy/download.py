@@ -23,7 +23,7 @@ class Download:
     def finish(self):
         if self.__finish_func:
             try:
-                self.__finish_func()
+                self.__finish_func(self.save_location)
             except (FileNotFoundError, BadZipFile):
                 self.cancel()
 
