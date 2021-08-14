@@ -174,6 +174,41 @@ class Test(TestCase):
         obs = installer.extract_by_wine(game, installer_path, temp_dir)
         self.assertEqual(exp, obs)
 
+    @mock.patch('subprocess.Popen')
+    @mock.patch("os.path.isfile")
+    def test1_postinstaller(self, mock_path_isfile, mock_subprocess):
+        mock_path_isfile.return_value = False
+        mock_subprocess().returncode = 1
+        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
+        exp = ""
+        obs = installer.postinstaller(game)
+        self.assertEqual(exp, obs)
+
+    @mock.patch('subprocess.Popen')
+    @mock.patch("os.path.isfile")
+    @mock.patch("os.chmod")
+    def test2_postinstaller(self, mock_chmod, mock_path_isfile, mock_subprocess):
+        mock_path_isfile.return_value = True
+        mock_subprocess().returncode = 0
+        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
+        exp = ""
+        obs = installer.postinstaller(game)
+        self.assertEqual(exp, obs)
+
+    @mock.patch('subprocess.Popen')
+    @mock.patch("os.path.isfile")
+    @mock.patch("os.chmod")
+    def test3_postinstaller(self, mock_chmod, mock_path_isfile, mock_subprocess):
+        mock_path_isfile.return_value = True
+        mock_subprocess().returncode = 1
+        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
+        exp = "Postinstallation script failed: /home/makson/GOG Games/Absolute Drift/support/postinst.sh"
+        obs = installer.postinstaller(game)
+        self.assertEqual(exp, obs)
+
     @mock.patch('os.statvfs')
     def test_get_availablediskspace(self, mock_os_statvfs):
         frsize = 4096
