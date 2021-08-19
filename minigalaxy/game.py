@@ -151,9 +151,11 @@ class Game:
         # Compare names with special characters and capital letters removed
         if self.get_stripped_name().lower() == other.get_stripped_name().lower():
             return True
-        if self.install_dir and other.get_stripped_name() in self.__strip_string(self.install_dir):
+        if self.install_dir and \
+                other.get_install_directory_name() == os.path.basename(os.path.normpath(self.install_dir)):
             return True
-        if other.install_dir and self.get_stripped_name() in self.__strip_string(other.install_dir):
+        if other.install_dir and \
+                self.get_install_directory_name() == os.path.basename(os.path.normpath(other.install_dir)):
             return True
         return False
 
