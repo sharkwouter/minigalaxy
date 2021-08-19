@@ -160,6 +160,19 @@ class TestLibrary(TestCase):
         obs = test_library.games[0].name
         self.assertEqual(exp, obs)
 
+    def test6_add_games_from_api(self):
+        self_games = [Game(name="Torchlight 2", game_id=0, install_dir="/home/user/GoG Games/Torchlight II")]
+        api_games = [Game(name="Torchlight II", game_id=1958228073)]
+        err_msg = ""
+        api_mock = MagicMock()
+        api_mock.get_library.return_value = api_games, err_msg
+        test_library = Library(MagicMock(), api_mock)
+        test_library.games = self_games
+        test_library._Library__add_games_from_api()
+        exp = 1
+        obs = len(test_library.games)
+        self.assertEqual(exp, obs)
+
 
 del sys.modules['gi']
 del sys.modules['gi.repository']
