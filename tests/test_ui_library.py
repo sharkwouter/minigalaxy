@@ -143,6 +143,36 @@ class TestLibrary(TestCase):
         obs = test_library.games[0].url
         self.assertEqual(exp, obs)
 
+    def test5_add_games_from_api(self):
+        self_games = []
+        for game in SELF_GAMES:
+            self_games.append(Game(name="{}_diff".format(game), game_id=int(SELF_GAMES[game]),))
+        api_games = []
+        for game in API_GAMES:
+            api_games.append(Game(name=game, game_id=int(API_GAMES[game])))
+        err_msg = ""
+        api_mock = MagicMock()
+        api_mock.get_library.return_value = api_games, err_msg
+        test_library = Library(MagicMock(), api_mock)
+        test_library.games = self_games
+        test_library._Library__add_games_from_api()
+        exp = "Neverwinter Nights: Enhanced Edition"
+        obs = test_library.games[0].name
+        self.assertEqual(exp, obs)
+
+    def test6_add_games_from_api(self):
+        self_games = [Game(name="Torchlight 2", game_id=0, install_dir="/home/user/GoG Games/Torchlight II")]
+        api_games = [Game(name="Torchlight II", game_id=1958228073)]
+        err_msg = ""
+        api_mock = MagicMock()
+        api_mock.get_library.return_value = api_games, err_msg
+        test_library = Library(MagicMock(), api_mock)
+        test_library.games = self_games
+        test_library._Library__add_games_from_api()
+        exp = 1
+        obs = len(test_library.games)
+        self.assertEqual(exp, obs)
+
 
 del sys.modules['gi']
 del sys.modules['gi.repository']
