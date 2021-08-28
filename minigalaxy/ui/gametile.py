@@ -113,7 +113,7 @@ class GameTile(Gtk.Box):
         elif self.current_state in [self.state.INSTALLED, self.state.UPDATABLE]:
             err_msg = start_game(self.game)
         elif self.current_state == self.state.INSTALLABLE:
-            install_thread = threading.Thread(target=self.__install_game)
+            install_thread = threading.Thread(target=self.__install_game, args=self.get_keep_executable_path())
             install_thread.start()
         elif self.current_state == self.state.DOWNLOADABLE:
             download_thread = threading.Thread(target=self.__download_game)
@@ -188,15 +188,12 @@ class GameTile(Gtk.Box):
 
     def get_keep_executable_path(self):
         keep_path = ""
-        if os.path.exists(self.keep_path):
-            if os.path.isdir(self.keep_path):
-                for fil in os.scandir(self.keep_path):
-                    if os.access(fil.path, os.X_OK) or os.path.splitext(fil)[-1] == ".exe" or \
-                            os.path.splitext(fil)[-1] == ".sh":
-                        keep_path = fil.path
-            elif os.path.isfile(self.keep_path):
-                # This is only the case for installers that have been downloaded with versions <= 0.9.4
-                keep_path = self.keep_path
+        if os.path.isdir(self.keep_path):
+            for dir_content in os.listdir(self.keep_path):
+                kept_file = os.path.join(self.keep_path, dir_content)
+                if os.access(kept_file, os.X_OK) or os.path.splitext(kept_file)[-1] in [".exe", ".sh"]:
+                    keep_path = kept_file
+                    break
         return keep_path
 
     def get_download_info(self):
@@ -280,11 +277,6 @@ class GameTile(Gtk.Box):
             self.__check_for_dlc(self.api.get_info(self.game))
 
     def __install(self, save_location, update=False, dlc_title=""):
-#        keep_executable_path = self.get_keep_executable_path()
-#        if keep_executable_path:
-#            installer = keep_executable_path
-#        else:
-#            installer = self.download_path
         if update:
             processing_state = self.state.UPDATING
             failed_state = self.state.INSTALLED
