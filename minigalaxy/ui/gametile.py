@@ -60,7 +60,7 @@ class GameTile(Gtk.Box):
         self.offline = parent.offline
         self.progress_bar = None
         self.thumbnail_set = False
-        self.download = None
+        self.download_list = []
         self.dlc_dict = {}
         self.current_state = self.state.DOWNLOADABLE
 
@@ -68,7 +68,6 @@ class GameTile(Gtk.Box):
 
         # Set folder for download installer
         self.download_dir = os.path.join(CACHE_DIR, "download", self.game.get_install_directory_name())
-        self.download_path = os.path.join(self.download_dir, self.game.get_install_directory_name())
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
@@ -133,7 +132,7 @@ class GameTile(Gtk.Box):
         question = _("Are you sure you want to cancel downloading {}?").format(self.game.name)
         if self.parent.parent.show_question(question):
             self.prevent_resume_on_startup()
-            DownloadManager.cancel_download(self.download)
+            DownloadManager.cancel_download(self.download_list)
             try:
                 for filename in os.listdir(self.download_dir):
                     if self.game.get_install_directory_name() in filename:
@@ -179,7 +178,7 @@ class GameTile(Gtk.Box):
         if os.path.isfile(thumbnail_install_dir):
             GLib.idle_add(self.image.set_from_file, thumbnail_install_dir)
             set_result = True
-        elif os.path.isfile(save_location):
+        elif save_location and os.path.isfile(save_location):
             GLib.idle_add(self.image.set_from_file, save_location)
             # Copy image to
             if os.path.isdir(os.path.dirname(thumbnail_install_dir)):
@@ -228,9 +227,10 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
         Config.set("current_download", self.game.id)
         # Start the download for all files
-        self.download = []
+        self.download_list = []
         number_of_files = len(download_info['files'])
         total_file_size = 0
+        executable_path = None
         for key, file_info in enumerate(download_info['files']):
             try:
                 download_url = self.api.get_real_download_link(file_info["downlink"])
@@ -243,27 +243,26 @@ class GameTile(Gtk.Box):
             try:
                 # Extract the filename from the download url (filename is between %2F and &token)
                 filename = urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1))
-                download_path = os.path.join(self.download_dir, filename)
-                if key == 0:
-                    # If key = 0, denote the file as the executable's path
-                    self.download_path = download_path
             except AttributeError:
-                if key > 0:
-                    download_path = "{}-{}.bin".format(self.download_path, key)
+                filename = "{}-{}.bin".format(self.game.get_stripped_name(), key)
+            download_path = os.path.join(self.download_dir, filename)
+            if key == 0:
+                # If key = 0, denote the file as the executable's path
+                executable_path = download_path
             self.game.md5sum[os.path.basename(download_path)] = self.api.get_download_file_md5(file_info["downlink"])
             download = Download(
                 url=download_url,
                 save_location=download_path,
-                finish_func=finish_func,
+                finish_func=finish_func if download_path == executable_path else None,
                 progress_func=self.set_progress,
                 cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
                 number=key + 1,
                 out_of_amount=number_of_files
             )
-            self.download.append(download)
+            self.download_list.append(download)
 
         if check_diskspace(total_file_size, Config.get("install_dir")):
-            DownloadManager.download(self.download)
+            DownloadManager.download(self.download_list)
             ds_msg_title = ""
             ds_msg_text = ""
         else:
@@ -276,29 +275,25 @@ class GameTile(Gtk.Box):
 
     def __install_game(self, save_location):
         self.game.set_install_dir()
-        install_success = self.__install()
+        install_success = self.__install(save_location)
         if install_success:
             self.__check_for_dlc(self.api.get_info(self.game))
 
-    def __install(self, update=False, dlc_title=""):
-        keep_executable_path = self.get_keep_executable_path()
-        if keep_executable_path:
-            installer = keep_executable_path
-        else:
-            installer = self.download_path
+    def __install(self, save_location, update=False, dlc_title=""):
+#        keep_executable_path = self.get_keep_executable_path()
+#        if keep_executable_path:
+#            installer = keep_executable_path
+#        else:
+#            installer = self.download_path
         if update:
             processing_state = self.state.UPDATING
             failed_state = self.state.INSTALLED
-            success_state = self.state.INSTALLED
         else:
             processing_state = self.state.INSTALLING
             failed_state = self.state.DOWNLOADABLE
-            success_state = self.state.INSTALLED
+        success_state = self.state.INSTALLED
         GLib.idle_add(self.update_to_state, processing_state)
-        err_msg = install_game(self.game, installer)
-        print("!!!!!!!!!!!!!!!")
-        print(installer)
-        print("!!!!!!!!!!!!!!!")
+        err_msg = install_game(self.game, save_location)
         if not err_msg:
             GLib.idle_add(self.update_to_state, success_state)
             install_success = True
@@ -337,7 +332,7 @@ class GameTile(Gtk.Box):
             GLib.idle_add(self.menu_button_dlc.hide)
 
     def __update(self, save_location):
-        install_success = self.__install(update=True)
+        install_success = self.__install(save_location, update=True)
         if install_success:
             if self.game.platform == "windows":
                 self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
@@ -350,7 +345,7 @@ class GameTile(Gtk.Box):
 
     def __download_dlc(self, dlc_installers) -> None:
         def finish_func(save_location):
-            self.__install_dlc(dlc_title=dlc_title, save_location=save_location)
+            self.__install_dlc(save_location, dlc_title=dlc_title)
 
         download_info = self.api.get_download_info(self.game, dlc_installers=dlc_installers)
         dlc_title = self.game.name
@@ -362,8 +357,8 @@ class GameTile(Gtk.Box):
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
-    def __install_dlc(self, dlc_title, save_location):
-        install_success = self.__install(dlc_title=dlc_title)
+    def __install_dlc(self, save_location, dlc_title):
+        install_success = self.__install(save_location, dlc_title=dlc_title)
         if not install_success:
             GLib.idle_add(self.update_to_state, self.state.INSTALLED)
         self.__check_for_update_dlc()
