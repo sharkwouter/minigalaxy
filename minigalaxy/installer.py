@@ -203,19 +203,18 @@ def copy_thumbnail(game):
 
 def remove_installer(game, installer):
     error_message = ""
-    if not Config.get("keep_installers"):
-        installer_directory = os.path.dirname(installer)
-        if os.path.isdir(installer_directory):
-            shutil.rmtree(installer_directory, ignore_errors=True)
-        else:
-            error_message = "No installer directory is present: {}".format(installer_directory)
-    else:
+    if Config.get("keep_installers"):
         keep_dir = os.path.join(Config.get("install_dir"), "installer")
         keep_dir2 = os.path.join(keep_dir, game.get_install_directory_name())
         keep_file = os.path.join(keep_dir2, os.path.basename(installer))
         if not os.path.isdir(keep_dir2):
             os.makedirs(keep_dir2)
         shutil.move(installer, keep_file)
+    installer_directory = os.path.dirname(installer)
+    if os.path.isdir(installer_directory):
+        shutil.rmtree(installer_directory, ignore_errors=True)
+    else:
+        error_message = "No installer directory is present: {}".format(installer_directory)
     return error_message
 
 
