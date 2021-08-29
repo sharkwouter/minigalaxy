@@ -67,7 +67,11 @@ class Window(Gtk.ApplicationWindow):
             os.makedirs(THUMBNAIL_DIR, mode=0o755)
 
         # Interact with the API
-        self.__authenticate()
+        try:
+            self.__authenticate()
+        except Exception as e:
+            print(e)
+            self.offline = True
         self.HeaderBar.set_subtitle(self.api.get_user_info())
         self.sync_library()
 
