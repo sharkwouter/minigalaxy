@@ -113,7 +113,7 @@ class GameTile(Gtk.Box):
         elif self.current_state in [self.state.INSTALLED, self.state.UPDATABLE]:
             err_msg = start_game(self.game)
         elif self.current_state == self.state.INSTALLABLE:
-            install_thread = threading.Thread(target=self.__install_game, args=self.get_keep_executable_path())
+            install_thread = threading.Thread(target=self.__install_game, args=(self.get_keep_executable_path(),))
             install_thread.start()
         elif self.current_state == self.state.DOWNLOADABLE:
             download_thread = threading.Thread(target=self.__download_game)
