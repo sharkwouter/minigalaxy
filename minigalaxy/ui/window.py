@@ -67,12 +67,14 @@ class Window(Gtk.ApplicationWindow):
             os.makedirs(THUMBNAIL_DIR, mode=0o755)
 
         # Interact with the API
-        try:
-            self.__authenticate()
-        except Exception as e:
-            print(e)
-            self.offline = True
-        self.HeaderBar.set_subtitle(self.api.get_user_info())
+        self.offline = not self.api.can_connect()
+        if not self.offline:
+            try:
+                self.__authenticate()
+                self.HeaderBar.set_subtitle(self.api.get_user_info())
+            except Exception as e:
+                print(e)
+                self.offline = True
         self.sync_library()
 
     @Gtk.Template.Callback("filter_library")
