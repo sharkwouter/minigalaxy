@@ -215,9 +215,13 @@ def create_applications_file(game):
     error_message = ""
     if Config.get("create_applications_file"):
         path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))
+        exe_cmd_list = get_execute_command(game)
+        for element in exe_cmd_list:
+          element = element.replace(" ", "\\ ")
+        exe_cmd = element
         # Create desktop file definition
         desktop_context = {
-            "game_bin_path": get_execute_command(game),
+            "game_bin_path": exe_cmd,
             "game_name": game.name,
             "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
             }
@@ -226,7 +230,7 @@ def create_applications_file(game):
             Type=Application
             Terminal=false
             StartupNotify=true
-            Exec="{game_bin_path}"
+            Exec=/bin/bash -c "{game_bin_path}"
             Name={game_name}
             Icon={game_icon_path}""".format(**desktop_context)
         if not os.path.isfile(path_to_shortcut):
