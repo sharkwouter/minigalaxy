@@ -196,9 +196,9 @@ class GameTile(Gtk.Box):
                     break
         return keep_path
 
-    def get_download_info(self):
+    def get_download_info(self, platform="linux"):
         try:
-            download_info = self.api.get_download_info(self.game)
+            download_info = self.api.get_download_info(self.game, platform)
             result = True
         except NoDownloadLinkFound as e:
             print(e)
@@ -306,7 +306,7 @@ class GameTile(Gtk.Box):
     def __download_update(self) -> None:
         finish_func = self.__update
         cancel_to_state = self.state.UPDATABLE
-        result, download_info = self.get_download_info()
+        result, download_info = self.get_download_info(self.game.platform)
         if result:
             result = self.__download(download_info, finish_func, cancel_to_state)
         if not result:
