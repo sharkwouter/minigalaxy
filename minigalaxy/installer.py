@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import hashlib
 import textwrap
+
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
@@ -55,16 +56,7 @@ def install_game(game, installer):
     if not error_message:
         error_message = copy_thumbnail(game)
     if not error_message:
-<<<<<<< HEAD
-<<<<<<< HEAD
-        error_message = remove_installer(game, installer)
-=======
-=======
->>>>>>> 3ce2e1f (adds create_desktop_dir option)
         error_message = create_applications_file(game)
-    if not error_message:
-        error_message = remove_installer(installer)
->>>>>>> be2191d (adds create_desktop_dir option)
     else:
         remove_installer(game, installer)
     if not error_message:
