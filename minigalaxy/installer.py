@@ -210,7 +210,7 @@ def create_applications_file(game):
         path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))
         exe_cmd_list = get_execute_command(game)
         for element in exe_cmd_list:
-          element = element.replace(" ", "\\ ")
+            element = element.replace(" ", "\\ ")
         exe_cmd = element
         # Create desktop file definition
         desktop_context = {
