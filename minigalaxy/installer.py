@@ -204,14 +204,18 @@ def copy_thumbnail(game):
     return error_message
 
 
+def get_exec_line(game):
+    exe_cmd_list = get_execute_command(game)
+    for i in range(len(exe_cmd_list)):
+        exe_cmd_list[i] = exe_cmd_list[i].replace(" ", "\\ ")
+    return " ".join(exe_cmd_list)
+
+
 def create_applications_file(game):
     error_message = ""
     if Config.get("create_applications_file"):
         path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))
-        exe_cmd_list = get_execute_command(game)
-        for element in exe_cmd_list:
-            element = element.replace(" ", "\\ ")
-        exe_cmd = element
+        exe_cmd = get_exec_line(game)
         # Create desktop file definition
         desktop_context = {
             "game_bin_path": exe_cmd,
