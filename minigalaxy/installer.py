@@ -220,6 +220,7 @@ def create_applications_file(game):
         desktop_context = {
             "game_bin_path": exe_cmd,
             "game_name": game.name,
+            "game_install_dir": game.install_dir,
             "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
             }
         desktop_definition = """\
@@ -227,7 +228,8 @@ def create_applications_file(game):
             Type=Application
             Terminal=false
             StartupNotify=true
-            Exec=/bin/bash -c "{game_bin_path}"
+            Exec={game_bin_path}
+            Path={game_install_dir}
             Name={game_name}
             Icon={game_icon_path}""".format(**desktop_context)
         if not os.path.isfile(path_to_shortcut):
