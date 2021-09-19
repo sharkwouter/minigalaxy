@@ -39,7 +39,7 @@ def check_diskspace(required_size, location):
     return diskspace_available >= installed_game_size
 
 
-def install_game(game, installer):
+def install_game(game, installer): # noqa: C901
     error_message = ""
     tmp_dir = ""
     if not error_message:
