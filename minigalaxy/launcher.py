@@ -39,15 +39,15 @@ def start_game(game):
 def get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
-    if launcher_type in ["windows"]:
+    if launcher_type in ["start_script", "wine"]:
+        exe_cmd = get_start_script_exe_cmd()
+    elif launcher_type == "windows":
         exe_cmd = get_windows_exe_cmd(game, files)
-    elif launcher_type in ["dosbox"]:
+    elif launcher_type == "dosbox":
         exe_cmd = get_dosbox_exe_cmd(game, files)
-    elif launcher_type in ["scummvm"]:
+    elif launcher_type == "scummvm":
         exe_cmd = get_scummvm_exe_cmd(game, files)
-    elif launcher_type in ["start_script", "wine"]:
-        exe_cmd = get_start_script_exe_cmd(game, files)
-    elif launcher_type in ["final_resort"]:
+    elif launcher_type == "final_resort":
         exe_cmd = get_final_resort_exe_cmd(game, files)
     else:
         # If no executable was found at all, raise an error
@@ -135,10 +135,8 @@ def get_scummvm_exe_cmd(game, files):
     return ["scummvm", "-c", scummvm_config]
 
 
-def get_start_script_exe_cmd(game, files):
-    start_sh = "start.sh"
-    exec_start = [os.path.join(game.install_dir, start_sh)] if start_sh in files else [""]
-    return exec_start
+def get_start_script_exe_cmd():
+    return ["./start.sh"]
 
 
 def get_final_resort_exe_cmd(game, files):

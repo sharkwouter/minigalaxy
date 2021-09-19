@@ -288,4 +288,4 @@ class Test(TestCase):
         mock_list_dir.return_value = ["data", "docs", "support", "gameinfo", "start.sh"]
 
         result2 = installer.get_exec_line(game2)
-        self.assertEqual(result2, "/home/test/GOG\\ Games/Blocks\\ That\\ Matter/start.sh")
+        self.assertEqual(result2, "./start.sh")

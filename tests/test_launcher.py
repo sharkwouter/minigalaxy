@@ -123,10 +123,8 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
     def test_get_start_script_exe_cmd(self):
-        files = ['thumbnail.jpg', 'docs', 'support', 'game', 'start.sh', 'minigalaxy-dlc.json', 'gameinfo']
-        game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ["/test/install/dir/start.sh"]
-        obs = launcher.get_start_script_exe_cmd(game, files)
+        exp = ["./start.sh"]
+        obs = launcher.get_start_script_exe_cmd()
         self.assertEqual(exp, obs)
 
     @mock.patch('os.getcwd')
