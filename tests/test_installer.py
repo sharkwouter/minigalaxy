@@ -289,3 +289,122 @@ class Test(TestCase):
 
         result2 = installer.get_exec_line(game2)
         self.assertEqual(result2, "./start.sh")
+
+    @mock.patch('os.path.getsize')
+    @mock.patch('os.listdir')
+    @mock.patch('os.path.isdir')
+    def test_compare_directory_true(self, mock_path_isdir, mock_list_dir, mock_os_path_getsize):
+        mock_path_isdir.return_value = True
+        mock_list_dir.return_value = ["beneath_a_steel_sky_en_gog_2_20150.sh", "beneath_a_steel_sky_en_gog_2_20150.part1"]
+        mock_os_path_getsize.return_value = 100
+
+        obs = installer.compare_directories("/home/test/.cache/minigalaxy/installer/test", "/home/test/GOG Games/installer/test")
+        self.assertEqual(obs, True)
+
+    @mock.patch('os.path.getsize')
+    @mock.patch('os.listdir')
+    @mock.patch('os.path.isdir')
+    def test_compare_directory_false(self, mock_path_isdir, mock_list_dir, mock_os_path_getsize):
+        mock_path_isdir.return_value = True
+        mock_list_dir.side_effect = [
+            ["beneath_a_steel_sky_en_gog_2_20150.sh", "beneath_a_steel_sky_en_gog_2_20150.part1"],
+            ["beneath_a_steel_sky_en_gog_2_20150.sh"],
+        ]
+
+        obs = installer.compare_directories("/home/test/.cache/minigalaxy/installer/test", "/home/test/GOG Games/installer/test")
+        self.assertEqual(obs, False)
+
+        mock_list_dir.side_effect = [
+            ["beneath_a_steel_sky_en_gog_2_20150.sh", "beneath_a_steel_sky_en_gog_2_20150.part1"],
+            ["beneath_a_steel_sky_en_gog_2_20150.sh", "beneath_a_steel_sky_en_gog_2_20150.part1"],
+        ]
+        mock_os_path_getsize.side_effect = [100, 200, 300, 400]
+
+        obs = installer.compare_directories("/home/test/.cache/minigalaxy/installer/test", "/home/test/GOG Games/installer/test")
+        self.assertEqual(obs, False)
+
+    def test_remove_installer_no_installer(self):
+        """
+        No installer present
+        """
+        game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
+        installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
+        obs = installer.remove_installer(game1, installer_path)
+        exp = "No installer directory is present: /home/i/.cache/minigalaxy/download/Beneath a Steel Sky"
+        self.assertEqual(obs, exp)
+
+    @mock.patch('shutil.rmtree')
+    @mock.patch('minigalaxy.config.Config.get')
+    @mock.patch('minigalaxy.installer.compare_directories')
+    @mock.patch('os.path.isdir')
+    def test_remove_installer_no_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree):
+        """
+        Disabled keep_installer
+        """
+        mock_os_path_isdir.return_value = True
+        mock_compare_directories.return_value = False
+        mock_config.return_value = False
+
+        game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
+        installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
+        obs = installer.remove_installer(game1, installer_path)
+        assert mock_shutil_rmtree.called
+        self.assertEqual(obs, "")
+
+    @mock.patch('shutil.rmtree')
+    @mock.patch('minigalaxy.config.Config.get')
+    @mock.patch('minigalaxy.installer.compare_directories')
+    @mock.patch('os.path.isdir')
+    def test_remove_installer_same_content(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree):
+        """
+        Same content of installer and keep dir
+        """
+        mock_os_path_isdir.return_value = True
+        mock_compare_directories.return_value = True
+        mock_config.side_effect = [True, "/home/i/GOG Games/installer"]
+
+        game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
+        installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
+        obs = installer.remove_installer(game1, installer_path)
+        assert not mock_shutil_rmtree.called
+        self.assertEqual(obs, "")
+
+    @mock.patch('shutil.move')
+    @mock.patch('shutil.rmtree')
+    @mock.patch('minigalaxy.config.Config.get')
+    @mock.patch('minigalaxy.installer.compare_directories')
+    @mock.patch('os.path.isdir')
+    def test_remove_installer_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_shutil_move):
+        """
+        Keep installer dir
+        """
+        mock_os_path_isdir.return_value = True
+        mock_compare_directories.return_value = False
+        mock_config.side_effect = [True, "/home/i/GOG Games/installer"]
+
+        game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
+        installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
+        obs = installer.remove_installer(game1, installer_path)
+        assert mock_shutil_rmtree.called
+        assert mock_shutil_move.called
+        self.assertEqual(obs, "")
+
+    @mock.patch('shutil.move')
+    @mock.patch('shutil.rmtree')
+    @mock.patch('minigalaxy.config.Config.get')
+    @mock.patch('minigalaxy.installer.compare_directories')
+    @mock.patch('os.path.isdir')
+    def test_remove_installer_from_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_shutil_move):
+        """
+        Called from keep dir
+        """
+        mock_os_path_isdir.return_value = True
+        mock_compare_directories.return_value = False
+        mock_config.side_effect = [True, "/home/i/GOG Games"]
+
+        game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath A Steel Sky", platform="linux")
+        installer_path = "/home/i/GOG Games/installer/Beneath A Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
+        obs = installer.remove_installer(game1, installer_path)
+        assert not mock_shutil_rmtree.called
+        assert not mock_shutil_move.called
+        self.assertEqual(obs, "")

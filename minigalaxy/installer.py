@@ -242,20 +242,51 @@ def create_applications_file(game):
     return error_message
 
 
+def compare_directories(dir1, dir2):
+    files_1 = []
+    files_2 = []
+
+    if os.path.isdir(dir1):
+        files_1 = os.listdir(dir1)
+    if os.path.isdir(dir2):
+        files_2 = os.listdir(dir2)
+
+    if not set(files_1).issubset(set(files_2)):
+        return False
+
+    result = True
+    for f in files_1:
+        if os.path.getsize(os.path.join(dir1, f)) != \
+           os.path.getsize(os.path.join(dir2, f)):
+            result = False
+
+    return result
+
+
 def remove_installer(game, installer):
     error_message = ""
+    installer_directory = os.path.dirname(installer)
+
+    if not os.path.isdir(installer_directory):
+        error_message = "No installer directory is present: {}".format(installer_directory)
+        return error_message
+
     if Config.get("keep_installers"):
         keep_dir = os.path.join(Config.get("install_dir"), "installer")
         keep_dir2 = os.path.join(keep_dir, game.get_install_directory_name())
-        keep_file = os.path.join(keep_dir2, os.path.basename(installer))
-        if not os.path.isdir(keep_dir2):
-            os.makedirs(keep_dir2)
-        shutil.move(installer, keep_file)
-    installer_directory = os.path.dirname(installer)
-    if os.path.isdir(installer_directory):
-        shutil.rmtree(installer_directory, ignore_errors=True)
+        if keep_dir2 == installer_directory:
+            # We are using the keep installer already
+            return error_message
+
+        if not compare_directories(installer_directory, keep_dir2):
+            shutil.rmtree(keep_dir2, ignore_errors=True)
+            try:
+                shutil.move(installer_directory, keep_dir2)
+            except Exception as e:
+                error_message = str(e)
     else:
-        error_message = "No installer directory is present: {}".format(installer_directory)
+        shutil.rmtree(installer_directory, ignore_errors=True)
+
     return error_message
 
 
