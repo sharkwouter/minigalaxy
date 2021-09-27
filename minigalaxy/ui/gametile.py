@@ -253,10 +253,11 @@ class GameTile(Gtk.Box):
                 finish_func=finish_func if download_path == executable_path else None,
                 progress_func=self.set_progress,
                 cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
-                number=key + 1,
+                number=number_of_files - key,
                 out_of_amount=number_of_files
             )
             self.download_list.append(download)
+        self.download_list.reverse()
 
         if check_diskspace(total_file_size, Config.get("install_dir")):
             DownloadManager.download(self.download_list)
