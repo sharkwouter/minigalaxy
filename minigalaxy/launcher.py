@@ -30,6 +30,8 @@ def start_game(game):
         error_message, process = run_game_subprocess(game)
     if not error_message:
         error_message = check_if_game_started_correctly(process, game)
+    if not error_message:
+        send_game_output_to_stdout(process)
     if error_message:
         print(_("Failed to start {}:").format(game.name))
         print(error_message)
@@ -168,18 +170,19 @@ def set_fps_display(game):
 
 
 def run_game_subprocess(game):
-    # Change the directory to the install dir
-    working_dir = os.getcwd()
-    os.chdir(game.install_dir)
     try:
-        process = subprocess.Popen(get_execute_command(game), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(
+            get_execute_command(game),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=0,
+            cwd=game.install_dir
+        )
         error_message = ""
     except FileNotFoundError:
         process = None
         error_message = _("No executable was found in {}").format(game.install_dir)
 
-    # restore the working directory
-    os.chdir(working_dir)
     return error_message, process
 
 
@@ -195,13 +198,10 @@ def check_if_game_started_correctly(process, game):
     if error_message in ["Game start process has finished prematurely"]:
         error_message = check_if_game_start_process_spawned_final_process(error_message, game)
 
-    # Set the error message to what's been received in std error if not yet set
+    # Set the error message to what's been received in stdout if not yet set
     if error_message:
-        stdout, stderror = process.communicate()
-        if stderror:
-            error_message = stderror.decode("utf-8")
-        elif stdout:
-            error_message = stdout.decode("utf-8")
+        stdout, _ = process.communicate()
+        error_message = stdout.decode("utf-8")
     return error_message
 
 
@@ -218,3 +218,10 @@ def check_if_game_start_process_spawned_final_process(error_message, game):
             error_message = ""
             break
     return error_message
+
+
+def send_game_output_to_stdout(process):
+    for line in iter(process.stdout.readline, b''):
+        print(line.decode('utf-8'), end='')
+    process.stdout.close()
+    process.wait()
