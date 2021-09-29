@@ -51,9 +51,7 @@ def main():
     parse_args()
 
     # Import the gi module after parsing arguments
-    import gi
-    gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk
+    from minigalaxy.ui.gtk import Gtk
     from minigalaxy.ui import Window
 
     # Start the application

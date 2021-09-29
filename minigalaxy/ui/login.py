@@ -1,12 +1,9 @@
 import os
 from urllib.parse import urlparse, parse_qsl
-import gi
-gi.require_version('Gtk', '3.0')
-gi.require_version('WebKit2', '4.0')
-from gi.repository import WebKit2
-from gi.repository import Gtk
 from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR
+from minigalaxy.ui.gtk import Gtk
+from minigalaxy.ui.webkit import WebKit2
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "login.ui"))

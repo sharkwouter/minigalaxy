@@ -8,31 +8,32 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-29 17:36+0200\n"
-"PO-Revision-Date: 2020-11-16 08:02+0100\n"
-"Last-Translator: Jan Kjetil Myklebust\n"
+"PO-Revision-Date: 2021-09-04 15:10+0300\n"
+"Last-Translator: \n"
 "Language-Team: \n"
-"Language: nb_NO\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Bookmarks: 3,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
 msgctxt "short_description"
 msgid "A simple GOG client for Linux"
-msgstr "Ein enkel GOG klient for Linux"
+msgstr "Yksinkertainen GOG-asiakasohjelma Linuxille"
 
 #: minigalaxy/ui/about.py:13
 msgid "About"
-msgstr "Om"
+msgstr "Tietoja"
 
 #. Opens about dialog
 #: data/ui/application.ui:58
 msgctxt "about"
 msgid "About"
-msgstr "Om"
+msgstr "Tietoja"
 
 #: data/ui/properties.ui:128
 msgid "Added at the end of the command used to launch the game"
@@ -44,47 +45,46 @@ msgstr ""
 
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
-msgstr "Er du sikker på at du vil avbryte nedlastinga av {}?"
+msgstr "Oletko varma että haluat keskeyttää latauksen {}?"
 
 #: minigalaxy/ui/window.py:94
 msgid "Are you sure you want to log out of GOG?"
-msgstr ""
+msgstr "Oletko varma että halua kirjautua ulos palvelusta GOG?"
 
 #: minigalaxy/ui/gametile.py:145
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
-msgstr "Er du sikker på at du vil avinstallere %s?"
+msgstr "Oletko varma että haluat poistaa asennuksen %s?"
 
 #: minigalaxy/constants.py:8
 msgid "Brazilian Portuguese"
-msgstr "Brasiliansk Portugisisk"
+msgstr "Brasilian portugali"
 
 #: data/ui/properties.ui:265
-#, fuzzy
 msgid "Cancel"
-msgstr "Avbryt"
+msgstr "Peruuta"
 
 #: data/ui/preferences.ui:20
 msgctxt "cancel"
 msgid "Cancel"
-msgstr "Avbryt"
+msgstr "Peruuta"
 
 #: minigalaxy/constants.py:9
 msgid "Chinese"
-msgstr "Kinesisk"
+msgstr "Kiina"
 
 #: data/ui/properties.ui:179
+#, fuzzy
 msgid "Command flags:"
-msgstr ""
+msgstr "Komentoparametrit:"
 
 #: minigalaxy/ui/properties.py:103
-#, fuzzy
 msgid "Couldn't open store page"
-msgstr "Kunne ikkje opne hjelpesida"
+msgstr "Kauppasivua ei voitu avata"
 
 #: minigalaxy/ui/properties.py:93
 msgid "Couldn't open support page"
-msgstr "Kunne ikkje opne hjelpesida"
+msgstr "Tukisivua ei voitu avata"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:288
@@ -94,351 +94,344 @@ msgstr ""
 
 #: data/ui/gametile.ui:36
 msgid "DLC"
-msgstr "DLC"
+msgstr "DLC-lisäosa"
 
 #: minigalaxy/constants.py:10
 msgid "Danish"
-msgstr "Dansk"
+msgstr "Tanska"
 
 #: minigalaxy/ui/gametile.py:207 minigalaxy/ui/gametile.py:236
 msgid "Download error"
-msgstr "Nedlastingsfeil"
+msgstr "Latausvirhe"
 
 #: minigalaxy/constants.py:11 minigalaxy/constants.py:31
 msgid "Dutch"
-msgstr "Nederlandsk"
+msgstr "Hollanti"
 
 #: minigalaxy/constants.py:12 minigalaxy/constants.py:32
 msgid "English"
-msgstr "Engelsk"
+msgstr "Englanti"
 
 #: minigalaxy/ui/gametile.py:298
 msgid "Failed to install {}"
-msgstr "Klarte ikkje å installere {}"
+msgstr "{} asentaminen epäonnistui"
 
 #: minigalaxy/ui/library.py:152
 msgid "Failed to retrieve library"
-msgstr "Klarte ikkje å hente bibliotek"
+msgstr "Kirjaston noutaminen epäonnistui"
 
 #: minigalaxy/launcher.py:36 minigalaxy/ui/gametile.py:122
 msgid "Failed to start {}:"
-msgstr "Klarte ikkje å starte {}:"
+msgstr "Käynnistys epäonnistui {}:"
 
 #: minigalaxy/constants.py:13
 msgid "Finnish"
-msgstr "Finsk"
+msgstr "Suomi"
 
 #: minigalaxy/constants.py:14 minigalaxy/constants.py:33
 msgid "French"
-msgstr "Fransk"
+msgstr "Ranska"
 
 #: minigalaxy/ui/properties.py:137
 msgid "Genre"
-msgstr ""
+msgstr "Genre"
 
 #: minigalaxy/constants.py:15 minigalaxy/constants.py:34
 msgid "German"
-msgstr "Tysk"
+msgstr "Saksa"
 
 #. A link to the Github page
 #: data/ui/about.ui:12
 msgctxt "github_page_link"
 msgid "Github page"
-msgstr "Github-side"
+msgstr "Github-sivu"
 
 #: data/ui/properties.ui:104
 msgid "Hide game:"
-msgstr ""
+msgstr "Piilota peli:"
 
 #: minigalaxy/constants.py:16
 msgid "Hungarian"
-msgstr "Ungarsk"
+msgstr "Unkari"
 
 #: minigalaxy/installer.py:147
 msgid "Innoextract extraction failed."
-msgstr ""
+msgstr "Innoextract-purku epäonnistui."
 
 #: minigalaxy/installer.py:158
 msgid "Innoextract not installed."
-msgstr ""
+msgstr "Innoextract ei asennettu."
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:118
 msgctxt "install_path"
 msgid "Installation path: "
-msgstr "Installasjonssti: "
+msgstr "Asennuspolku: "
 
 #. Used next to a checkbox which switches between showing all games and only installed ones
 #: data/ui/application.ui:116
 msgctxt "installed"
 msgid "Installed"
-msgstr "Installert"
+msgstr "Asennetut"
 
 #: minigalaxy/constants.py:17
 msgid "Italian"
-msgstr "Italiensk"
+msgstr "Italia"
 
 #: minigalaxy/constants.py:18
 msgid "Japanese"
-msgstr "Japansk"
+msgstr "Japani"
 
 #: minigalaxy/ui/preferences.py:46
 msgid ""
 "Keep installers after downloading a game.\n"
 "Installers are stored in: {}"
 msgstr ""
-"Behalde installeringsfiler etter nedlasting av spel.\n"
-"Installerarar ligg under: {}"
+"Säilytä asennusohjelmat pelin lataamisen jälkeen.\n"
+"Asennusohjelmat löytyvät täältä: {}"
 
 #. Whether installer files are kept after download. Ends with ": ".
 #: data/ui/preferences.ui:145
 msgctxt "keep_installer"
 msgid "Keep installers: "
-msgstr "Behalde installerarar: "
+msgstr "Säilytä asennusohjelmat: "
 
 #: minigalaxy/constants.py:19
 msgid "Korean"
-msgstr "Koreansk"
+msgstr "Korea"
 
 #. The preferred language on Minigalaxy start. Ends with ": ".
 #: data/ui/preferences.ui:68
 msgctxt "language"
 msgid "Language: "
-msgstr ""
+msgstr "Kieli: "
 
 #: minigalaxy/ui/login.py:20
 msgid "Login"
-msgstr "Inlogging"
+msgstr "Sisäänkirjautuminen"
 
 #. Logs the users gog account out and returns to login page
 #: data/ui/application.ui:17
 msgctxt "logout"
 msgid "Logout"
-msgstr "Logg ut"
+msgstr "Kirjaudu ulos"
 
 #: minigalaxy/launcher.py:184
 msgid "No executable was found in {}"
-msgstr "Inga køyrbar fil funnen i {}"
+msgstr "Ajettavaa käynnistystiedostoa ei löytynyt kohteelle {}"
 
 #: minigalaxy/constants.py:20
 msgid "Norwegian"
-msgstr "Norsk"
+msgstr "Norja"
 
 #: minigalaxy/constants.py:35
-#, fuzzy
 msgid "Norwegian Bokmål"
-msgstr "Norsk"
+msgstr "Norja (kirjakieli)"
 
 #: minigalaxy/constants.py:36
-#, fuzzy
 msgid "Norwegian Nynorsk"
-msgstr "Norsk"
+msgstr "Norja (Nynorsk)"
 
 #: minigalaxy/installer.py:97
 msgid "Not enough space to extract game. Required: {} Available: {}"
 msgstr ""
+"Levytilaa ei ole tarpeeksi pelin purkamiseen. Tarvitaan {} Saatavilla {}"
 
 #: data/ui/properties.ui:279
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: data/ui/properties.ui:215
 msgid "Open files"
-msgstr "Opne filer"
+msgstr "Avaa tiedostot"
 
 #: minigalaxy/ui/properties.py:94 minigalaxy/ui/properties.py:104
 msgid "Please check your internet connection"
-msgstr "Ver venleg og sjekk internettilkoplinga di"
+msgstr "Ole hyvä ja tarkista, että internet-yhteytesi on toiminnassa"
 
 #: minigalaxy/constants.py:21 minigalaxy/constants.py:37
 msgid "Polish"
-msgstr "Polsk"
+msgstr "Puola"
 
 #: minigalaxy/constants.py:22 minigalaxy/constants.py:38
 msgid "Portuguese"
-msgstr "Portugisisk"
+msgstr "Portugali"
 
 #: minigalaxy/ui/preferences.py:30
 msgid "Preferences"
-msgstr "Brukarval"
+msgstr "Asetukset"
 
 #. Opens preferences dialog
 #: data/ui/application.ui:32
 msgctxt "preferences"
 msgid "Preferences"
-msgstr "Brukarval"
+msgstr "Asetukset"
 
 #. Prefered language for downloading games in. Ends with ": ".
 #: data/ui/preferences.ui:93
 msgctxt "preferred_game_language"
 msgid "Preferred game language: "
-msgstr "Foretrukke språk: "
+msgstr "Ensisijainen kieli peleille: "
 
 #: data/ui/gametile.ui:81
 msgid "Properties"
-msgstr ""
+msgstr "Ominaisuudet"
 
 #: minigalaxy/ui/properties.py:33
 msgid "Properties of {}"
-msgstr ""
+msgstr "Ominaisuudet kohteelle {}"
 
 #. Tooltip for refresh button
 #: data/ui/application.ui:89
 msgctxt "refresh"
 msgid "Refresh game list"
-msgstr "Oppdater spelelista"
+msgstr "Virkistä peliluettelo"
 
 #: data/ui/properties.ui:202
 msgid "Regedit"
-msgstr ""
+msgstr "Regedit-muokkaus"
 
 #: minigalaxy/constants.py:23 minigalaxy/constants.py:39
 msgid "Russian"
-msgstr "Russisk"
+msgstr "Venäjä"
 
 #. Saves the preferences
 #: data/ui/preferences.ui:34
 msgctxt "save"
 msgid "Save"
-msgstr "Lagre"
+msgstr "Tallenna"
 
 #: data/ui/properties.ui:153
-#, fuzzy
 msgid "Show FPS in game:"
-msgstr "Vis FPS i spel:"
+msgstr "Näytä ruudunpäivitysnopeus pelissä:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:250
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Vis spel for Windows:"
+msgstr "Näytä Windows-pelit: "
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:224
-#, fuzzy
 msgctxt "show_hidden_games"
 msgid "Show hidden games: "
-msgstr "Vis spel for Windows:"
+msgstr "Näytä piilotetut pelit: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:105
 msgctxt "tooltip_installed"
 msgid "Show only installed games"
-msgstr "Vis berre installerte spel"
+msgstr "Näytä ainoastaan asennetut pelit"
 
 #: minigalaxy/constants.py:40
 msgid "Simplified Chinese"
-msgstr ""
+msgstr "Yksinkertaistettu kiina"
 
 #: minigalaxy/constants.py:24 minigalaxy/constants.py:41
 msgid "Spanish"
-msgstr "Spansk"
+msgstr "Espanja"
 
 #. Whether the user will stay logged in after closing Minigalaxy. Ends with ": ".
 #: data/ui/preferences.ui:171
 msgctxt "stay_logged_in"
 msgid "Stay logged in:"
-msgstr "Bli verande pålogga:"
+msgstr "Pysy kirjautuneena:"
 
 #: data/ui/properties.ui:76
-#, fuzzy
 msgid "Store"
-msgstr "Produktside"
+msgstr "Kauppa"
 
 #: data/ui/properties.ui:62
-#, fuzzy
 msgid "Support"
-msgstr "Støtte"
+msgstr "Tuki"
 
 #: minigalaxy/constants.py:25 minigalaxy/constants.py:42
 msgid "Swedish"
-msgstr "Svensk"
+msgstr "Ruotsi"
 
 #: minigalaxy/constants.py:30
 msgid "System default"
-msgstr ""
+msgstr "Järjestelmän oletus"
 
 #: minigalaxy/installer.py:128
 msgid "The installation of {} failed. Please try again."
-msgstr "Installasjonen av {} feila. Ver venleg og prøv på nytt."
+msgstr "Asennus {} epäonnistui. Yritä uudelleen."
 
 #: data/ui/preferences.ui:90
 msgctxt "preferred_game_language_tooltip"
 msgid "The preferred language for downloading games in"
-msgstr "Foretrukke språk for nedlasting av spel"
+msgstr "Ensisijainen kieli jolle pelit ladataan"
 
 #: data/ui/preferences.ui:65
-#, fuzzy
 msgctxt "language_tooltip"
 msgid "The preferred language on Minigalaxy start"
-msgstr "Foretrukke språk for nedlasting av spel"
+msgstr "Ensisijainen kieli jota minigalaxy itsessään käyttää"
 
 #: minigalaxy/ui/gametile.py:208
 msgid ""
 "There was an error when trying to fetch the download link!\n"
 "{}"
 msgstr ""
-"Ein feil oppstod ved henting av nedlastingslink!\n"
+"Ilmeni virhe noudettaessa latauslinkkiä!\n"
 "{}"
 
 #: data/ui/preferences.ui:115
 msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
-msgstr "Spel vil verte installerte her"
+msgstr "Tämä on sijainti johon pelit asennetaan"
 
 #: minigalaxy/constants.py:43
 msgid "Traditional Chinese"
-msgstr ""
+msgstr "Perinteinen kiina"
 
 #: minigalaxy/constants.py:26 minigalaxy/constants.py:44
 msgid "Turkish"
-msgstr "Tyrkisk"
+msgstr "Turkki"
 
 #: data/ui/gametile.ui:66
-#, fuzzy
 msgid "Uninstall"
-msgstr "Avinstaller"
+msgstr "Poista asennus"
 
 #: data/ui/gametile.ui:51
-#, fuzzy
 msgid "Update"
-msgstr "Oppdater"
+msgstr "Päivitä"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:198
 msgctxt "use_dark_theme"
 msgid "Use dark theme: "
-msgstr ""
+msgstr "Käytä tummaa teemaa: "
 
 #: data/ui/properties.ui:166
+#, fuzzy
 msgid "Variable flags:"
-msgstr ""
+msgstr "Muuttujat:"
 
 #: minigalaxy/ui/properties.py:139
 msgid "Version"
-msgstr ""
+msgstr "Versio"
 
 #: data/ui/preferences.ui:168
 msgctxt "stay_logged_in_tooltip"
 msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
 msgstr ""
-"Viss deaktivert vil du bli spurd om å logge på kvar gong Minigalaxy starter"
+"Mikäli pois päältä, sinua pyydetään kirjautumaan uudelleen aina Minigalaxyn "
+"käynnistyksessä"
 
 #: data/ui/preferences.ui:195
 msgctxt "use_dark_theme_tooltip"
 msgid "Whether Minigalaxy should use dark theme or not"
-msgstr ""
+msgstr "Tulisiko minigalaxyn käyttää tummaa teemaa vai ei"
 
 #: data/ui/preferences.ui:247
 msgctxt "show_windows_games_tooltip"
 msgid "Whether Windows games are shown in the library or not"
-msgstr "Om spel for Windows vert vist i biblioteket eller ikkje"
+msgstr "Näytetäänkö Windows-pelit kirjastossa vaiko ei"
 
 #: data/ui/preferences.ui:221
-#, fuzzy
 msgctxt "show_hidden_games_tooltip"
 msgid "Whether hidden games are shown in the library or not"
-msgstr "Om spel for Windows vert vist i biblioteket eller ikkje"
+msgstr "Näytetäänkö piilotetut pelit kirjastossa vaiko ei"
 
 #: data/ui/preferences.ui:285
 msgctxt "create_menu_shortcuts_tooltip"
@@ -447,111 +440,61 @@ msgstr ""
 
 #: minigalaxy/installer.py:172
 msgid "Wine extraction failed."
-msgstr ""
+msgstr "Wine-purku epäonnistui."
 
 #: minigalaxy/ui/preferences.py:161
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr ""
+"Wine-ohjelmaa ei löytynyt. Windows-pelien näyttämistä ei voida kytkeä päälle."
 
 #: data/ui/properties.ui:189
 msgid "Winecfg"
-msgstr ""
+msgstr "Winecfg-asetukset"
 
 #: minigalaxy/ui/gametile.py:450
 msgid "download"
-msgstr "last ned"
+msgstr "lataa"
 
 #: minigalaxy/ui/gametile.py:489
 msgid "downloading…"
-msgstr "lastar ned…"
+msgstr "ladataan…"
 
 #: minigalaxy/ui/gametile.py:481
 msgid "in queue…"
-msgstr "i kø…"
+msgstr "jonossa…"
 
 #: minigalaxy/ui/gametile.py:469
 msgid "install"
-msgstr "installer"
+msgstr "asenna"
 
 #: minigalaxy/ui/gametile.py:499
 msgid "installing…"
-msgstr "installerar…"
+msgstr "asennetaan…"
 
 #: minigalaxy/ui/gametile.py:513 minigalaxy/ui/gametile.py:543
 msgid "play"
-msgstr "spel"
+msgstr "pelaa"
 
 #: minigalaxy/ui/gametile.py:529
 msgid "uninstalling…"
-msgstr "avinstallerar…"
+msgstr "poistetaan asennusta…"
 
 #: minigalaxy/ui/gametile.py:552
 msgid "updating…"
-msgstr "oppdaterar…"
+msgstr "päivitetään…"
 
 #: minigalaxy/installer.py:130
 msgid "{} could not be unzipped."
-msgstr "{} kunne ikkje pakkast ut."
+msgstr "{} ei voitu purkaa."
 
 #: minigalaxy/installer.py:73
 msgid "{} failed to download."
-msgstr "{} kunne ikkje lastast ned."
+msgstr "{} lataus epäonnistui."
 
 #: minigalaxy/ui/preferences.py:173
 msgid "{} isn't a usable path"
-msgstr "{} er ikkje ein brukbar sti"
+msgstr "{} ei ole käytettävä polku"
 
 #: minigalaxy/installer.py:85
 msgid "{} was corrupted. Please download it again."
-msgstr "{} var korrumpert. Ver venleg å last den ned på ny."
-
-#~ msgid "Couldn't connect to GOG servers"
-#~ msgstr "Kunne ikkje kople til GOG sine tenarar"
-
-#~ msgid "Install Wine to enable this feature"
-#~ msgstr "Installer Wine for å aktivere denne funksjonen"
-
-#~ msgctxt "Wine Settings"
-#~ msgid "Settings"
-#~ msgstr "Innstillingar"
-
-#~ msgctxt "show_fps_tooltip"
-#~ msgid ""
-#~ "Show the framerate while playing games. Only works with AMD and Nvidia "
-#~ "graphics cards."
-#~ msgstr ""
-#~ "Vis framerate medan du speler spel. Fungerar berre med AMD og Nvidia "
-#~ "grafikkort."
-
-#~ msgid ""
-#~ "<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
-#~ "<a href=\"https://github.com/BlindJerobine\">BlindJerobine</a>\n"
-#~ "<a href=\"https://github.com/EsdrasTarsis\">Esdras Tarsis</a>\n"
-#~ "<a href=\"https://github.com/fuzunspm\">Hüseyin Fahri Uzun</a>\n"
-#~ "<a href=\"https://github.com/LordPilum\">Jan Kjetil Myklebust</a>\n"
-#~ "<a href=\"https://github.com/s8321414\">Jeff Huang</a>\n"
-#~ "<a href=\"https://github.com/kimmalmo\">kimmalmo</a>\n"
-#~ "<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
-#~ "<a href=\"https://github.com/thomasb22\">thomasb22</a>"
-#~ msgstr ""
-#~ "<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
-#~ "<a href=\"https://github.com/BlindJerobine\">BlindJerobine</a>\n"
-#~ "<a href=\"https://github.com/EsdrasTarsis\">Esdras Tarsis</a>\n"
-#~ "<a href=\"https://github.com/fuzunspm\">Hüseyin Fahri Uzun</a>\n"
-#~ "<a href=\"https://github.com/LordPilum\">Jan Kjetil Myklebust</a>\n"
-#~ "<a href=\"https://github.com/s8321414\">Jeff Huang</a>\n"
-#~ "<a href=\"https://github.com/kimmalmo\">kimmalmo</a>\n"
-#~ "<a href=\"https://github.com/protheory8\">ProTheory8</a>\n"
-#~ "<a href=\"https://github.com/thomasb22\">thomasb22</a>"
-
-#~ msgid "Couldn't start subprocess"
-#~ msgstr "Kunne ikkje starte underprosess"
-
-#~ msgid "No error message was returned"
-#~ msgstr "Inga feilmelding vart returnert"
-
-#~ msgid "Minigalaxy is now running in offline mode"
-#~ msgstr "Minigalaxy køyrer i fråkopla modus"
-
-#~ msgid "Try again with an active internet connection"
-#~ msgstr "Prøv igjen med ein aktiv internettilkopling"
+msgstr "{} korruptoitui. Suorita lataus uudelleen."

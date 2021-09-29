@@ -1,15 +1,15 @@
 import os
-import gi
+import locale
 
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk, GdkPixbuf
 from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
+from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
+from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
@@ -26,7 +26,17 @@ class Window(Gtk.ApplicationWindow):
     window_library = Gtk.Template.Child()
 
     def __init__(self, name="Minigalaxy"):
+        current_locale = Config.get("locale")
+        default_locale = locale.getdefaultlocale()[0]
+        if current_locale == '':
+            locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
+        else:
+            try:
+                locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
+            except NameError:
+                locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
         Gtk.ApplicationWindow.__init__(self, title=name)
+
         self.api = Api()
         self.search_string = ""
         self.offline = False
@@ -81,7 +91,7 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_logout_clicked")
     def logout(self, button):
-        question = _("Do you really want to log out of GOG?") 
+        question = _("Are you sure you want to log out of GOG?")
         if self.show_question(question):
             # Unset everything which is specific to this user
             self.HeaderBar.set_subtitle("")

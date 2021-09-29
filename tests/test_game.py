@@ -3,11 +3,12 @@ import sys
 import os
 from unittest.mock import MagicMock, mock_open, patch
 
-from minigalaxy.paths import CONFIG_DIR
-
 m_config = MagicMock()
+m_paths = MagicMock()
 sys.modules['minigalaxy.config'] = m_config
-from minigalaxy.game import Game
+sys.modules['minigalaxy.paths'] = m_paths
+m_paths.CONFIG_GAMES_DIR = "/home/user/.config/minigalaxy/games/"
+from minigalaxy.game import Game  # noqa: E402
 
 
 class TestGame(unittest.TestCase):
@@ -132,9 +133,9 @@ en-US
             observed = game.fallback_read_installed_version()
         self.assertEqual(expected, observed)
 
-    @unittest.mock.patch('os.path.isfile')
-    def test1_set_info(self, mock_isfile):
-        mock_isfile.return_value = True
+    @unittest.mock.patch('os.path.exists')
+    def test1_set_info(self, mock_exists):
+        mock_exists.return_value = True
         json_content = '{"version": "gog-2"}'
         with patch("builtins.open", mock_open(read_data=json_content)) as m:
             game = Game("Game Name test2")
@@ -149,9 +150,10 @@ en-US
         observed = write_string
         self.assertEqual(expected, observed)
 
-    @unittest.mock.patch('os.path.isfile')
-    def test2_set_dlc_info(self, mock_isfile):
-        mock_isfile.return_value = False
+    @unittest.mock.patch('os.path.exists')
+    @unittest.mock.patch('os.makedirs')
+    def test2_set_dlc_info(self, mock_makedirs, mock_exists):
+        mock_exists.return_value = False
         dlc_name = "Neverwinter Nights: Wyvern Crown of Cormyr"
         with patch("builtins.open", mock_open()) as m:
             game = Game("Neverwinter Nights")
@@ -196,7 +198,8 @@ en-US
         self.assertEqual(expected, observed)
 
     @unittest.mock.patch("minigalaxy.config.Config")
-    def test_save_minigalaxy_info_json(self, mock_config):
+    @unittest.mock.patch('os.makedirs')
+    def test_save_minigalaxy_info_json(self, mock_makedirs, mock_config):
         json_dict = {"version": "gog-2"}
         with patch("builtins.open", mock_open()) as m:
             game = Game("Neverwinter Nights")
@@ -352,5 +355,18 @@ en-US
         observed = game_get_status
         self.assertEqual(expected, observed)
 
+    def test1_get_status_file_path(self):
+        game = Game(name="Europa Universalis 2")
+        expected = "/home/user/.config/minigalaxy/games/Europa Universalis 2.json"
+        observed = game.get_status_file_path()
+        self.assertEqual(expected, observed)
+
+    def test2_get_status_file_path(self):
+        game = Game(name="Europa Universalis 2", install_dir="/home/user/GoG Games//Europa Universalis II")
+        expected = "/home/user/.config/minigalaxy/games/Europa Universalis II.json"
+        observed = game.get_status_file_path()
+        self.assertEqual(expected, observed)
+
 
 del sys.modules["minigalaxy.config"]
+del sys.modules["minigalaxy.paths"]

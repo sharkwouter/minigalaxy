@@ -30,6 +30,8 @@ def start_game(game):
         error_message, process = run_game_subprocess(game)
     if not error_message:
         error_message = check_if_game_started_correctly(process, game)
+    if not error_message:
+        send_game_output_to_stdout(process)
     if error_message:
         print(_("Failed to start {}:").format(game.name))
         print(error_message)
@@ -39,15 +41,15 @@ def start_game(game):
 def get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
-    if launcher_type in ["windows"]:
+    if launcher_type in ["start_script", "wine"]:
+        exe_cmd = get_start_script_exe_cmd()
+    elif launcher_type == "windows":
         exe_cmd = get_windows_exe_cmd(game, files)
-    elif launcher_type in ["dosbox"]:
+    elif launcher_type == "dosbox":
         exe_cmd = get_dosbox_exe_cmd(game, files)
-    elif launcher_type in ["scummvm"]:
+    elif launcher_type == "scummvm":
         exe_cmd = get_scummvm_exe_cmd(game, files)
-    elif launcher_type in ["start_script", "wine"]:
-        exe_cmd = get_start_script_exe_cmd(game, files)
-    elif launcher_type in ["final_resort"]:
+    elif launcher_type == "final_resort":
         exe_cmd = get_final_resort_exe_cmd(game, files)
     else:
         # If no executable was found at all, raise an error
@@ -135,10 +137,8 @@ def get_scummvm_exe_cmd(game, files):
     return ["scummvm", "-c", scummvm_config]
 
 
-def get_start_script_exe_cmd(game, files):
-    start_sh = "start.sh"
-    exec_start = [os.path.join(game.install_dir, start_sh)] if start_sh in files else [""]
-    return exec_start
+def get_start_script_exe_cmd():
+    return ["./start.sh"]
 
 
 def get_final_resort_exe_cmd(game, files):
@@ -170,18 +170,19 @@ def set_fps_display(game):
 
 
 def run_game_subprocess(game):
-    # Change the directory to the install dir
-    working_dir = os.getcwd()
-    os.chdir(game.install_dir)
     try:
-        process = subprocess.Popen(get_execute_command(game), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(
+            get_execute_command(game),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=0,
+            cwd=game.install_dir
+        )
         error_message = ""
     except FileNotFoundError:
         process = None
         error_message = _("No executable was found in {}").format(game.install_dir)
 
-    # restore the working directory
-    os.chdir(working_dir)
     return error_message, process
 
 
@@ -197,13 +198,10 @@ def check_if_game_started_correctly(process, game):
     if error_message in ["Game start process has finished prematurely"]:
         error_message = check_if_game_start_process_spawned_final_process(error_message, game)
 
-    # Set the error message to what's been received in std error if not yet set
+    # Set the error message to what's been received in stdout if not yet set
     if error_message:
-        stdout, stderror = process.communicate()
-        if stderror:
-            error_message = stderror.decode("utf-8")
-        elif stdout:
-            error_message = stdout.decode("utf-8")
+        stdout, _ = process.communicate()
+        error_message = stdout.decode("utf-8")
     return error_message
 
 
@@ -220,3 +218,10 @@ def check_if_game_start_process_spawned_final_process(error_message, game):
             error_message = ""
             break
     return error_message
+
+
+def send_game_output_to_stdout(process):
+    for line in iter(process.stdout.readline, b''):
+        print(line.decode('utf-8'), end='')
+    process.stdout.close()
+    process.wait()

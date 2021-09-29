@@ -1,19 +1,19 @@
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
 import os
+import locale
 import shutil
 from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR
-from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES
+from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES
 from minigalaxy.config import Config
 from minigalaxy.download_manager import DownloadManager
+from minigalaxy.ui.gtk import Gtk
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "preferences.ui"))
 class Preferences(Gtk.Dialog):
     __gtype_name__ = "Preferences"
 
+    combobox_program_language = Gtk.Template.Child()
     combobox_language = Gtk.Template.Child()
     button_file_chooser = Gtk.Template.Child()
     label_keep_installers = Gtk.Template.Child()
@@ -21,6 +21,7 @@ class Preferences(Gtk.Dialog):
     switch_stay_logged_in = Gtk.Template.Child()
     switch_show_hidden_games = Gtk.Template.Child()
     switch_show_windows_games = Gtk.Template.Child()
+    switch_create_applications_file = Gtk.Template.Child()
     switch_use_dark_theme = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
@@ -28,6 +29,8 @@ class Preferences(Gtk.Dialog):
     def __init__(self, parent):
         Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
         self.parent = parent
+
+        self.__set_locale_list()
         self.__set_language_list()
         self.button_file_chooser.set_filename(Config.get("install_dir"))
         self.switch_keep_installers.set_active(Config.get("keep_installers"))
@@ -35,12 +38,34 @@ class Preferences(Gtk.Dialog):
         self.switch_use_dark_theme.set_active(Config.get("use_dark_theme"))
         self.switch_show_hidden_games.set_active(Config.get("show_hidden_games"))
         self.switch_show_windows_games.set_active(Config.get("show_windows_games"))
+        self.switch_create_applications_file.set_active(Config.get("create_applications_file"))
 
         # Set tooltip for keep installers label
         installer_dir = os.path.join(self.button_file_chooser.get_filename(), "installer")
         self.label_keep_installers.set_tooltip_text(
             _("Keep installers after downloading a game.\nInstallers are stored in: {}").format(installer_dir)
         )
+
+    def __set_locale_list(self) -> None:
+        locales = Gtk.ListStore(str, str)
+        for local in SUPPORTED_LOCALES:
+            locales.append(local)
+
+        self.combobox_program_language.set_model(locales)
+        self.combobox_program_language.set_entry_text_column(1)
+        self.renderer_text = Gtk.CellRendererText()
+        self.combobox_program_language.pack_start(self.renderer_text, False)
+        self.combobox_program_language.add_attribute(self.renderer_text, "text", 1)
+
+        # Set the active option
+        current_locale = Config.get("locale")
+        default_locale = locale.getdefaultlocale()
+        if current_locale is None:
+            locale.setlocale(locale.LC_ALL, default_locale)
+        for key in range(len(locales)):
+            if locales[key][:1][0] == current_locale:
+                self.combobox_program_language.set_active(key)
+                break
 
     def __set_language_list(self) -> None:
         languages = Gtk.ListStore(str, str)
@@ -59,6 +84,22 @@ class Preferences(Gtk.Dialog):
             if languages[key][:1][0] == current_lang:
                 self.combobox_language.set_active(key)
                 break
+
+    def __save_locale_choice(self) -> None:
+        new_locale = self.combobox_program_language.get_active_iter()
+        if new_locale is not None:
+            model = self.combobox_program_language.get_model()
+            locale_choice, _ = model[new_locale][:2]
+            if locale_choice == '':
+                default_locale = locale.getdefaultlocale()[0]
+                locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
+                Config.set("locale", locale_choice)
+            else:
+                try:
+                    locale.setlocale(locale.LC_ALL, (locale_choice, 'UTF-8'))
+                    Config.set("locale", locale_choice)
+                except locale.Error:
+                    self.parent.show_error("Failed to change program language. Make sure locale is generated on your system.")
 
     def __save_language_choice(self) -> None:
         lang_choice = self.combobox_language.get_active_iter()
@@ -84,7 +125,7 @@ class Preferences(Gtk.Dialog):
         if not os.path.exists(choice):
             try:
                 os.makedirs(choice, mode=0o755)
-            except:
+            except Exception:
                 return False
         else:
             write_test_file = os.path.join(choice, "write_test.txt")
@@ -93,7 +134,7 @@ class Preferences(Gtk.Dialog):
                     file.write("test")
                     file.close()
                 os.remove(write_test_file)
-            except:
+            except Exception:
                 return False
         # Remove the old directory if it is empty
         try:
@@ -106,11 +147,13 @@ class Preferences(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_save_clicked")
     def save_pressed(self, button):
+        self.__save_locale_choice()
         self.__save_language_choice()
         self.__save_theme_choice()
         Config.set("keep_installers", self.switch_keep_installers.get_active())
         Config.set("stay_logged_in", self.switch_stay_logged_in.get_active())
         Config.set("show_hidden_games", self.switch_show_hidden_games.get_active())
+        Config.set("create_applications_file", self.switch_create_applications_file.get_active())
         self.parent.library.filter_library()
 
         if self.switch_show_windows_games.get_active() != Config.get("show_windows_games"):
