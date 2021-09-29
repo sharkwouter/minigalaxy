@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-29 17:36+0200\n"
-"PO-Revision-Date: 2021-06-14 14:02+0300\n"
+"PO-Revision-Date: 2021-09-29 19:02+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: uk\n"
@@ -37,11 +37,11 @@ msgstr "Інформація"
 
 #: data/ui/properties.ui:128
 msgid "Added at the end of the command used to launch the game"
-msgstr ""
+msgstr "Додано в кінці команди, яка використовується для запуску гри"
 
 #: data/ui/properties.ui:140
 msgid "Added in front of the command used to launch the game"
-msgstr ""
+msgstr "Додано перед командою, яка використовується для запуску гри"
 
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
@@ -74,9 +74,8 @@ msgid "Chinese"
 msgstr "Китайська"
 
 #: data/ui/properties.ui:179
-#, fuzzy
 msgid "Command flags:"
-msgstr "Позначка команд:"
+msgstr "Флажки для команди:"
 
 #: minigalaxy/ui/properties.py:103
 msgid "Couldn't open store page"
@@ -90,7 +89,7 @@ msgstr "Не вдалося відкрити сторінку підтримки
 #: data/ui/preferences.ui:288
 msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
-msgstr ""
+msgstr "Створити ярлики меню: "
 
 #: data/ui/gametile.ui:36
 msgid "DLC"
@@ -156,11 +155,11 @@ msgstr "Угорська"
 
 #: minigalaxy/installer.py:147
 msgid "Innoextract extraction failed."
-msgstr ""
+msgstr "Помилка вилучення Innoextract."
 
 #: minigalaxy/installer.py:158
 msgid "Innoextract not installed."
-msgstr ""
+msgstr "Innoextract не встановлено."
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:118
@@ -204,7 +203,7 @@ msgstr "Корейська"
 #: data/ui/preferences.ui:68
 msgctxt "language"
 msgid "Language: "
-msgstr ""
+msgstr "Мова: "
 
 #: minigalaxy/ui/login.py:20
 msgid "Login"
@@ -225,14 +224,12 @@ msgid "Norwegian"
 msgstr "Норвезька"
 
 #: minigalaxy/constants.py:35
-#, fuzzy
 msgid "Norwegian Bokmål"
-msgstr "Норвезька"
+msgstr "Норвезька Букмол"
 
 #: minigalaxy/constants.py:36
-#, fuzzy
 msgid "Norwegian Nynorsk"
-msgstr "Норвезька"
+msgstr "Норвезька Ньорск"
 
 #: minigalaxy/installer.py:97
 msgid "Not enough space to extract game. Required: {} Available: {}"
@@ -326,7 +323,7 @@ msgstr "Показати лише встановлені ігри"
 
 #: minigalaxy/constants.py:40
 msgid "Simplified Chinese"
-msgstr ""
+msgstr "Спрощена Китайська"
 
 #: minigalaxy/constants.py:24 minigalaxy/constants.py:41
 msgid "Spanish"
@@ -336,7 +333,7 @@ msgstr "Іспанська"
 #: data/ui/preferences.ui:171
 msgctxt "stay_logged_in"
 msgid "Stay logged in:"
-msgstr "Залишайтеся в системі:"
+msgstr "Залишатися в системі:"
 
 #: data/ui/properties.ui:76
 msgid "Store"
@@ -352,7 +349,7 @@ msgstr "Шведська"
 
 #: minigalaxy/constants.py:30
 msgid "System default"
-msgstr ""
+msgstr "За замовчуванням"
 
 #: minigalaxy/installer.py:128
 msgid "The installation of {} failed. Please try again."
@@ -364,10 +361,9 @@ msgid "The preferred language for downloading games in"
 msgstr "Бажана мова для завантаження ігор в"
 
 #: data/ui/preferences.ui:65
-#, fuzzy
 msgctxt "language_tooltip"
 msgid "The preferred language on Minigalaxy start"
-msgstr "Бажана мова для завантаження ігор в"
+msgstr "Бажана мова для запуску Minigalaxy"
 
 #: minigalaxy/ui/gametile.py:208
 msgid ""
@@ -384,7 +380,7 @@ msgstr "Тут будуть встановлені ігри"
 
 #: minigalaxy/constants.py:43
 msgid "Traditional Chinese"
-msgstr ""
+msgstr "Традиційна Китайська"
 
 #: minigalaxy/constants.py:26 minigalaxy/constants.py:44
 msgid "Turkish"
@@ -405,9 +401,8 @@ msgid "Use dark theme: "
 msgstr "Використовувати темну тему: "
 
 #: data/ui/properties.ui:166
-#, fuzzy
 msgid "Variable flags:"
-msgstr "Прапор змінних:"
+msgstr "Флажки для змінної:"
 
 #: minigalaxy/ui/properties.py:139
 msgid "Version"
@@ -439,10 +434,11 @@ msgstr "Показувати приховані ігри в бібліотеці
 msgctxt "create_menu_shortcuts_tooltip"
 msgid "Whether shortcuts are created for newly installed games or not"
 msgstr ""
+"Незалежно від того, створені ярлики для нещодавно встановлених ігор чи ні"
 
 #: minigalaxy/installer.py:172
 msgid "Wine extraction failed."
-msgstr ""
+msgstr "Помилка вилучення Wine."
 
 #: minigalaxy/ui/preferences.py:161
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
@@ -478,7 +474,7 @@ msgstr "грати"
 
 #: minigalaxy/ui/gametile.py:529
 msgid "uninstalling…"
-msgstr "видалення..."
+msgstr "видалення…"
 
 #: minigalaxy/ui/gametile.py:552
 msgid "updating…"
