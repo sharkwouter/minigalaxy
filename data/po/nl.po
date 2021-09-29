@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-29 16:57+0200\n"
-"PO-Revision-Date: 2020-01-06 19:14+0100\n"
+"PO-Revision-Date: 2021-09-29 17:31+0200\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.3\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -36,11 +36,11 @@ msgstr "Over Minigalaxy"
 
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
-msgstr "Weet zeker dat je je de download voor {} wilt stoppen?"
+msgstr "Weet je zeker dat je de {} download wilt stoppen?"
 
 #: minigalaxy/ui/window.py:94
 msgid "Are you sure you want to log out of GOG?"
-msgstr ""
+msgstr "Weet je zeker dat je uit wilt loggen?"
 
 #: minigalaxy/ui/gametile.py:145
 #, python-format
@@ -52,7 +52,6 @@ msgid "Brazilian Portuguese"
 msgstr "Braziliaans-Portugees"
 
 #: data/ui/properties.ui:261
-#, fuzzy
 msgid "Cancel"
 msgstr "Annuleren"
 
@@ -70,9 +69,8 @@ msgid "Commands flag:"
 msgstr ""
 
 #: minigalaxy/ui/properties.py:103
-#, fuzzy
 msgid "Couldn't open store page"
-msgstr "De ondersteuningspagina kon niet worden geopend"
+msgstr "De pagina kon niet worden geopend"
 
 #: minigalaxy/ui/properties.py:93
 msgid "Couldn't open support page"
@@ -82,7 +80,7 @@ msgstr "De ondersteuningspagina kon niet worden geopend"
 #: data/ui/preferences.ui:288
 msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
-msgstr ""
+msgstr "Maak menusnelkoppelingen: "
 
 #: data/ui/gametile.ui:36
 msgid "DLC"
@@ -93,9 +91,8 @@ msgid "Danish"
 msgstr "Deens"
 
 #: minigalaxy/ui/gametile.py:207 minigalaxy/ui/gametile.py:236
-#, fuzzy
 msgid "Download error"
-msgstr "download"
+msgstr "Downloadfout"
 
 #: minigalaxy/constants.py:11 minigalaxy/constants.py:31
 msgid "Dutch"
@@ -107,7 +104,7 @@ msgstr "Engels"
 
 #: minigalaxy/ui/gametile.py:298
 msgid "Failed to install {}"
-msgstr "Kon {} niet starten:"
+msgstr "Kon {} niet geïnstalleerd worden:"
 
 #: minigalaxy/ui/library.py:152
 msgid "Failed to retrieve library"
@@ -127,7 +124,7 @@ msgstr "Frans"
 
 #: minigalaxy/ui/properties.py:137
 msgid "Genre"
-msgstr ""
+msgstr "Genre"
 
 #: minigalaxy/constants.py:15 minigalaxy/constants.py:34
 msgid "German"
@@ -141,7 +138,7 @@ msgstr "Github pagina"
 
 #: data/ui/properties.ui:102
 msgid "Hide game:"
-msgstr ""
+msgstr "Verberg game:"
 
 #: minigalaxy/constants.py:16
 msgid "Hungarian"
@@ -149,11 +146,11 @@ msgstr "Hongaars"
 
 #: minigalaxy/installer.py:147
 msgid "Innoextract extraction failed."
-msgstr ""
+msgstr "Innoextract kon de game niet uitpakken."
 
 #: minigalaxy/installer.py:158
 msgid "Innoextract not installed."
-msgstr ""
+msgstr "Innoextract is niet geïnstalleerd."
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:118
@@ -197,7 +194,7 @@ msgstr "Koreaans"
 #: data/ui/preferences.ui:68
 msgctxt "language"
 msgid "Language: "
-msgstr ""
+msgstr "Taal: "
 
 #: minigalaxy/ui/login.py:20
 msgid "Login"
@@ -218,22 +215,20 @@ msgid "Norwegian"
 msgstr "Noors"
 
 #: minigalaxy/constants.py:35
-#, fuzzy
 msgid "Norwegian Bokmål"
-msgstr "Noors"
+msgstr "Noors (Bokmål)"
 
 #: minigalaxy/constants.py:36
-#, fuzzy
 msgid "Norwegian Nynorsk"
-msgstr "Noors"
+msgstr "Noors (Nynorsk)"
 
 #: minigalaxy/installer.py:97
 msgid "Not enough space to extract game. Required: {} Available: {}"
-msgstr ""
+msgstr "Niet genoeg ruimt om"
 
 #: data/ui/properties.ui:275
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: data/ui/properties.ui:211
 msgid "Open files"
@@ -269,11 +264,11 @@ msgstr "Voorkeurstaal: "
 
 #: data/ui/gametile.ui:81
 msgid "Properties"
-msgstr ""
+msgstr "Instellingen"
 
 #: minigalaxy/ui/properties.py:33
 msgid "Properties of {}"
-msgstr ""
+msgstr "Instellingen van {}"
 
 #. Tooltip for refresh button
 #: data/ui/application.ui:89
@@ -283,7 +278,7 @@ msgstr "Haal gamelijst opnieuw op"
 
 #: data/ui/properties.ui:198
 msgid "Regedit"
-msgstr ""
+msgstr "Regedit"
 
 #: minigalaxy/constants.py:23 minigalaxy/constants.py:39
 msgid "Russian"
@@ -296,23 +291,20 @@ msgid "Save"
 msgstr "Opslaan"
 
 #: data/ui/properties.ui:149
-#, fuzzy
 msgid "Show FPS in game:"
 msgstr "Laat FPS zijn tijdens het spelen:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:250
-#, fuzzy
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Laat FPS zijn tijdens het spelen:"
+msgstr "Toon games voor Windows: "
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:224
-#, fuzzy
 msgctxt "show_hidden_games"
 msgid "Show hidden games: "
-msgstr "Laat FPS zijn tijdens het spelen:"
+msgstr "Toon verborgen games: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:105
@@ -322,7 +314,7 @@ msgstr "Laat alleen geïnstalleerde games zien"
 
 #: minigalaxy/constants.py:40
 msgid "Simplified Chinese"
-msgstr ""
+msgstr "Vereenvoudigd Chinees"
 
 #: minigalaxy/constants.py:24 minigalaxy/constants.py:41
 msgid "Spanish"
@@ -332,15 +324,13 @@ msgstr "Spaans"
 #: data/ui/preferences.ui:171
 msgctxt "stay_logged_in"
 msgid "Stay logged in:"
-msgstr "Blijf ingelogd: "
+msgstr "Blijf ingelogd:"
 
 #: data/ui/properties.ui:74
-#, fuzzy
 msgid "Store"
 msgstr "Winkelpagina"
 
 #: data/ui/properties.ui:60
-#, fuzzy
 msgid "Support"
 msgstr "Ondersteuning"
 
@@ -350,7 +340,7 @@ msgstr "Zweeds"
 
 #: minigalaxy/constants.py:30
 msgid "System default"
-msgstr ""
+msgstr "Systeemsstandard"
 
 #: minigalaxy/installer.py:128
 msgid "The installation of {} failed. Please try again."
@@ -362,10 +352,9 @@ msgid "The preferred language for downloading games in"
 msgstr "De voorkeurstaal voor gedownloadde games"
 
 #: data/ui/preferences.ui:65
-#, fuzzy
 msgctxt "language_tooltip"
 msgid "The preferred language on Minigalaxy start"
-msgstr "De voorkeurstaal voor gedownloadde games"
+msgstr "De voorkeurstaal voorMinigalaxy bij het starten"
 
 #: minigalaxy/ui/gametile.py:208
 msgid ""
@@ -382,19 +371,17 @@ msgstr "Dit is waar games geinstalleerd worden"
 
 #: minigalaxy/constants.py:43
 msgid "Traditional Chinese"
-msgstr ""
+msgstr "Traditioneel Chinees"
 
 #: minigalaxy/constants.py:26 minigalaxy/constants.py:44
 msgid "Turkish"
 msgstr "Turks"
 
 #: data/ui/gametile.ui:66
-#, fuzzy
 msgid "Uninstall"
 msgstr "Verwijderen"
 
 #: data/ui/gametile.ui:51
-#, fuzzy
 msgid "Update"
 msgstr "Update"
 
@@ -402,7 +389,7 @@ msgstr "Update"
 #: data/ui/preferences.ui:198
 msgctxt "use_dark_theme"
 msgid "Use dark theme: "
-msgstr ""
+msgstr "Gebruik donker thema: "
 
 #: data/ui/properties.ui:162
 msgid "Variables flag:"
@@ -410,7 +397,7 @@ msgstr ""
 
 #: minigalaxy/ui/properties.py:139
 msgid "Version"
-msgstr ""
+msgstr "Versie"
 
 #: data/ui/preferences.ui:168
 msgctxt "stay_logged_in_tooltip"
@@ -422,7 +409,7 @@ msgstr ""
 #: data/ui/preferences.ui:195
 msgctxt "use_dark_theme_tooltip"
 msgid "Whether Minigalaxy should use dark theme or not"
-msgstr ""
+msgstr "Of Minigalaxy een donkerder thema gebruikt of niet"
 
 #: data/ui/preferences.ui:247
 msgctxt "show_windows_games_tooltip"
@@ -430,27 +417,30 @@ msgid "Whether Windows games are shown in the library or not"
 msgstr "Of Windows games zichtbaar zijn in de bibliotheek"
 
 #: data/ui/preferences.ui:221
-#, fuzzy
 msgctxt "show_hidden_games_tooltip"
 msgid "Whether hidden games are shown in the library or not"
-msgstr "Of Windows games zichtbaar zijn in de bibliotheek"
+msgstr "Of verborgen games zichtbaar zijn in de bibliotheek"
 
 #: data/ui/preferences.ui:285
 msgctxt "create_menu_shortcuts_tooltip"
 msgid "Whether shortcuts are created for newly installed games or not"
 msgstr ""
+"Of snelkoppelingen in het menu van het besturingssysteem aangemaakt worden "
+"voor nieuw geïnstalleerde games"
 
 #: minigalaxy/installer.py:172
 msgid "Wine extraction failed."
-msgstr ""
+msgstr "Het uitpakken met wine is mislukt."
 
 #: minigalaxy/ui/preferences.py:161
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr ""
+"Wine kon niet gevonden worden. Het tonen van Windows games kan niet aangezet "
+"worden."
 
 #: data/ui/properties.ui:185
 msgid "Winecfg"
-msgstr ""
+msgstr "Winecfg"
 
 #: minigalaxy/ui/gametile.py:450
 msgid "download"
@@ -486,11 +476,11 @@ msgstr "updaten…"
 
 #: minigalaxy/installer.py:130
 msgid "{} could not be unzipped."
-msgstr "{} kan niet uitgepakt worden"
+msgstr "{} kan niet uitgepakt worden."
 
 #: minigalaxy/installer.py:73
 msgid "{} failed to download."
-msgstr "{} kon niet worden gedownload"
+msgstr "{} kon niet gedownload worden."
 
 #: minigalaxy/ui/preferences.py:173
 msgid "{} isn't a usable path"
