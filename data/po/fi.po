@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-04 14:48+0300\n"
+"POT-Creation-Date: 2021-09-29 16:57+0200\n"
 "PO-Revision-Date: 2021-09-04 15:10+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -77,6 +77,12 @@ msgstr "Kauppasivua ei voitu avata"
 msgid "Couldn't open support page"
 msgstr "Tukisivua ei voitu avata"
 
+#. Has to end with ": "
+#: data/ui/preferences.ui:288
+msgctxt "create_menu_shortcuts"
+msgid "Create menu shortcuts: "
+msgstr ""
+
 #: data/ui/gametile.ui:36
 msgid "DLC"
 msgstr "DLC-lisäosa"
@@ -97,7 +103,7 @@ msgstr "Hollanti"
 msgid "English"
 msgstr "Englanti"
 
-#: minigalaxy/ui/gametile.py:297
+#: minigalaxy/ui/gametile.py:298
 msgid "Failed to install {}"
 msgstr "{} asentaminen epäonnistui"
 
@@ -105,7 +111,7 @@ msgstr "{} asentaminen epäonnistui"
 msgid "Failed to retrieve library"
 msgstr "Kirjaston noutaminen epäonnistui"
 
-#: minigalaxy/launcher.py:34 minigalaxy/ui/gametile.py:122
+#: minigalaxy/launcher.py:36 minigalaxy/ui/gametile.py:122
 msgid "Failed to start {}:"
 msgstr "Käynnistys epäonnistui {}:"
 
@@ -139,11 +145,11 @@ msgstr "Piilota peli:"
 msgid "Hungarian"
 msgstr "Unkari"
 
-#: minigalaxy/installer.py:144
+#: minigalaxy/installer.py:147
 msgid "Innoextract extraction failed."
 msgstr "Innoextract-purku epäonnistui."
 
-#: minigalaxy/installer.py:155
+#: minigalaxy/installer.py:158
 msgid "Innoextract not installed."
 msgstr "Innoextract ei asennettu."
 
@@ -167,7 +173,7 @@ msgstr "Italia"
 msgid "Japanese"
 msgstr "Japani"
 
-#: minigalaxy/ui/preferences.py:44
+#: minigalaxy/ui/preferences.py:46
 msgid ""
 "Keep installers after downloading a game.\n"
 "Installers are stored in: {}"
@@ -201,7 +207,7 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
-#: minigalaxy/launcher.py:181
+#: minigalaxy/launcher.py:184
 msgid "No executable was found in {}"
 msgstr "Ajettavaa käynnistystiedostoa ei löytynyt kohteelle {}"
 
@@ -217,9 +223,10 @@ msgstr "Norja (kirjakieli)"
 msgid "Norwegian Nynorsk"
 msgstr "Norja (Nynorsk)"
 
-#: minigalaxy/installer.py:94
+#: minigalaxy/installer.py:97
 msgid "Not enough space to extract game. Required: {} Available: {}"
-msgstr "Levytilaa ei ole tarpeeksi pelin purkamiseen. Tarvitaan {} Saatavilla {}"
+msgstr ""
+"Levytilaa ei ole tarpeeksi pelin purkamiseen. Tarvitaan {} Saatavilla {}"
 
 #: data/ui/properties.ui:275
 msgid "OK"
@@ -241,7 +248,7 @@ msgstr "Puola"
 msgid "Portuguese"
 msgstr "Portugali"
 
-#: minigalaxy/ui/preferences.py:29
+#: minigalaxy/ui/preferences.py:30
 msgid "Preferences"
 msgstr "Asetukset"
 
@@ -337,7 +344,7 @@ msgstr "Ruotsi"
 msgid "System default"
 msgstr "Järjestelmän oletus"
 
-#: minigalaxy/installer.py:125
+#: minigalaxy/installer.py:128
 msgid "The installation of {} failed. Please try again."
 msgstr "Asennus {} epäonnistui. Yritä uudelleen."
 
@@ -397,7 +404,9 @@ msgstr "Versio"
 #: data/ui/preferences.ui:168
 msgctxt "stay_logged_in_tooltip"
 msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
-msgstr "Mikäli pois päältä, sinua pyydetään kirjautumaan uudelleen aina Minigalaxyn käynnistyksessä"
+msgstr ""
+"Mikäli pois päältä, sinua pyydetään kirjautumaan uudelleen aina Minigalaxyn "
+"käynnistyksessä"
 
 #: data/ui/preferences.ui:195
 msgctxt "use_dark_theme_tooltip"
@@ -414,62 +423,68 @@ msgctxt "show_hidden_games_tooltip"
 msgid "Whether hidden games are shown in the library or not"
 msgstr "Näytetäänkö piilotetut pelit kirjastossa vaiko ei"
 
-#: minigalaxy/installer.py:169
+#: data/ui/preferences.ui:285
+msgctxt "create_menu_shortcuts_tooltip"
+msgid "Whether shortcuts are created for newly installed games or not"
+msgstr ""
+
+#: minigalaxy/installer.py:172
 msgid "Wine extraction failed."
 msgstr "Wine-purku epäonnistui."
 
-#: minigalaxy/ui/preferences.py:158
+#: minigalaxy/ui/preferences.py:161
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
-msgstr "Wine-ohjelmaa ei löytynyt. Windows-pelien näyttämistä ei voida kytkeä päälle."
+msgstr ""
+"Wine-ohjelmaa ei löytynyt. Windows-pelien näyttämistä ei voida kytkeä päälle."
 
 #: data/ui/properties.ui:185
 msgid "Winecfg"
 msgstr "Winecfg-asetukset"
 
-#: minigalaxy/ui/gametile.py:449
+#: minigalaxy/ui/gametile.py:450
 msgid "download"
 msgstr "lataa"
 
-#: minigalaxy/ui/gametile.py:488
+#: minigalaxy/ui/gametile.py:489
 msgid "downloading…"
 msgstr "ladataan…"
 
-#: minigalaxy/ui/gametile.py:480
+#: minigalaxy/ui/gametile.py:481
 msgid "in queue…"
 msgstr "jonossa…"
 
-#: minigalaxy/ui/gametile.py:468
+#: minigalaxy/ui/gametile.py:469
 msgid "install"
 msgstr "asenna"
 
-#: minigalaxy/ui/gametile.py:498
+#: minigalaxy/ui/gametile.py:499
 msgid "installing…"
 msgstr "asennetaan…"
 
-#: minigalaxy/ui/gametile.py:512 minigalaxy/ui/gametile.py:542
+#: minigalaxy/ui/gametile.py:513 minigalaxy/ui/gametile.py:543
 msgid "play"
 msgstr "pelaa"
 
-#: minigalaxy/ui/gametile.py:528
+#: minigalaxy/ui/gametile.py:529
 msgid "uninstalling…"
 msgstr "poistetaan asennusta…"
 
-#: minigalaxy/ui/gametile.py:551
+#: minigalaxy/ui/gametile.py:552
 msgid "updating…"
 msgstr "päivitetään…"
 
-#: minigalaxy/installer.py:127
+#: minigalaxy/installer.py:130
 msgid "{} could not be unzipped."
 msgstr "{} ei voitu purkaa."
 
-#: minigalaxy/installer.py:70
+#: minigalaxy/installer.py:73
 msgid "{} failed to download."
 msgstr "{} lataus epäonnistui."
 
-#: minigalaxy/ui/preferences.py:170
+#: minigalaxy/ui/preferences.py:173
 msgid "{} isn't a usable path"
 msgstr "{} ei ole käytettävä polku"
 
-#: minigalaxy/installer.py:82
+#: minigalaxy/installer.py:85
 msgid "{} was corrupted. Please download it again."
 msgstr "{} korruptoitui. Suorita lataus uudelleen."
