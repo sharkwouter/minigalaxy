@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 16:57+0200\n"
+"POT-Creation-Date: 2021-09-29 17:36+0200\n"
 "PO-Revision-Date: 2020-11-15 12:03+0100\n"
 "Last-Translator: Artem Polishchuk <ego.cordatus@gmail.com>\n"
 "Language-Team: \n"
@@ -36,6 +36,14 @@ msgctxt "about"
 msgid "About"
 msgstr "О Minigalaxy"
 
+#: data/ui/properties.ui:128
+msgid "Added at the end of the command used to launch the game"
+msgstr ""
+
+#: data/ui/properties.ui:140
+msgid "Added in front of the command used to launch the game"
+msgstr ""
+
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Вы уверены что хотите отменить загрузку {}?"
@@ -53,7 +61,7 @@ msgstr "Вы уверены что хотите удалить %s?"
 msgid "Brazilian Portuguese"
 msgstr "Бразильский Португальский"
 
-#: data/ui/properties.ui:261
+#: data/ui/properties.ui:265
 #, fuzzy
 msgid "Cancel"
 msgstr "Отменить"
@@ -67,8 +75,8 @@ msgstr "Отменить"
 msgid "Chinese"
 msgstr "Китайский"
 
-#: data/ui/properties.ui:175
-msgid "Commands flag:"
+#: data/ui/properties.ui:179
+msgid "Command flags:"
 msgstr ""
 
 #: minigalaxy/ui/properties.py:103
@@ -140,7 +148,7 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "Github страница"
 
-#: data/ui/properties.ui:102
+#: data/ui/properties.ui:104
 msgid "Hide game:"
 msgstr ""
 
@@ -232,11 +240,11 @@ msgstr "Норвежский"
 msgid "Not enough space to extract game. Required: {} Available: {}"
 msgstr ""
 
-#: data/ui/properties.ui:275
+#: data/ui/properties.ui:279
 msgid "OK"
 msgstr ""
 
-#: data/ui/properties.ui:211
+#: data/ui/properties.ui:215
 msgid "Open files"
 msgstr "Открыть Файлы"
 
@@ -282,7 +290,7 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Обновить список игр"
 
-#: data/ui/properties.ui:198
+#: data/ui/properties.ui:202
 msgid "Regedit"
 msgstr ""
 
@@ -296,7 +304,7 @@ msgctxt "save"
 msgid "Save"
 msgstr "Сохранить"
 
-#: data/ui/properties.ui:149
+#: data/ui/properties.ui:153
 #, fuzzy
 msgid "Show FPS in game:"
 msgstr "Показывать FPS в играх:"
@@ -334,12 +342,12 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Не выходить из системы:"
 
-#: data/ui/properties.ui:74
+#: data/ui/properties.ui:76
 #, fuzzy
 msgid "Store"
 msgstr "Страница в магазине"
 
-#: data/ui/properties.ui:60
+#: data/ui/properties.ui:62
 #, fuzzy
 msgid "Support"
 msgstr "Поддержка"
@@ -404,8 +412,8 @@ msgctxt "use_dark_theme"
 msgid "Use dark theme: "
 msgstr ""
 
-#: data/ui/properties.ui:162
-msgid "Variables flag:"
+#: data/ui/properties.ui:166
+msgid "Variable flags:"
 msgstr ""
 
 #: minigalaxy/ui/properties.py:139
@@ -447,7 +455,7 @@ msgstr ""
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr ""
 
-#: data/ui/properties.ui:185
+#: data/ui/properties.ui:189
 msgid "Winecfg"
 msgstr ""
 

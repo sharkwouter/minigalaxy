@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 16:57+0200\n"
+"POT-Creation-Date: 2021-09-29 17:36+0200\n"
 "PO-Revision-Date: 2021-09-29 17:31+0200\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch\n"
@@ -34,6 +34,14 @@ msgctxt "about"
 msgid "About"
 msgstr "Over Minigalaxy"
 
+#: data/ui/properties.ui:128
+msgid "Added at the end of the command used to launch the game"
+msgstr ""
+
+#: data/ui/properties.ui:140
+msgid "Added in front of the command used to launch the game"
+msgstr ""
+
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Weet je zeker dat je de {} download wilt stoppen?"
@@ -51,7 +59,7 @@ msgstr "Weet je zeker dat je %s wilt verwijderen?"
 msgid "Brazilian Portuguese"
 msgstr "Braziliaans-Portugees"
 
-#: data/ui/properties.ui:261
+#: data/ui/properties.ui:265
 msgid "Cancel"
 msgstr "Annuleren"
 
@@ -64,8 +72,8 @@ msgstr "Annuleren"
 msgid "Chinese"
 msgstr "Chinees"
 
-#: data/ui/properties.ui:175
-msgid "Commands flag:"
+#: data/ui/properties.ui:179
+msgid "Command flags:"
 msgstr ""
 
 #: minigalaxy/ui/properties.py:103
@@ -136,7 +144,7 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "Github pagina"
 
-#: data/ui/properties.ui:102
+#: data/ui/properties.ui:104
 msgid "Hide game:"
 msgstr "Verberg game:"
 
@@ -226,11 +234,11 @@ msgstr "Noors (Nynorsk)"
 msgid "Not enough space to extract game. Required: {} Available: {}"
 msgstr "Niet genoeg ruimt om"
 
-#: data/ui/properties.ui:275
+#: data/ui/properties.ui:279
 msgid "OK"
 msgstr "OK"
 
-#: data/ui/properties.ui:211
+#: data/ui/properties.ui:215
 msgid "Open files"
 msgstr "Bestanden openen"
 
@@ -276,7 +284,7 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Haal gamelijst opnieuw op"
 
-#: data/ui/properties.ui:198
+#: data/ui/properties.ui:202
 msgid "Regedit"
 msgstr "Regedit"
 
@@ -290,7 +298,7 @@ msgctxt "save"
 msgid "Save"
 msgstr "Opslaan"
 
-#: data/ui/properties.ui:149
+#: data/ui/properties.ui:153
 msgid "Show FPS in game:"
 msgstr "Laat FPS zijn tijdens het spelen:"
 
@@ -326,11 +334,11 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Blijf ingelogd:"
 
-#: data/ui/properties.ui:74
+#: data/ui/properties.ui:76
 msgid "Store"
 msgstr "Winkelpagina"
 
-#: data/ui/properties.ui:60
+#: data/ui/properties.ui:62
 msgid "Support"
 msgstr "Ondersteuning"
 
@@ -391,8 +399,8 @@ msgctxt "use_dark_theme"
 msgid "Use dark theme: "
 msgstr "Gebruik donker thema: "
 
-#: data/ui/properties.ui:162
-msgid "Variables flag:"
+#: data/ui/properties.ui:166
+msgid "Variable flags:"
 msgstr ""
 
 #: minigalaxy/ui/properties.py:139
@@ -438,7 +446,7 @@ msgstr ""
 "Wine kon niet gevonden worden. Het tonen van Windows games kan niet aangezet "
 "worden."
 
-#: data/ui/properties.ui:185
+#: data/ui/properties.ui:189
 msgid "Winecfg"
 msgstr "Winecfg"
 

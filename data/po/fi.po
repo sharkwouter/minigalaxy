@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 16:57+0200\n"
+"POT-Creation-Date: 2021-09-29 17:36+0200\n"
 "PO-Revision-Date: 2021-09-04 15:10+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -35,6 +35,14 @@ msgctxt "about"
 msgid "About"
 msgstr "Tietoja"
 
+#: data/ui/properties.ui:128
+msgid "Added at the end of the command used to launch the game"
+msgstr ""
+
+#: data/ui/properties.ui:140
+msgid "Added in front of the command used to launch the game"
+msgstr ""
+
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Oletko varma että haluat keskeyttää latauksen {}?"
@@ -52,7 +60,7 @@ msgstr "Oletko varma että haluat poistaa asennuksen %s?"
 msgid "Brazilian Portuguese"
 msgstr "Brasilian portugali"
 
-#: data/ui/properties.ui:261
+#: data/ui/properties.ui:265
 msgid "Cancel"
 msgstr "Peruuta"
 
@@ -65,8 +73,9 @@ msgstr "Peruuta"
 msgid "Chinese"
 msgstr "Kiina"
 
-#: data/ui/properties.ui:175
-msgid "Commands flag:"
+#: data/ui/properties.ui:179
+#, fuzzy
+msgid "Command flags:"
 msgstr "Komentoparametrit:"
 
 #: minigalaxy/ui/properties.py:103
@@ -137,7 +146,7 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "Github-sivu"
 
-#: data/ui/properties.ui:102
+#: data/ui/properties.ui:104
 msgid "Hide game:"
 msgstr "Piilota peli:"
 
@@ -228,11 +237,11 @@ msgid "Not enough space to extract game. Required: {} Available: {}"
 msgstr ""
 "Levytilaa ei ole tarpeeksi pelin purkamiseen. Tarvitaan {} Saatavilla {}"
 
-#: data/ui/properties.ui:275
+#: data/ui/properties.ui:279
 msgid "OK"
 msgstr "OK"
 
-#: data/ui/properties.ui:211
+#: data/ui/properties.ui:215
 msgid "Open files"
 msgstr "Avaa tiedostot"
 
@@ -278,7 +287,7 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Virkistä peliluettelo"
 
-#: data/ui/properties.ui:198
+#: data/ui/properties.ui:202
 msgid "Regedit"
 msgstr "Regedit-muokkaus"
 
@@ -292,7 +301,7 @@ msgctxt "save"
 msgid "Save"
 msgstr "Tallenna"
 
-#: data/ui/properties.ui:149
+#: data/ui/properties.ui:153
 msgid "Show FPS in game:"
 msgstr "Näytä ruudunpäivitysnopeus pelissä:"
 
@@ -328,11 +337,11 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Pysy kirjautuneena:"
 
-#: data/ui/properties.ui:74
+#: data/ui/properties.ui:76
 msgid "Store"
 msgstr "Kauppa"
 
-#: data/ui/properties.ui:60
+#: data/ui/properties.ui:62
 msgid "Support"
 msgstr "Tuki"
 
@@ -393,8 +402,9 @@ msgctxt "use_dark_theme"
 msgid "Use dark theme: "
 msgstr "Käytä tummaa teemaa: "
 
-#: data/ui/properties.ui:162
-msgid "Variables flag:"
+#: data/ui/properties.ui:166
+#, fuzzy
+msgid "Variable flags:"
 msgstr "Muuttujat:"
 
 #: minigalaxy/ui/properties.py:139
@@ -437,7 +447,7 @@ msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr ""
 "Wine-ohjelmaa ei löytynyt. Windows-pelien näyttämistä ei voida kytkeä päälle."
 
-#: data/ui/properties.ui:185
+#: data/ui/properties.ui:189
 msgid "Winecfg"
 msgstr "Winecfg-asetukset"
 

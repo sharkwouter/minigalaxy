@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 16:57+0200\n"
+"POT-Creation-Date: 2021-09-29 17:36+0200\n"
 "PO-Revision-Date: 2020-11-14 20:16+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,6 +34,14 @@ msgctxt "about"
 msgid "About"
 msgstr "关于"
 
+#: data/ui/properties.ui:128
+msgid "Added at the end of the command used to launch the game"
+msgstr ""
+
+#: data/ui/properties.ui:140
+msgid "Added in front of the command used to launch the game"
+msgstr ""
+
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "确定要取消下载 {} 吗？"
@@ -51,7 +59,7 @@ msgstr "确定要卸载 %s 吗？"
 msgid "Brazilian Portuguese"
 msgstr "巴西葡萄牙语"
 
-#: data/ui/properties.ui:261
+#: data/ui/properties.ui:265
 #, fuzzy
 msgid "Cancel"
 msgstr "取消"
@@ -65,8 +73,8 @@ msgstr "取消"
 msgid "Chinese"
 msgstr "汉语"
 
-#: data/ui/properties.ui:175
-msgid "Commands flag:"
+#: data/ui/properties.ui:179
+msgid "Command flags:"
 msgstr ""
 
 #: minigalaxy/ui/properties.py:103
@@ -138,7 +146,7 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "Github 页面"
 
-#: data/ui/properties.ui:102
+#: data/ui/properties.ui:104
 msgid "Hide game:"
 msgstr ""
 
@@ -228,11 +236,11 @@ msgstr "挪威语"
 msgid "Not enough space to extract game. Required: {} Available: {}"
 msgstr ""
 
-#: data/ui/properties.ui:275
+#: data/ui/properties.ui:279
 msgid "OK"
 msgstr ""
 
-#: data/ui/properties.ui:211
+#: data/ui/properties.ui:215
 msgid "Open files"
 msgstr "打开文件"
 
@@ -278,7 +286,7 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "刷新游戏列表"
 
-#: data/ui/properties.ui:198
+#: data/ui/properties.ui:202
 msgid "Regedit"
 msgstr ""
 
@@ -292,7 +300,7 @@ msgctxt "save"
 msgid "Save"
 msgstr "保存"
 
-#: data/ui/properties.ui:149
+#: data/ui/properties.ui:153
 #, fuzzy
 msgid "Show FPS in game:"
 msgstr "在游戏内显示 FPS："
@@ -330,12 +338,12 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "保持登录："
 
-#: data/ui/properties.ui:74
+#: data/ui/properties.ui:76
 #, fuzzy
 msgid "Store"
 msgstr "商店页面"
 
-#: data/ui/properties.ui:60
+#: data/ui/properties.ui:62
 #, fuzzy
 msgid "Support"
 msgstr "支持"
@@ -400,8 +408,8 @@ msgctxt "use_dark_theme"
 msgid "Use dark theme: "
 msgstr ""
 
-#: data/ui/properties.ui:162
-msgid "Variables flag:"
+#: data/ui/properties.ui:166
+msgid "Variable flags:"
 msgstr ""
 
 #: minigalaxy/ui/properties.py:139
@@ -442,7 +450,7 @@ msgstr ""
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr ""
 
-#: data/ui/properties.ui:185
+#: data/ui/properties.ui:189
 msgid "Winecfg"
 msgstr ""
 

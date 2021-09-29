@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 16:57+0200\n"
+"POT-Creation-Date: 2021-09-29 17:36+0200\n"
 "PO-Revision-Date: 2021-05-25 19:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,6 +34,14 @@ msgctxt "about"
 msgid "About"
 msgstr "Informazioni"
 
+#: data/ui/properties.ui:128
+msgid "Added at the end of the command used to launch the game"
+msgstr ""
+
+#: data/ui/properties.ui:140
+msgid "Added in front of the command used to launch the game"
+msgstr ""
+
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Sei sicuro di voler annullare lo scaricamento di {}?"
@@ -51,7 +59,7 @@ msgstr "Sei sicuro di voler disinstallare %s?"
 msgid "Brazilian Portuguese"
 msgstr "Portoghese Brasiliano"
 
-#: data/ui/properties.ui:261
+#: data/ui/properties.ui:265
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -65,9 +73,9 @@ msgid "Chinese"
 msgstr "Cinese"
 
 # I don't know where it's used, so this translation might be wrong.
-#: data/ui/properties.ui:175
+#: data/ui/properties.ui:179
 #, fuzzy
-msgid "Commands flag:"
+msgid "Command flags:"
 msgstr "Opzione dei comandi"
 
 #: minigalaxy/ui/properties.py:103
@@ -138,7 +146,7 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "Pagina di Github"
 
-#: data/ui/properties.ui:102
+#: data/ui/properties.ui:104
 msgid "Hide game:"
 msgstr ""
 
@@ -230,11 +238,11 @@ msgstr "Norvegese"
 msgid "Not enough space to extract game. Required: {} Available: {}"
 msgstr ""
 
-#: data/ui/properties.ui:275
+#: data/ui/properties.ui:279
 msgid "OK"
 msgstr "OK"
 
-#: data/ui/properties.ui:211
+#: data/ui/properties.ui:215
 msgid "Open files"
 msgstr "Apri cartella"
 
@@ -280,7 +288,7 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Aggiorna lista dei giochi"
 
-#: data/ui/properties.ui:198
+#: data/ui/properties.ui:202
 msgid "Regedit"
 msgstr "Regedit"
 
@@ -294,7 +302,7 @@ msgctxt "save"
 msgid "Save"
 msgstr "Salva"
 
-#: data/ui/properties.ui:149
+#: data/ui/properties.ui:153
 msgid "Show FPS in game:"
 msgstr "Visualizza FPS in gioco:"
 
@@ -331,11 +339,11 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Mantieni l'accesso:"
 
-#: data/ui/properties.ui:74
+#: data/ui/properties.ui:76
 msgid "Store"
 msgstr "Negozio"
 
-#: data/ui/properties.ui:60
+#: data/ui/properties.ui:62
 msgid "Support"
 msgstr "Supporto"
 
@@ -398,9 +406,9 @@ msgid "Use dark theme: "
 msgstr ""
 
 # I don't know where it's used, so this translation might be wrong.
-#: data/ui/properties.ui:162
+#: data/ui/properties.ui:166
 #, fuzzy
-msgid "Variables flag:"
+msgid "Variable flags:"
 msgstr "Opzione delle variabili"
 
 #: minigalaxy/ui/properties.py:139
@@ -445,7 +453,7 @@ msgstr ""
 "Wine non è stato trovato. Non potrai abilitare la Visualizzazione dei giochi "
 "di Windows."
 
-#: data/ui/properties.ui:185
+#: data/ui/properties.ui:189
 msgid "Winecfg"
 msgstr "Winecfg"
 
