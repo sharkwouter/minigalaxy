@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-29 17:36+0200\n"
-"PO-Revision-Date: 2021-09-29 17:31+0200\n"
+"PO-Revision-Date: 2021-09-30 10:36+0200\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -37,10 +37,12 @@ msgstr "Over Minigalaxy"
 #: data/ui/properties.ui:128
 msgid "Added at the end of the command used to launch the game"
 msgstr ""
+"Wordt aan het commando dat gebruikt wordt om de game te starten toegevoegd"
 
 #: data/ui/properties.ui:140
 msgid "Added in front of the command used to launch the game"
 msgstr ""
+"Wordt voor het commando dat gebruikt wordt om de game te starten toegevoegd"
 
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
@@ -74,7 +76,7 @@ msgstr "Chinees"
 
 #: data/ui/properties.ui:179
 msgid "Command flags:"
-msgstr ""
+msgstr "Commando flaggetjes:"
 
 #: minigalaxy/ui/properties.py:103
 msgid "Couldn't open store page"
@@ -401,7 +403,7 @@ msgstr "Gebruik donker thema: "
 
 #: data/ui/properties.ui:166
 msgid "Variable flags:"
-msgstr ""
+msgstr "Variabelen:"
 
 #: minigalaxy/ui/properties.py:139
 msgid "Version"
