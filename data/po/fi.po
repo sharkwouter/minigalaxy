@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 17:36+0200\n"
+"POT-Creation-Date: 2021-09-30 10:58+0200\n"
 "PO-Revision-Date: 2021-09-04 15:10+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -124,11 +124,11 @@ msgstr "Kirjaston noutaminen epäonnistui"
 msgid "Failed to start {}:"
 msgstr "Käynnistys epäonnistui {}:"
 
-#: minigalaxy/constants.py:13
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "Finnish"
 msgstr "Suomi"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
 msgid "French"
 msgstr "Ranska"
 
@@ -136,7 +136,7 @@ msgstr "Ranska"
 msgid "Genre"
 msgstr "Genre"
 
-#: minigalaxy/constants.py:15 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:15 minigalaxy/constants.py:35
 msgid "German"
 msgstr "Saksa"
 
@@ -224,11 +224,11 @@ msgstr "Ajettavaa käynnistystiedostoa ei löytynyt kohteelle {}"
 msgid "Norwegian"
 msgstr "Norja"
 
-#: minigalaxy/constants.py:35
+#: minigalaxy/constants.py:36
 msgid "Norwegian Bokmål"
 msgstr "Norja (kirjakieli)"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:37
 msgid "Norwegian Nynorsk"
 msgstr "Norja (Nynorsk)"
 
@@ -249,11 +249,11 @@ msgstr "Avaa tiedostot"
 msgid "Please check your internet connection"
 msgstr "Ole hyvä ja tarkista, että internet-yhteytesi on toiminnassa"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
 msgid "Polish"
 msgstr "Puola"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
 msgid "Portuguese"
 msgstr "Portugali"
 
@@ -291,7 +291,7 @@ msgstr "Virkistä peliluettelo"
 msgid "Regedit"
 msgstr "Regedit-muokkaus"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:40
 msgid "Russian"
 msgstr "Venäjä"
 
@@ -323,11 +323,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Näytä ainoastaan asennetut pelit"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:41
 msgid "Simplified Chinese"
 msgstr "Yksinkertaistettu kiina"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Spanish"
 msgstr "Espanja"
 
@@ -345,7 +345,7 @@ msgstr "Kauppa"
 msgid "Support"
 msgstr "Tuki"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:43
 msgid "Swedish"
 msgstr "Ruotsi"
 
@@ -380,13 +380,17 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Tämä on sijainti johon pelit asennetaan"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:44
 msgid "Traditional Chinese"
 msgstr "Perinteinen kiina"
 
-#: minigalaxy/constants.py:26 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:26 minigalaxy/constants.py:45
 msgid "Turkish"
 msgstr "Turkki"
+
+#: minigalaxy/constants.py:46
+msgid "Ukrainian"
+msgstr ""
 
 #: data/ui/gametile.ui:66
 msgid "Uninstall"

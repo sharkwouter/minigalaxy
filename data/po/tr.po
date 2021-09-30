@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 17:36+0200\n"
+"POT-Creation-Date: 2021-09-30 10:58+0200\n"
 "PO-Revision-Date: 2021-09-30 11:22+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
@@ -122,11 +122,11 @@ msgstr "Kütüphane alınamadı"
 msgid "Failed to start {}:"
 msgstr "{} başlatılamadı:"
 
-#: minigalaxy/constants.py:13
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "Finnish"
 msgstr "Fince"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
 msgid "French"
 msgstr "Fransızca"
 
@@ -134,7 +134,7 @@ msgstr "Fransızca"
 msgid "Genre"
 msgstr "Genre"
 
-#: minigalaxy/constants.py:15 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:15 minigalaxy/constants.py:35
 msgid "German"
 msgstr "Almanca"
 
@@ -222,11 +222,11 @@ msgstr "{} burada başlatma dosyası bulunamadı"
 msgid "Norwegian"
 msgstr "Norveçce"
 
-#: minigalaxy/constants.py:35
+#: minigalaxy/constants.py:36
 msgid "Norwegian Bokmål"
 msgstr "Norveçce"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:37
 msgid "Norwegian Nynorsk"
 msgstr "Norveçce"
 
@@ -246,11 +246,11 @@ msgstr "Dosyaları Aç"
 msgid "Please check your internet connection"
 msgstr "Lütfen internet bağlantınızı kontrol ediniz"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
 msgid "Polish"
 msgstr "Lehçe"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
 msgid "Portuguese"
 msgstr "Portekizce"
 
@@ -288,7 +288,7 @@ msgstr "Oyun listesini güncelle"
 msgid "Regedit"
 msgstr "Regedit"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:40
 msgid "Russian"
 msgstr "Rusça"
 
@@ -320,11 +320,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Sadece yüklü oyunları göster"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:41
 msgid "Simplified Chinese"
 msgstr "Basitleştirilmiş Çince"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Spanish"
 msgstr "İspanyolca"
 
@@ -342,7 +342,7 @@ msgstr "Market Sayfası"
 msgid "Support"
 msgstr "Destek"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:43
 msgid "Swedish"
 msgstr "İsveçce"
 
@@ -375,13 +375,17 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Burası oyunların indireleceği yerdir"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:44
 msgid "Traditional Chinese"
 msgstr "Geleneksel Çince"
 
-#: minigalaxy/constants.py:26 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:26 minigalaxy/constants.py:45
 msgid "Turkish"
 msgstr "Türkçe"
+
+#: minigalaxy/constants.py:46
+msgid "Ukrainian"
+msgstr ""
 
 #: data/ui/gametile.ui:66
 msgid "Uninstall"
@@ -501,8 +505,12 @@ msgstr "{} bozuk. Lütfen yeniden indirin."
 #~ msgstr "Ayarlar"
 
 #~ msgctxt "show_fps_tooltip"
-#~ msgid "Show the framerate while playing games. Only works with AMD and Nvidia graphics cards."
-#~ msgstr "Oyun oynarken kare hızını göster. Sadece AMD ve Nvidia ekran kartlarında çalışır."
+#~ msgid ""
+#~ "Show the framerate while playing games. Only works with AMD and Nvidia "
+#~ "graphics cards."
+#~ msgstr ""
+#~ "Oyun oynarken kare hızını göster. Sadece AMD ve Nvidia ekran kartlarında "
+#~ "çalışır."
 
 #~ msgid ""
 #~ "<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"

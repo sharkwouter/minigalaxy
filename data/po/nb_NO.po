@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 17:36+0200\n"
+"POT-Creation-Date: 2021-09-30 10:58+0200\n"
 "PO-Revision-Date: 2020-04-11 13:17+0200\n"
 "Last-Translator: Kim Malmo <berencamlost@msn.com>\n"
 "Language-Team: \n"
@@ -124,11 +124,11 @@ msgstr "Kunne ikke hente bibliotek"
 msgid "Failed to start {}:"
 msgstr "Kunne ikke starte {}:"
 
-#: minigalaxy/constants.py:13
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "Finnish"
 msgstr "Finsk"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
 msgid "French"
 msgstr "Fransk"
 
@@ -136,7 +136,7 @@ msgstr "Fransk"
 msgid "Genre"
 msgstr ""
 
-#: minigalaxy/constants.py:15 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:15 minigalaxy/constants.py:35
 msgid "German"
 msgstr "Tysk"
 
@@ -224,12 +224,12 @@ msgstr "Ingen kjørbar fil funnet i {}"
 msgid "Norwegian"
 msgstr "Norsk"
 
-#: minigalaxy/constants.py:35
+#: minigalaxy/constants.py:36
 #, fuzzy
 msgid "Norwegian Bokmål"
 msgstr "Norsk"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:37
 #, fuzzy
 msgid "Norwegian Nynorsk"
 msgstr "Norsk"
@@ -250,11 +250,11 @@ msgstr "Åpne filer"
 msgid "Please check your internet connection"
 msgstr "Vennligst sjekk internettforbindelsen din"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
 msgid "Polish"
 msgstr "Polsk"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
 msgid "Portuguese"
 msgstr "Portugisisk"
 
@@ -292,7 +292,7 @@ msgstr "Oppdater spillisten"
 msgid "Regedit"
 msgstr ""
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:40
 msgid "Russian"
 msgstr "Russisk"
 
@@ -326,11 +326,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Vis kun installerte spill"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:41
 msgid "Simplified Chinese"
 msgstr ""
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Spanish"
 msgstr "Spansk"
 
@@ -350,7 +350,7 @@ msgstr "Butikkside"
 msgid "Support"
 msgstr "Støtte"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:43
 msgid "Swedish"
 msgstr "Svensk"
 
@@ -386,13 +386,17 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Dette er hvor spill vil bli installert"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:44
 msgid "Traditional Chinese"
 msgstr ""
 
-#: minigalaxy/constants.py:26 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:26 minigalaxy/constants.py:45
 msgid "Turkish"
 msgstr "Tyrkisk"
+
+#: minigalaxy/constants.py:46
+msgid "Ukrainian"
+msgstr ""
 
 #: data/ui/gametile.ui:66
 #, fuzzy

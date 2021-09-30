@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 17:36+0200\n"
+"POT-Creation-Date: 2021-09-30 10:58+0200\n"
 "PO-Revision-Date: 2020-11-15 12:03+0100\n"
 "Last-Translator: Artem Polishchuk <ego.cordatus@gmail.com>\n"
 "Language-Team: \n"
@@ -126,11 +126,11 @@ msgstr "Не удалось получить библиотеку"
 msgid "Failed to start {}:"
 msgstr "Не удалось запустить {}:"
 
-#: minigalaxy/constants.py:13
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "Finnish"
 msgstr "Финский"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
 msgid "French"
 msgstr "Французский"
 
@@ -138,7 +138,7 @@ msgstr "Французский"
 msgid "Genre"
 msgstr ""
 
-#: minigalaxy/constants.py:15 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:15 minigalaxy/constants.py:35
 msgid "German"
 msgstr "Немецкий"
 
@@ -226,12 +226,12 @@ msgstr "Не найден запускаемый файл в {}"
 msgid "Norwegian"
 msgstr "Норвежский"
 
-#: minigalaxy/constants.py:35
+#: minigalaxy/constants.py:36
 #, fuzzy
 msgid "Norwegian Bokmål"
 msgstr "Норвежский"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:37
 #, fuzzy
 msgid "Norwegian Nynorsk"
 msgstr "Норвежский"
@@ -252,11 +252,11 @@ msgstr "Открыть Файлы"
 msgid "Please check your internet connection"
 msgstr "Проверьте ваше интернет-соединение"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
 msgid "Polish"
 msgstr "Польский"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
 msgid "Portuguese"
 msgstr "Португальский"
 
@@ -294,7 +294,7 @@ msgstr "Обновить список игр"
 msgid "Regedit"
 msgstr ""
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:40
 msgid "Russian"
 msgstr "Русский"
 
@@ -328,11 +328,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Показывать только установленные игры"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:41
 msgid "Simplified Chinese"
 msgstr ""
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Spanish"
 msgstr "Испанский"
 
@@ -352,7 +352,7 @@ msgstr "Страница в магазине"
 msgid "Support"
 msgstr "Поддержка"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:43
 msgid "Swedish"
 msgstr "Шведский"
 
@@ -388,13 +388,17 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Место, где будут установлены игры"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:44
 msgid "Traditional Chinese"
 msgstr ""
 
-#: minigalaxy/constants.py:26 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:26 minigalaxy/constants.py:45
 msgid "Turkish"
 msgstr "Турецкий"
+
+#: minigalaxy/constants.py:46
+msgid "Ukrainian"
+msgstr ""
 
 #: data/ui/gametile.ui:66
 #, fuzzy

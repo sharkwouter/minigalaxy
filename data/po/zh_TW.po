@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 17:36+0200\n"
+"POT-Creation-Date: 2021-09-30 10:58+0200\n"
 "PO-Revision-Date: 2020-11-15 07:53+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
@@ -123,11 +123,11 @@ msgstr "擷取收藏庫失敗"
 msgid "Failed to start {}:"
 msgstr "啟動 {} 失敗："
 
-#: minigalaxy/constants.py:13
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "Finnish"
 msgstr "芬蘭文"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
 msgid "French"
 msgstr "法文"
 
@@ -135,7 +135,7 @@ msgstr "法文"
 msgid "Genre"
 msgstr ""
 
-#: minigalaxy/constants.py:15 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:15 minigalaxy/constants.py:35
 msgid "German"
 msgstr "德文"
 
@@ -223,12 +223,12 @@ msgstr "在 {} 找不到可執行檔"
 msgid "Norwegian"
 msgstr "挪威文"
 
-#: minigalaxy/constants.py:35
+#: minigalaxy/constants.py:36
 #, fuzzy
 msgid "Norwegian Bokmål"
 msgstr "挪威文"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:37
 #, fuzzy
 msgid "Norwegian Nynorsk"
 msgstr "挪威文"
@@ -249,11 +249,11 @@ msgstr "開啟檔案"
 msgid "Please check your internet connection"
 msgstr "請檢查您的網際網路連線"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
 msgid "Polish"
 msgstr "波蘭文"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
 msgid "Portuguese"
 msgstr "葡萄牙文"
 
@@ -291,7 +291,7 @@ msgstr "重新整理遊戲清單"
 msgid "Regedit"
 msgstr ""
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:40
 msgid "Russian"
 msgstr "俄文"
 
@@ -325,11 +325,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "僅顯示已安裝的遊戲"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:41
 msgid "Simplified Chinese"
 msgstr ""
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Spanish"
 msgstr "西班牙文"
 
@@ -349,7 +349,7 @@ msgstr "商店頁面"
 msgid "Support"
 msgstr "支援"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:43
 msgid "Swedish"
 msgstr "瑞典文"
 
@@ -385,13 +385,17 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "遊戲會安裝在"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:44
 msgid "Traditional Chinese"
 msgstr ""
 
-#: minigalaxy/constants.py:26 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:26 minigalaxy/constants.py:45
 msgid "Turkish"
 msgstr "土耳其文"
+
+#: minigalaxy/constants.py:46
+msgid "Ukrainian"
+msgstr ""
 
 #: data/ui/gametile.ui:66
 #, fuzzy

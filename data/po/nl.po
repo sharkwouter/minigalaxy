@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-29 17:36+0200\n"
-"PO-Revision-Date: 2021-09-30 10:36+0200\n"
+"POT-Creation-Date: 2021-09-30 10:58+0200\n"
+"PO-Revision-Date: 2021-09-30 11:00+0200\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -124,11 +124,11 @@ msgstr "De lijst me games kon niet opgehaald worden"
 msgid "Failed to start {}:"
 msgstr "Kon {} niet starten:"
 
-#: minigalaxy/constants.py:13
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "Finnish"
 msgstr "Fins"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
 msgid "French"
 msgstr "Frans"
 
@@ -136,7 +136,7 @@ msgstr "Frans"
 msgid "Genre"
 msgstr "Genre"
 
-#: minigalaxy/constants.py:15 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:15 minigalaxy/constants.py:35
 msgid "German"
 msgstr "Duits"
 
@@ -224,11 +224,11 @@ msgstr "Geen programma gevonden in {}"
 msgid "Norwegian"
 msgstr "Noors"
 
-#: minigalaxy/constants.py:35
+#: minigalaxy/constants.py:36
 msgid "Norwegian Bokmål"
 msgstr "Noors (Bokmål)"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:37
 msgid "Norwegian Nynorsk"
 msgstr "Noors (Nynorsk)"
 
@@ -248,11 +248,11 @@ msgstr "Bestanden openen"
 msgid "Please check your internet connection"
 msgstr "Controleer je internetverbinding"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
 msgid "Polish"
 msgstr "Pools"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
 msgid "Portuguese"
 msgstr "Portugees"
 
@@ -290,7 +290,7 @@ msgstr "Haal gamelijst opnieuw op"
 msgid "Regedit"
 msgstr "Regedit"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:40
 msgid "Russian"
 msgstr "Russisch"
 
@@ -322,11 +322,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Laat alleen geïnstalleerde games zien"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:41
 msgid "Simplified Chinese"
 msgstr "Vereenvoudigd Chinees"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Spanish"
 msgstr "Spaans"
 
@@ -344,7 +344,7 @@ msgstr "Winkelpagina"
 msgid "Support"
 msgstr "Ondersteuning"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:43
 msgid "Swedish"
 msgstr "Zweeds"
 
@@ -379,13 +379,17 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Dit is waar games geinstalleerd worden"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:44
 msgid "Traditional Chinese"
 msgstr "Traditioneel Chinees"
 
-#: minigalaxy/constants.py:26 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:26 minigalaxy/constants.py:45
 msgid "Turkish"
 msgstr "Turks"
+
+#: minigalaxy/constants.py:46
+msgid "Ukrainian"
+msgstr "Oekraïens"
 
 #: data/ui/gametile.ui:66
 msgid "Uninstall"
