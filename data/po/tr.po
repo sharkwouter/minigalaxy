@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-29 17:36+0200\n"
-"PO-Revision-Date: 2021-09-30 11:05+0300\n"
+"PO-Revision-Date: 2021-09-30 11:22+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
@@ -88,7 +88,7 @@ msgstr "Destek sayfası açılamadı"
 #: data/ui/preferences.ui:288
 msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
-msgstr "Menü kısayolları oluştur:"
+msgstr "Menü kısayolları oluştur: "
 
 #: data/ui/gametile.ui:36
 msgid "DLC"
@@ -202,7 +202,7 @@ msgstr "Korece"
 #: data/ui/preferences.ui:68
 msgctxt "language"
 msgid "Language: "
-msgstr "Dil:"
+msgstr "Dil:  "
 
 #: minigalaxy/ui/login.py:20
 msgid "Login"
@@ -395,7 +395,7 @@ msgstr "Güncelle"
 #: data/ui/preferences.ui:198
 msgctxt "use_dark_theme"
 msgid "Use dark theme: "
-msgstr "Koyu tema kullan:"
+msgstr "Koyu tema kullan: "
 
 #: data/ui/properties.ui:166
 msgid "Variable flags:"
