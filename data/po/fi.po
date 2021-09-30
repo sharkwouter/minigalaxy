@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-30 11:20+0200\n"
-"PO-Revision-Date: 2021-09-04 15:10+0300\n"
+"PO-Revision-Date: 2021-09-30 12:59+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 2.4.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Bookmarks: 3,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
@@ -37,11 +37,11 @@ msgstr "Tietoja"
 
 #: data/ui/properties.ui:128
 msgid "Added at the end of the command used to launch the game"
-msgstr ""
+msgstr "Lisätään pelin käynnistämiseen käytettävän komennon loppuun"
 
 #: data/ui/properties.ui:140
 msgid "Added in front of the command used to launch the game"
-msgstr ""
+msgstr "Lisätään pelin käynnistämiseen käytettävän komennon alkuun"
 
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
@@ -74,7 +74,6 @@ msgid "Chinese"
 msgstr "Kiina"
 
 #: data/ui/properties.ui:179
-#, fuzzy
 msgid "Command flags:"
 msgstr "Komentoparametrit:"
 
@@ -90,7 +89,7 @@ msgstr "Tukisivua ei voitu avata"
 #: data/ui/preferences.ui:288
 msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
-msgstr ""
+msgstr "Luo valikon pikakuvakkeet: "
 
 #: data/ui/gametile.ui:36
 msgid "DLC"
@@ -122,7 +121,7 @@ msgstr "Kirjaston noutaminen epäonnistui"
 
 #: minigalaxy/launcher.py:36 minigalaxy/ui/gametile.py:122
 msgid "Failed to start {}:"
-msgstr "Käynnistys epäonnistui {}:"
+msgstr "Kohteen {} käynnistäminen epäonnistui:"
 
 #: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "Finnish"
@@ -208,7 +207,7 @@ msgstr "Kieli: "
 
 #: minigalaxy/ui/login.py:20
 msgid "Login"
-msgstr "Sisäänkirjautuminen"
+msgstr "Kirjaudu sisään"
 
 #. Logs the users gog account out and returns to login page
 #: data/ui/application.ui:17
@@ -390,7 +389,7 @@ msgstr "Turkki"
 
 #: minigalaxy/constants.py:46
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukraina"
 
 #: data/ui/gametile.ui:66
 msgid "Uninstall"
@@ -407,7 +406,6 @@ msgid "Use dark theme: "
 msgstr "Käytä tummaa teemaa: "
 
 #: data/ui/properties.ui:166
-#, fuzzy
 msgid "Variable flags:"
 msgstr "Muuttujat:"
 
@@ -440,7 +438,7 @@ msgstr "Näytetäänkö piilotetut pelit kirjastossa vaiko ei"
 #: data/ui/preferences.ui:285
 msgctxt "create_menu_shortcuts_tooltip"
 msgid "Whether shortcuts are created for newly installed games or not"
-msgstr ""
+msgstr "Luodaanko uusille peleille pikakuvakkeet vaiko ei"
 
 #: minigalaxy/installer.py:172
 msgid "Wine extraction failed."
