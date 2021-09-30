@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-29 17:36+0200\n"
-"PO-Revision-Date: 2020-11-14 16:33+0300\n"
+"PO-Revision-Date: 2021-09-30 11:05+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. A short description of what Minigalaxy is
@@ -36,11 +36,11 @@ msgstr "Hakkında"
 
 #: data/ui/properties.ui:128
 msgid "Added at the end of the command used to launch the game"
-msgstr ""
+msgstr "Oyun çalıştırılırken kullanılacak olan komutun sonuna eklendi"
 
 #: data/ui/properties.ui:140
 msgid "Added in front of the command used to launch the game"
-msgstr ""
+msgstr "Oyun çalıştırılırken kullanılacak olan komutun başına eklendi"
 
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
@@ -48,7 +48,7 @@ msgstr "{} indirmesini iptal etmek istediğine emin misin?"
 
 #: minigalaxy/ui/window.py:94
 msgid "Are you sure you want to log out of GOG?"
-msgstr ""
+msgstr "GOG üzerinden çıkış yapmak istediğinize emin misiniz?"
 
 #: minigalaxy/ui/gametile.py:145
 #, python-format
@@ -60,7 +60,6 @@ msgid "Brazilian Portuguese"
 msgstr "Brezilya Portekizçesi"
 
 #: data/ui/properties.ui:265
-#, fuzzy
 msgid "Cancel"
 msgstr "İptal"
 
@@ -75,12 +74,11 @@ msgstr "Çince"
 
 #: data/ui/properties.ui:179
 msgid "Command flags:"
-msgstr ""
+msgstr "Komut bayrakları:"
 
 #: minigalaxy/ui/properties.py:103
-#, fuzzy
 msgid "Couldn't open store page"
-msgstr "Destek sayfası açılamadı"
+msgstr "Mağaza sayfası açılamadı"
 
 #: minigalaxy/ui/properties.py:93
 msgid "Couldn't open support page"
@@ -90,7 +88,7 @@ msgstr "Destek sayfası açılamadı"
 #: data/ui/preferences.ui:288
 msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
-msgstr ""
+msgstr "Menü kısayolları oluştur:"
 
 #: data/ui/gametile.ui:36
 msgid "DLC"
@@ -134,7 +132,7 @@ msgstr "Fransızca"
 
 #: minigalaxy/ui/properties.py:137
 msgid "Genre"
-msgstr ""
+msgstr "Genre"
 
 #: minigalaxy/constants.py:15 minigalaxy/constants.py:34
 msgid "German"
@@ -148,7 +146,7 @@ msgstr "Github sayfası"
 
 #: data/ui/properties.ui:104
 msgid "Hide game:"
-msgstr ""
+msgstr "Oyunu gizle:"
 
 #: minigalaxy/constants.py:16
 msgid "Hungarian"
@@ -156,11 +154,11 @@ msgstr "Macarca"
 
 #: minigalaxy/installer.py:147
 msgid "Innoextract extraction failed."
-msgstr ""
+msgstr "Innoextract dışa aktarım başarısız."
 
 #: minigalaxy/installer.py:158
 msgid "Innoextract not installed."
-msgstr ""
+msgstr "Innoextract yüklü değil."
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:118
@@ -204,7 +202,7 @@ msgstr "Korece"
 #: data/ui/preferences.ui:68
 msgctxt "language"
 msgid "Language: "
-msgstr ""
+msgstr "Dil:"
 
 #: minigalaxy/ui/login.py:20
 msgid "Login"
@@ -225,22 +223,20 @@ msgid "Norwegian"
 msgstr "Norveçce"
 
 #: minigalaxy/constants.py:35
-#, fuzzy
 msgid "Norwegian Bokmål"
 msgstr "Norveçce"
 
 #: minigalaxy/constants.py:36
-#, fuzzy
 msgid "Norwegian Nynorsk"
 msgstr "Norveçce"
 
 #: minigalaxy/installer.py:97
 msgid "Not enough space to extract game. Required: {} Available: {}"
-msgstr ""
+msgstr "Oyunu dışarı çıkartmak için yeterli alan yok. Gerekli: {} Mevcut {}"
 
 #: data/ui/properties.ui:279
 msgid "OK"
-msgstr ""
+msgstr "Tamam"
 
 #: data/ui/properties.ui:215
 msgid "Open files"
@@ -276,11 +272,11 @@ msgstr "Tercih edilen dil: "
 
 #: data/ui/gametile.ui:81
 msgid "Properties"
-msgstr ""
+msgstr "Seçenekler"
 
 #: minigalaxy/ui/properties.py:33
 msgid "Properties of {}"
-msgstr ""
+msgstr "{} Seçenekleri"
 
 #. Tooltip for refresh button
 #: data/ui/application.ui:89
@@ -290,7 +286,7 @@ msgstr "Oyun listesini güncelle"
 
 #: data/ui/properties.ui:202
 msgid "Regedit"
-msgstr ""
+msgstr "Regedit"
 
 #: minigalaxy/constants.py:23 minigalaxy/constants.py:39
 msgid "Russian"
@@ -303,7 +299,6 @@ msgid "Save"
 msgstr "Kaydet"
 
 #: data/ui/properties.ui:153
-#, fuzzy
 msgid "Show FPS in game:"
 msgstr "Oyunlarda FPS göster:"
 
@@ -315,10 +310,9 @@ msgstr "Windows oyunlarını göster: "
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:224
-#, fuzzy
 msgctxt "show_hidden_games"
 msgid "Show hidden games: "
-msgstr "Windows oyunlarını göster: "
+msgstr "Gizli oyunları göster: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:105
@@ -328,7 +322,7 @@ msgstr "Sadece yüklü oyunları göster"
 
 #: minigalaxy/constants.py:40
 msgid "Simplified Chinese"
-msgstr ""
+msgstr "Basitleştirilmiş Çince"
 
 #: minigalaxy/constants.py:24 minigalaxy/constants.py:41
 msgid "Spanish"
@@ -341,12 +335,10 @@ msgid "Stay logged in:"
 msgstr "Çevrimci tut:"
 
 #: data/ui/properties.ui:76
-#, fuzzy
 msgid "Store"
 msgstr "Market Sayfası"
 
 #: data/ui/properties.ui:62
-#, fuzzy
 msgid "Support"
 msgstr "Destek"
 
@@ -356,7 +348,7 @@ msgstr "İsveçce"
 
 #: minigalaxy/constants.py:30
 msgid "System default"
-msgstr ""
+msgstr "Sistem varsayılanları"
 
 #: minigalaxy/installer.py:128
 msgid "The installation of {} failed. Please try again."
@@ -368,10 +360,9 @@ msgid "The preferred language for downloading games in"
 msgstr "İndirilen oyunlar için tercih edilen dil"
 
 #: data/ui/preferences.ui:65
-#, fuzzy
 msgctxt "language_tooltip"
 msgid "The preferred language on Minigalaxy start"
-msgstr "İndirilen oyunlar için tercih edilen dil"
+msgstr "Minigalaxy çalıştırıldığında tercih edilecek dil"
 
 #: minigalaxy/ui/gametile.py:208
 msgid ""
@@ -386,19 +377,17 @@ msgstr "Burası oyunların indireleceği yerdir"
 
 #: minigalaxy/constants.py:43
 msgid "Traditional Chinese"
-msgstr ""
+msgstr "Geleneksel Çince"
 
 #: minigalaxy/constants.py:26 minigalaxy/constants.py:44
 msgid "Turkish"
 msgstr "Türkçe"
 
 #: data/ui/gametile.ui:66
-#, fuzzy
 msgid "Uninstall"
-msgstr "Sil"
+msgstr "Kaldır"
 
 #: data/ui/gametile.ui:51
-#, fuzzy
 msgid "Update"
 msgstr "Güncelle"
 
@@ -406,15 +395,15 @@ msgstr "Güncelle"
 #: data/ui/preferences.ui:198
 msgctxt "use_dark_theme"
 msgid "Use dark theme: "
-msgstr ""
+msgstr "Koyu tema kullan:"
 
 #: data/ui/properties.ui:166
 msgid "Variable flags:"
-msgstr ""
+msgstr "Değişken bayrakları:"
 
 #: minigalaxy/ui/properties.py:139
 msgid "Version"
-msgstr ""
+msgstr "Versiyon"
 
 #: data/ui/preferences.ui:168
 msgctxt "stay_logged_in_tooltip"
@@ -424,7 +413,7 @@ msgstr "Etkin değilken her Minigalaxy açıldığında giriş yapılması isten
 #: data/ui/preferences.ui:195
 msgctxt "use_dark_theme_tooltip"
 msgid "Whether Minigalaxy should use dark theme or not"
-msgstr ""
+msgstr "Minigalaxy'nin koyu tema kullanıp kullanmayacağı"
 
 #: data/ui/preferences.ui:247
 msgctxt "show_windows_games_tooltip"
@@ -432,27 +421,26 @@ msgid "Whether Windows games are shown in the library or not"
 msgstr "Windows oyunları kütüphanede gözükmeli mi"
 
 #: data/ui/preferences.ui:221
-#, fuzzy
 msgctxt "show_hidden_games_tooltip"
 msgid "Whether hidden games are shown in the library or not"
-msgstr "Windows oyunları kütüphanede gözükmeli mi"
+msgstr "Gizlenmiş oyunların kütüphanede gözükmeli mi"
 
 #: data/ui/preferences.ui:285
 msgctxt "create_menu_shortcuts_tooltip"
 msgid "Whether shortcuts are created for newly installed games or not"
-msgstr ""
+msgstr "Yeni yüklenen oyunların kısa yol oluşturup oluşturmayacağı"
 
 #: minigalaxy/installer.py:172
 msgid "Wine extraction failed."
-msgstr ""
+msgstr "Wine dışarı aktarım başarısız."
 
 #: minigalaxy/ui/preferences.py:161
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
-msgstr ""
+msgstr "Wine bulunamadı. Windows oyunlarının gösterimi etkinleştirilemez."
 
 #: data/ui/properties.ui:189
 msgid "Winecfg"
-msgstr ""
+msgstr "Winecfg"
 
 #: minigalaxy/ui/gametile.py:450
 msgid "download"
@@ -513,12 +501,8 @@ msgstr "{} bozuk. Lütfen yeniden indirin."
 #~ msgstr "Ayarlar"
 
 #~ msgctxt "show_fps_tooltip"
-#~ msgid ""
-#~ "Show the framerate while playing games. Only works with AMD and Nvidia "
-#~ "graphics cards."
-#~ msgstr ""
-#~ "Oyun oynarken kare hızını göster. Sadece AMD ve Nvidia ekran kartlarında "
-#~ "çalışır."
+#~ msgid "Show the framerate while playing games. Only works with AMD and Nvidia graphics cards."
+#~ msgstr "Oyun oynarken kare hızını göster. Sadece AMD ve Nvidia ekran kartlarında çalışır."
 
 #~ msgid ""
 #~ "<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
