@@ -206,11 +206,15 @@ class Api:
 
     @staticmethod
     def can_connect() -> bool:
-        url = "https://embed.gog.com"
-        try:
-            SESSION.get(url, timeout=5)
-        except requests.exceptions.ConnectionError:
-            return False
+        urls = [
+            "https://embed.gog.com",
+            "https://auth.gog.com",
+        ]
+        for url in urls:
+            try:
+                SESSION.get(url, timeout=5)
+            except requests.exceptions.ConnectionError:
+                return False
         return True
 
     # Make a request with the active token

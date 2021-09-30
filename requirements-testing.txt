@@ -1,2 +1,3 @@
 requests
 flake8
+simplejson
