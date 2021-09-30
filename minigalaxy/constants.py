@@ -30,6 +30,7 @@ SUPPORTED_LOCALES = [
     ["", _("System default")],
     ["nl", _("Dutch")],
     ["en_US", _("English")],
+    ["fi", _("Finnish")],
     ["fr", _("French")],
     ["de", _("German")],
     ["nb_NO", _("Norwegian Bokmål")],
@@ -42,6 +43,7 @@ SUPPORTED_LOCALES = [
     ["sv_SE", _("Swedish")],
     ["zh_TW", _("Traditional Chinese")],
     ["tr", _("Turkish")],
+    ["uk", _("Ukrainian")],
 ]
 
 # The default values for new configuration files
