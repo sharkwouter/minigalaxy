@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-30 10:58+0200\n"
+"POT-Creation-Date: 2021-09-30 11:20+0200\n"
 "PO-Revision-Date: 2020-11-14 12:33+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -45,7 +45,7 @@ msgstr ""
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Bist du dir sicher, dass du den Download von {} abbrechen möchtest?"
 
-#: minigalaxy/ui/window.py:94
+#: minigalaxy/ui/window.py:100
 msgid "Are you sure you want to log out of GOG?"
 msgstr ""
 
