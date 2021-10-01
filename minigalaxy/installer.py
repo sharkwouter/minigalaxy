@@ -3,6 +3,8 @@ import shutil
 import subprocess
 import hashlib
 import textwrap
+import glob
+import re
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
@@ -54,6 +56,8 @@ def install_game(game, installer):  # noqa: C901
         error_message = move_and_overwrite(game, tmp_dir)
     if not error_message:
         error_message = copy_thumbnail(game)
+    if not error_message:
+        error_message = extract_game_icon(game)
     if not error_message:
         error_message = create_applications_file(game)
     if not error_message:
@@ -200,7 +204,7 @@ def copy_thumbnail(game):
             shutil.copyfile(os.path.join(THUMBNAIL_DIR, "{}.jpg".format(game.id)),
                             new_thumbnail_path)
         except Exception as e:
-            error_message = e
+            error_message = str(e)
     return error_message
 
 
@@ -209,6 +213,73 @@ def get_exec_line(game):
     for i in range(len(exe_cmd_list)):
         exe_cmd_list[i] = exe_cmd_list[i].replace(" ", "\\ ")
     return " ".join(exe_cmd_list)
+
+
+def extract_game_icon_pillow(win_icon_path, game_icon_path):
+    error_message = ""
+    # Extract game icon
+    try:
+        from PIL import Image
+        im = Image.open(win_icon_path)
+        im.save(game_icon_path)
+    except Exception as e:
+        error_message = str(e)
+    return error_message
+
+
+def extract_game_icon_magick(win_icon_path, game_icon_path):
+    error_message = ""
+    # Extract game icon
+    win_icon_frame = None
+
+    # Identify 256x256 frame    
+    cmd = ['identify', win_icon_path]
+    stdout, stderr, exitcode = _exe_cmd(cmd)
+    if exitcode not in [0]:
+        error_message = stderr
+    else:
+        for line in stdout.split('\n'):
+            if "256x256" in line:
+                m = re.search("\[\d+\]", line)
+                win_icon_frame = win_icon_path + m.group(0)
+
+    # Extract the icon
+    if win_icon_frame is None:
+        error_message = f"Unable to find 256x256 icon in {win_icon_path}"
+    else:
+        cmd = ['convert', win_icon_frame, game_icon_path]
+        stdout, stderr, exitcode = _exe_cmd(cmd)
+        if exitcode not in [0]:
+            error_message = stderr
+
+    return error_message
+
+
+def extract_game_icon(game):
+    error_message = ""
+    game_icon_dir = os.path.join(game.install_dir, 'support')
+    game_icon_path = os.path.join(game_icon_dir, 'icon.png')
+
+    if os.path.exists(game_icon_path):
+        return error_message
+
+    # Extract game icon
+    try:
+        if not os.path.exists(game_icon_dir):
+            os.makedirs(game_icon_dir)
+        win_icon_path = glob.glob(os.path.join(game.install_dir, 'goggame-*.ico'))[0]
+    except Exception as e:
+        error_message = str(e)
+        return error_message
+
+    error_message = extract_game_icon_pillow(win_icon_path, game_icon_path)
+    if error_message:
+        print("Unable to extract game icon using python pillow: "+error_message)
+        error_message = extract_game_icon_magick(win_icon_path, game_icon_path)
+        if error_message:
+            print("Unable to extract game icon using image magick: "+error_message)
+
+    return ""
 
 
 def create_applications_file(game):
