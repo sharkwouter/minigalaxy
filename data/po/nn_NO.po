@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-09-30 11:20+0200\n"
-"PO-Revision-Date: 2020-11-16 08:02+0100\n"
+"PO-Revision-Date: 2021-10-04 11:33+0200\n"
 "Last-Translator: Jan Kjetil Myklebust\n"
 "Language-Team: \n"
 "Language: nb_NO\n"
@@ -36,11 +36,11 @@ msgstr "Om"
 
 #: data/ui/properties.ui:128
 msgid "Added at the end of the command used to launch the game"
-msgstr ""
+msgstr "Lagt til bakom kommandoen som er brukt for å starte spelet"
 
 #: data/ui/properties.ui:140
 msgid "Added in front of the command used to launch the game"
-msgstr ""
+msgstr "Lagt til framføre kommandoen som er brukt for å starte spelet"
 
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
@@ -48,7 +48,7 @@ msgstr "Er du sikker på at du vil avbryte nedlastinga av {}?"
 
 #: minigalaxy/ui/window.py:100
 msgid "Are you sure you want to log out of GOG?"
-msgstr ""
+msgstr "Er du sikker på at du vil logge ut av GOG?"
 
 #: minigalaxy/ui/gametile.py:145
 #, python-format
@@ -60,7 +60,6 @@ msgid "Brazilian Portuguese"
 msgstr "Brasiliansk Portugisisk"
 
 #: data/ui/properties.ui:265
-#, fuzzy
 msgid "Cancel"
 msgstr "Avbryt"
 
@@ -75,12 +74,11 @@ msgstr "Kinesisk"
 
 #: data/ui/properties.ui:179
 msgid "Command flags:"
-msgstr ""
+msgstr "Kommandolinjeflagg:"
 
 #: minigalaxy/ui/properties.py:103
-#, fuzzy
 msgid "Couldn't open store page"
-msgstr "Kunne ikkje opne hjelpesida"
+msgstr "Kunne ikkje opne produktsida"
 
 #: minigalaxy/ui/properties.py:93
 msgid "Couldn't open support page"
@@ -90,7 +88,7 @@ msgstr "Kunne ikkje opne hjelpesida"
 #: data/ui/preferences.ui:288
 msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
-msgstr ""
+msgstr "Opprett menysnarvegar: "
 
 #: data/ui/gametile.ui:36
 msgid "DLC"
@@ -134,7 +132,7 @@ msgstr "Fransk"
 
 #: minigalaxy/ui/properties.py:137
 msgid "Genre"
-msgstr ""
+msgstr "Sjanger"
 
 #: minigalaxy/constants.py:15 minigalaxy/constants.py:35
 msgid "German"
@@ -148,7 +146,7 @@ msgstr "Github-side"
 
 #: data/ui/properties.ui:104
 msgid "Hide game:"
-msgstr ""
+msgstr "Skjul spel:"
 
 #: minigalaxy/constants.py:16
 msgid "Hungarian"
@@ -156,11 +154,11 @@ msgstr "Ungarsk"
 
 #: minigalaxy/installer.py:147
 msgid "Innoextract extraction failed."
-msgstr ""
+msgstr "Innoextract utpakking feila."
 
 #: minigalaxy/installer.py:158
 msgid "Innoextract not installed."
-msgstr ""
+msgstr "Innoextract er ikkje installert."
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:118
@@ -204,7 +202,7 @@ msgstr "Koreansk"
 #: data/ui/preferences.ui:68
 msgctxt "language"
 msgid "Language: "
-msgstr ""
+msgstr "Språk: "
 
 #: minigalaxy/ui/login.py:20
 msgid "Login"
@@ -225,22 +223,20 @@ msgid "Norwegian"
 msgstr "Norsk"
 
 #: minigalaxy/constants.py:36
-#, fuzzy
 msgid "Norwegian Bokmål"
-msgstr "Norsk"
+msgstr "Norsk Bokmål"
 
 #: minigalaxy/constants.py:37
-#, fuzzy
 msgid "Norwegian Nynorsk"
-msgstr "Norsk"
+msgstr "Norsk Nynorsk"
 
 #: minigalaxy/installer.py:97
 msgid "Not enough space to extract game. Required: {} Available: {}"
-msgstr ""
+msgstr "Ikkje nok plass til å pakke ut spelet. Trengs: {} Tilgjengeleg: {}"
 
 #: data/ui/properties.ui:279
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: data/ui/properties.ui:215
 msgid "Open files"
@@ -276,11 +272,11 @@ msgstr "Foretrukke språk: "
 
 #: data/ui/gametile.ui:81
 msgid "Properties"
-msgstr ""
+msgstr "Eigenskapar"
 
 #: minigalaxy/ui/properties.py:33
 msgid "Properties of {}"
-msgstr ""
+msgstr "Eigenskapar for {}"
 
 #. Tooltip for refresh button
 #: data/ui/application.ui:89
@@ -290,7 +286,7 @@ msgstr "Oppdater spelelista"
 
 #: data/ui/properties.ui:202
 msgid "Regedit"
-msgstr ""
+msgstr "Regedit"
 
 #: minigalaxy/constants.py:23 minigalaxy/constants.py:40
 msgid "Russian"
@@ -303,22 +299,20 @@ msgid "Save"
 msgstr "Lagre"
 
 #: data/ui/properties.ui:153
-#, fuzzy
 msgid "Show FPS in game:"
-msgstr "Vis FPS i spel:"
+msgstr "Vis FPS i spelet:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:250
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Vis spel for Windows:"
+msgstr "Vis spel for Windows: "
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:224
-#, fuzzy
 msgctxt "show_hidden_games"
 msgid "Show hidden games: "
-msgstr "Vis spel for Windows:"
+msgstr "Vis spel for Windows: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:105
@@ -328,7 +322,7 @@ msgstr "Vis berre installerte spel"
 
 #: minigalaxy/constants.py:41
 msgid "Simplified Chinese"
-msgstr ""
+msgstr "Foreinkla Kinesisk"
 
 #: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Spanish"
@@ -341,12 +335,10 @@ msgid "Stay logged in:"
 msgstr "Bli verande pålogga:"
 
 #: data/ui/properties.ui:76
-#, fuzzy
 msgid "Store"
 msgstr "Produktside"
 
 #: data/ui/properties.ui:62
-#, fuzzy
 msgid "Support"
 msgstr "Støtte"
 
@@ -356,7 +348,7 @@ msgstr "Svensk"
 
 #: minigalaxy/constants.py:30
 msgid "System default"
-msgstr ""
+msgstr "System standardverdi"
 
 #: minigalaxy/installer.py:128
 msgid "The installation of {} failed. Please try again."
@@ -368,10 +360,9 @@ msgid "The preferred language for downloading games in"
 msgstr "Foretrukke språk for nedlasting av spel"
 
 #: data/ui/preferences.ui:65
-#, fuzzy
 msgctxt "language_tooltip"
 msgid "The preferred language on Minigalaxy start"
-msgstr "Foretrukke språk for nedlasting av spel"
+msgstr "Foretrukke språk ved oppstart av Minigalaxy"
 
 #: minigalaxy/ui/gametile.py:208
 msgid ""
@@ -388,7 +379,7 @@ msgstr "Spel vil verte installerte her"
 
 #: minigalaxy/constants.py:44
 msgid "Traditional Chinese"
-msgstr ""
+msgstr "Tradisjonell kinesisk"
 
 #: minigalaxy/constants.py:26 minigalaxy/constants.py:45
 msgid "Turkish"
@@ -396,15 +387,13 @@ msgstr "Tyrkisk"
 
 #: minigalaxy/constants.py:46
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrainsk"
 
 #: data/ui/gametile.ui:66
-#, fuzzy
 msgid "Uninstall"
 msgstr "Avinstaller"
 
 #: data/ui/gametile.ui:51
-#, fuzzy
 msgid "Update"
 msgstr "Oppdater"
 
@@ -412,26 +401,25 @@ msgstr "Oppdater"
 #: data/ui/preferences.ui:198
 msgctxt "use_dark_theme"
 msgid "Use dark theme: "
-msgstr ""
+msgstr "Bruk mørkt tema: "
 
 #: data/ui/properties.ui:166
 msgid "Variable flags:"
-msgstr ""
+msgstr "Variabelflagg:"
 
 #: minigalaxy/ui/properties.py:139
 msgid "Version"
-msgstr ""
+msgstr "Versjon"
 
 #: data/ui/preferences.ui:168
 msgctxt "stay_logged_in_tooltip"
 msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
-msgstr ""
-"Viss deaktivert vil du bli spurd om å logge på kvar gong Minigalaxy starter"
+msgstr "Viss deaktivert vil du bli spurd om å logge på kvar gong Minigalaxy starter"
 
 #: data/ui/preferences.ui:195
 msgctxt "use_dark_theme_tooltip"
 msgid "Whether Minigalaxy should use dark theme or not"
-msgstr ""
+msgstr "Om Minigalaxy skal nytte mørtk tema eller ikkje"
 
 #: data/ui/preferences.ui:247
 msgctxt "show_windows_games_tooltip"
@@ -439,27 +427,26 @@ msgid "Whether Windows games are shown in the library or not"
 msgstr "Om spel for Windows vert vist i biblioteket eller ikkje"
 
 #: data/ui/preferences.ui:221
-#, fuzzy
 msgctxt "show_hidden_games_tooltip"
 msgid "Whether hidden games are shown in the library or not"
-msgstr "Om spel for Windows vert vist i biblioteket eller ikkje"
+msgstr "Om skjulte spel vert vist i biblioteket eller ikkje"
 
 #: data/ui/preferences.ui:285
 msgctxt "create_menu_shortcuts_tooltip"
 msgid "Whether shortcuts are created for newly installed games or not"
-msgstr ""
+msgstr "Om snarvegar blir oppretta for nyinstallerte spel eller ikkje"
 
 #: minigalaxy/installer.py:172
 msgid "Wine extraction failed."
-msgstr ""
+msgstr "Wine utpakking feila."
 
 #: minigalaxy/ui/preferences.py:161
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
-msgstr ""
+msgstr "Fann ikkje Wine. Kan ikkje skru på vising av Windows-spel."
 
 #: data/ui/properties.ui:189
 msgid "Winecfg"
-msgstr ""
+msgstr "Winecfg"
 
 #: minigalaxy/ui/gametile.py:450
 msgid "download"
@@ -520,12 +507,8 @@ msgstr "{} var korrumpert. Ver venleg å last den ned på ny."
 #~ msgstr "Innstillingar"
 
 #~ msgctxt "show_fps_tooltip"
-#~ msgid ""
-#~ "Show the framerate while playing games. Only works with AMD and Nvidia "
-#~ "graphics cards."
-#~ msgstr ""
-#~ "Vis framerate medan du speler spel. Fungerar berre med AMD og Nvidia "
-#~ "grafikkort."
+#~ msgid "Show the framerate while playing games. Only works with AMD and Nvidia graphics cards."
+#~ msgstr "Vis framerate medan du speler spel. Fungerar berre med AMD og Nvidia grafikkort."
 
 #~ msgid ""
 #~ "<a href=\"https://github.com/ArturWroblewski\">Artur Wróblewski</a>\n"
