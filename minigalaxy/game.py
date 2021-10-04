@@ -17,14 +17,21 @@ class Game:
         self.image_url = image_url
         self.platform = platform
         self.dlcs = [] if dlcs is None else dlcs
-        self.status_file_name = "{}.json".format(self.get_install_directory_name())
-        self.status_file_path = os.path.join(CONFIG_GAMES_DIR, self.status_file_name)
+        self.status_file_path = self.get_status_file_path()
 
     def get_stripped_name(self):
         return self.__strip_string(self.name)
 
     def get_install_directory_name(self):
         return re.sub('[^A-Za-z0-9 ]+', '', self.name)
+
+    def get_status_file_path(self):
+        if self.install_dir:
+            last_install_dir = os.path.basename(os.path.normpath(self.install_dir))
+        else:
+            last_install_dir = self.get_install_directory_name()
+        status_file_path = os.path.join(CONFIG_GAMES_DIR, "{}.json".format(last_install_dir))
+        return status_file_path
 
     def load_minigalaxy_info_json(self):
         json_dict = {}
@@ -144,9 +151,11 @@ class Game:
         # Compare names with special characters and capital letters removed
         if self.get_stripped_name().lower() == other.get_stripped_name().lower():
             return True
-        if self.install_dir and other.get_stripped_name() in self.__strip_string(self.install_dir):
+        if self.install_dir and \
+                other.get_install_directory_name() == os.path.basename(os.path.normpath(self.install_dir)):
             return True
-        if other.install_dir and self.get_stripped_name() in self.__strip_string(other.install_dir):
+        if other.install_dir and \
+                self.get_install_directory_name() == os.path.basename(os.path.normpath(other.install_dir)):
             return True
         return False
 

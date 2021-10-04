@@ -26,8 +26,29 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
     ["tr", _("Turkish")],
 ]
 
+SUPPORTED_LOCALES = [
+    ["", _("System default")],
+    ["nl", _("Dutch")],
+    ["en_US", _("English")],
+    ["fi", _("Finnish")],
+    ["fr", _("French")],
+    ["de", _("German")],
+    ["nb_NO", _("Norwegian Bokmål")],
+    ["nn_NO", _("Norwegian Nynorsk")],
+    ["pl", _("Polish")],
+    ["pt_BR", _("Portuguese")],
+    ["ru_RU", _("Russian")],
+    ["zh_CN", _("Simplified Chinese")],
+    ["es", _("Spanish")],
+    ["sv_SE", _("Swedish")],
+    ["zh_TW", _("Traditional Chinese")],
+    ["tr", _("Turkish")],
+    ["uk", _("Ukrainian")],
+]
+
 # The default values for new configuration files
 DEFAULT_CONFIGURATION = {
+    "locale": "",
     "lang": "en",
     "install_dir": DEFAULT_INSTALL_DIR,
     "keep_installers": False,
@@ -37,7 +58,8 @@ DEFAULT_CONFIGURATION = {
     "show_hidden_games": False,
     "show_windows_games": False,
     "keep_window_maximized": False,
-    "installed_filter": False
+    "installed_filter": False,
+    "create_applications_file": False
 }
 
 # Game IDs to ignore when received by the API

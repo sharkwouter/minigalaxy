@@ -123,10 +123,8 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
     def test_get_start_script_exe_cmd(self):
-        files = ['thumbnail.jpg', 'docs', 'support', 'game', 'start.sh', 'minigalaxy-dlc.json', 'gameinfo']
-        game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ["/test/install/dir/start.sh"]
-        obs = launcher.get_start_script_exe_cmd(game, files)
+        exp = ["./start.sh"]
+        obs = launcher.get_start_script_exe_cmd()
         self.assertEqual(exp, obs)
 
     @mock.patch('os.getcwd')
@@ -164,9 +162,9 @@ class Test(TestCase):
     @mock.patch('minigalaxy.launcher.check_if_game_start_process_spawned_final_process')
     def test2_check_if_game_started_correctly(self, mock_check_game):
         mock_process = MagicMock()
-        mock_process.communicate.return_value = (b"Output message", b"Error message")
+        mock_process.communicate.return_value = (b"Output message", None)
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = "Error message"
+        exp = "Output message"
         obs = launcher.check_if_game_started_correctly(mock_process, game)
         self.assertEqual(exp, obs)
 

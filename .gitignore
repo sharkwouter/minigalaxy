@@ -9,6 +9,7 @@ dist/
 .eggs/
 data/mo/
 data/po/minigalaxy.pot
+data/po/*.mo
 .project
 .pydevproject
 

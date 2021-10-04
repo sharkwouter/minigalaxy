@@ -145,6 +145,8 @@ class __DownloadManger:
                         progress = int(downloaded_size / file_size * 100)
                         download.set_progress(progress)
                 save_file.close()
+        else:
+            download.set_progress(100)
         return result
 
     def __is_same_download_as_before(self, download):
