@@ -13,6 +13,11 @@ try:
 except AttributeError:
     print("Couldn't run locale.bindtextdomain. Translations might not work correctly.")
 
+try:
+    locale.textdomain(TRANSLATION_DOMAIN)
+except AttributeError:
+    print("Couldn't run locale.textdomain. Translations might not work correctly.")
+
 gettext.bindtextdomain(TRANSLATION_DOMAIN, LOCALE_DIR)
 gettext.textdomain(TRANSLATION_DOMAIN)
 _ = gettext.gettext
