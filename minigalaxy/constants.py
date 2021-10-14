@@ -2,7 +2,6 @@ import requests
 import platform
 from minigalaxy.translation import _
 from minigalaxy.version import VERSION
-from minigalaxy.paths import DEFAULT_INSTALL_DIR
 
 SUPPORTED_DOWNLOAD_LANGUAGES = [
     ["br", _("Brazilian Portuguese")],
@@ -45,22 +44,6 @@ SUPPORTED_LOCALES = [
     ["tr", _("Turkish")],
     ["uk", _("Ukrainian")],
 ]
-
-# The default values for new configuration files
-DEFAULT_CONFIGURATION = {
-    "locale": "",
-    "lang": "en",
-    "install_dir": DEFAULT_INSTALL_DIR,
-    "keep_installers": False,
-    "stay_logged_in": True,
-    "show_fps": False,
-    "use_dark_theme": False,
-    "show_hidden_games": False,
-    "show_windows_games": False,
-    "keep_window_maximized": False,
-    "installed_filter": False,
-    "create_applications_file": False
-}
 
 # Game IDs to ignore when received by the API
 IGNORE_GAME_IDS = [
