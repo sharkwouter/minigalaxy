@@ -2,8 +2,23 @@ import os
 import threading
 import json
 import time
-from minigalaxy.paths import CONFIG_DIR, CONFIG_FILE_PATH
-from minigalaxy.constants import DEFAULT_CONFIGURATION
+from minigalaxy.paths import CONFIG_DIR, CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
+
+# The default values for new configuration files
+DEFAULT_CONFIGURATION = {
+    "locale": "",
+    "lang": "en",
+    "install_dir": DEFAULT_INSTALL_DIR,
+    "keep_installers": False,
+    "stay_logged_in": True,
+    "show_fps": False,
+    "use_dark_theme": False,
+    "show_hidden_games": False,
+    "show_windows_games": False,
+    "keep_window_maximized": False,
+    "installed_filter": False,
+    "create_applications_file": False
+}
 
 
 # Make sure you never spawn two instances of this class

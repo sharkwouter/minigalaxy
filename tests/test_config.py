@@ -1,7 +1,7 @@
 import sys
 from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch, mock_open
-from minigalaxy.constants import DEFAULT_CONFIGURATION
+from minigalaxy.config import DEFAULT_CONFIGURATION
 JSON_DEFAULT_CONFIGURATION = str(DEFAULT_CONFIGURATION).replace("'", "\"").replace("False", "false").replace("True", "true")
 
 m_thread = MagicMock()
@@ -29,6 +29,7 @@ class TestConfig(TestCase):
         mock_isdir.return_value = True
         with patch("builtins.open", mock_open()) as mock_config:
             from minigalaxy.config import Config
+            Config.first_run = False
             Config.get("")
         mock_c = mock_config.mock_calls
         write_string = ""

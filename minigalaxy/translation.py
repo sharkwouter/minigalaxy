@@ -1,5 +1,6 @@
 import gettext
 import locale
+from minigalaxy.config import Config
 from minigalaxy.paths import LOCALE_DIR
 
 TRANSLATION_DOMAIN = "minigalaxy"
@@ -20,5 +21,11 @@ except AttributeError:
 
 gettext.bindtextdomain(TRANSLATION_DOMAIN, LOCALE_DIR)
 gettext.textdomain(TRANSLATION_DOMAIN)
-_ = gettext.gettext
-gettext.install(TRANSLATION_DOMAIN, LOCALE_DIR)
+
+current_locale = Config.get("locale")
+default_locale = locale.getdefaultlocale()[0]
+if current_locale == '':
+    lang = gettext.translation(TRANSLATION_DOMAIN, LOCALE_DIR, languages=[default_locale], fallback=True)
+else:
+    lang = gettext.translation(TRANSLATION_DOMAIN, LOCALE_DIR, languages=[current_locale], fallback=True)
+_ = lang.gettext
