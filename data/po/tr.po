@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-30 11:20+0200\n"
+"POT-Creation-Date: 2021-10-27 22:44-0400\n"
 "PO-Revision-Date: 2021-09-30 11:22+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
@@ -34,11 +34,11 @@ msgctxt "about"
 msgid "About"
 msgstr "Hakkında"
 
-#: data/ui/properties.ui:128
+#: data/ui/properties.ui:129
 msgid "Added at the end of the command used to launch the game"
 msgstr "Oyun çalıştırılırken kullanılacak olan komutun sonuna eklendi"
 
-#: data/ui/properties.ui:140
+#: data/ui/properties.ui:141
 msgid "Added in front of the command used to launch the game"
 msgstr "Oyun çalıştırılırken kullanılacak olan komutun başına eklendi"
 
@@ -55,11 +55,11 @@ msgstr "GOG üzerinden çıkış yapmak istediğinize emin misiniz?"
 msgid "Are you sure you want to uninstall %s?"
 msgstr "%s silmek istediğine emin misin?"
 
-#: minigalaxy/constants.py:8
+#: minigalaxy/constants.py:7
 msgid "Brazilian Portuguese"
 msgstr "Brezilya Portekizçesi"
 
-#: data/ui/properties.ui:265
+#: data/ui/properties.ui:266
 msgid "Cancel"
 msgstr "İptal"
 
@@ -68,11 +68,11 @@ msgctxt "cancel"
 msgid "Cancel"
 msgstr "İptal"
 
-#: minigalaxy/constants.py:9
+#: minigalaxy/constants.py:8
 msgid "Chinese"
 msgstr "Çince"
 
-#: data/ui/properties.ui:179
+#: data/ui/properties.ui:180
 msgid "Command flags:"
 msgstr "Komut bayrakları:"
 
@@ -94,7 +94,7 @@ msgstr "Menü kısayolları oluştur: "
 msgid "DLC"
 msgstr "DLC"
 
-#: minigalaxy/constants.py:10
+#: minigalaxy/constants.py:9
 msgid "Danish"
 msgstr "Danimarka Dili"
 
@@ -102,13 +102,19 @@ msgstr "Danimarka Dili"
 msgid "Download error"
 msgstr "İndirme hatası"
 
-#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:30
 msgid "Dutch"
 msgstr "Flemenkçe"
 
-#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
 msgid "English"
 msgstr "İngilzce"
+
+#: minigalaxy/ui/preferences.py:102
+msgid ""
+"Failed to change program language. Make sure locale is generated on your "
+"system."
+msgstr ""
 
 #: minigalaxy/ui/gametile.py:298
 msgid "Failed to install {}"
@@ -122,11 +128,11 @@ msgstr "Kütüphane alınamadı"
 msgid "Failed to start {}:"
 msgstr "{} başlatılamadı:"
 
-#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
 msgid "Finnish"
 msgstr "Fince"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "French"
 msgstr "Fransızca"
 
@@ -134,7 +140,7 @@ msgstr "Fransızca"
 msgid "Genre"
 msgstr "Genre"
 
-#: minigalaxy/constants.py:15 minigalaxy/constants.py:35
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
 msgid "German"
 msgstr "Almanca"
 
@@ -144,11 +150,11 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "Github sayfası"
 
-#: data/ui/properties.ui:104
+#: data/ui/properties.ui:105
 msgid "Hide game:"
 msgstr "Oyunu gizle:"
 
-#: minigalaxy/constants.py:16
+#: minigalaxy/constants.py:15
 msgid "Hungarian"
 msgstr "Macarca"
 
@@ -172,11 +178,11 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "Yüklendi"
 
-#: minigalaxy/constants.py:17
+#: minigalaxy/constants.py:16
 msgid "Italian"
 msgstr "İtalyanca"
 
-#: minigalaxy/constants.py:18
+#: minigalaxy/constants.py:17
 msgid "Japanese"
 msgstr "Japonca"
 
@@ -194,7 +200,7 @@ msgctxt "keep_installer"
 msgid "Keep installers: "
 msgstr "Yükleyicileri saklı tut: "
 
-#: minigalaxy/constants.py:19
+#: minigalaxy/constants.py:18
 msgid "Korean"
 msgstr "Korece"
 
@@ -218,15 +224,15 @@ msgstr "Çıkış Yap"
 msgid "No executable was found in {}"
 msgstr "{} burada başlatma dosyası bulunamadı"
 
-#: minigalaxy/constants.py:20
+#: minigalaxy/constants.py:19
 msgid "Norwegian"
 msgstr "Norveçce"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:35
 msgid "Norwegian Bokmål"
 msgstr "Norveçce"
 
-#: minigalaxy/constants.py:37
+#: minigalaxy/constants.py:36
 msgid "Norwegian Nynorsk"
 msgstr "Norveçce"
 
@@ -234,11 +240,11 @@ msgstr "Norveçce"
 msgid "Not enough space to extract game. Required: {} Available: {}"
 msgstr "Oyunu dışarı çıkartmak için yeterli alan yok. Gerekli: {} Mevcut {}"
 
-#: data/ui/properties.ui:279
+#: data/ui/properties.ui:280
 msgid "OK"
 msgstr "Tamam"
 
-#: data/ui/properties.ui:215
+#: data/ui/properties.ui:216
 msgid "Open files"
 msgstr "Dosyaları Aç"
 
@@ -246,11 +252,11 @@ msgstr "Dosyaları Aç"
 msgid "Please check your internet connection"
 msgstr "Lütfen internet bağlantınızı kontrol ediniz"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:37
 msgid "Polish"
 msgstr "Lehçe"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
 msgid "Portuguese"
 msgstr "Portekizce"
 
@@ -284,11 +290,11 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Oyun listesini güncelle"
 
-#: data/ui/properties.ui:202
+#: data/ui/properties.ui:203
 msgid "Regedit"
 msgstr "Regedit"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:40
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
 msgid "Russian"
 msgstr "Rusça"
 
@@ -298,7 +304,7 @@ msgctxt "save"
 msgid "Save"
 msgstr "Kaydet"
 
-#: data/ui/properties.ui:153
+#: data/ui/properties.ui:154
 msgid "Show FPS in game:"
 msgstr "Oyunlarda FPS göster:"
 
@@ -320,11 +326,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Sadece yüklü oyunları göster"
 
-#: minigalaxy/constants.py:41
+#: minigalaxy/constants.py:40
 msgid "Simplified Chinese"
 msgstr "Basitleştirilmiş Çince"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:41
 msgid "Spanish"
 msgstr "İspanyolca"
 
@@ -334,19 +340,19 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Çevrimci tut:"
 
-#: data/ui/properties.ui:76
+#: data/ui/properties.ui:77
 msgid "Store"
 msgstr "Market Sayfası"
 
-#: data/ui/properties.ui:62
+#: data/ui/properties.ui:63
 msgid "Support"
 msgstr "Destek"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:43
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Swedish"
 msgstr "İsveçce"
 
-#: minigalaxy/constants.py:30
+#: minigalaxy/constants.py:29
 msgid "System default"
 msgstr "Sistem varsayılanları"
 
@@ -375,15 +381,15 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Burası oyunların indireleceği yerdir"
 
-#: minigalaxy/constants.py:44
+#: minigalaxy/constants.py:43
 msgid "Traditional Chinese"
 msgstr "Geleneksel Çince"
 
-#: minigalaxy/constants.py:26 minigalaxy/constants.py:45
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:44
 msgid "Turkish"
 msgstr "Türkçe"
 
-#: minigalaxy/constants.py:46
+#: minigalaxy/constants.py:45
 msgid "Ukrainian"
 msgstr ""
 
@@ -401,7 +407,7 @@ msgctxt "use_dark_theme"
 msgid "Use dark theme: "
 msgstr "Koyu tema kullan: "
 
-#: data/ui/properties.ui:166
+#: data/ui/properties.ui:167
 msgid "Variable flags:"
 msgstr "Değişken bayrakları:"
 
@@ -438,11 +444,11 @@ msgstr "Yeni yüklenen oyunların kısa yol oluşturup oluşturmayacağı"
 msgid "Wine extraction failed."
 msgstr "Wine dışarı aktarım başarısız."
 
-#: minigalaxy/ui/preferences.py:161
+#: minigalaxy/ui/preferences.py:162
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr "Wine bulunamadı. Windows oyunlarının gösterimi etkinleştirilemez."
 
-#: data/ui/properties.ui:189
+#: data/ui/properties.ui:190
 msgid "Winecfg"
 msgstr "Winecfg"
 
@@ -486,7 +492,7 @@ msgstr "{} arşivden çıkartılamadı."
 msgid "{} failed to download."
 msgstr "{} indirirken hata."
 
-#: minigalaxy/ui/preferences.py:173
+#: minigalaxy/ui/preferences.py:174
 msgid "{} isn't a usable path"
 msgstr "{} kullanılabilinir bir yol değil"
 

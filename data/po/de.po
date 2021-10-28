@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-10 19:07+0200\n"
+"POT-Creation-Date: 2021-10-27 22:44-0400\n"
 "PO-Revision-Date: 2021-10-10 21:36+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -54,7 +54,7 @@ msgstr "Bist du sicher, dass du dich von GOG abmelden möchtest?"
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Bist du sicher, dass du %s deinstallieren möchtest?"
 
-#: minigalaxy/constants.py:8
+#: minigalaxy/constants.py:7
 msgid "Brazilian Portuguese"
 msgstr "Brasilianisches Portugiesisch"
 
@@ -67,7 +67,7 @@ msgctxt "cancel"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: minigalaxy/constants.py:9
+#: minigalaxy/constants.py:8
 msgid "Chinese"
 msgstr "Chinesisch"
 
@@ -93,7 +93,7 @@ msgstr "Menü-Verknüpfungen erstellen: "
 msgid "DLC"
 msgstr "DLC"
 
-#: minigalaxy/constants.py:10
+#: minigalaxy/constants.py:9
 msgid "Danish"
 msgstr "Dänisch"
 
@@ -101,13 +101,19 @@ msgstr "Dänisch"
 msgid "Download error"
 msgstr "Download-Fehler"
 
-#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:30
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
 msgid "English"
 msgstr "Englisch"
+
+#: minigalaxy/ui/preferences.py:102
+msgid ""
+"Failed to change program language. Make sure locale is generated on your "
+"system."
+msgstr ""
 
 #: minigalaxy/ui/gametile.py:298
 msgid "Failed to install {}"
@@ -121,11 +127,11 @@ msgstr "Fehler beim Abrufen der Bibliothek"
 msgid "Failed to start {}:"
 msgstr "Fehler beim Starten von {}:"
 
-#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
 msgid "Finnish"
 msgstr "Finnisch"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "French"
 msgstr "Französisch"
 
@@ -133,7 +139,7 @@ msgstr "Französisch"
 msgid "Genre"
 msgstr "Genre"
 
-#: minigalaxy/constants.py:15 minigalaxy/constants.py:35
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
 msgid "German"
 msgstr "Deutsch"
 
@@ -147,7 +153,7 @@ msgstr "Github-Seite"
 msgid "Hide game:"
 msgstr "Spiel verstecken:"
 
-#: minigalaxy/constants.py:16
+#: minigalaxy/constants.py:15
 msgid "Hungarian"
 msgstr "Ungarisch"
 
@@ -171,11 +177,11 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "Installiert"
 
-#: minigalaxy/constants.py:17
+#: minigalaxy/constants.py:16
 msgid "Italian"
 msgstr "Italienisch"
 
-#: minigalaxy/constants.py:18
+#: minigalaxy/constants.py:17
 msgid "Japanese"
 msgstr "Japanisch"
 
@@ -193,7 +199,7 @@ msgctxt "keep_installer"
 msgid "Keep installers: "
 msgstr "Installationsdateien behalten: "
 
-#: minigalaxy/constants.py:19
+#: minigalaxy/constants.py:18
 msgid "Korean"
 msgstr "Koreanisch"
 
@@ -217,15 +223,15 @@ msgstr "Abmelden"
 msgid "No executable was found in {}"
 msgstr "Es wurden keine Ausführbaren Dateien in  {} gefunden"
 
-#: minigalaxy/constants.py:20
+#: minigalaxy/constants.py:19
 msgid "Norwegian"
 msgstr "Norwegisch"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:35
 msgid "Norwegian Bokmål"
 msgstr "Norwegisch Bokmål"
 
-#: minigalaxy/constants.py:37
+#: minigalaxy/constants.py:36
 msgid "Norwegian Nynorsk"
 msgstr "Norwegisch Nynorsk"
 
@@ -246,11 +252,11 @@ msgstr "Dateien öffnen"
 msgid "Please check your internet connection"
 msgstr "Bitte überprüfe deine Internetverbindung"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:37
 msgid "Polish"
 msgstr "Polnisch"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
 msgid "Portuguese"
 msgstr "Portugiesisch"
 
@@ -288,7 +294,7 @@ msgstr "Spieleliste aktualisieren"
 msgid "Regedit"
 msgstr "Regedit"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:40
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
 msgid "Russian"
 msgstr "Russisch"
 
@@ -320,11 +326,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Nur installierte Spiele anzeigen"
 
-#: minigalaxy/constants.py:41
+#: minigalaxy/constants.py:40
 msgid "Simplified Chinese"
 msgstr "Vereinfachtes Chinesisch"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:41
 msgid "Spanish"
 msgstr "Spanisch"
 
@@ -342,11 +348,11 @@ msgstr "Store"
 msgid "Support"
 msgstr "Support"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:43
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Swedish"
 msgstr "Schwedisch"
 
-#: minigalaxy/constants.py:30
+#: minigalaxy/constants.py:29
 msgid "System default"
 msgstr "Systemstandard"
 
@@ -377,15 +383,15 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Ort, an dem Spiele installiert werden"
 
-#: minigalaxy/constants.py:44
+#: minigalaxy/constants.py:43
 msgid "Traditional Chinese"
 msgstr "Traditionelles Chinesisch"
 
-#: minigalaxy/constants.py:26 minigalaxy/constants.py:45
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:44
 msgid "Turkish"
 msgstr "Türkisch"
 
-#: minigalaxy/constants.py:46
+#: minigalaxy/constants.py:45
 msgid "Ukrainian"
 msgstr "Ukrainisch"
 
@@ -443,7 +449,7 @@ msgstr ""
 msgid "Wine extraction failed."
 msgstr "Entpacken mit Wine fehlgeschlagen."
 
-#: minigalaxy/ui/preferences.py:161
+#: minigalaxy/ui/preferences.py:162
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr ""
 "Wine wurde nicht gefunden. Das Anzeigen von Windows-Spielen kann nicht "
@@ -493,7 +499,7 @@ msgstr "{} konnte nicht entpackt werden."
 msgid "{} failed to download."
 msgstr "Der Download von {} schlug fehl."
 
-#: minigalaxy/ui/preferences.py:173
+#: minigalaxy/ui/preferences.py:174
 msgid "{} isn't a usable path"
 msgstr "{} ist kein gültiger Pfad"
 

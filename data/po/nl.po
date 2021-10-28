@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-30 11:20+0200\n"
+"POT-Creation-Date: 2021-10-27 22:44-0400\n"
 "PO-Revision-Date: 2021-09-30 11:00+0200\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch\n"
@@ -34,12 +34,12 @@ msgctxt "about"
 msgid "About"
 msgstr "Over Minigalaxy"
 
-#: data/ui/properties.ui:128
+#: data/ui/properties.ui:129
 msgid "Added at the end of the command used to launch the game"
 msgstr ""
 "Wordt aan het commando dat gebruikt wordt om de game te starten toegevoegd"
 
-#: data/ui/properties.ui:140
+#: data/ui/properties.ui:141
 msgid "Added in front of the command used to launch the game"
 msgstr ""
 "Wordt voor het commando dat gebruikt wordt om de game te starten toegevoegd"
@@ -57,11 +57,11 @@ msgstr "Weet je zeker dat je uit wilt loggen?"
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Weet je zeker dat je %s wilt verwijderen?"
 
-#: minigalaxy/constants.py:8
+#: minigalaxy/constants.py:7
 msgid "Brazilian Portuguese"
 msgstr "Braziliaans-Portugees"
 
-#: data/ui/properties.ui:265
+#: data/ui/properties.ui:266
 msgid "Cancel"
 msgstr "Annuleren"
 
@@ -70,11 +70,11 @@ msgctxt "cancel"
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: minigalaxy/constants.py:9
+#: minigalaxy/constants.py:8
 msgid "Chinese"
 msgstr "Chinees"
 
-#: data/ui/properties.ui:179
+#: data/ui/properties.ui:180
 msgid "Command flags:"
 msgstr "Commando flaggetjes:"
 
@@ -96,7 +96,7 @@ msgstr "Maak menusnelkoppelingen: "
 msgid "DLC"
 msgstr "DLC"
 
-#: minigalaxy/constants.py:10
+#: minigalaxy/constants.py:9
 msgid "Danish"
 msgstr "Deens"
 
@@ -104,13 +104,19 @@ msgstr "Deens"
 msgid "Download error"
 msgstr "Downloadfout"
 
-#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:30
 msgid "Dutch"
 msgstr "Nederlands"
 
-#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
 msgid "English"
 msgstr "Engels"
+
+#: minigalaxy/ui/preferences.py:102
+msgid ""
+"Failed to change program language. Make sure locale is generated on your "
+"system."
+msgstr ""
 
 #: minigalaxy/ui/gametile.py:298
 msgid "Failed to install {}"
@@ -124,11 +130,11 @@ msgstr "De lijst me games kon niet opgehaald worden"
 msgid "Failed to start {}:"
 msgstr "Kon {} niet starten:"
 
-#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
 msgid "Finnish"
 msgstr "Fins"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "French"
 msgstr "Frans"
 
@@ -136,7 +142,7 @@ msgstr "Frans"
 msgid "Genre"
 msgstr "Genre"
 
-#: minigalaxy/constants.py:15 minigalaxy/constants.py:35
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
 msgid "German"
 msgstr "Duits"
 
@@ -146,11 +152,11 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "Github pagina"
 
-#: data/ui/properties.ui:104
+#: data/ui/properties.ui:105
 msgid "Hide game:"
 msgstr "Verberg game:"
 
-#: minigalaxy/constants.py:16
+#: minigalaxy/constants.py:15
 msgid "Hungarian"
 msgstr "Hongaars"
 
@@ -174,11 +180,11 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "Geïnstalleerd"
 
-#: minigalaxy/constants.py:17
+#: minigalaxy/constants.py:16
 msgid "Italian"
 msgstr "Italiaans"
 
-#: minigalaxy/constants.py:18
+#: minigalaxy/constants.py:17
 msgid "Japanese"
 msgstr "Japans"
 
@@ -196,7 +202,7 @@ msgctxt "keep_installer"
 msgid "Keep installers: "
 msgstr "Behoud installatiebestanden: "
 
-#: minigalaxy/constants.py:19
+#: minigalaxy/constants.py:18
 msgid "Korean"
 msgstr "Koreaans"
 
@@ -220,15 +226,15 @@ msgstr "Uitloggen"
 msgid "No executable was found in {}"
 msgstr "Geen programma gevonden in {}"
 
-#: minigalaxy/constants.py:20
+#: minigalaxy/constants.py:19
 msgid "Norwegian"
 msgstr "Noors"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:35
 msgid "Norwegian Bokmål"
 msgstr "Noors (Bokmål)"
 
-#: minigalaxy/constants.py:37
+#: minigalaxy/constants.py:36
 msgid "Norwegian Nynorsk"
 msgstr "Noors (Nynorsk)"
 
@@ -236,11 +242,11 @@ msgstr "Noors (Nynorsk)"
 msgid "Not enough space to extract game. Required: {} Available: {}"
 msgstr "Niet genoeg ruimt om"
 
-#: data/ui/properties.ui:279
+#: data/ui/properties.ui:280
 msgid "OK"
 msgstr "OK"
 
-#: data/ui/properties.ui:215
+#: data/ui/properties.ui:216
 msgid "Open files"
 msgstr "Bestanden openen"
 
@@ -248,11 +254,11 @@ msgstr "Bestanden openen"
 msgid "Please check your internet connection"
 msgstr "Controleer je internetverbinding"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:37
 msgid "Polish"
 msgstr "Pools"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
 msgid "Portuguese"
 msgstr "Portugees"
 
@@ -286,11 +292,11 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Haal gamelijst opnieuw op"
 
-#: data/ui/properties.ui:202
+#: data/ui/properties.ui:203
 msgid "Regedit"
 msgstr "Regedit"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:40
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
 msgid "Russian"
 msgstr "Russisch"
 
@@ -300,7 +306,7 @@ msgctxt "save"
 msgid "Save"
 msgstr "Opslaan"
 
-#: data/ui/properties.ui:153
+#: data/ui/properties.ui:154
 msgid "Show FPS in game:"
 msgstr "Laat FPS zijn tijdens het spelen:"
 
@@ -322,11 +328,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Laat alleen geïnstalleerde games zien"
 
-#: minigalaxy/constants.py:41
+#: minigalaxy/constants.py:40
 msgid "Simplified Chinese"
 msgstr "Vereenvoudigd Chinees"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:41
 msgid "Spanish"
 msgstr "Spaans"
 
@@ -336,19 +342,19 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Blijf ingelogd:"
 
-#: data/ui/properties.ui:76
+#: data/ui/properties.ui:77
 msgid "Store"
 msgstr "Winkelpagina"
 
-#: data/ui/properties.ui:62
+#: data/ui/properties.ui:63
 msgid "Support"
 msgstr "Ondersteuning"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:43
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Swedish"
 msgstr "Zweeds"
 
-#: minigalaxy/constants.py:30
+#: minigalaxy/constants.py:29
 msgid "System default"
 msgstr "Systeemsstandard"
 
@@ -379,15 +385,15 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Dit is waar games geinstalleerd worden"
 
-#: minigalaxy/constants.py:44
+#: minigalaxy/constants.py:43
 msgid "Traditional Chinese"
 msgstr "Traditioneel Chinees"
 
-#: minigalaxy/constants.py:26 minigalaxy/constants.py:45
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:44
 msgid "Turkish"
 msgstr "Turks"
 
-#: minigalaxy/constants.py:46
+#: minigalaxy/constants.py:45
 msgid "Ukrainian"
 msgstr "Oekraïens"
 
@@ -405,7 +411,7 @@ msgctxt "use_dark_theme"
 msgid "Use dark theme: "
 msgstr "Gebruik donker thema: "
 
-#: data/ui/properties.ui:166
+#: data/ui/properties.ui:167
 msgid "Variable flags:"
 msgstr "Variabelen:"
 
@@ -446,13 +452,13 @@ msgstr ""
 msgid "Wine extraction failed."
 msgstr "Het uitpakken met wine is mislukt."
 
-#: minigalaxy/ui/preferences.py:161
+#: minigalaxy/ui/preferences.py:162
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr ""
 "Wine kon niet gevonden worden. Het tonen van Windows games kan niet aangezet "
 "worden."
 
-#: data/ui/properties.ui:189
+#: data/ui/properties.ui:190
 msgid "Winecfg"
 msgstr "Winecfg"
 
@@ -496,7 +502,7 @@ msgstr "{} kan niet uitgepakt worden."
 msgid "{} failed to download."
 msgstr "{} kon niet gedownload worden."
 
-#: minigalaxy/ui/preferences.py:173
+#: minigalaxy/ui/preferences.py:174
 msgid "{} isn't a usable path"
 msgstr "{} is geen bruikbaar pad"
 
