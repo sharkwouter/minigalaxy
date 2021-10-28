@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-23 16:11+0200\n"
+"POT-Creation-Date: 2021-10-27 22:44-0400\n"
 "PO-Revision-Date: 2021-10-23 16:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -109,6 +109,12 @@ msgstr "Néerlandais"
 #: minigalaxy/constants.py:11 minigalaxy/constants.py:31
 msgid "English"
 msgstr "Anglais"
+
+#: minigalaxy/ui/preferences.py:102
+msgid ""
+"Failed to change program language. Make sure locale is generated on your "
+"system."
+msgstr ""
 
 #: minigalaxy/ui/gametile.py:298
 msgid "Failed to install {}"
@@ -443,7 +449,7 @@ msgstr ""
 msgid "Wine extraction failed."
 msgstr "L'extraction de Wine a échoué."
 
-#: minigalaxy/ui/preferences.py:161
+#: minigalaxy/ui/preferences.py:162
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr ""
 "Wine n'a pas été trouvé. L'affichage des jeux Windows ne peut pas être "
@@ -493,7 +499,7 @@ msgstr "{} n'a pas pu être décompressé."
 msgid "{} failed to download."
 msgstr "{} n'a pas pu être téléchargé."
 
-#: minigalaxy/ui/preferences.py:173
+#: minigalaxy/ui/preferences.py:174
 msgid "{} isn't a usable path"
 msgstr "{} n'est pas un chemin utilisable"
 

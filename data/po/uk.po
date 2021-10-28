@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-30 11:20+0200\n"
+"POT-Creation-Date: 2021-10-27 22:44-0400\n"
 "PO-Revision-Date: 2021-09-29 19:02+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -35,11 +35,11 @@ msgctxt "about"
 msgid "About"
 msgstr "Інформація"
 
-#: data/ui/properties.ui:128
+#: data/ui/properties.ui:129
 msgid "Added at the end of the command used to launch the game"
 msgstr "Додано в кінці команди, яка використовується для запуску гри"
 
-#: data/ui/properties.ui:140
+#: data/ui/properties.ui:141
 msgid "Added in front of the command used to launch the game"
 msgstr "Додано перед командою, яка використовується для запуску гри"
 
@@ -56,11 +56,11 @@ msgstr "Ви дійсно хочете вийти з GOG?"
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Ви впевнені, що хочете видалити %s?"
 
-#: minigalaxy/constants.py:8
+#: minigalaxy/constants.py:7
 msgid "Brazilian Portuguese"
 msgstr "Бразильський Португальська"
 
-#: data/ui/properties.ui:265
+#: data/ui/properties.ui:266
 msgid "Cancel"
 msgstr "Скасувати"
 
@@ -69,11 +69,11 @@ msgctxt "cancel"
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: minigalaxy/constants.py:9
+#: minigalaxy/constants.py:8
 msgid "Chinese"
 msgstr "Китайська"
 
-#: data/ui/properties.ui:179
+#: data/ui/properties.ui:180
 msgid "Command flags:"
 msgstr "Флажки для команди:"
 
@@ -95,7 +95,7 @@ msgstr "Створити ярлики меню: "
 msgid "DLC"
 msgstr "DLC"
 
-#: minigalaxy/constants.py:10
+#: minigalaxy/constants.py:9
 msgid "Danish"
 msgstr "Датська"
 
@@ -103,13 +103,19 @@ msgstr "Датська"
 msgid "Download error"
 msgstr "Помилка при завантаженні"
 
-#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:30
 msgid "Dutch"
 msgstr "Голландська"
 
-#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
 msgid "English"
 msgstr "Англійська"
+
+#: minigalaxy/ui/preferences.py:102
+msgid ""
+"Failed to change program language. Make sure locale is generated on your "
+"system."
+msgstr ""
 
 #: minigalaxy/ui/gametile.py:298
 msgid "Failed to install {}"
@@ -123,11 +129,11 @@ msgstr "Не вдалося отримати бібліотеку"
 msgid "Failed to start {}:"
 msgstr "Не вдалося запустити {}:"
 
-#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
 msgid "Finnish"
 msgstr "Фінська"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
 msgid "French"
 msgstr "Французька"
 
@@ -135,7 +141,7 @@ msgstr "Французька"
 msgid "Genre"
 msgstr "Жанр"
 
-#: minigalaxy/constants.py:15 minigalaxy/constants.py:35
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
 msgid "German"
 msgstr "Німецька"
 
@@ -145,11 +151,11 @@ msgctxt "github_page_link"
 msgid "Github page"
 msgstr "Сторінка Github"
 
-#: data/ui/properties.ui:104
+#: data/ui/properties.ui:105
 msgid "Hide game:"
 msgstr "Сховати гру:"
 
-#: minigalaxy/constants.py:16
+#: minigalaxy/constants.py:15
 msgid "Hungarian"
 msgstr "Угорська"
 
@@ -173,11 +179,11 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "Встановлено"
 
-#: minigalaxy/constants.py:17
+#: minigalaxy/constants.py:16
 msgid "Italian"
 msgstr "Італійська"
 
-#: minigalaxy/constants.py:18
+#: minigalaxy/constants.py:17
 msgid "Japanese"
 msgstr "Японська"
 
@@ -195,7 +201,7 @@ msgctxt "keep_installer"
 msgid "Keep installers: "
 msgstr "Зберігати інсталятори: "
 
-#: minigalaxy/constants.py:19
+#: minigalaxy/constants.py:18
 msgid "Korean"
 msgstr "Корейська"
 
@@ -219,15 +225,15 @@ msgstr "Вийти"
 msgid "No executable was found in {}"
 msgstr "У {} не знайдено жодного виконуваного файлу"
 
-#: minigalaxy/constants.py:20
+#: minigalaxy/constants.py:19
 msgid "Norwegian"
 msgstr "Норвезька"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:35
 msgid "Norwegian Bokmål"
 msgstr "Норвезька Букмол"
 
-#: minigalaxy/constants.py:37
+#: minigalaxy/constants.py:36
 msgid "Norwegian Nynorsk"
 msgstr "Норвезька Ньорск"
 
@@ -235,11 +241,11 @@ msgstr "Норвезька Ньорск"
 msgid "Not enough space to extract game. Required: {} Available: {}"
 msgstr "Не вистачає місця для розпакування гри. Потрібно: {} Доступно: {}"
 
-#: data/ui/properties.ui:279
+#: data/ui/properties.ui:280
 msgid "OK"
 msgstr "ОК"
 
-#: data/ui/properties.ui:215
+#: data/ui/properties.ui:216
 msgid "Open files"
 msgstr "Відкрийте файли"
 
@@ -247,11 +253,11 @@ msgstr "Відкрийте файли"
 msgid "Please check your internet connection"
 msgstr "Перевірте підключення до Інтернету"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:37
 msgid "Polish"
 msgstr "Польська"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
 msgid "Portuguese"
 msgstr "Португальська"
 
@@ -285,11 +291,11 @@ msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Оновити список ігор"
 
-#: data/ui/properties.ui:202
+#: data/ui/properties.ui:203
 msgid "Regedit"
 msgstr "Regedit (регіт)"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:40
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
 msgid "Russian"
 msgstr "Російська"
 
@@ -299,7 +305,7 @@ msgctxt "save"
 msgid "Save"
 msgstr "Зберегти"
 
-#: data/ui/properties.ui:153
+#: data/ui/properties.ui:154
 msgid "Show FPS in game:"
 msgstr "Показати FPS у грі:"
 
@@ -321,11 +327,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Показати лише встановлені ігри"
 
-#: minigalaxy/constants.py:41
+#: minigalaxy/constants.py:40
 msgid "Simplified Chinese"
 msgstr "Спрощена Китайська"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:41
 msgid "Spanish"
 msgstr "Іспанська"
 
@@ -335,19 +341,19 @@ msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Залишатися в системі:"
 
-#: data/ui/properties.ui:76
+#: data/ui/properties.ui:77
 msgid "Store"
 msgstr "Магазин"
 
-#: data/ui/properties.ui:62
+#: data/ui/properties.ui:63
 msgid "Support"
 msgstr "Підтримка"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:43
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
 msgid "Swedish"
 msgstr "Шведська"
 
-#: minigalaxy/constants.py:30
+#: minigalaxy/constants.py:29
 msgid "System default"
 msgstr "За замовчуванням"
 
@@ -378,15 +384,15 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Тут будуть встановлені ігри"
 
-#: minigalaxy/constants.py:44
+#: minigalaxy/constants.py:43
 msgid "Traditional Chinese"
 msgstr "Традиційна Китайська"
 
-#: minigalaxy/constants.py:26 minigalaxy/constants.py:45
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:44
 msgid "Turkish"
 msgstr "Турецька"
 
-#: minigalaxy/constants.py:46
+#: minigalaxy/constants.py:45
 msgid "Ukrainian"
 msgstr ""
 
@@ -404,7 +410,7 @@ msgctxt "use_dark_theme"
 msgid "Use dark theme: "
 msgstr "Використовувати темну тему: "
 
-#: data/ui/properties.ui:166
+#: data/ui/properties.ui:167
 msgid "Variable flags:"
 msgstr "Флажки для змінної:"
 
@@ -444,11 +450,11 @@ msgstr ""
 msgid "Wine extraction failed."
 msgstr "Помилка вилучення Wine."
 
-#: minigalaxy/ui/preferences.py:161
+#: minigalaxy/ui/preferences.py:162
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr "Wine не знайдено. Показ ігор Windows не може бути ввімкнено."
 
-#: data/ui/properties.ui:189
+#: data/ui/properties.ui:190
 msgid "Winecfg"
 msgstr "Winecfg"
 
@@ -492,7 +498,7 @@ msgstr "{} не вдалося розпакувати."
 msgid "{} failed to download."
 msgstr "Не вдалося завантажити {}."
 
-#: minigalaxy/ui/preferences.py:173
+#: minigalaxy/ui/preferences.py:174
 msgid "{} isn't a usable path"
 msgstr "{} некоректний шлях"
 
