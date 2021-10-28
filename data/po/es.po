@@ -118,6 +118,8 @@ msgid ""
 "Failed to change program language. Make sure locale is generated on your "
 "system."
 msgstr ""
+"Fallo al cambiar el idioma del programa. Asegúrate de que el local se ha"
+"generado en tu sistema"
 
 #: minigalaxy/ui/gametile.py:298
 msgid "Failed to install {}"
@@ -365,7 +367,7 @@ msgstr "Sueco"
 
 #: minigalaxy/constants.py:29
 msgid "System default"
-msgstr ""
+msgstr "Por defecto del sistema"
 
 #: minigalaxy/installer.py:128
 msgid "The installation of {} failed. Please try again."
@@ -424,7 +426,7 @@ msgstr "Usar tema oscuro: "
 
 #: data/ui/properties.ui:167
 msgid "Variable flags:"
-msgstr ""
+msgstr "Parámetros"
 
 #: minigalaxy/ui/properties.py:139
 msgid "Version"
