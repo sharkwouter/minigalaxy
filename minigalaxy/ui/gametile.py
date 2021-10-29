@@ -381,7 +381,8 @@ class GameTile(Gtk.Box):
             install_button = Gtk.Button()
             dlc_box.pack_start(install_button, False, True, 0)
             self.dlc_dict[title] = [install_button, image]
-            self.dlc_dict[title][0].connect("clicked", lambda x: self.__download_dlc(installer))
+            self.dlc_dict[title][0].connect("clicked", lambda x: threading.Thread(target=self.__download_dlc,
+                                                                                  args=(installer,)).start())
             self.dlc_horizontal_box.pack_start(dlc_box, False, True, 0)
             dlc_box.show_all()
             self.get_async_image_dlc_icon(icon, title)

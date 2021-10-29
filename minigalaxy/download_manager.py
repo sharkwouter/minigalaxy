@@ -110,6 +110,8 @@ class __DownloadManger:
             shutil.rmtree(save_location)
             print("{} is a directory. Will remove it, to make place for installer.".format(save_location))
 
+        open(save_location, 'a+').close()
+
     def get_start_point_and_download_mode(self, download):
         # Resume the previous download if possible
         start_point = 0
