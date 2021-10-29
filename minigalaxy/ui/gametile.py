@@ -482,7 +482,8 @@ class GameTile(Gtk.Box):
         self.button.set_label(_("in queue…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(False)
-        self.menu_button.hide()
+        self.menu_button_uninstall.hide()
+        self.menu_button_update.hide()
         self.button_cancel.show()
         self.__create_progress_bar()
 
@@ -490,7 +491,8 @@ class GameTile(Gtk.Box):
         self.button.set_label(_("downloading…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(False)
-        self.menu_button.hide()
+        self.menu_button_uninstall.hide()
+        self.menu_button_update.hide()
         self.button_cancel.show()
         if not self.progress_bar:
             self.__create_progress_bar()
@@ -500,7 +502,8 @@ class GameTile(Gtk.Box):
         self.button.set_label(_("installing…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(True)
-        self.menu_button.hide()
+        self.menu_button_uninstall.hide()
+        self.menu_button_update.hide()
         self.button_cancel.hide()
 
         self.game.set_install_dir()
