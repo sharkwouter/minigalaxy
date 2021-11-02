@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-27 22:06+0200\n"
-"PO-Revision-Date: 2021-10-27 23:19+0200\n"
+"POT-Creation-Date: 2021-11-02 14:04+0100\n"
+"PO-Revision-Date: 2021-11-02 14:19+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: cs_CZ\n"
@@ -114,6 +114,14 @@ msgstr "Nizozemština"
 msgid "English"
 msgstr "Angličtina"
 
+#: minigalaxy/ui/preferences.py:102
+msgid ""
+"Failed to change program language. Make sure locale is generated on your "
+"system."
+msgstr ""
+"Nepodařilo se změnit jazyk aplikace. Ujistěte se, že je na Vašem systému "
+"vygenerováno příslušné locale."
+
 #: minigalaxy/ui/gametile.py:298
 msgid "Failed to install {}"
 msgstr "Instalace {} se nezdařila"
@@ -122,7 +130,7 @@ msgstr "Instalace {} se nezdařila"
 msgid "Failed to retrieve library"
 msgstr "Získání knihovny se nezdařilo"
 
-#: minigalaxy/launcher.py:36 minigalaxy/ui/gametile.py:122
+#: minigalaxy/launcher.py:34 minigalaxy/ui/gametile.py:122
 msgid "Failed to start {}:"
 msgstr "{} se nezdařilo spustit:"
 
@@ -218,7 +226,7 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "Odhlásit"
 
-#: minigalaxy/launcher.py:184
+#: minigalaxy/launcher.py:179
 msgid "No executable was found in {}"
 msgstr "{} neobsahuje žádný spustitelný soubor"
 
@@ -240,7 +248,7 @@ msgstr "Nedostatek místa pro rozbalení hry. Požadované: {} Dostupné: {}"
 
 #: data/ui/properties.ui:280
 msgid "OK"
-msgstr "OK"
+msgstr "Budiž"
 
 #: data/ui/properties.ui:216
 msgid "Open files"
@@ -366,7 +374,7 @@ msgstr "Preferovaný jazyk pro stahované hry"
 #: data/ui/preferences.ui:65
 msgctxt "language_tooltip"
 msgid "The preferred language on Minigalaxy start"
-msgstr "Preferovarný jazyk po startu Minigalaxy"
+msgstr "Preferovaný jazyk pro Minigalaxy"
 
 #: minigalaxy/ui/gametile.py:208
 msgid ""
@@ -409,7 +417,7 @@ msgstr "Použít tmavé téma: "
 
 #: data/ui/properties.ui:167
 msgid "Variable flags:"
-msgstr "Možnosti proměnné:"
+msgstr "Argumenty příkazu:"
 
 #: minigalaxy/ui/properties.py:139
 msgid "Version"
@@ -446,7 +454,7 @@ msgstr "Určuje zdali se mají vytvářet zástupci pro nově nainstalované hry
 msgid "Wine extraction failed."
 msgstr "Rozbalení Wine se nezdařilo."
 
-#: minigalaxy/ui/preferences.py:161
+#: minigalaxy/ui/preferences.py:162
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
 msgstr "Wine nebyl nalezen. Zobrazení her pro Windows nemůže být zapnuto."
 
@@ -494,7 +502,7 @@ msgstr "{} nemohl být rozbalen."
 msgid "{} failed to download."
 msgstr "{} se nezdařilo stáhnout."
 
-#: minigalaxy/ui/preferences.py:173
+#: minigalaxy/ui/preferences.py:174
 msgid "{} isn't a usable path"
 msgstr "{} není použitelná cesta"
 
