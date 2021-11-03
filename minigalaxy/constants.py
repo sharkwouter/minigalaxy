@@ -27,6 +27,7 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
 
 SUPPORTED_LOCALES = [
     ["", _("System default")],
+    ["cs_CZ", _("Czech")],
     ["nl", _("Dutch")],
     ["en_US", _("English")],
     ["fi", _("Finnish")],
