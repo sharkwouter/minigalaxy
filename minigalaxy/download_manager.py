@@ -3,7 +3,6 @@ import shutil
 import time
 import threading
 import queue
-from os.path import exists
 
 from requests.exceptions import ConnectionError
 from minigalaxy.config import Config

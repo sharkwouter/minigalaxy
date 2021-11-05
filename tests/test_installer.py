@@ -333,11 +333,12 @@ class Test(TestCase):
         exp = "No installer directory is present: /home/i/.cache/minigalaxy/download/Beneath a Steel Sky"
         self.assertEqual(obs, exp)
 
+    @mock.patch('os.remove')
     @mock.patch('shutil.rmtree')
     @mock.patch('minigalaxy.config.Config.get')
     @mock.patch('minigalaxy.installer.compare_directories')
     @mock.patch('os.path.isdir')
-    def test_remove_installer_no_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree):
+    def test_remove_installer_no_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_os_remove):
         """
         Disabled keep_installer
         """
@@ -348,14 +349,16 @@ class Test(TestCase):
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
         installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         obs = installer.remove_installer(game1, installer_path)
-        assert mock_shutil_rmtree.called
+        assert mock_os_remove.called
+        assert not mock_shutil_rmtree.called
         self.assertEqual(obs, "")
 
+    @mock.patch('os.remove')
     @mock.patch('shutil.rmtree')
     @mock.patch('minigalaxy.config.Config.get')
     @mock.patch('minigalaxy.installer.compare_directories')
     @mock.patch('os.path.isdir')
-    def test_remove_installer_same_content(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree):
+    def test_remove_installer_same_content(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_os_remove):
         """
         Same content of installer and keep dir
         """
@@ -367,14 +370,16 @@ class Test(TestCase):
         installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         obs = installer.remove_installer(game1, installer_path)
         assert not mock_shutil_rmtree.called
+        assert not mock_os_remove.called
         self.assertEqual(obs, "")
 
+    @mock.patch('os.remove')
     @mock.patch('shutil.move')
     @mock.patch('shutil.rmtree')
     @mock.patch('minigalaxy.config.Config.get')
     @mock.patch('minigalaxy.installer.compare_directories')
     @mock.patch('os.path.isdir')
-    def test_remove_installer_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_shutil_move):
+    def test_remove_installer_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_shutil_move, mock_os_remove):
         """
         Keep installer dir
         """
@@ -387,14 +392,16 @@ class Test(TestCase):
         obs = installer.remove_installer(game1, installer_path)
         assert mock_shutil_rmtree.called
         assert mock_shutil_move.called
+        assert not mock_os_remove.called
         self.assertEqual(obs, "")
 
+    @mock.patch('os.remove')
     @mock.patch('shutil.move')
     @mock.patch('shutil.rmtree')
     @mock.patch('minigalaxy.config.Config.get')
     @mock.patch('minigalaxy.installer.compare_directories')
     @mock.patch('os.path.isdir')
-    def test_remove_installer_from_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_shutil_move):
+    def test_remove_installer_from_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_shutil_move, mock_os_remove):
         """
         Called from keep dir
         """
@@ -407,4 +414,5 @@ class Test(TestCase):
         obs = installer.remove_installer(game1, installer_path)
         assert not mock_shutil_rmtree.called
         assert not mock_shutil_move.called
+        assert not mock_os_remove.called
         self.assertEqual(obs, "")
