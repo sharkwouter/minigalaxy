@@ -164,6 +164,7 @@ Special thanks goes out to all contributors:
 - tim77 for packaging Minigalaxy for Fedora, Flathub and multiple code contributions
 - larslindq for multiple code contributions
 - TotalCaesar659 for multiple code contributions
+- graag for multiple code contributions
 - BlindJerobine for translating to German and adding the support option
 - JoshuaFern for packaging Minigalaxy for NixOS and for contributing code
 - stephanlachnit for upstreaming to Debian and multiple code contributions
