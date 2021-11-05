@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-10-27 22:44-0400\n"
-"PO-Revision-Date: 2021-10-30 15:15+0300\n"
+"PO-Revision-Date: 2021-11-05 18:00+0300\n"
 "Last-Translator: Artem Polishchuk <ego.cordatus@gmail.com>\n"
 "Language-Team: \n"
 "Language: ru_RU\n"
@@ -92,6 +92,10 @@ msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
 msgstr "Создавать ярлыки в меню: "
 
+#: minigalaxy/constants.py:30
+msgid "Czech"
+msgstr "Чешский"
+
 #: data/ui/gametile.ui:36
 msgid "DLC"
 msgstr "Дополнения"
@@ -104,11 +108,11 @@ msgstr "Датский"
 msgid "Download error"
 msgstr "Ошибка загрузки"
 
-#: minigalaxy/constants.py:10 minigalaxy/constants.py:30
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:31
 msgid "Dutch"
 msgstr "Нидерландский"
 
-#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:32
 msgid "English"
 msgstr "Английский"
 
@@ -128,15 +132,15 @@ msgstr "Не удалось установить {}"
 msgid "Failed to retrieve library"
 msgstr "Не удалось получить библиотеку"
 
-#: minigalaxy/launcher.py:36 minigalaxy/ui/gametile.py:122
+#: minigalaxy/launcher.py:34 minigalaxy/ui/gametile.py:122
 msgid "Failed to start {}:"
 msgstr "Не удалось запустить {}:"
 
-#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
+#: minigalaxy/constants.py:12 minigalaxy/constants.py:33
 msgid "Finnish"
 msgstr "Финский"
 
-#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:34
 msgid "French"
 msgstr "Французский"
 
@@ -144,7 +148,7 @@ msgstr "Французский"
 msgid "Genre"
 msgstr "Жанр"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:35
 msgid "German"
 msgstr "Немецкий"
 
@@ -224,7 +228,7 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "Выйти"
 
-#: minigalaxy/launcher.py:184
+#: minigalaxy/launcher.py:179
 msgid "No executable was found in {}"
 msgstr "Не найден запускаемый файл в {}"
 
@@ -232,11 +236,11 @@ msgstr "Не найден запускаемый файл в {}"
 msgid "Norwegian"
 msgstr "Норвежский"
 
-#: minigalaxy/constants.py:35
+#: minigalaxy/constants.py:36
 msgid "Norwegian Bokmål"
 msgstr "Норвежский букмол"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:37
 msgid "Norwegian Nynorsk"
 msgstr "Норвежский нюнорск"
 
@@ -256,11 +260,11 @@ msgstr "Открыть файлы"
 msgid "Please check your internet connection"
 msgstr "Проверьте ваше подключение к Интернету"
 
-#: minigalaxy/constants.py:20 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:38
 msgid "Polish"
 msgstr "Польский"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:39
 msgid "Portuguese"
 msgstr "Португальский"
 
@@ -298,7 +302,7 @@ msgstr "Обновить список игр"
 msgid "Regedit"
 msgstr ""
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:40
 msgid "Russian"
 msgstr "Русский"
 
@@ -330,11 +334,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Показывать только установленные игры"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:41
 msgid "Simplified Chinese"
 msgstr "Китайский упрощенный"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:42
 msgid "Spanish"
 msgstr "Испанский"
 
@@ -352,7 +356,7 @@ msgstr "Магазин"
 msgid "Support"
 msgstr "Поддержка"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:43
 msgid "Swedish"
 msgstr "Шведский"
 
@@ -387,15 +391,15 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Место, куда будут установлены игры"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:44
 msgid "Traditional Chinese"
 msgstr "Китайский традиционный"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:45
 msgid "Turkish"
 msgstr "Турецкий"
 
-#: minigalaxy/constants.py:45
+#: minigalaxy/constants.py:46
 msgid "Ukrainian"
 msgstr "Украинский"
 
