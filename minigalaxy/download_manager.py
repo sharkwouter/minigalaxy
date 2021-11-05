@@ -50,6 +50,8 @@ class __DownloadManger:
                     queued_download = self.__queue.get()
                     if download == queued_download:
                         download.cancel()
+                    elif download.game == queued_download.game:
+                        download.cancel()
                     else:
                         new_queue.put(queued_download)
                 self.__queue = new_queue

@@ -254,7 +254,8 @@ class GameTile(Gtk.Box):
                 progress_func=self.set_progress,
                 cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
                 number=number_of_files - key,
-                out_of_amount=number_of_files
+                out_of_amount=number_of_files,
+                game=self.game
             )
             self.download_list.append(download)
         self.download_list.reverse()
