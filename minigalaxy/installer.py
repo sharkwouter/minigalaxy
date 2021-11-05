@@ -286,8 +286,6 @@ def remove_installer(game, installer):
                 error_message = str(e)
     else:
         os.remove(installer)
-        if len(os.listdir(installer_directory)) == 0:
-            os.rmdir(installer_directory)
 
     return error_message
 
