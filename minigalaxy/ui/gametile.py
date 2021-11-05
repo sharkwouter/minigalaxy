@@ -303,6 +303,7 @@ class GameTile(Gtk.Box):
         return install_success
 
     def __cancel(self, to_state):
+        self.download_list = []
         GLib.idle_add(self.update_to_state, to_state)
         GLib.idle_add(self.reload_state)
 
@@ -396,7 +397,8 @@ class GameTile(Gtk.Box):
             self.dlc_dict[title][0].set_sensitive(False)
         else:
             icon_name = "document-save"
-            self.dlc_dict[title][0].set_sensitive(True)
+            if not self.download_list:
+                self.dlc_dict[title][0].set_sensitive(True)
         install_button_image = Gtk.Image()
         install_button_image.set_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
         self.dlc_dict[title][0].set_image(install_button_image)
