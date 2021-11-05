@@ -3,6 +3,8 @@ import shutil
 import time
 import threading
 import queue
+from os.path import exists
+
 from requests.exceptions import ConnectionError
 from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION
@@ -110,7 +112,8 @@ class __DownloadManger:
             shutil.rmtree(save_location)
             print("{} is a directory. Will remove it, to make place for installer.".format(save_location))
 
-        open(save_location, 'a+').close()
+        if not exists(save_location):
+            open(save_location, 'w').close()
 
     def get_start_point_and_download_mode(self, download):
         # Resume the previous download if possible
