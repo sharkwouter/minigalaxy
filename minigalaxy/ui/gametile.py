@@ -228,6 +228,7 @@ class GameTile(Gtk.Box):
         number_of_files = len(download_info['files'])
         total_file_size = 0
         executable_path = None
+        download_files = []
         for key, file_info in enumerate(download_info['files']):
             try:
                 download_url = self.api.get_real_download_link(file_info["downlink"])
@@ -257,11 +258,11 @@ class GameTile(Gtk.Box):
                 out_of_amount=number_of_files,
                 game=self.game
             )
-            self.download_list.append(download)
-        self.download_list.reverse()
+            download_files.insert(0, download)
+        self.download_list.extend(download_files)
 
         if check_diskspace(total_file_size, Config.get("install_dir")):
-            DownloadManager.download(self.download_list)
+            DownloadManager.download(download_files)
             ds_msg_title = ""
             ds_msg_text = ""
         else:
