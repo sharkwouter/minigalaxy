@@ -33,6 +33,7 @@ SUPPORTED_LOCALES = [
     ["fi", _("Finnish")],
     ["fr", _("French")],
     ["de", _("German")],
+    ["it_IT", _("Italian")],
     ["nb_NO", _("Norwegian Bokmål")],
     ["nn_NO", _("Norwegian Nynorsk")],
     ["pl", _("Polish")],
