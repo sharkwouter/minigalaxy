@@ -8,4 +8,5 @@ exclude =
     data,
     debian,
     dist,
-    *.egg-info
+    *.egg-info,
+    site-packages
