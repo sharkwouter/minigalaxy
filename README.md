@@ -29,10 +29,13 @@ In addition to that, Minigalaxy also allows you to:
 
 Currently Minigalaxy can be displayed in the following languages:
 - Brazilian Portuguese
+- Czech
 - English
 - Dutch
 - French
+- Finnish
 - German
+- Italian
 - Norwegian Bokmål
 - Norwegian Nynorsk
 - Polish
@@ -42,6 +45,7 @@ Currently Minigalaxy can be displayed in the following languages:
 - Swedish
 - Taiwanese Mandarin
 - Turkish
+- Ukranian
 
 ## System requirements
 
@@ -160,11 +164,14 @@ Special thanks goes out to all contributors:
 
 - makson96 for multiple code contributions
 - Odelpasso for multiple code contributions
+- TotalCaesar659 for multiple code contributions
 - SvdB-nonp for multiple code contributions
 - tim77 for packaging Minigalaxy for Fedora, Flathub and multiple code contributions
 - larslindq for multiple code contributions
-- TotalCaesar659 for multiple code contributions
+- graag for multiple code contributions
+- lmeunier for multiple code contributions
 - BlindJerobine for translating to German and adding the support option
+- zweif contributions to code and the German translation
 - JoshuaFern for packaging Minigalaxy for NixOS and for contributing code
 - stephanlachnit for upstreaming to Debian and multiple code contributions
 - sgn for fixing a bug
@@ -177,9 +184,13 @@ Special thanks goes out to all contributors:
 - protheory8 for translating to Russian
 - LordPilum for translating to Norwegian Nynorsk
 - dummyx for translating to simplified Chinese
-- juanborda for translating to Spanish
+- juanborda, advy99 and LocalPinkRobin for translating to Spanish
 - Newbytee for translating to Swedish
 - jubalh for packaging Minigalaxy for openSUSE
 - gasinvein for packaging Minigalaxy for flathub
 - metafarion for packaging Minigalaxy for Gentoo
 - SwampRabbit and Steven Pusser for packaging Minigalaxy for MX Linux
+- karaushu for translating to Ukrainian
+- koraynilay for translating to Italian
+- heidiwenger and jonnelafin for translating to Finish
+- jakbuz23 for translating to Czech

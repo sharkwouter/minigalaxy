@@ -1,3 +1,4 @@
+import os
 import gettext
 import locale
 from minigalaxy.config import Config
@@ -21,6 +22,9 @@ except AttributeError:
 
 gettext.bindtextdomain(TRANSLATION_DOMAIN, LOCALE_DIR)
 gettext.textdomain(TRANSLATION_DOMAIN)
+
+# Make sure LANGUAGE is not set, or translations will not be loaded
+os.unsetenv("LANGUAGE")
 
 current_locale = Config.get("locale")
 default_locale = locale.getdefaultlocale()[0]
