@@ -17,6 +17,7 @@
 - Run post install script after installation. This fixes Full Throttle Remastered (thanks to makson96)
 - Fix games being shown twice
 - Fix crash when GOG is down (thanks to lmeunier)
+- Make the language configurable (thanks to TotalCaesar659 and zweif)
 
 - Add the following translations:
   - Czech (thanks to jakbuz23)
@@ -31,6 +32,7 @@
   - Norwegian Nynorsk (thanks to LordPilum)
   - Polish (thanks to ArturWroblewski)
   - Russian (thanks to TotalCaesar659)
+  - Simplified Chinese (thanks to dummyx)
   - Spanish (thanks to LocalPinkRobin and advy99)
   - Turkish (thanks to fuzunspm)
 
