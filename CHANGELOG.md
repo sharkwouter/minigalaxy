@@ -21,7 +21,7 @@
 
 - Add the following translations:
   - Czech (thanks to jakbuz23)
-  - Finish (thanks to heidiwenger and jonnelafin)
+  - Finnish (thanks to heidiwenger and jonnelafin)
   - Italian (thanks to koraynilay)
   - Swedish (thanks to Newbytee)
   - Ukrainian (thanks to karaushu)
