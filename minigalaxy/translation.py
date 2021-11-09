@@ -23,8 +23,9 @@ except AttributeError:
 gettext.bindtextdomain(TRANSLATION_DOMAIN, LOCALE_DIR)
 gettext.textdomain(TRANSLATION_DOMAIN)
 
-# Make sure LANGUAGE is not set, or translations will not be loaded
+# Make sure LANGUAGE and LANG are not set, or translations will not be loaded
 os.unsetenv("LANGUAGE")
+os.unsetenv("LANG")
 
 current_locale = Config.get("locale")
 default_locale = locale.getdefaultlocale()[0]
