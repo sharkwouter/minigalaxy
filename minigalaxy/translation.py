@@ -29,7 +29,10 @@ os.unsetenv("LANGUAGE")
 current_locale = Config.get("locale")
 default_locale = locale.getdefaultlocale()[0]
 if current_locale == '':
-    lang = gettext.translation(TRANSLATION_DOMAIN, LOCALE_DIR, languages=[default_locale], fallback=True)
+    if default_locale is None:
+        lang = gettext.translation(TRANSLATION_DOMAIN, LOCALE_DIR, languages=['en'], fallback=True)
+    else:
+        lang = gettext.translation(TRANSLATION_DOMAIN, LOCALE_DIR, languages=[default_locale], fallback=True)
 else:
     lang = gettext.translation(TRANSLATION_DOMAIN, LOCALE_DIR, languages=[current_locale], fallback=True)
 _ = lang.gettext
