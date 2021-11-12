@@ -274,6 +274,7 @@ class GameTile(Gtk.Box):
         return download_success
 
     def __install_game(self, save_location):
+        self.download_list = []
         self.game.set_install_dir()
         install_success = self.__install(save_location)
         if install_success:
