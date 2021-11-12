@@ -1,7 +1,7 @@
 import os
 import locale
 import shutil
-from minigalaxy.translation import _
+from minigalaxy.translation import _, USING_LANGUAGE_ENV_VAR
 from minigalaxy.paths import UI_DIR
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES
 from minigalaxy.config import Config
@@ -45,6 +45,10 @@ class Preferences(Gtk.Dialog):
         self.label_keep_installers.set_tooltip_text(
             _("Keep installers after downloading a game.\nInstallers are stored in: {}").format(installer_dir)
         )
+
+        # Disable Program Language combobox if LANGUAGE is set
+        if USING_LANGUAGE_ENV_VAR:
+            self.combobox_program_language.set_sensitive(False)
 
     def __set_locale_list(self) -> None:
         locales = Gtk.ListStore(str, str)
