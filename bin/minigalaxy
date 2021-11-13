@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import os
-import getopt
+import argparse
 import shutil
 from os.path import realpath, dirname, normpath
 
@@ -16,39 +16,25 @@ if os.path.isdir(os.path.join(LAUNCH_PATH, "../minigalaxy")):
 from minigalaxy.version import VERSION
 from minigalaxy.paths import CONFIG_DIR, CACHE_DIR
 
+def conf_reset():
+    shutil.rmtree(CONFIG_DIR, ignore_errors=True)
+    shutil.rmtree(CACHE_DIR, ignore_errors=True)
 
-def usage():
-    print("Usage:\t{} [OPTION]".format(sys.argv[0]))
-    print("\nA simple GOG Linux client\n")
-    print("Options:")
+def cli_params():
+    parser = argparse.ArgumentParser(description="A simple GOG Linux client")
 
-    print("\t-h, --help\t\tDisplay this help and exit")
-    print("\t-v, --version\t\tDisplay version information and exit")
-    print("\t--reset\t\t\tReset the configuration of Minigalaxy")
+    parser.add_argument("--reset",
+        dest="reset", action="store_true", 
+        help="reset the configuration of Minigalaxy")
+    parser.add_argument("-v", "--version",
+        action="version", version=VERSION)
 
-
-def parse_args():
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "hv", ["help", "version", "reset"])
-    except getopt.GetoptError as err:
-        # print help information and exit:
-        print(err)  # will print something like "option -a not recognized"
-        usage()
-        sys.exit(2)
-    for o, a in opts:
-        if o in ("-v", "--version"):
-            print(VERSION)
-            sys.exit()
-        elif o in ("-h", "--help"):
-            usage()
-            sys.exit()
-        elif o == "--reset":
-            shutil.rmtree(CONFIG_DIR, ignore_errors=True)
-            shutil.rmtree(CACHE_DIR, ignore_errors=True)
-
+    return parser.parse_args()
 
 def main():
-    parse_args()
+    cli_args = cli_params()
+
+    if cli_args.reset: conf_reset()
 
     # Import the gi module after parsing arguments
     from minigalaxy.ui.gtk import Gtk
