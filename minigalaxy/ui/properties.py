@@ -1,11 +1,9 @@
 import urllib
 import os
-import subprocess
 import webbrowser
 
 from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
-from minigalaxy.launcher import config_game, regedit_game
 from minigalaxy.config import Config
 from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
 
