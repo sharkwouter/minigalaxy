@@ -129,18 +129,7 @@ class Library(Gtk.Viewport):
                         game_id = int(game_id)
                 games.append(Game(name=name, game_id=game_id, install_dir=full_path))
             else:
-                game_files = os.listdir(full_path)
-                for file in game_files:
-                    if re.match(r'^goggame-[0-9]*\.info$', file):
-                        with open(os.path.join(full_path, file), 'r') as info_file:
-                            info = json.loads(info_file.read())
-                            game = Game(
-                                name=info["name"],
-                                game_id=int(info["gameId"]),
-                                install_dir=full_path,
-                                platform="windows"
-                            )
-                            games.append(game)
+                games.extend(get_installed_windows_games(full_path))
         return games
 
     def __add_games_from_api(self):
@@ -158,3 +147,20 @@ class Library(Gtk.Viewport):
                 self.games[self.games.index(game)].name = game.name
             self.games[self.games.index(game)].image_url = game.image_url
             self.games[self.games.index(game)].url = game.url
+
+
+def get_installed_windows_games(full_path):
+    games = []
+    game_files = os.listdir(full_path)
+    for file in game_files:
+        if re.match(r'^goggame-[0-9]*\.info$', file):
+            with open(os.path.join(full_path, file), 'rb') as info_file:
+                info = json.loads(info_file.read().decode('utf-8-sig'))
+                game = Game(
+                    name=info["name"],
+                    game_id=int(info["gameId"]),
+                    install_dir=full_path,
+                    platform="windows"
+                )
+                games.append(game)
+    return games
