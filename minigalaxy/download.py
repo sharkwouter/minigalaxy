@@ -3,7 +3,7 @@ from zipfile import BadZipFile
 
 class Download:
     def __init__(self, url, save_location, finish_func=None, progress_func=None, cancel_func=None, number=1,
-                 out_of_amount=1):
+                 out_of_amount=1, game=None):
         self.url = url
         self.save_location = save_location
         self.__finish_func = finish_func
@@ -11,6 +11,7 @@ class Download:
         self.__cancel_func = cancel_func
         self.number = number
         self.out_of_amount = out_of_amount
+        self.game = game
 
     def set_progress(self, percentage: int) -> None:
         if self.__progress_func:

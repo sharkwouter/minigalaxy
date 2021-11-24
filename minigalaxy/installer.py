@@ -285,7 +285,7 @@ def remove_installer(game, installer):
             except Exception as e:
                 error_message = str(e)
     else:
-        shutil.rmtree(installer_directory, ignore_errors=True)
+        os.remove(installer)
 
     return error_message
 

@@ -228,6 +228,7 @@ class GameTile(Gtk.Box):
         number_of_files = len(download_info['files'])
         total_file_size = 0
         executable_path = None
+        download_files = []
         for key, file_info in enumerate(download_info['files']):
             try:
                 download_url = self.api.get_real_download_link(file_info["downlink"])
@@ -254,13 +255,14 @@ class GameTile(Gtk.Box):
                 progress_func=self.set_progress,
                 cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
                 number=number_of_files - key,
-                out_of_amount=number_of_files
+                out_of_amount=number_of_files,
+                game=self.game
             )
-            self.download_list.append(download)
-        self.download_list.reverse()
+            download_files.insert(0, download)
+        self.download_list.extend(download_files)
 
         if check_diskspace(total_file_size, Config.get("install_dir")):
-            DownloadManager.download(self.download_list)
+            DownloadManager.download(download_files)
             ds_msg_title = ""
             ds_msg_text = ""
         else:
@@ -272,6 +274,7 @@ class GameTile(Gtk.Box):
         return download_success
 
     def __install_game(self, save_location):
+        self.download_list = []
         self.game.set_install_dir()
         install_success = self.__install(save_location)
         if install_success:
@@ -301,6 +304,7 @@ class GameTile(Gtk.Box):
         return install_success
 
     def __cancel(self, to_state):
+        self.download_list = []
         GLib.idle_add(self.update_to_state, to_state)
         GLib.idle_add(self.reload_state)
 
@@ -381,7 +385,7 @@ class GameTile(Gtk.Box):
             install_button = Gtk.Button()
             dlc_box.pack_start(install_button, False, True, 0)
             self.dlc_dict[title] = [install_button, image]
-            self.dlc_dict[title][0].connect("clicked", lambda x: self.__download_dlc(installer))
+            self.dlc_dict[title][0].connect("clicked", self.__dlc_button_clicked, installer)
             self.dlc_horizontal_box.pack_start(dlc_box, False, True, 0)
             dlc_box.show_all()
             self.get_async_image_dlc_icon(icon, title)
@@ -394,10 +398,15 @@ class GameTile(Gtk.Box):
             self.dlc_dict[title][0].set_sensitive(False)
         else:
             icon_name = "document-save"
-            self.dlc_dict[title][0].set_sensitive(True)
+            if not self.download_list:
+                self.dlc_dict[title][0].set_sensitive(True)
         install_button_image = Gtk.Image()
         install_button_image.set_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
         self.dlc_dict[title][0].set_image(install_button_image)
+
+    def __dlc_button_clicked(self, button, installer):
+        button.set_sensitive(False)
+        threading.Thread(target=self.__download_dlc, args=(installer,)).start()
 
     def get_async_image_dlc_icon(self, icon, title):
         if icon:
@@ -411,8 +420,9 @@ class GameTile(Gtk.Box):
         self.dlc_dict[user_data][1].set_from_pixbuf(pixbuf)
 
     def set_progress(self, percentage: int):
-        if self.current_state == self.state.QUEUED:
+        if self.current_state in [self.state.QUEUED, self.state.INSTALLED]:
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADING)
+            self.__create_progress_bar()
         if self.progress_bar:
             GLib.idle_add(self.progress_bar.set_fraction, percentage / 100)
 
@@ -481,7 +491,8 @@ class GameTile(Gtk.Box):
         self.button.set_label(_("in queue…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(False)
-        self.menu_button.hide()
+        self.menu_button_uninstall.hide()
+        self.menu_button_update.hide()
         self.button_cancel.show()
         self.__create_progress_bar()
 
@@ -489,7 +500,8 @@ class GameTile(Gtk.Box):
         self.button.set_label(_("downloading…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(False)
-        self.menu_button.hide()
+        self.menu_button_uninstall.hide()
+        self.menu_button_update.hide()
         self.button_cancel.show()
         if not self.progress_bar:
             self.__create_progress_bar()
@@ -499,7 +511,8 @@ class GameTile(Gtk.Box):
         self.button.set_label(_("installing…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(True)
-        self.menu_button.hide()
+        self.menu_button_uninstall.hide()
+        self.menu_button_update.hide()
         self.button_cancel.hide()
 
         self.game.set_install_dir()

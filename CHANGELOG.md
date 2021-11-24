@@ -1,3 +1,6 @@
+**1.2.0**
+- Allow DLC to be queued up for downloading (thanks to flagrama)
+
 **1.1.0**
 - Improve integrity check after downloading (thanks to makson96)
 - Show an error showing Windows games cannot be enabled 
