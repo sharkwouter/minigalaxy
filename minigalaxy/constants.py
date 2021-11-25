@@ -47,6 +47,11 @@ SUPPORTED_LOCALES = [
     ["uk", _("Ukrainian")],
 ]
 
+VIEWS = [
+    ["grid", _("Grid")],
+    ["list", _("List")],
+]
+
 # Game IDs to ignore when received by the API
 IGNORE_GAME_IDS = [
     1424856371,  # Hotline Miami 2: Wrong Number - Digital Comics

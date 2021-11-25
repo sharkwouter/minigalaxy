@@ -3,7 +3,7 @@ import locale
 import shutil
 from minigalaxy.translation import _
 from minigalaxy.paths import UI_DIR
-from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES
+from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES, VIEWS
 from minigalaxy.config import Config
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.ui.gtk import Gtk
@@ -15,6 +15,7 @@ class Preferences(Gtk.Dialog):
 
     combobox_program_language = Gtk.Template.Child()
     combobox_language = Gtk.Template.Child()
+    combobox_view = Gtk.Template.Child()
     button_file_chooser = Gtk.Template.Child()
     label_keep_installers = Gtk.Template.Child()
     switch_keep_installers = Gtk.Template.Child()
@@ -32,6 +33,7 @@ class Preferences(Gtk.Dialog):
 
         self.__set_locale_list()
         self.__set_language_list()
+        self.__set_view_list()
         self.button_file_chooser.set_filename(Config.get("install_dir"))
         self.switch_keep_installers.set_active(Config.get("keep_installers"))
         self.switch_stay_logged_in.set_active(Config.get("stay_logged_in"))
@@ -85,6 +87,24 @@ class Preferences(Gtk.Dialog):
                 self.combobox_language.set_active(key)
                 break
 
+    def __set_view_list(self) -> None:
+        views = Gtk.ListStore(str, str)
+        for view in VIEWS:
+            views.append(view)
+
+        self.combobox_view.set_model(views)
+        self.combobox_view.set_entry_text_column(1)
+        self.renderer_text = Gtk.CellRendererText()
+        self.combobox_view.pack_start(self.renderer_text, False)
+        self.combobox_view.add_attribute(self.renderer_text, "text", 1)
+
+        # Set the active option
+        current_view = Config.get("view")
+        for key in range(len(views)):
+            if views[key][:1][0] == current_view:
+                self.combobox_view.set_active(key)
+                break
+
     def __save_locale_choice(self) -> None:
         new_locale = self.combobox_program_language.get_active_iter()
         if new_locale is not None:
@@ -108,6 +128,15 @@ class Preferences(Gtk.Dialog):
             model = self.combobox_language.get_model()
             lang, _ = model[lang_choice][:2]
             Config.set("lang", lang)
+
+    def __save_view_choice(self) -> None:
+        view_choice = self.combobox_view.get_active_iter()
+        if view_choice is not None:
+            model = self.combobox_view.get_model()
+            view, _ = model[view_choice][:2]
+            if view != Config.get("view"):
+                self.parent.reset_library()
+            Config.set("view", view)
 
     def __save_theme_choice(self) -> None:
         settings = Gtk.Settings.get_default()
@@ -150,6 +179,7 @@ class Preferences(Gtk.Dialog):
     def save_pressed(self, button):
         self.__save_locale_choice()
         self.__save_language_choice()
+        self.__save_view_choice()
         self.__save_theme_choice()
         Config.set("keep_installers", self.switch_keep_installers.get_active())
         Config.set("stay_logged_in", self.switch_stay_logged_in.get_active())
