@@ -1,6 +1,6 @@
 import sys
-from unittest import TestCase
-from unittest.mock import MagicMock
+from unittest import TestCase, mock
+from unittest.mock import MagicMock, patch, mock_open
 
 m_gtk = MagicMock()
 m_gi = MagicMock()
@@ -52,7 +52,7 @@ sys.modules['minigalaxy.ui.window'] = m_window
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.gametile'] = m_gametile
 from minigalaxy.game import Game           # noqa: E402
-from minigalaxy.ui.library import Library  # noqa: E402
+from minigalaxy.ui.library import Library, get_installed_windows_games  # noqa: E402
 
 SELF_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath A Steel Sky": "1207658695",
               "Stellaris (English)": "1508702879"}
@@ -171,6 +171,26 @@ class TestLibrary(TestCase):
         test_library._Library__add_games_from_api()
         exp = 1
         obs = len(test_library.games)
+        self.assertEqual(exp, obs)
+
+    @mock.patch('os.listdir')
+    def test1_get_installed_windows_game(self, mock_listdir):
+        mock_listdir.return_value = ["goggame-1207665883.info"]
+        game_json_data = '{ "gameId": "1207665883", "name": "Aliens vs Predator Classic 2000" }'.encode('utf-8')
+        with patch("builtins.open", mock_open(read_data=game_json_data)):
+            games = get_installed_windows_games("/example/path")
+        exp = "Aliens vs Predator Classic 2000"
+        obs = games[0].name
+        self.assertEqual(exp, obs)
+
+    @mock.patch('os.listdir')
+    def test2_get_installed_windows_game(self, mock_listdir):
+        mock_listdir.return_value = ["goggame-1207665883.info"]
+        game_json_data = '{ "gameId": "1207665883", "name": "Aliens vs Predator Classic 2000" }'.encode('utf-8-sig')
+        with patch("builtins.open", mock_open(read_data=game_json_data)):
+            games = get_installed_windows_games("/example/path")
+        exp = "Aliens vs Predator Classic 2000"
+        obs = games[0].name
         self.assertEqual(exp, obs)
 
 
