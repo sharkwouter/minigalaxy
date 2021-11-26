@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-06 23:23+0900\n"
+"POT-Creation-Date: 2021-11-26 14:30-0800\n"
 "PO-Revision-Date: 2021-11-06 23:37+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -94,7 +94,7 @@ msgstr "创建菜单快捷方式"
 msgid "Czech"
 msgstr "捷克语"
 
-#: data/ui/gametile.ui:36
+#: data/ui/gametile.ui:178
 msgid "DLC"
 msgstr "DLC"
 
@@ -102,7 +102,7 @@ msgstr "DLC"
 msgid "Danish"
 msgstr "丹麦语"
 
-#: minigalaxy/ui/gametile.py:207 minigalaxy/ui/gametile.py:236
+#: minigalaxy/ui/gametile.py:207 minigalaxy/ui/gametile.py:237
 msgid "Download error"
 msgstr "下载错误"
 
@@ -120,11 +120,11 @@ msgid ""
 "system."
 msgstr "更改软件语言失败。请确保已生成locale。"
 
-#: minigalaxy/ui/gametile.py:298
+#: minigalaxy/ui/gametile.py:301
 msgid "Failed to install {}"
 msgstr "安装 {} 失败"
 
-#: minigalaxy/ui/library.py:152
+#: minigalaxy/ui/library.py:141
 msgid "Failed to retrieve library"
 msgstr "获取游戏库失败"
 
@@ -140,7 +140,7 @@ msgstr "芬兰语"
 msgid "French"
 msgstr "法语"
 
-#: minigalaxy/ui/properties.py:137
+#: minigalaxy/ui/properties.py:140
 msgid "Genre"
 msgstr "类型"
 
@@ -278,7 +278,7 @@ msgctxt "preferred_game_language"
 msgid "Preferred game language: "
 msgstr "首选语言："
 
-#: data/ui/gametile.ui:81
+#: data/ui/gametile.ui:223
 msgid "Properties"
 msgstr "属性"
 
@@ -397,11 +397,11 @@ msgstr "土耳其语"
 msgid "Ukrainian"
 msgstr "乌克兰语"
 
-#: data/ui/gametile.ui:66
+#: data/ui/gametile.ui:208
 msgid "Uninstall"
 msgstr "卸载"
 
-#: data/ui/gametile.ui:51
+#: data/ui/gametile.ui:193
 msgid "Update"
 msgstr "更新"
 
@@ -415,7 +415,7 @@ msgstr "使用暗色主题："
 msgid "Variable flags:"
 msgstr "变量标记："
 
-#: minigalaxy/ui/properties.py:139
+#: minigalaxy/ui/properties.py:142
 msgid "Version"
 msgstr "版本"
 
@@ -456,35 +456,39 @@ msgstr "未找到 Wine。无法启用显示 Windows 游戏"
 msgid "Winecfg"
 msgstr "Winecfg"
 
-#: minigalaxy/ui/gametile.py:450
+#: minigalaxy/ui/gametile.py:460
 msgid "download"
 msgstr "下载"
 
-#: minigalaxy/ui/gametile.py:489
+#: minigalaxy/ui/gametile.py:500
 msgid "downloading…"
 msgstr "正在下载…"
 
-#: minigalaxy/ui/gametile.py:481
+#: minigalaxy/ui/gametile.py:491
 msgid "in queue…"
 msgstr "队列中…"
 
-#: minigalaxy/ui/gametile.py:469
+#: minigalaxy/ui/gametile.py:479
 msgid "install"
 msgstr "安装"
 
-#: minigalaxy/ui/gametile.py:499
+#: minigalaxy/ui/gametile.py:511
 msgid "installing…"
 msgstr "正在安装…"
 
-#: minigalaxy/ui/gametile.py:513 minigalaxy/ui/gametile.py:543
+#: minigalaxy/ui/gametile.py:526 minigalaxy/ui/gametile.py:556
 msgid "play"
 msgstr "开始游戏"
 
-#: minigalaxy/ui/gametile.py:529
+#: minigalaxy/ui/gametile.py:542
 msgid "uninstalling…"
 msgstr "正在卸载…"
 
-#: minigalaxy/ui/gametile.py:552
+#: minigalaxy/ui/properties.py:136
+msgid "unknown"
+msgstr ""
+
+#: minigalaxy/ui/gametile.py:565
 msgid "updating…"
 msgstr "正在更新…"
 
