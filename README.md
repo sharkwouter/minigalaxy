@@ -53,6 +53,7 @@ Minigalaxy should work on the following distributions:
 
 - Debian Buster (10.0) or newer
 - Ubuntu 18.10 or newer
+- Linux Mint 20 or newer
 - Arch Linux
 - Manjaro
 - Fedora 31+
