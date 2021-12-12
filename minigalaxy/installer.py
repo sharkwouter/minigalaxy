@@ -115,7 +115,7 @@ def extract_installer(game, installer, temp_dir):
     if game.platform in ["linux"]:
         err_msg = extract_linux(installer, temp_dir)
     else:
-        err_msg = extract_windows(game, installer, temp_dir)
+        err_msg = extract_windows(game, installer)
     return err_msg
 
 
@@ -131,12 +131,9 @@ def extract_linux(installer, temp_dir):
     return err_msg
 
 
-def extract_windows(game, installer, temp_dir):
-    err_msg = extract_by_innoextract(installer, temp_dir)
-    if err_msg:
-        err_msg = extract_by_wine(game, installer, temp_dir)
+def extract_windows(game, installer):
+    err_msg = extract_by_wine(game, installer)
     return err_msg
-
 
 def extract_by_innoextract(installer, temp_dir):
     err_msg = ""
@@ -159,14 +156,14 @@ def extract_by_innoextract(installer, temp_dir):
     return err_msg
 
 
-def extract_by_wine(game, installer, temp_dir):
+def extract_by_wine(game, installer):
     err_msg = ""
     # Set the prefix for Windows games
     prefix_dir = os.path.join(game.install_dir, "prefix")
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
     # It's possible to set install dir as argument before installation
-    command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir), "/VERYSILENT"]
+    command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(game.install_dir)]
     stdout, stderr, exitcode = _exe_cmd(command)
     if exitcode not in [0]:
         err_msg = _("Wine extraction failed.")
@@ -186,8 +183,6 @@ def move_and_overwrite(game, temp_dir):
 
     # Remove the temporary directory
     shutil.rmtree(temp_dir, ignore_errors=True)
-    if game.platform in ["windows"] and "unins000.exe" not in os.listdir(game.install_dir):
-        open(os.path.join(game.install_dir, "unins000.exe"), "w").close()
     return error_message
 
 

@@ -110,42 +110,8 @@ class Test(TestCase):
         mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = ""
-        obs = installer.extract_windows(game, installer_path, temp_dir)
-        self.assertEqual(exp, obs)
-
-    @mock.patch('subprocess.Popen')
-    @mock.patch('shutil.which')
-    def test1_extract_by_innoextract(self, mock_which, mock_subprocess):
-        mock_which.return_value = True
-        mock_subprocess().returncode = 0
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
-        installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
-        exp = ""
-        obs = installer.extract_by_innoextract(installer_path, temp_dir)
-        self.assertEqual(exp, obs)
-
-    @mock.patch('shutil.which')
-    def test2_extract_by_innoextract(self, mock_which):
-        mock_which.return_value = False
-        installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
-        exp = "Innoextract not installed."
-        obs = installer.extract_by_innoextract(installer_path, temp_dir)
-        self.assertEqual(exp, obs)
-
-    @mock.patch('subprocess.Popen')
-    @mock.patch('shutil.which')
-    def test3_extract_by_innoextract(self, mock_which, mock_subprocess):
-        mock_which.return_value = True
-        mock_subprocess().returncode = 1
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
-        installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
-        exp = "Innoextract extraction failed."
-        obs = installer.extract_by_innoextract(installer_path, temp_dir)
+        obs = installer.extract_windows(game, installer_path)
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
@@ -156,9 +122,8 @@ class Test(TestCase):
         mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = ""
-        obs = installer.extract_by_wine(game, installer_path, temp_dir)
+        obs = installer.extract_by_wine(game, installer_path)
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
@@ -169,9 +134,8 @@ class Test(TestCase):
         mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = "Wine extraction failed."
-        obs = installer.extract_by_wine(game, installer_path, temp_dir)
+        obs = installer.extract_by_wine(game, installer_path)
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
