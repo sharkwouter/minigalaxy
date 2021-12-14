@@ -146,11 +146,11 @@ def extract_by_innoextract(installer, temp_dir):
         if exitcode not in [0]:
             err_msg = _("Innoextract extraction failed.")
         else:
-            ## In the case the game is installed in "temp_dir/app" like Zeus + Poseidon (Acropolis)
+            # In the case the game is installed in "temp_dir/app" like Zeus + Poseidon (Acropolis)
             inno_app_dir = os.path.join(temp_dir, "app")
             if os.path.isdir(inno_app_dir):
                 _mv(inno_app_dir, temp_dir)
-            ## In the case the game is installed in "temp_dir/game" like Dragon Age™: Origins - Ultimate Edition
+            # In the case the game is installed in "temp_dir/game" like Dragon Age™: Origins - Ultimate Edition
             inno_game_dir = os.path.join(temp_dir, "game")
             if os.path.isdir(inno_game_dir):
                 _mv(inno_game_dir, temp_dir)
@@ -297,12 +297,12 @@ def remove_installer(game, installer):
 
 def postinstaller(game):
     err_msg = ""
-    """To prevents crash at launch for Dragon Age : Origins (only when the game is extracted by Innoextract) :
-       012c:err:module:import_dll Library PhysXLoader.dll (which is needed by L"Z:\\home\\kasimir\\.cache\\minigalaxy\\1949616134\\game\\bin_ship\\NxCharacter.dll") not found
-       012c:err:module:import_dll Library NxCharacter.dll (which is needed by L"Z:\\home\\kasimir\\.cache\\minigalaxy\\1949616134\\game\\bin_ship\\DAOrigins.exe") not found
-       012c:err:module:import_dll Library PhysXLoader.dll (which is needed by L"Z:\\home\\kasimir\\.cache\\minigalaxy\\1949616134\\game\\bin_ship\\DAOrigins.exe") not found
-       012c:err:module:LdrInitializeThunk Importing dlls for L"Z:\\home\\kasimir\\.cache\\minigalaxy\\1949616134\\game\\bin_ship\\DAOrigins.exe" failed, status c0000135
-       it's needed to install Physx with wine after extraction."""
+    # To prevents crash at launch for Dragon Age : Origins (only when the game is extracted by Innoextract) :
+    # 012c:err:module:import_dll Library PhysXLoader.dll (which is needed by L"Z:\\home\\kasimir\\.cache\\minigalaxy\\1949616134\\game\\bin_ship\\NxCharacter.dll") not found
+    # 012c:err:module:import_dll Library NxCharacter.dll (which is needed by L"Z:\\home\\kasimir\\.cache\\minigalaxy\\1949616134\\game\\bin_ship\\DAOrigins.exe") not found
+    # 012c:err:module:import_dll Library PhysXLoader.dll (which is needed by L"Z:\\home\\kasimir\\.cache\\minigalaxy\\1949616134\\game\\bin_ship\\DAOrigins.exe") not found
+    # 012c:err:module:LdrInitializeThunk Importing dlls for L"Z:\\home\\kasimir\\.cache\\minigalaxy\\1949616134\\game\\bin_ship\\DAOrigins.exe" failed, status c0000135
+    # it's needed to install Physx with wine after extraction."""
     postinst_wine = os.path.join(game.install_dir, "redist", "PhysX_9.09.0408_SystemSoftware.exe")
     if os.path.isfile(postinst_wine):
         prefix_dir = os.path.join(game.install_dir, "prefix")
