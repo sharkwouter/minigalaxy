@@ -23,11 +23,14 @@ class Properties(Gtk.Dialog):
     button_properties_open_files = Gtk.Template.Child()
     button_properties_winecfg = Gtk.Template.Child()
     button_properties_regedit = Gtk.Template.Child()
+    button_properties_wine = Gtk.Template.Child()
+    button_properties_reset = Gtk.Template.Child()
     switch_properties_show_fps = Gtk.Template.Child()
     switch_properties_hide_game = Gtk.Template.Child()
     entry_properties_variable = Gtk.Template.Child()
     entry_properties_command = Gtk.Template.Child()
     label_game_description = Gtk.Template.Child()
+    label_wine_custom = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
@@ -44,9 +47,10 @@ class Properties(Gtk.Dialog):
         # Disable/Enable buttons
         self.button_sensitive(game)
 
-        # Retrieve variable & command each time Properties is open
+        # Retrieve variable, command & custom wine path each time Properties is open
         self.entry_properties_variable.set_text(self.game.get_info("variable"))
         self.entry_properties_command.set_text(self.game.get_info("command"))
+        self.button_properties_wine.set_filename(self.game.get_info("custom_wine"))
 
         # Keep switch FPS disabled/enabled
         self.switch_properties_show_fps.set_active(self.game.get_info("show_fps"))
@@ -70,6 +74,16 @@ class Properties(Gtk.Dialog):
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
         self.parent.parent.filter_library()
         self.destroy()
+
+    @Gtk.Template.Callback("on_button_properties_wine_file_set")
+    def on_button_properties_wine(self, widget):
+        self.game.set_info("custom_wine", str(self.button_properties_wine.get_filename()))
+
+    @Gtk.Template.Callback("on_button_properties_reset_clicked")
+    def on_menu_button_reset(self, widget):
+        if self.game.get_info("custom_wine") is not None:
+            self.button_properties_wine.unselect_filename(self.game.get_info("custom_wine"))
+            self.game.set_info("custom_wine", "")
 
     @Gtk.Template.Callback("on_button_properties_winecfg_clicked")
     def on_menu_button_winecfg(self, widget):
@@ -145,9 +159,14 @@ class Properties(Gtk.Dialog):
             self.button_properties_winecfg.set_sensitive(False)
             self.entry_properties_command.set_sensitive(False)
             self.entry_properties_variable.set_sensitive(False)
+            self.button_properties_wine.set_sensitive(False)
+            self.button_properties_reset.set_sensitive(False)
             self.button_properties_regedit.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
 
         if game.platform == 'linux':
             self.button_properties_winecfg.hide()
             self.button_properties_regedit.hide()
+            self.button_properties_wine.hide()
+            self.button_properties_reset.hide()
+            self.label_wine_custom.hide()
