@@ -7,27 +7,22 @@ import glob
 from minigalaxy.translation import _
 
 
-def wine_path(game):
-    custom_path = game.get_info("custom_wine")
-    if custom_path == "":
-        custom_wine_path = shutil.which("wine")
-    else:
-        custom_wine_path = custom_path
-    return custom_wine_path
-
+def get_wine_path(game):
+    custom_wine_path = game.get_info("custom_wine")
+    return custom_wine_path if custom_wine_path else shutil.which("wine")
 
 def config_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
 
     os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen([wine_path(game), 'winecfg'])
+    subprocess.Popen([get_wine_path(game), 'winecfg'])
 
 
 def regedit_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
 
     os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen([wine_path(game), 'regedit'])
+    subprocess.Popen([get_wine_path(game), 'regedit'])
 
 
 def start_game(game):
@@ -108,16 +103,16 @@ def get_windows_exe_cmd(game, files):
                 # if we have the workingDir property, start the executable at that directory
                 if info["playTasks"]:
                     if "workingDir" in info["playTasks"][0] and info["playTasks"][0]["workingDir"]:
-                        exe_cmd = [wine_path(game), "start", "/b", "/wait", "/d", info["playTasks"][0]["workingDir"],
+                        exe_cmd = [get_wine_path(game), "start", "/b", "/wait", "/d", info["playTasks"][0]["workingDir"],
                                    info["playTasks"][0]["path"]]
                     else:
-                        exe_cmd = [wine_path(game), info["playTasks"][0]["path"]]
+                        exe_cmd = [get_wine_path(game), info["playTasks"][0]["path"]]
     if exe_cmd == [""]:
         # in case no goggame info file was found
         executables = glob.glob(game.install_dir + '/*.exe')
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
-        exe_cmd = [wine_path(game), filename]
+        exe_cmd = [get_wine_path(game), filename]
 
     return exe_cmd
 

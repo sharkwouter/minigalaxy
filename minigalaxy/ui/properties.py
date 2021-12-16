@@ -81,7 +81,7 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_reset_clicked")
     def on_menu_button_reset(self, widget):
-        if self.game.get_info("custom_wine") is not None:
+        if self.game.get_info("custom_wine"):
             self.button_properties_wine.unselect_filename(self.game.get_info("custom_wine"))
             self.game.set_info("custom_wine", "")
 
