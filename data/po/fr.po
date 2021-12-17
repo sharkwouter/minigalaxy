@@ -274,7 +274,7 @@ msgctxt "preferences"
 msgid "Preferences"
 msgstr "Préférences"
 
-#. Prefered language for downloading games in. Ends with ": ".
+#. Preferred language for downloading games in. Ends with ": ".
 #: data/ui/preferences.ui:93
 msgctxt "preferred_game_language"
 msgid "Preferred game language: "
