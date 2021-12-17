@@ -220,7 +220,7 @@
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <property name="text" translatable="yes">Properties</property>
+            <property name="text" translatable="yes">Game info</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="on_menu_button_properties_clicked" swapped="no"/>
           </object>
@@ -235,7 +235,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="text" translatable="yes">Preferences</property>
+            <property name="text" translatable="yes">Properties</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="on_menu_button_game_preferences_clicked" swapped="no"/>
           </object>

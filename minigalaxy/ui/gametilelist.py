@@ -18,6 +18,7 @@ from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound
 from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
 from minigalaxy.ui.properties import Properties
+from minigalaxy.ui.game_preferences import GamePreferences
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametilelist.ui"))
@@ -35,6 +36,7 @@ class GameTileList(Gtk.Box):
     menu_button_uninstall = Gtk.Template.Child()
     dlc_horizontal_box = Gtk.Template.Child()
     menu_button_properties = Gtk.Template.Child()
+    menu_button_game_preferences = Gtk.Template.Child()
     game_label = Gtk.Template.Child()
 
     state = Enum('state',
@@ -129,6 +131,12 @@ class GameTileList(Gtk.Box):
         properties_window = Properties(self, self.game, self.api)
         properties_window.run()
         properties_window.destroy()
+
+    @Gtk.Template.Callback("on_menu_button_game_preferences_clicked")
+    def show_game_preferences(self, button):
+        game_preferences_window = GamePreferences(self, self.game, self.api)
+        game_preferences_window.run()
+        game_preferences_window.destroy()
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def on_button_cancel(self, widget):
