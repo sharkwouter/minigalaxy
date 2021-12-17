@@ -17,8 +17,8 @@ from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound
 from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
+from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
-from minigalaxy.ui.game_preferences import GamePreferences
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
@@ -35,8 +35,8 @@ class GameTile(Gtk.Box):
     menu_button_dlc = Gtk.Template.Child()
     menu_button_uninstall = Gtk.Template.Child()
     dlc_horizontal_box = Gtk.Template.Child()
+    menu_button_information = Gtk.Template.Child()
     menu_button_properties = Gtk.Template.Child()
-    menu_button_game_preferences = Gtk.Template.Child()
 
     state = Enum('state',
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
@@ -123,17 +123,17 @@ class GameTile(Gtk.Box):
         if err_msg:
             self.parent.parent.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
 
+    @Gtk.Template.Callback("on_menu_button_information_clicked")
+    def show_information(self, button):
+        information_window = Information(self, self.game, self.api)
+        information_window.run()
+        information_window.destroy()
+
     @Gtk.Template.Callback("on_menu_button_properties_clicked")
     def show_properties(self, button):
         properties_window = Properties(self, self.game, self.api)
         properties_window.run()
         properties_window.destroy()
-
-    @Gtk.Template.Callback("on_menu_button_game_preferences_clicked")
-    def show_game_preferences(self, button):
-        game_preferences_window = GamePreferences(self, self.game, self.api)
-        game_preferences_window.run()
-        game_preferences_window.destroy()
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def on_button_cancel(self, widget):

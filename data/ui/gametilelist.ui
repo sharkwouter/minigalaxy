@@ -232,13 +232,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="menu_button_properties">
+          <object class="GtkModelButton" id="menu_button_information">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="text" translatable="yes">Game info</property>
+            <property name="text" translatable="yes">Information</property>
             <property name="centered">True</property>
-            <signal name="clicked" handler="on_menu_button_properties_clicked" swapped="no"/>
+            <signal name="clicked" handler="on_menu_button_information_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -247,13 +247,13 @@
           </packing>
         </child>
         <child>
-          <object class="GtkModelButton" id="menu_button_game_preferences">
+          <object class="GtkModelButton" id="menu_button_properties">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="text" translatable="yes">Properties</property>
             <property name="centered">True</property>
-            <signal name="clicked" handler="on_menu_button_game_preferences_clicked" swapped="no"/>
+            <signal name="clicked" handler="on_menu_button_properties_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>
