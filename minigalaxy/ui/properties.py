@@ -20,7 +20,7 @@ class Properties(Gtk.Dialog):
     label_game_description = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
-        Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
+        Gtk.Dialog.__init__(self, title=_("Game info about {}").format(game.name), parent=parent.parent.parent,
                             modal=True)
         self.parent = parent
         self.game = game
