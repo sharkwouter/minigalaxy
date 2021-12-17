@@ -90,7 +90,7 @@
                 <property name="tooltip-text" translatable="yes" context="preferred_game_language_tooltip">The preferred language for downloading games in</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
-                <property name="label" translatable="yes" context="preferred_game_language" comments="Prefered language for downloading games in. Has to end with &quot;: &quot;">Preferred game language: </property>
+                <property name="label" translatable="yes" context="preferred_game_language" comments="Preferred language for downloading games in. Has to end with &quot;: &quot;">Preferred game language: </property>
               </object>
               <packing>
                 <property name="left-attach">0</property>
