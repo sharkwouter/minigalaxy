@@ -259,8 +259,9 @@ class Api:
             for summary_key in response_json["game"]["summary"]:
                 gamesdb_dict["summary"][summary_key] = response_json["game"]["summary"][summary_key]
             gamesdb_dict["genre"] = {}
-            for genre_key in response_json["game"]["genres"][0]["name"]:
-                gamesdb_dict["genre"][genre_key] = response_json["game"]["genres"][0]["name"][genre_key]
+            if len(response_json["game"]["genres"]) > 0:
+                for genre_key in response_json["game"]["genres"][0]["name"]:
+                    gamesdb_dict["genre"][genre_key] = response_json["game"]["genres"][0]["name"][genre_key]
         else:
             gamesdb_dict["summary"] = {}
             gamesdb_dict["genre"] = {}

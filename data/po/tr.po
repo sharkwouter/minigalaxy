@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-27 22:44-0400\n"
+"POT-Creation-Date: 2021-11-26 14:30-0800\n"
 "PO-Revision-Date: 2021-09-30 11:22+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
@@ -55,7 +55,7 @@ msgstr "GOG üzerinden çıkış yapmak istediğinize emin misiniz?"
 msgid "Are you sure you want to uninstall %s?"
 msgstr "%s silmek istediğine emin misin?"
 
-#: minigalaxy/constants.py:7
+#: minigalaxy/constants.py:7 minigalaxy/constants.py:30
 msgid "Brazilian Portuguese"
 msgstr "Brezilya Portekizçesi"
 
@@ -90,7 +90,11 @@ msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
 msgstr "Menü kısayolları oluştur: "
 
-#: data/ui/gametile.ui:36
+#: minigalaxy/constants.py:31
+msgid "Czech"
+msgstr ""
+
+#: data/ui/gametile.ui:178
 msgid "DLC"
 msgstr "DLC"
 
@@ -98,15 +102,15 @@ msgstr "DLC"
 msgid "Danish"
 msgstr "Danimarka Dili"
 
-#: minigalaxy/ui/gametile.py:207 minigalaxy/ui/gametile.py:236
+#: minigalaxy/ui/gametile.py:207 minigalaxy/ui/gametile.py:237
 msgid "Download error"
 msgstr "İndirme hatası"
 
-#: minigalaxy/constants.py:10 minigalaxy/constants.py:30
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:32
 msgid "Dutch"
 msgstr "Flemenkçe"
 
-#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:33
 msgid "English"
 msgstr "İngilzce"
 
@@ -116,31 +120,31 @@ msgid ""
 "system."
 msgstr ""
 
-#: minigalaxy/ui/gametile.py:298
+#: minigalaxy/ui/gametile.py:301
 msgid "Failed to install {}"
 msgstr "{} yüklenemedi:"
 
-#: minigalaxy/ui/library.py:152
+#: minigalaxy/ui/library.py:141
 msgid "Failed to retrieve library"
 msgstr "Kütüphane alınamadı"
 
-#: minigalaxy/launcher.py:36 minigalaxy/ui/gametile.py:122
+#: minigalaxy/launcher.py:34 minigalaxy/ui/gametile.py:122
 msgid "Failed to start {}:"
 msgstr "{} başlatılamadı:"
 
-#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
+#: minigalaxy/constants.py:12 minigalaxy/constants.py:34
 msgid "Finnish"
 msgstr "Fince"
 
-#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:35
 msgid "French"
 msgstr "Fransızca"
 
-#: minigalaxy/ui/properties.py:137
+#: minigalaxy/ui/properties.py:140
 msgid "Genre"
 msgstr "Genre"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:36
 msgid "German"
 msgstr "Almanca"
 
@@ -178,7 +182,7 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "Yüklendi"
 
-#: minigalaxy/constants.py:16
+#: minigalaxy/constants.py:16 minigalaxy/constants.py:37
 msgid "Italian"
 msgstr "İtalyanca"
 
@@ -220,7 +224,7 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "Çıkış Yap"
 
-#: minigalaxy/launcher.py:184
+#: minigalaxy/launcher.py:179
 msgid "No executable was found in {}"
 msgstr "{} burada başlatma dosyası bulunamadı"
 
@@ -228,11 +232,11 @@ msgstr "{} burada başlatma dosyası bulunamadı"
 msgid "Norwegian"
 msgstr "Norveçce"
 
-#: minigalaxy/constants.py:35
+#: minigalaxy/constants.py:38
 msgid "Norwegian Bokmål"
 msgstr "Norveçce"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:39
 msgid "Norwegian Nynorsk"
 msgstr "Norveçce"
 
@@ -252,11 +256,11 @@ msgstr "Dosyaları Aç"
 msgid "Please check your internet connection"
 msgstr "Lütfen internet bağlantınızı kontrol ediniz"
 
-#: minigalaxy/constants.py:20 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:40
 msgid "Polish"
 msgstr "Lehçe"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:21
 msgid "Portuguese"
 msgstr "Portekizce"
 
@@ -276,7 +280,7 @@ msgctxt "preferred_game_language"
 msgid "Preferred game language: "
 msgstr "Tercih edilen dil: "
 
-#: data/ui/gametile.ui:81
+#: data/ui/gametile.ui:223
 msgid "Properties"
 msgstr "Seçenekler"
 
@@ -294,7 +298,7 @@ msgstr "Oyun listesini güncelle"
 msgid "Regedit"
 msgstr "Regedit"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:41
 msgid "Russian"
 msgstr "Rusça"
 
@@ -326,11 +330,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Sadece yüklü oyunları göster"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:42
 msgid "Simplified Chinese"
 msgstr "Basitleştirilmiş Çince"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:43
 msgid "Spanish"
 msgstr "İspanyolca"
 
@@ -348,7 +352,7 @@ msgstr "Market Sayfası"
 msgid "Support"
 msgstr "Destek"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:44
 msgid "Swedish"
 msgstr "İsveçce"
 
@@ -381,23 +385,23 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Burası oyunların indireleceği yerdir"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:45
 msgid "Traditional Chinese"
 msgstr "Geleneksel Çince"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:46
 msgid "Turkish"
 msgstr "Türkçe"
 
-#: minigalaxy/constants.py:45
+#: minigalaxy/constants.py:47
 msgid "Ukrainian"
 msgstr ""
 
-#: data/ui/gametile.ui:66
+#: data/ui/gametile.ui:208
 msgid "Uninstall"
 msgstr "Kaldır"
 
-#: data/ui/gametile.ui:51
+#: data/ui/gametile.ui:193
 msgid "Update"
 msgstr "Güncelle"
 
@@ -411,7 +415,7 @@ msgstr "Koyu tema kullan: "
 msgid "Variable flags:"
 msgstr "Değişken bayrakları:"
 
-#: minigalaxy/ui/properties.py:139
+#: minigalaxy/ui/properties.py:142
 msgid "Version"
 msgstr "Versiyon"
 
@@ -452,35 +456,39 @@ msgstr "Wine bulunamadı. Windows oyunlarının gösterimi etkinleştirilemez."
 msgid "Winecfg"
 msgstr "Winecfg"
 
-#: minigalaxy/ui/gametile.py:450
+#: minigalaxy/ui/gametile.py:460
 msgid "download"
 msgstr "indir"
 
-#: minigalaxy/ui/gametile.py:489
+#: minigalaxy/ui/gametile.py:500
 msgid "downloading…"
 msgstr "indirliyor…"
 
-#: minigalaxy/ui/gametile.py:481
+#: minigalaxy/ui/gametile.py:491
 msgid "in queue…"
 msgstr "sırada…"
 
-#: minigalaxy/ui/gametile.py:469
+#: minigalaxy/ui/gametile.py:479
 msgid "install"
 msgstr "yükle"
 
-#: minigalaxy/ui/gametile.py:499
+#: minigalaxy/ui/gametile.py:511
 msgid "installing…"
 msgstr "yükleniyor…"
 
-#: minigalaxy/ui/gametile.py:513 minigalaxy/ui/gametile.py:543
+#: minigalaxy/ui/gametile.py:526 minigalaxy/ui/gametile.py:556
 msgid "play"
 msgstr "oyna"
 
-#: minigalaxy/ui/gametile.py:529
+#: minigalaxy/ui/gametile.py:542
 msgid "uninstalling…"
 msgstr "siliniyor…"
 
-#: minigalaxy/ui/gametile.py:552
+#: minigalaxy/ui/properties.py:136
+msgid "unknown"
+msgstr ""
+
+#: minigalaxy/ui/gametile.py:565
 msgid "updating…"
 msgstr "güncelleniyor…"
 

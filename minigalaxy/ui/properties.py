@@ -130,11 +130,14 @@ class Properties(Gtk.Dialog):
                 description = "{}...".format(self.gamesdb_info["summary"][desc_lang][:description_len])
             else:
                 description = self.gamesdb_info["summary"][desc_lang]
-            genre_lang = "*"
-            for genre_key in self.gamesdb_info["genre"].keys():
+            if "*" in self.gamesdb_info["genre"]:
+                genre = self.gamesdb_info["genre"]["*"]
+            else:
+                genre = _("unknown")
+            for genre_key, genre_value in self.gamesdb_info["genre"].items():
                 if lang in genre_key:
-                    genre_lang = genre_key
-            description = "{}: {}\n{}".format(_("Genre"), self.gamesdb_info["genre"][genre_lang], description)
+                    genre = genre_value
+            description = "{}: {}\n{}".format(_("Genre"), genre, description)
         if self.game.is_installed():
             description = "{}: {}\n{}".format(_("Version"), self.game.get_info("version"), description)
         GLib.idle_add(self.label_game_description.set_text, description)
