@@ -17,6 +17,7 @@ from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound
 from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
+from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 
 
@@ -34,6 +35,7 @@ class GameTile(Gtk.Box):
     menu_button_dlc = Gtk.Template.Child()
     menu_button_uninstall = Gtk.Template.Child()
     dlc_horizontal_box = Gtk.Template.Child()
+    menu_button_information = Gtk.Template.Child()
     menu_button_properties = Gtk.Template.Child()
 
     state = Enum('state',
@@ -120,6 +122,12 @@ class GameTile(Gtk.Box):
             download_thread.start()
         if err_msg:
             self.parent.parent.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
+
+    @Gtk.Template.Callback("on_menu_button_information_clicked")
+    def show_information(self, button):
+        information_window = Information(self, self.game, self.api)
+        information_window.run()
+        information_window.destroy()
 
     @Gtk.Template.Callback("on_menu_button_properties_clicked")
     def show_properties(self, button):

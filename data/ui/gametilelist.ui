@@ -232,6 +232,21 @@
           </packing>
         </child>
         <child>
+          <object class="GtkModelButton" id="menu_button_information">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="text" translatable="yes">Information</property>
+            <property name="centered">True</property>
+            <signal name="clicked" handler="on_menu_button_information_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkModelButton" id="menu_button_properties">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -243,7 +258,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">3</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>
