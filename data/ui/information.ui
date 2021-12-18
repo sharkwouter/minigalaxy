@@ -99,7 +99,7 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button_information_gog_database">
-                        <property name="label" translatable="yes">GOG Database</property>
+                        <property name="label">GOG Database</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
@@ -112,7 +112,7 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button_information_pcgamingwiki">
-                        <property name="label" translatable="yes">PCGamingWiki</property>
+                        <property name="label">PCGamingWiki</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
