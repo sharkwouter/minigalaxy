@@ -17,6 +17,9 @@ class Information(Gtk.Dialog):
     button_information_ok = Gtk.Template.Child()
     button_information_support = Gtk.Template.Child()
     button_information_store = Gtk.Template.Child()
+    button_information_forum = Gtk.Template.Child()
+    button_information_gog_database = Gtk.Template.Child()
+    button_information_pcgamingwiki = Gtk.Template.Child()
     label_game_description = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
@@ -55,6 +58,36 @@ class Information(Gtk.Dialog):
         except webbrowser.Error:
             self.parent.parent.show_error(
                 _("Couldn't open store page"),
+                _("Please check your internet connection")
+            )
+
+    @Gtk.Template.Callback("on_button_information_forum_clicked")
+    def on_menu_button_forum(self, widget):
+        try:
+            webbrowser.open(self.api.get_info(self.game)['links']['forum'], new=2)
+        except webbrowser.Error:
+            self.parent.parent.show_error(
+                _("Couldn't open forum page"),
+                _("Please check your internet connection")
+            )
+
+    @Gtk.Template.Callback("on_button_information_gog_database_clicked")
+    def on_menu_button_gog_database(self, widget):
+        try:
+            webbrowser.open("https://www.gogdb.org/product/{}".format(self.game.id))
+        except webbrowser.Error:
+            self.parent.parent.show_error(
+                _("Couldn't open forum page"),
+                _("Please check your internet connection")
+            )
+
+    @Gtk.Template.Callback("on_button_information_pcgamingwiki_clicked")
+    def on_menu_button_pcgamingwiki(self, widget):
+        try:
+            webbrowser.open("https://pcgamingwiki.com/api/gog.php?page={}".format(self.game.id))
+        except webbrowser.Error:
+            self.parent.parent.show_error(
+                _("Couldn't open forum page"),
                 _("Please check your internet connection")
             )
 
