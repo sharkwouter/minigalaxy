@@ -149,10 +149,10 @@ msgstr ""
 msgid "German"
 msgstr "德文"
 
-#. A link to the Github page
+#. A link to the GitHub page
 #: data/ui/about.ui:12
 msgctxt "github_page_link"
-msgid "Github page"
+msgid "GitHub page"
 msgstr "GitHub 頁面"
 
 #: data/ui/properties.ui:105

@@ -148,11 +148,11 @@ msgstr "类型"
 msgid "German"
 msgstr "德语"
 
-#. A link to the Github page
+#. A link to the GitHub page
 #: data/ui/about.ui:12
 msgctxt "github_page_link"
-msgid "Github page"
-msgstr "Github 页面"
+msgid "GitHub page"
+msgstr "GitHub 页面"
 
 #: data/ui/properties.ui:105
 msgid "Hide game:"

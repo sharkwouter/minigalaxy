@@ -9,7 +9,7 @@
     <property name="copyright">Copyright © 2019-2020 Wouter Wijsman</property>
     <property name="comments" translatable="yes" context="short_description" comments="A short description of what Minigalaxy is">A simple GOG client for Linux</property>
     <property name="website">https://github.com/sharkwouter/minigalaxy</property>
-    <property name="website-label" translatable="yes" context="github_page_link" comments="A link to the Github page">Github page</property>
+    <property name="website-label" translatable="yes" context="github_page_link" comments="A link to the GitHub page">GitHub page</property>
     <property name="authors">&lt;a href="https://github.com/sharkwouter"&gt;Wouter Wijsman&lt;/a&gt;
 &lt;a href="https://github.com/makson96"&gt;Tomasz Makarewicz&lt;/a&gt;
 &lt;a href="https://github.com/Odelpasso"&gt;Maxime Lombard&lt;/a&gt;
