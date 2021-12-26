@@ -150,11 +150,11 @@ msgstr "Žánr"
 msgid "German"
 msgstr "Němčina"
 
-#. A link to the Github page
+#. A link to the GitHub page
 #: data/ui/about.ui:12
 msgctxt "github_page_link"
-msgid "Github page"
-msgstr "Stránka na Githubu"
+msgid "GitHub page"
+msgstr "Stránka na GitHubu"
 
 #: data/ui/properties.ui:105
 msgid "Hide game:"
