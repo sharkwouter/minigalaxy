@@ -1,6 +1,6 @@
 # Minigalaxy
 
-A simple GOG client for Linux
+A simple GOG client for Linux.
 
 ![screenshot](screenshot.jpg?raw=true)
 
@@ -10,24 +10,25 @@ The most important features of Minigalaxy:
 
 - Log in with your GOG account
 - Download the Linux games you own on GOG
-- Launch them
+- Launch them!
 
 In addition to that, Minigalaxy also allows you to:
 
 - Update your games
 - Install and update DLC
-- Select in which language you'd prefer to download your games
+- Select which language you'd prefer to download your games in
 - Change where games are installed
 - Search your GOG Linux library
 - Show all games or just the ones you've installed
 - View the error message if a game fails to launch
 - Enable displaying the FPS in games
-- Use the system's Scummvm or Dosbox installation
+- Use the system's ScummVM or DOSBox installation
 - Install Windows games using Wine
 
 ## Supported languages
 
-Currently Minigalaxy can be displayed in the following languages:
+Currently, Minigalaxy can be displayed in the following languages:
+
 - Brazilian Portuguese
 - Czech
 - English
@@ -51,16 +52,17 @@ Currently Minigalaxy can be displayed in the following languages:
 
 Minigalaxy should work on the following distributions:
 
-- Debian Buster (10.0) or newer
+- Debian 10 or newer
 - Ubuntu 18.10 or newer
 - Linux Mint 20 or newer
 - Arch Linux
 - Manjaro
-- Fedora 31+
-- openSUSE Tumbleweed
-- Gentoo
-- MX Linux 19
+- Fedora Linux 31 or newer
+- openSUSE Tumbleweed and Leap 15.2 or newer
+- Gentoo Linux
+- MX Linux 19 or newer
 - Solus
+- Void Linux
 
 Minigalaxy does **not** ship for the following distributions because they do not contain the required version of PyGObject:
 
@@ -82,10 +84,16 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
     <img src="https://repology.org/badge/vertical-allrepos/minigalaxy.svg" alt="Packaging status" align="right">
 </a>
 
-<details><summary>Ubuntu/Debian</summary>
+<details><summary>Debian/Ubuntu</summary>
 
-Download the latest deb package from the <a href="https://github.com/sharkwouter/minigalaxy/releases">releases page</a> and install it.
+Available in the official repositories since Debian 11 and Ubuntu 21.04. You can install it with:
+<pre>
+sudo apt install minigalaxy
+</pre>
+
+You can also download the latest .deb package from the <a href="https://github.com/sharkwouter/minigalaxy/releases">releases page</a> and install it that way.
 </details>
+
 <details><summary>Arch/Manjaro</summary>
 
 Available the <a href="https://aur.archlinux.org/packages/minigalaxy">AUR</a>. You can use an AUR helper or use the following set of commands to install Minigalaxy on Arch:
@@ -98,7 +106,7 @@ makepkg -si
 
 <details><summary>Fedora</summary>
 
-Available in <a href="https://src.fedoraproject.org/rpms/minigalaxy">official repos</a> (F31+)
+Available in the <a href="https://src.fedoraproject.org/rpms/minigalaxy">official repositories</a> since Fedora 31. You can install it with:
 <pre>
 sudo dnf install minigalaxy
 </pre>
@@ -106,7 +114,12 @@ sudo dnf install minigalaxy
 
 <details><summary>openSUSE</summary>
 
-Available in official repos for openSUSE Tumbleweed. You can use the following set of commands to install Minigalaxy on openSUSE from the devel project on <a href="https://build.opensuse.org/package/show/games:tools/minigalaxy">OBS</a>:
+Available in the official repositories for openSUSE Tumbleweed and also Leap since 15.2. You can install it with:
+<pre>
+sudo zypper in minigalaxy
+</pre>
+
+Alternatively, you can use the following set of commands to install Minigalaxy on openSUSE from the devel project on <a href="https://build.opensuse.org/package/show/games:tools/minigalaxy">OBS</a>:
 <pre>
 sudo zypper ar -f obs://games:tools gamestools
 sudo zypper ref
@@ -116,24 +129,33 @@ sudo zypper in minigalaxy
 
 <details><summary>Gentoo</summary>
 
-Available in the <a href="https://github.com/metafarion/metahax">in the Metahax overlay</a>. Follow the instructions in the link to install Minigalaxy on Gentoo.
+Available in the <a href="https://github.com/metafarion/metahax">Metahax overlay</a>. Follow the instructions in the link to install Minigalaxy on Gentoo.
 </details>
 
 <details><summary>MX Linux</summary>
 
-Currently available in the <a href="http://mxrepo.com/mx/repo/pool/main/m/minigalaxy/">official repository</a>.  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
+Available in the <a href="http://mxrepo.com/mx/repo/pool/main/m/minigalaxy/">official repository</a>.  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
 </details>
+
 <details><summary>Solus</summary>
  
-Available in the official repositories. You can use the following command to install Minigalaxy on Solus:
+Available in the official repositories. You can install it with:
 <pre>
 sudo eopkg it minigalaxy
 </pre>
 </details>
 
+<details><summary>Void Linux</summary>
+
+Available in the official repositories. You can install it with:
+<pre>
+sudo xbps-install -S minigalaxy
+</pre>
+</details>
+
 <details><summary>Other distributions</summary>
 
-On other distributions Minigalaxy can be downloaded and started with the following commands:
+On other distributions, Minigalaxy can be downloaded and started with the following commands:
 <pre>
 git clone https://github.com/sharkwouter/minigalaxy.git
 cd minigalaxy
@@ -141,16 +163,17 @@ scripts/compile-translations.sh
 bin/minigalaxy
 </pre>
 
-This will be the development version. Alternatively a tarball of a specific release can be downloaded from the <a href="https://github.com/sharkwouter/minigalaxy/releases">releases page</a>.
+This will be the development version. Alternatively, a tarball of a specific release can be downloaded from the <a href="https://github.com/sharkwouter/minigalaxy/releases">releases page</a>.
 </details>
 
 ## Support
+
 If you need any help using Minigalaxy, feel free to join the [Minigalaxy Discord server](https://discord.gg/RC4cXVD).
 Bugs reports and feature requests can also be made [here](https://github.com/sharkwouter/minigalaxy/issues).
 
 ## Contribute
 
-Currently help is needed with the following:
+Currently, help is needed with the following:
 
 - Reporting bugs in the [issue tracker](https://github.com/sharkwouter/minigalaxy/issues).
 - Translating to different languages. Instructions [here](https://github.com/sharkwouter/minigalaxy/wiki/Translating-Minigalaxy).
