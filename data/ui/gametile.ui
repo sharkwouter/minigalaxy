@@ -165,6 +165,21 @@
         <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
+          <object class="GtkModelButton" id="menu_button_update">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="text" translatable="yes">Update</property>
+            <property name="centered">True</property>
+            <signal name="clicked" handler="on_menu_button_update_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkMenuButton" id="menu_button_dlc">
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
@@ -178,21 +193,6 @@
                 <property name="label" translatable="yes">DLC</property>
               </object>
             </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkModelButton" id="menu_button_update">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="text" translatable="yes">Update</property>
-            <property name="centered">True</property>
-            <signal name="clicked" handler="on_menu_button_update_clicked" swapped="no"/>
           </object>
           <packing>
             <property name="expand">False</property>

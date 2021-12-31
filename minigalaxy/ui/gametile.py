@@ -328,10 +328,13 @@ class GameTile(Gtk.Box):
     def __check_for_update_dlc(self):
         if self.game.is_installed() and self.game.id and not self.offline:
             game_info = self.api.get_info(self.game)
-            game_version = self.api.get_version(self.game, gameinfo=game_info)
-            update_available = self.game.is_update_available(game_version)
-            if update_available:
-                GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
+            if self.game.get_info("check_for_updates") == "":
+                self.game.set_info("check_for_updates", True)
+            if self.game.get_info("check_for_updates"):
+                game_version = self.api.get_version(self.game, gameinfo=game_info)
+                update_available = self.game.is_update_available(game_version)
+                if update_available:
+                    GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
             self.__check_for_dlc(game_info)
         if self.offline:
             GLib.idle_add(self.menu_button_dlc.hide)
