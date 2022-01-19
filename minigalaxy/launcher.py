@@ -156,8 +156,6 @@ def get_final_resort_exe_cmd(game, files):
 def set_fps_display(game):
     error_message = ""
     # Enable FPS Counter for Nvidia or AMD (Mesa) users
-    if game.get_info("show_fps") == "":
-        game.set_info("show_fps", False)
     if game.get_info("show_fps"):
         os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users + OpenGL/Vulkan games
         os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users + OpenGL games
