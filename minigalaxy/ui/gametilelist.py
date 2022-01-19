@@ -164,23 +164,27 @@ class GameTileList(Gtk.Box):
         download_thread.start()
 
     def load_thumbnail(self):
-        set_result = self.__set_image("")
-        if not set_result:
-            tries = 10
-            performed_try = 0
-            while performed_try < tries:
-                if self.game.image_url and self.game.id:
-                    # Download the thumbnail
-                    image_url = "https:{}_196.jpg".format(self.game.image_url)
-                    thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
+        thumbnail_path = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
+        if os.path.isfile(thumbnail_path):
+            GLib.idle_add(self.image.set_from_file, thumbnail_path)
+        else:
+            set_result = self.__set_image("")
+            if not set_result:
+                tries = 10
+                performed_try = 0
+                while performed_try < tries:
+                    if self.game.image_url and self.game.id:
+                        # Download the thumbnail
+                        image_url = "https:{}_196.jpg".format(self.game.image_url)
+                        thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
 
-                    download = Download(image_url, thumbnail, finish_func=self.__set_image)
-                    DownloadManager.download_now(download)
-                    set_result = True
-                    break
-                performed_try += 1
-                time.sleep(1)
-        return set_result
+                        download = Download(image_url, thumbnail, finish_func=self.__set_image)
+                        DownloadManager.download_now(download)
+                        set_result = True
+                        break
+                    performed_try += 1
+                    time.sleep(1)
+            return set_result
 
     def __set_image(self, save_location):
         set_result = False
