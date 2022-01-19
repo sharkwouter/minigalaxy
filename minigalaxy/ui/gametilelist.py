@@ -436,6 +436,7 @@ class GameTileList(Gtk.Box):
             self.__create_progress_bar()
         if self.progress_bar:
             GLib.idle_add(self.progress_bar.set_fraction, percentage / 100)
+            GLib.idle_add(self.progress_bar.set_tooltip_text, "{}%".format(percentage))
 
     def __uninstall_game(self):
         GLib.idle_add(self.update_to_state, self.state.UNINSTALLING)
