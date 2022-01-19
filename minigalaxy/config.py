@@ -12,7 +12,6 @@ DEFAULT_CONFIGURATION = {
     "install_dir": DEFAULT_INSTALL_DIR,
     "keep_installers": False,
     "stay_logged_in": True,
-    "show_fps": False,
     "use_dark_theme": False,
     "show_hidden_games": False,
     "show_windows_games": False,
