@@ -140,6 +140,7 @@ class Window(Gtk.ApplicationWindow):
         )
         if secondary_text:
             dialog.format_secondary_text(secondary_text)
+        dialog.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
         dialog.run()
         dialog.destroy()
 
