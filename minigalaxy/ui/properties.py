@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 
 from minigalaxy.paths import UI_DIR
@@ -12,12 +13,13 @@ class Properties(Gtk.Dialog):
     __gtype_name__ = "Properties"
     gogBaseUrl = "https://www.gog.com"
 
-    button_properties_open_files = Gtk.Template.Child()
-    button_properties_winecfg = Gtk.Template.Child()
     button_properties_regedit = Gtk.Template.Child()
+    button_properties_winecfg = Gtk.Template.Child()
+    button_properties_open_files = Gtk.Template.Child()
     switch_properties_check_for_updates = Gtk.Template.Child()
     switch_properties_show_fps = Gtk.Template.Child()
     switch_properties_hide_game = Gtk.Template.Child()
+    switch_properties_use_gamemode = Gtk.Template.Child()
     entry_properties_variable = Gtk.Template.Child()
     entry_properties_command = Gtk.Template.Child()
     button_properties_cancel = Gtk.Template.Child()
@@ -43,6 +45,9 @@ class Properties(Gtk.Dialog):
         # Keep switch game shown/hidden
         self.switch_properties_hide_game.set_active(self.game.get_info("hide_game"))
 
+        # Keep switch use GameMode disabled/enabled
+        self.switch_properties_use_gamemode.set_active(self.game.get_info("use_gamemode"))
+
         # Retrieve variable & command each time properties is open
         self.entry_properties_variable.set_text(self.game.get_info("variable"))
         self.entry_properties_command.set_text(self.game.get_info("command"))
@@ -59,6 +64,11 @@ class Properties(Gtk.Dialog):
         if self.game.is_installed():
             self.game.set_info("check_for_updates", self.switch_properties_check_for_updates.get_active())
             self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
+            if self.switch_properties_use_gamemode.get_active() and not shutil.which("gamemoderun"):
+                self.parent.parent.parent.show_error(_("GameMode wasn't found. Using GameMode cannot be enabled."))
+                self.game.set_info("use_gamemode", False)
+            else:
+                self.game.set_info("use_gamemode", self.switch_properties_use_gamemode.get_active())
             self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
             self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
@@ -85,6 +95,7 @@ class Properties(Gtk.Dialog):
             self.button_properties_open_files.set_sensitive(False)
             self.switch_properties_check_for_updates.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
+            self.switch_properties_use_gamemode.set_sensitive(False)
             self.entry_properties_variable.set_sensitive(False)
             self.entry_properties_command.set_sensitive(False)
 
