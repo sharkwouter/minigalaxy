@@ -54,6 +54,9 @@ def get_execute_command(game) -> list:
         raise FileNotFoundError()
     if game.get_info("use_gamemode") is True:
         exe_cmd.insert(0, "gamemoderun")
+    if game.get_info("use_mangohud") is True:
+        exe_cmd.insert(0, "mangohud")
+        exe_cmd.insert(1, "--dlsym")
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
     return exe_cmd
 
