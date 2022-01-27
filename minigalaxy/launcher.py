@@ -21,6 +21,13 @@ def regedit_game(game):
     subprocess.Popen(['wine', 'regedit'])
 
 
+def winetricks_game(game):
+    prefix = os.path.join(game.install_dir, "prefix")
+
+    os.environ["WINEPREFIX"] = prefix
+    subprocess.Popen(['winetricks'])
+
+
 def start_game(game):
     error_message = ""
     process = None
