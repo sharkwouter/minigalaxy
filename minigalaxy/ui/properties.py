@@ -20,6 +20,7 @@ class Properties(Gtk.Dialog):
     switch_properties_show_fps = Gtk.Template.Child()
     switch_properties_hide_game = Gtk.Template.Child()
     switch_properties_use_gamemode = Gtk.Template.Child()
+    switch_properties_use_mangohud = Gtk.Template.Child()
     entry_properties_variable = Gtk.Template.Child()
     entry_properties_command = Gtk.Template.Child()
     button_properties_cancel = Gtk.Template.Child()
@@ -48,6 +49,9 @@ class Properties(Gtk.Dialog):
         # Keep switch use GameMode disabled/enabled
         self.switch_properties_use_gamemode.set_active(self.game.get_info("use_gamemode"))
 
+        # Keep switch use MangoHud disabled/enabled
+        self.switch_properties_use_mangohud.set_active(self.game.get_info("use_mangohud"))
+
         # Retrieve variable & command each time properties is open
         self.entry_properties_variable.set_text(self.game.get_info("variable"))
         self.entry_properties_command.set_text(self.game.get_info("command"))
@@ -69,6 +73,11 @@ class Properties(Gtk.Dialog):
                 self.game.set_info("use_gamemode", False)
             else:
                 self.game.set_info("use_gamemode", self.switch_properties_use_gamemode.get_active())
+            if self.switch_properties_use_mangohud.get_active() and not shutil.which("mangohud"):
+                self.parent.parent.parent.show_error(_("MangoHud wasn't found. Using MangoHud cannot be enabled."))
+                self.game.set_info("use_mangohud", False)
+            else:
+                self.game.set_info("use_mangohud", self.switch_properties_use_mangohud.get_active())
             self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
             self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
@@ -96,6 +105,7 @@ class Properties(Gtk.Dialog):
             self.switch_properties_check_for_updates.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
             self.switch_properties_use_gamemode.set_sensitive(False)
+            self.switch_properties_use_mangohud.set_sensitive(False)
             self.entry_properties_variable.set_sensitive(False)
             self.entry_properties_command.set_sensitive(False)
 
