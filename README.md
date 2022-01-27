@@ -216,5 +216,5 @@ Special thanks goes out to all contributors:
 - SwampRabbit and Steven Pusser for packaging Minigalaxy for MX Linux
 - karaushu for translating to Ukrainian
 - koraynilay for translating to Italian
-- heidiwenger and jonnelafin for translating to Finish
+- heidiwenger and jonnelafin for translating to Finnish
 - jakbuz23 for translating to Czech
