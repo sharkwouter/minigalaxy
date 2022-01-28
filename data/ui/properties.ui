@@ -73,6 +73,19 @@
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkButton" id="button_properties_winetricks">
+                        <property name="label" translatable="yes">Winetricks</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <signal name="clicked" handler="on_button_properties_winetricks_clicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>

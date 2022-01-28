@@ -4,7 +4,7 @@ import subprocess
 
 from minigalaxy.paths import UI_DIR
 from minigalaxy.translation import _
-from minigalaxy.launcher import config_game, regedit_game
+from minigalaxy.launcher import config_game, regedit_game, winetricks_game
 from minigalaxy.ui.gtk import Gtk
 
 
@@ -15,6 +15,7 @@ class Properties(Gtk.Dialog):
 
     button_properties_regedit = Gtk.Template.Child()
     button_properties_winecfg = Gtk.Template.Child()
+    button_properties_winetricks = Gtk.Template.Child()
     button_properties_open_files = Gtk.Template.Child()
     switch_properties_check_for_updates = Gtk.Template.Child()
     switch_properties_show_fps = Gtk.Template.Child()
@@ -92,6 +93,13 @@ class Properties(Gtk.Dialog):
     def on_menu_button_winecfg(self, widget):
         config_game(self.game)
 
+    @Gtk.Template.Callback("on_button_properties_winetricks_clicked")
+    def on_menu_button_winetricks(self, widget):
+        if not shutil.which("winetricks"):
+            self.parent.parent.parent.show_error(_("Winetricks wasn't found and cannot be used."))
+        else:
+            winetricks_game(self.game)
+
     @Gtk.Template.Callback("on_button_properties_open_files_clicked")
     def on_menu_button_open_files(self, widget):
         self.game.set_install_dir()
@@ -101,6 +109,7 @@ class Properties(Gtk.Dialog):
         if not game.is_installed():
             self.button_properties_regedit.set_sensitive(False)
             self.button_properties_winecfg.set_sensitive(False)
+            self.button_properties_winetricks.set_sensitive(False)
             self.button_properties_open_files.set_sensitive(False)
             self.switch_properties_check_for_updates.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
@@ -110,5 +119,6 @@ class Properties(Gtk.Dialog):
             self.entry_properties_command.set_sensitive(False)
 
         if game.platform == 'linux':
-            self.button_properties_winecfg.hide()
             self.button_properties_regedit.hide()
+            self.button_properties_winecfg.hide()
+            self.button_properties_winetricks.hide()
