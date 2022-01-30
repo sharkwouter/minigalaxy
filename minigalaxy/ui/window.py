@@ -6,7 +6,7 @@ from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
-from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
+from minigalaxy.paths import THUMBNAIL_DIR, ICON_DIR, UI_DIR, LOGO_IMAGE_PATH
 from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
 from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf
@@ -65,6 +65,10 @@ class Window(Gtk.ApplicationWindow):
         # Create the thumbnails directory
         if not os.path.exists(THUMBNAIL_DIR):
             os.makedirs(THUMBNAIL_DIR, mode=0o755)
+
+        # Create the icons directory
+        if not os.path.exists(ICON_DIR):
+            os.makedirs(ICON_DIR, mode=0o755)
 
         # Interact with the API
         self.offline = not self.api.can_connect()
