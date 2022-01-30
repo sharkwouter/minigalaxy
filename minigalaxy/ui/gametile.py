@@ -16,7 +16,7 @@ from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound
-from minigalaxy.ui.gtk import Gtk, GLib, GdkPixbuf
+from minigalaxy.ui.gtk import Gtk, GLib
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 
