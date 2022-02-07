@@ -23,6 +23,7 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.ERROR)
 
 # create formatter and add it to the handlers
+# This doesn't use the MinigalaxyLogFormatter yet, it uses the default logging Formatter
 formatter = logging.Formatter(fmt="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 ch.setFormatter(formatter)
 
