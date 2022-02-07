@@ -95,16 +95,23 @@ class GameTileList(Gtk.Box):
 
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):
-        download_id = Config.get("current_download")
-        if download_id and download_id == self.game.id and self.current_state == self.state.DOWNLOADABLE:
-            download_thread = threading.Thread(target=self.__download_game)
-            download_thread.start()
+        download_ids = Config.get("current_downloads")
+        if download_ids:
+            for download_id in download_ids:
+                if download_id and download_id == self.game.id and self.current_state == self.state.DOWNLOADABLE:
+                    download_thread = threading.Thread(target=self.__download_game)
+                    download_thread.start()
 
     # Do not restart the download if Minigalaxy is restarted
     def prevent_resume_on_startup(self):
-        download_id = Config.get("current_download")
-        if download_id and download_id == self.game.id:
-            Config.unset("current_download")
+        download_ids = set(Config.get("current_downloads"))
+        if download_ids:
+            new_download_ids = set()
+            for download_id in download_ids:
+                if not (download_id and download_id == self.game.id):
+                    new_download_ids.add(download_id)
+
+            Config.set("current_downloads", list(new_download_ids))
 
     def __str__(self):
         return self.game.name
@@ -217,8 +224,13 @@ class GameTileList(Gtk.Box):
             result = True
         except NoDownloadLinkFound as e:
             print(e)
-            if Config.get("current_download") == self.game.id:
-                Config.unset("current_download")
+            current_download_ids = set(Config.get("current_download"))
+            if current_download_ids:
+                new_current_download_ids = set()
+                for current_download_id in current_download_ids:
+                    if current_download_id != self.game.id:
+                        new_current_download_ids.add(current_download_id)
+                Config.set("current_downloads", list(new_current_download_ids))
             GLib.idle_add(self.parent.parent.show_error, _("Download error"),
                           _("There was an error when trying to fetch the download link!\n{}".format(e)))
             download_info = False
@@ -237,7 +249,12 @@ class GameTileList(Gtk.Box):
     def __download(self, download_info, finish_func, cancel_to_state):
         download_success = True
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
-        Config.set("current_download", self.game.id)
+        current_download_ids = set(Config.get("current_downloads"))
+        if current_download_ids is None:
+            current_download_ids = set()
+        current_download_ids.add(self.game.id)
+        Config.set("current_downloads", list(current_download_ids))
+
         # Start the download for all files
         self.download_list = []
         number_of_files = len(download_info['files'])
