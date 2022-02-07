@@ -134,6 +134,7 @@ class __DownloadManger:
                     self.__cancel[download] = True
                 else:
                     self.__paused = True
+                    # We may need to wrap this swap of the priority queue in a lock
                     new_queue = queue.PriorityQueue()
                     while not self.__queue.empty():
                         queued_download = self.__queue.get()
