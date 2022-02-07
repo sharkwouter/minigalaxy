@@ -71,3 +71,5 @@ MINIMUM_RESUME_SIZE = 50 * 1024**2  # 50 MB
 
 SESSION = requests.Session()
 SESSION.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {})'.format(VERSION, platform.machine())})
+
+NUMBER_DOWNLOAD_THREADS = 4
