@@ -2,9 +2,11 @@ import urllib
 import os
 import webbrowser
 
-from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR
+from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR, COVER_DIR
 from minigalaxy.translation import _
 from minigalaxy.config import Config
+from minigalaxy.download import Download
+from minigalaxy.download_manager import DownloadManager
 from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
 
 
@@ -93,11 +95,20 @@ class Information(Gtk.Dialog):
 
     def load_thumbnail(self):
         if self.gamesdb_info["cover"]:
-            response = urllib.request.urlopen(self.gamesdb_info["cover"])
-            input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
-            pixbuf = GdkPixbuf.Pixbuf.new_from_stream(input_stream, None)
-            pixbuf = pixbuf.scale_simple(340, 480, GdkPixbuf.InterpType.BILINEAR)
-            GLib.idle_add(self.image.set_from_pixbuf, pixbuf)
+            cover_path = os.path.join(COVER_DIR, "{}.jpg".format(self.game.id))
+            if os.path.isfile(cover_path):
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file(cover_path)
+                pixbuf = pixbuf.scale_simple(340, 480, GdkPixbuf.InterpType.BILINEAR)
+                GLib.idle_add(self.image.set_from_pixbuf, pixbuf)
+            else:
+                url = "{}".format(self.gamesdb_info["cover"])
+                download = Download(url, cover_path)
+                DownloadManager.download_now(download)
+                response = urllib.request.urlopen(url)
+                input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
+                pixbuf = GdkPixbuf.Pixbuf.new_from_stream(input_stream, None)
+                pixbuf = pixbuf.scale_simple(340, 480, GdkPixbuf.InterpType.BILINEAR)
+                GLib.idle_add(self.image.set_from_pixbuf, pixbuf)
         else:
             thumbnail_path = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
             if not os.path.isfile(thumbnail_path) and self.game.is_installed:
