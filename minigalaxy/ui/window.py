@@ -62,13 +62,7 @@ class Window(Gtk.ApplicationWindow):
             self.maximize()
         self.show_all()
 
-        # Create the thumbnails directory
-        if not os.path.exists(THUMBNAIL_DIR):
-            os.makedirs(THUMBNAIL_DIR, mode=0o755)
-
-        # Create the covers directory
-        if not os.path.exists(COVER_DIR):
-            os.makedirs(COVER_DIR, mode=0o755)
+        self.make_directories()
 
         # Interact with the API
         self.offline = not self.api.can_connect()
@@ -126,6 +120,14 @@ class Window(Gtk.ApplicationWindow):
         if self.library.offline:
             self.__authenticate()
         self.library.update_library()
+
+    def make_directories(self):
+        # Create the thumbnails directory
+        if not os.path.exists(THUMBNAIL_DIR):
+            os.makedirs(THUMBNAIL_DIR, mode=0o755)
+        # Create the covers directory
+        if not os.path.exists(COVER_DIR):
+            os.makedirs(COVER_DIR, mode=0o755)
 
     def reset_library(self):
         self.library.reset()
