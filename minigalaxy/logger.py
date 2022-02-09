@@ -20,7 +20,8 @@ logger.setLevel(logging.DEBUG)
 
 # The console should log DEBUG messages and up
 ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
+ch.setLevel(logging.DEBUG)
+#ch.setLevel(logging.ERROR)
 
 # create formatter and add it to the handlers
 # This doesn't use the MinigalaxyLogFormatter yet, it uses the default logging Formatter

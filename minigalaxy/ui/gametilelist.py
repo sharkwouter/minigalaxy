@@ -9,7 +9,7 @@ from enum import Enum
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
 from minigalaxy.config import Config
-from minigalaxy.download import Download
+from minigalaxy.download import Download, DownloadType
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
@@ -104,7 +104,7 @@ class GameTileList(Gtk.Box):
 
     # Do not restart the download if Minigalaxy is restarted
     def prevent_resume_on_startup(self):
-        download_ids = set(Config.get("current_downloads"))
+        download_ids = Config.get("current_downloads")
         if download_ids:
             new_download_ids = set()
             for download_id in download_ids:
@@ -180,8 +180,8 @@ class GameTileList(Gtk.Box):
                     # Download the thumbnail
                     image_url = "https:{}_196.jpg".format(self.game.image_url)
                     thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
-
-                    download = Download(image_url, thumbnail, finish_func=self.__set_image)
+                    download = Download(image_url, thumbnail, DownloadType.THUMBNAIL,
+                                        finish_func=self.__set_image)
                     DownloadManager.download_now(download)
                     set_result = True
                     break
@@ -224,7 +224,7 @@ class GameTileList(Gtk.Box):
             result = True
         except NoDownloadLinkFound as e:
             print(e)
-            current_download_ids = set(Config.get("current_download"))
+            current_download_ids = Config.get("current_downloads")
             if current_download_ids:
                 new_current_download_ids = set()
                 for current_download_id in current_download_ids:
@@ -242,19 +242,23 @@ class GameTileList(Gtk.Box):
         cancel_to_state = self.state.DOWNLOADABLE
         result, download_info = self.get_download_info()
         if result:
-            result = self.__download(download_info, finish_func, cancel_to_state)
+            result = self.__download(download_info, DownloadType.GAME, finish_func,
+                                     cancel_to_state)
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
-    def __download(self, download_info, finish_func, cancel_to_state):
+    def __download(self, download_info, download_type, finish_func, cancel_to_state):
         download_success = True
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
-        current_download_ids = set(Config.get("current_downloads"))
+
+        # Need to update the config with DownloadType metadata
+        current_download_ids = Config.get("current_downloads")
         if current_download_ids is None:
             current_download_ids = set()
+        else:
+            current_download_ids = set(current_download_ids)
         current_download_ids.add(self.game.id)
         Config.set("current_downloads", list(current_download_ids))
-
         # Start the download for all files
         self.download_list = []
         number_of_files = len(download_info['files'])
@@ -285,6 +289,7 @@ class GameTileList(Gtk.Box):
             download = Download(
                 url=download_url,
                 save_location=download_path,
+                download_type=DownloadType.GAME,
                 finish_func=finish_func if download_path == executable_path else None,
                 progress_func=self.set_progress,
                 cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
@@ -347,7 +352,8 @@ class GameTileList(Gtk.Box):
         cancel_to_state = self.state.UPDATABLE
         result, download_info = self.get_download_info(self.game.platform)
         if result:
-            result = self.__download(download_info, finish_func, cancel_to_state)
+            result = self.__download(download_info, DownloadType.GAME_UPDATE, finish_func,
+                                     cancel_to_state)
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
@@ -387,7 +393,8 @@ class GameTileList(Gtk.Box):
             if dlc["downloads"]["installers"] == dlc_installers:
                 dlc_title = dlc["title"]
         cancel_to_state = self.state.INSTALLED
-        result = self.__download(download_info, finish_func, cancel_to_state)
+        result = self.__download(download_info, DownloadType.GAME_DLC, finish_func,
+                                 cancel_to_state)
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 

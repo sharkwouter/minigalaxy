@@ -6,12 +6,12 @@ DownloadManager to download it.
 
 Example:
 >>> import os
->>> from minigalaxy.download import Download
+>>> from minigalaxy.download import Download, DownloadType
 >>> from minigalaxy.download_manager import DownloadManager
 >>> def your_function():
 >>>   image_url = "https://www.gog.com/bundles/gogwebsitestaticpages/images/icon_section1-header.png"
 >>>   thumbnail = os.path.join(".", "{}.jpg".format("test-icon"))
->>>   download = Download(image_url, thumbnail, finish_func=lambda x: print("Done downloading {}!".format(x)))
+>>>   download = Download(image_url, thumbnail, DownloadType.THUMBNAIL, finish_func=lambda x: print("Done downloading {}!".format(x)))
 >>>   DownloadManager.download(download)
 >>> your_function() # doctest: +SKIP
 """
@@ -24,8 +24,8 @@ import queue
 
 from requests.exceptions import RequestException
 from minigalaxy.config import Config
-from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION, NUMBER_DOWNLOAD_THREADS
-from minigalaxy.download import Download
+from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
+from minigalaxy.download import Download, DownloadType
 import minigalaxy.logger
 
 module_logger = logging.getLogger("minigalaxy.download_manager")
@@ -68,8 +68,16 @@ class __DownloadManger:
         Args:
             This initializer takes no arguments
         """
-        # The Queue to store items for download
-        self.__queue = queue.PriorityQueue()
+        # A queue for UI elements
+        self.__ui_queue = queue.PriorityQueue()
+
+        # A queue for games and other long-running downloads
+        self.__game_queue = queue.PriorityQueue()
+
+        # The queues and associated limits
+        self.queues = [(self.__ui_queue, UI_DOWNLOAD_THREADS),
+                       (self.__game_queue, GAME_DOWNLOAD_THREADS)]
+
         self.__cancel = {}
         self.__paused = False
         self.workers = []
@@ -79,12 +87,12 @@ class __DownloadManger:
 
         self.logger = logging.getLogger("minigalaxy.download_manager.DownloadManager")
 
-        for i in range(NUMBER_DOWNLOAD_THREADS):
-            download_thread = threading.Thread(target=lambda: self.__download_thread(i))
-            download_thread.id = i
-            download_thread.daemon = True
-            download_thread.start()
-            self.workers.append(download_thread)
+        for q, number_threads in self.queues:
+            for i in range(number_threads):
+                download_thread = threading.Thread(target=lambda: self.__download_thread(q))
+                download_thread.daemon = True
+                download_thread.start()
+                self.workers.append(download_thread)
 
     def download(self, download):
         """
@@ -95,12 +103,29 @@ class __DownloadManger:
             A single Download or a list of Download objects
         """
         if isinstance(download, Download):
-            self.__queue.put(QueuedDownloadItem(download))
+            self.put_in_proper_queue(download)
         else:
             # Assume we've received a list of downloads
             for d in download:
-                self.__queue.put(QueuedDownloadItem(d))
+                self.put_in_proper_queue(d)
 
+    def put_in_proper_queue(self, download):
+        "Put the download in the proper queue"
+        # Add game type downloads to the game queue
+        if download.download_type == DownloadType.GAME:
+            self.__game_queue.put(QueuedDownloadItem(download, 1))
+        elif download.download_type == DownloadType.GAME_UPDATE:
+            self.__game_queue.put(QueuedDownloadItem(download, 1))
+        elif download.download_type == DownloadType.GAME_DLC:
+            self.__game_queue.put(QueuedDownloadItem(download, 1))
+        elif download.download_type == DownloadType.ICON:
+            self.__ui_queue.put(QueuedDownloadItem(download, 0))
+        elif download.download_type == DownloadType.THUMBNAIL:
+            self.__ui_queue.put(QueuedDownloadItem(download, 0))
+        else:
+            # Add other items to the UI queue
+            self.__ui_queue.put(QueuedDownloadItem(download, 0))
+            
     def download_now(self, download):
         """
         Download an item with a higher priority
@@ -113,11 +138,13 @@ class __DownloadManger:
         Args:
             The Download to download
         """
-        self.__queue.put(QueuedDownloadItem(download, 0))
+        self.__ui_queue.put(QueuedDownloadItem(download, 0))
 
     def cancel_download(self, downloads):
         """
         Cancel a download or a list of downloads
+        This only cancels items in the game download queue
+        Items in the UI queue are not deleted
 
         Args:
             A single Download or a list of Download objects
@@ -134,20 +161,19 @@ class __DownloadManger:
                     self.__cancel[download] = True
                 else:
                     self.__paused = True
-                    # We may need to wrap this swap of the priority queue in a lock
-                    new_queue = queue.PriorityQueue()
-                    while not self.__queue.empty():
-                        queued_download = self.__queue.get()
-                        if download == queued_download.item:
-                            download.cancel()
-                        elif download.game == queued_download.item.game:
-                            download.cancel()
-                        else:
-                            new_queue.put(queued_download)
-                        # Mark the task as "done" to keep counts correct so
-                        # we can use join() or other functions later
-                        self.__queue.task_done()
-                    self.__queue = new_queue
+                    for download_queue, limit in self.queues:
+                        # We may need to wrap this swap of the priority queue in a lock
+                        while not download_queue.empty():
+                            queued_download = download_queue.get()
+                            if download == queued_download.item:
+                                download.cancel()
+                            elif download.game == queued_download.item.game:
+                                download.cancel()
+                            else:
+                                new_queue.put(queued_download)
+                            # Mark the task as "done" to keep counts correct so
+                            # we can use join() or other functions later
+                            download_queue.task_done()
                     self.__paused = False
 
     def cancel_current_downloads(self):
@@ -164,13 +190,15 @@ class __DownloadManger:
         Cancel all current downloads queued
         """
         self.logger.debug("Canceling all downloads")
-        self.logger.debug("queue length: {}".format(self.__queue.qsize()))
-        while not self.__queue.empty():
-            download = self.__queue.get().item
-            self.logger.debug("canceling another download: {}".format(download.save_location))
-            # Mark the task as "done" to keep counts correct so
-            # we can use join() or other functions later
-            self.__queue.task_done()
+        for download_queue, limit in self.queues:
+            self.logger.debug("queue length: {}".format(download_queue.qsize()))
+            while not download_queue.empty():
+                download = download_queue.get().item
+                self.logger.debug("canceling another download: {}".format(download.save_location))
+                # Mark the task as "done" to keep counts correct so
+                # we can use join() or other functions later
+                download_queue.task_done()
+
         self.cancel_current_downloads()
 
     def __remove_download_from_active_downloads(self, download):
@@ -182,25 +210,25 @@ class __DownloadManger:
             else:
                 self.logger.debug("Didn't find download in active downloads list")
 
-    def __download_thread(self, id=0):
+    def __download_thread(self, download_queue):
         """
         The main DownloadManager thread calls this when it is created
         It checks the queue, starting new downloads when they are available
         Users of this library should not need to call this.
         """
         while True:
-            if not self.__queue.empty():
+            if not download_queue.empty():
                 # Update the active downloads
                 with self.active_downloads_lock:
-                    download = self.__queue.get().item
+                    download = download_queue.get().item
                     self.active_downloads[download] = download
-                self.__download_file(download, id)
+                self.__download_file(download, download_queue)
                 # Mark the task as done to keep counts correct so
                 # we can use join() or other functions later
-                self.__queue.task_done()
-            time.sleep(0.1)
+                download_queue.task_done()
+            time.sleep(0.2)
 
-    def __download_file(self, download, id=0):
+    def __download_file(self, download, download_queue):
         """
         This is called by __download_thread to download a file
         It is also called directly by the thread created in download_now
@@ -224,11 +252,11 @@ class __DownloadManger:
         # Successful downloads
         if result:
             if download.number == download.out_of_amount:
-                self.logger.debug("Download finished, thread {}".format(id))
+                self.logger.debug("Download finished, thread {}".format(threading.get_ident()))
                 finish_thread = threading.Thread(target=download.finish)
                 finish_thread.start()
             self.__remove_download_from_active_downloads(download)
-            if self.__queue.empty():
+            if download_queue.empty():
                 Config.unset("current_downloads")
         # Unsuccessful downloads and cancels
         else:
