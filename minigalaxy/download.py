@@ -1,5 +1,13 @@
+from enum import Enum
 from zipfile import BadZipFile
 
+# Enums were added in Python 3.4
+class DownloadType(Enum):
+    ICON = 1
+    THUMBNAIL = 2
+    GAME = 3
+    GAME_UPDATE = 4
+    GAME_DLC = 5
 
 class Download:
     """
@@ -7,17 +15,16 @@ class Download:
 
     Usage:
     >>> import os
-    >>> from minigalaxy.download import Download
+    >>> from minigalaxy.download import Download, DownloadType
     >>> from minigalaxy.download_manager import DownloadManager
     >>> def your_function():
     >>>   image_url = "https://www.gog.com/bundles/gogwebsitestaticpages/images/icon_section1-header.png"
     >>>   thumbnail = os.path.join(".", "{}.jpg".format("test-icon"))
-    >>>   download = Download(image_url, thumbnail, finish_func=lambda x: print("Done downloading {}!".format(x)))
+    >>>   download = Download(image_url, thumbnail, DownloadType.THUMBNAIL, finish_func=lambda x: print("Done downloading {}!".format(x)))
     >>> your_function() # doctest: +SKIP
-
-
     """
-    def __init__(self, url, save_location, finish_func=None, progress_func=None, cancel_func=None, number=1,
+    def __init__(self, url, save_location, download_type=None, finish_func=None,
+                 progress_func=None, cancel_func=None, number=1,
                  out_of_amount=1, game=None):
         self.url = url
         self.save_location = save_location
@@ -27,6 +34,8 @@ class Download:
         self.number = number
         self.out_of_amount = out_of_amount
         self.game = game
+        # Type of object, e.g. icon, thumbnail, game, dlc,
+        self.download_type = download_type
 
     def set_progress(self, percentage: int) -> None:
         "Set the download progress of the Download"
