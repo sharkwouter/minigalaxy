@@ -224,7 +224,6 @@ class __DownloadManger:
                 # Mark the task as done to keep counts correct so
                 # we can use join() or other functions later
                 download_queue.task_done()
-            time.sleep(0.2)
 
     def __download_file(self, download, download_queue):
         """
