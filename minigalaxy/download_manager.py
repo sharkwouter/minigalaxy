@@ -125,7 +125,7 @@ class __DownloadManger:
         else:
             # Add other items to the UI queue
             self.__ui_queue.put(QueuedDownloadItem(download, 0))
-            
+
     def download_now(self, download):
         """
         Download an item with a higher priority
@@ -143,8 +143,6 @@ class __DownloadManger:
     def cancel_download(self, downloads):
         """
         Cancel a download or a list of downloads
-        This only cancels items in the game download queue
-        Items in the UI queue are not deleted
 
         Args:
             A single Download or a list of Download objects
