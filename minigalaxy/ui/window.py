@@ -1,12 +1,13 @@
 import os
 import locale
 
+from minigalaxy.asset_manager import AssetManager
 from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
-from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
+from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH
 from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
 from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf
@@ -62,9 +63,8 @@ class Window(Gtk.ApplicationWindow):
             self.maximize()
         self.show_all()
 
-        # Create the thumbnails directory
-        if not os.path.exists(THUMBNAIL_DIR):
-            os.makedirs(THUMBNAIL_DIR, mode=0o755)
+        # Create the cover and thumbnail directories and any other needed ones
+        AssetManager.create_asset_dirs()
 
         # Interact with the API
         self.offline = not self.api.can_connect()

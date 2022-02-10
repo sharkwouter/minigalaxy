@@ -1,11 +1,11 @@
-import urllib
 import os
 import webbrowser
 
-from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR
+from minigalaxy.paths import UI_DIR
 from minigalaxy.translation import _
 from minigalaxy.config import Config
-from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
+from minigalaxy.ui.gtk import Gtk, GLib
+from minigalaxy.asset_manager import Asset, AssetType, AssetManager
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "information.ui"))
@@ -31,7 +31,7 @@ class Information(Gtk.Dialog):
         self.gamesdb_info = self.api.get_gamesdb_info(self.game)
 
         # Show the image
-        self.load_thumbnail()
+        self.load_cover()
         self.load_description()
 
         # Center information window
@@ -91,18 +91,16 @@ class Information(Gtk.Dialog):
                 _("Please check your internet connection")
             )
 
-    def load_thumbnail(self):
-        if self.gamesdb_info["cover"]:
-            response = urllib.request.urlopen(self.gamesdb_info["cover"])
-            input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
-            pixbuf = GdkPixbuf.Pixbuf.new_from_stream(input_stream, None)
-            pixbuf = pixbuf.scale_simple(340, 480, GdkPixbuf.InterpType.BILINEAR)
-            GLib.idle_add(self.image.set_from_pixbuf, pixbuf)
-        else:
-            thumbnail_path = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
-            if not os.path.isfile(thumbnail_path) and self.game.is_installed:
-                thumbnail_path = os.path.join(self.game.install_dir, "thumbnail.jpg")
-            GLib.idle_add(self.image.set_from_file, thumbnail_path)
+    def load_cover(self):
+        asset = Asset(AssetType.COVER, self.gamesdb_info["cover"],
+                      {"game_id": self.game.id,
+                       "game_installed": self.game.is_installed(),
+                       "game_install_dir": self.game.install_dir})
+        asset_manager = AssetManager(asset)
+        asset_manager.load(self.draw_cover)
+
+    def draw_cover(self, pixbuf):
+        GLib.idle_add(self.image.set_from_pixbuf, pixbuf)
 
     def load_description(self):
         description = ""
