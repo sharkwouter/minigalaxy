@@ -1,5 +1,7 @@
 import logging
 import datetime
+import os
+
 
 class MinigalaxyLogFormatter(logging.Formatter):
     converter = datetime.date.fromtimestamp
@@ -11,8 +13,9 @@ class MinigalaxyLogFormatter(logging.Formatter):
             return ct.strftime(datefmt)
         else:
             time_string = ct.strftime("%Y-%m-%d %H:%M:%S")
-            time_string_with_ms = "%s,%03d" % (t, record.msecs)
+            time_string_with_ms = "%s,%03d" % (time_string, record.msecs)
             return time_string_with_ms
+
 
 # create logger for the minigalaxy application
 logger = logging.getLogger('minigalaxy')
@@ -20,8 +23,11 @@ logger.setLevel(logging.DEBUG)
 
 # The console should log DEBUG messages and up
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-#ch.setLevel(logging.ERROR)
+debug = os.environ.get("MG_DEBUG")
+if debug:
+    ch.setLevel(logging.DEBUG)
+else:
+    ch.setLevel(logging.ERROR)
 
 # create formatter and add it to the handlers
 # This doesn't use the MinigalaxyLogFormatter yet, it uses the default logging Formatter
