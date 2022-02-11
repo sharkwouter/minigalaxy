@@ -11,7 +11,7 @@ Example:
 >>> def your_function():
 >>>   image_url = "https://www.gog.com/bundles/gogwebsitestaticpages/images/icon_section1-header.png"
 >>>   thumbnail = os.path.join(".", "{}.jpg".format("test-icon"))
->>>   download = Download(image_url, thumbnail, DownloadType.THUMBNAIL, finish_func=lambda x: print("Done downloading {}!".format(x)))
+>>>   download = Download(image_url, thumbnail, DownloadType.THUMBNAIL, finish_func=lambda x: print("Done downloading {}!".format(x))) # noqa: E501
 >>>   DownloadManager.download(download)
 >>> your_function() # doctest: +SKIP
 """
@@ -26,9 +26,10 @@ from requests.exceptions import RequestException
 from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
 from minigalaxy.download import Download, DownloadType
-import minigalaxy.logger
+import minigalaxy.logger    # noqa: F401
 
 module_logger = logging.getLogger("minigalaxy.download_manager")
+
 
 class QueuedDownloadItem:
     """
@@ -53,6 +54,7 @@ class QueuedDownloadItem:
             return self.priority < other.priority
         else:
             return self.queue_time < other.queue_time
+
 
 class __DownloadManger:
     """
@@ -161,6 +163,7 @@ class __DownloadManger:
                     self.__paused = True
                     for download_queue, limit in self.queues:
                         # We may need to wrap this swap of the priority queue in a lock
+                        new_queue = queue.PriorityQueue()
                         while not download_queue.empty():
                             queued_download = download_queue.get()
                             if download == queued_download.item:
@@ -172,6 +175,7 @@ class __DownloadManger:
                             # Mark the task as "done" to keep counts correct so
                             # we can use join() or other functions later
                             download_queue.task_done()
+                        download_queue = new_queue
                     self.__paused = False
 
     def cancel_current_downloads(self):
@@ -359,5 +363,6 @@ class __DownloadManger:
             with open(download.save_location, "rb") as file:
                 file_content = file.read(size_to_check)
                 return file_content == chunk
+
 
 DownloadManager = __DownloadManger()

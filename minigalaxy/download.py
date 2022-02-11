@@ -1,6 +1,7 @@
 from enum import Enum
 from zipfile import BadZipFile
 
+
 # Enums were added in Python 3.4
 class DownloadType(Enum):
     ICON = 1
@@ -8,6 +9,7 @@ class DownloadType(Enum):
     GAME = 3
     GAME_UPDATE = 4
     GAME_DLC = 5
+
 
 class Download:
     """
@@ -20,7 +22,7 @@ class Download:
     >>> def your_function():
     >>>   image_url = "https://www.gog.com/bundles/gogwebsitestaticpages/images/icon_section1-header.png"
     >>>   thumbnail = os.path.join(".", "{}.jpg".format("test-icon"))
-    >>>   download = Download(image_url, thumbnail, DownloadType.THUMBNAIL, finish_func=lambda x: print("Done downloading {}!".format(x)))
+    >>>   download = Download(image_url, thumbnail, DownloadType.THUMBNAIL, finish_func=lambda x: print("Done downloading {}!".format(x))) # noqa: E501
     >>> your_function() # doctest: +SKIP
     """
     def __init__(self, url, save_location, download_type=None, finish_func=None,
