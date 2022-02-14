@@ -218,7 +218,7 @@ def create_applications_file(game):
         exe_cmd = get_exec_line(game)
         # Create desktop file definition
         desktop_context = {
-            "game_bin_path": exe_cmd,
+            "game_bin_path": os.path.join('"{}"'.format(game.install_dir.replace('"', '\\"')), exe_cmd),
             "game_name": game.name,
             "game_install_dir": game.install_dir,
             "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
