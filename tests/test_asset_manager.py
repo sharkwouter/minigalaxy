@@ -203,3 +203,21 @@ class TestAsset(TestCase):
         self.assertEqual(asset.filename, os.path.join(COVER_DIR, "51622789000874509.png"))
         self.assertEqual(asset.exists(), True)
         self.assertEqual(asset.expired(), True)
+
+
+# These mocks are polluting the test namespace when tests are run
+# with python -m unittest tests/*.py
+# So make sure we clean them up
+del sys.modules['gi']
+del sys.modules['gi.repository']
+del sys.modules['minigalaxy.constants']
+del sys.modules['minigalaxy.config']
+del sys.modules['minigalaxy.paths']
+del sys.modules['minigalaxy.ui.gametile']
+del sys.modules['minigalaxy.ui.library']
+del sys.modules['minigalaxy.ui.preferences']
+del sys.modules['minigalaxy.ui.login']
+del sys.modules['minigalaxy.ui.about']
+del sys.modules['minigalaxy.ui.gtk']
+del sys.modules['minigalaxy.ui.window']
+del sys.modules['minigalaxy.game']
