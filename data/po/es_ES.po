@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-05 10:44+0100\n"
-"PO-Revision-Date: 2022-02-05 10:47+0100\n"
+"POT-Creation-Date: 2022-02-16 11:49+0100\n"
+"PO-Revision-Date: 2022-02-16 11:49+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -386,8 +386,8 @@ msgid "Spanish"
 msgstr "Español"
 
 #: minigalaxy/constants.py:44
-msgid "Spanish from Spain"
-msgstr "Español de España"
+msgid "Spanish (Spain)"
+msgstr "Español (España)"
 
 #. Whether the user will stay logged in after closing Minigalaxy. Has to end with ": "
 #: data/ui/preferences.ui:196
