@@ -41,6 +41,7 @@ SUPPORTED_LOCALES = [
     ["ru_RU", _("Russian")],
     ["zh_CN", _("Simplified Chinese")],
     ["es", _("Spanish")],
+    ["es_ES", _("Spanish (Spain)")],
     ["sv_SE", _("Swedish")],
     ["zh_TW", _("Traditional Chinese")],
     ["tr", _("Turkish")],
