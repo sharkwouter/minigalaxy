@@ -159,6 +159,20 @@ class __DownloadManger:
 
         # This follows the previous logic
         # First cancel all the active downloads
+        self.cancel_queued_downloads(download_dict)
+
+        # Next, loop through the downloads queued for download, comparing them to the
+        # cancel list
+        self.cancel_queued_downloads(download_dict)
+
+    def cancel_active_downloads(self, download_dict):
+        """
+        Cancel active downloads
+        This is called by cancel_download
+
+        Args:
+          download_dict is a dictionary of downloads to cancel with values True
+        """
         with self.active_downloads_lock:
             for download in self.active_downloads:
                 if download in download_dict:
@@ -168,8 +182,14 @@ class __DownloadManger:
                     # Remove it from the downloads to cancel
                     del download_dict[download]
 
-        # Next, loop through the downloads queued for download, comparing them to the
-        # cancel list
+    def cancel_queued_downloads(self, download_dict):
+        """
+        Cancel selected downloads in the queue
+        This is called by cancel_download
+
+        Args:
+          download_dict is a dictionary of downloads to cancel with values True
+        """
         for download in download_dict.keys():
             self.logger.debug("download: {}".format(download))
             for download_queue, limit in self.queues:
