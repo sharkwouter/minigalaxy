@@ -81,9 +81,9 @@ class __DownloadManger:
                        (self.__game_queue, GAME_DOWNLOAD_THREADS)]
 
         self.__cancel = {}
-        self.__paused = False
         self.workers = []
         # The list of currently active downloads
+        # These are items not in the queue, but currently being downloaded
         self.active_downloads = {}
         self.active_downloads_lock = threading.Lock()
 
@@ -149,34 +149,53 @@ class __DownloadManger:
         Args:
             A single Download or a list of Download objects
         """
-        self.logger.debug("Canceling download: {}".format(downloads))
         # Make sure we're always dealing with a list
         if isinstance(downloads, Download):
             downloads = [downloads]
 
-        for download in downloads:
-            with self.active_downloads_lock:
-                if download in self.active_downloads:
+        # Create a dictionary with the keys that are the downloads and the value is True
+        # We use this to test for downloads more efficiently
+        download_dict = dict(zip(downloads, [True] * len(downloads)))
+
+        # This follows the previous logic
+        # First cancel all the active downloads
+        with self.active_downloads_lock:
+            for download in self.active_downloads:
+                if download in download_dict:
                     self.logger.debug("Found download")
+                    # mark it for canceling
                     self.__cancel[download] = True
-                else:
-                    self.__paused = True
-                    for download_queue, limit in self.queues:
-                        # We may need to wrap this swap of the priority queue in a lock
-                        new_queue = queue.PriorityQueue()
-                        while not download_queue.empty():
-                            queued_download = download_queue.get()
-                            if download == queued_download.item:
-                                download.cancel()
-                            elif download.game == queued_download.item.game:
-                                download.cancel()
-                            else:
-                                new_queue.put(queued_download)
-                            # Mark the task as "done" to keep counts correct so
-                            # we can use join() or other functions later
-                            download_queue.task_done()
-                        download_queue = new_queue
-                    self.__paused = False
+                    # Remove it from the downloads to cancel
+                    del download_dict[download]
+
+        # Next, loop through the downloads queued for download, comparing them to the
+        # cancel list
+        for download in download_dict.keys():
+            self.logger.debug("download: {}".format(download))
+            for download_queue, limit in self.queues:
+                new_queue = queue.PriorityQueue()
+
+                while not download_queue.empty():
+                    queued_download = download_queue.get()
+                    # Test a Download against a QueuedDownloadItem
+                    if download == queued_download.item:
+                        download.cancel()
+                    # test for games
+                    elif (download.game is not None) and \
+                         (download.game == queued_download.item.game):
+                        download.cancel()
+                    # test for other assets
+                    elif download.save_location == queued_download.item.save_location:
+                        download.cancel()
+                    else:
+                        new_queue.put(queued_download)
+                    # Mark the task as "done" to keep counts correct so
+                    # we can use join() or other functions later
+                    download_queue.task_done()
+                # Copy items back over to the queue
+                while not new_queue.empty():
+                    item = new_queue.get()
+                    download_queue.put(item)
 
     def cancel_current_downloads(self):
         """
@@ -324,9 +343,6 @@ class __DownloadManger:
         if downloaded_size < file_size:
             with open(download.save_location, download_mode) as save_file:
                 for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-                    # Pause if needed
-                    while self.__paused:
-                        time.sleep(0.1)
                     save_file.write(chunk)
                     downloaded_size += len(chunk)
                     if download in self.__cancel:
