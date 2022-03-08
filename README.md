@@ -77,6 +77,7 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 - PyGObject 3.29.1+
 - Webkit2gtk with API version 4.0 support
 - Python Requests
+- gettext
 
 ## Installation
 
