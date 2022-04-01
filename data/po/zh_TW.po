@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-27 22:44-0400\n"
+"POT-Creation-Date: 2021-11-26 14:30-0800\n"
 "PO-Revision-Date: 2020-11-15 07:53+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Are you sure you want to uninstall %s?"
 msgstr "您確定要解除安裝 %s 嗎？"
 
-#: minigalaxy/constants.py:7
+#: minigalaxy/constants.py:7 minigalaxy/constants.py:30
 msgid "Brazilian Portuguese"
 msgstr "葡萄牙文（巴西）"
 
@@ -91,7 +91,11 @@ msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
 msgstr ""
 
-#: data/ui/gametile.ui:36
+#: minigalaxy/constants.py:31
+msgid "Czech"
+msgstr ""
+
+#: data/ui/gametile.ui:178
 msgid "DLC"
 msgstr "DLC"
 
@@ -99,15 +103,15 @@ msgstr "DLC"
 msgid "Danish"
 msgstr "丹麥文"
 
-#: minigalaxy/ui/gametile.py:207 minigalaxy/ui/gametile.py:236
+#: minigalaxy/ui/gametile.py:207 minigalaxy/ui/gametile.py:237
 msgid "Download error"
 msgstr "下載錯誤"
 
-#: minigalaxy/constants.py:10 minigalaxy/constants.py:30
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:32
 msgid "Dutch"
 msgstr "荷蘭文"
 
-#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:33
 msgid "English"
 msgstr "英文"
 
@@ -117,38 +121,38 @@ msgid ""
 "system."
 msgstr ""
 
-#: minigalaxy/ui/gametile.py:298
+#: minigalaxy/ui/gametile.py:301
 msgid "Failed to install {}"
 msgstr "安裝 {} 失敗"
 
-#: minigalaxy/ui/library.py:152
+#: minigalaxy/ui/library.py:141
 msgid "Failed to retrieve library"
 msgstr "擷取收藏庫失敗"
 
-#: minigalaxy/launcher.py:36 minigalaxy/ui/gametile.py:122
+#: minigalaxy/launcher.py:34 minigalaxy/ui/gametile.py:122
 msgid "Failed to start {}:"
 msgstr "啟動 {} 失敗："
 
-#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
+#: minigalaxy/constants.py:12 minigalaxy/constants.py:34
 msgid "Finnish"
 msgstr "芬蘭文"
 
-#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:35
 msgid "French"
 msgstr "法文"
 
-#: minigalaxy/ui/properties.py:137
+#: minigalaxy/ui/properties.py:140
 msgid "Genre"
 msgstr ""
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:36
 msgid "German"
 msgstr "德文"
 
-#. A link to the Github page
+#. A link to the GitHub page
 #: data/ui/about.ui:12
 msgctxt "github_page_link"
-msgid "Github page"
+msgid "GitHub page"
 msgstr "GitHub 頁面"
 
 #: data/ui/properties.ui:105
@@ -179,7 +183,7 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "已安裝"
 
-#: minigalaxy/constants.py:16
+#: minigalaxy/constants.py:16 minigalaxy/constants.py:37
 msgid "Italian"
 msgstr "義大利文"
 
@@ -221,7 +225,7 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "登出"
 
-#: minigalaxy/launcher.py:184
+#: minigalaxy/launcher.py:179
 msgid "No executable was found in {}"
 msgstr "在 {} 找不到可執行檔"
 
@@ -229,12 +233,12 @@ msgstr "在 {} 找不到可執行檔"
 msgid "Norwegian"
 msgstr "挪威文"
 
-#: minigalaxy/constants.py:35
+#: minigalaxy/constants.py:38
 #, fuzzy
 msgid "Norwegian Bokmål"
 msgstr "挪威文"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:39
 #, fuzzy
 msgid "Norwegian Nynorsk"
 msgstr "挪威文"
@@ -255,11 +259,11 @@ msgstr "開啟檔案"
 msgid "Please check your internet connection"
 msgstr "請檢查您的網際網路連線"
 
-#: minigalaxy/constants.py:20 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:40
 msgid "Polish"
 msgstr "波蘭文"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:21
 msgid "Portuguese"
 msgstr "葡萄牙文"
 
@@ -273,13 +277,13 @@ msgctxt "preferences"
 msgid "Preferences"
 msgstr "偏好設定"
 
-#. Prefered language for downloading games in. Ends with ": ".
+#. Preferred language for downloading games in. Ends with ": ".
 #: data/ui/preferences.ui:93
 msgctxt "preferred_game_language"
 msgid "Preferred game language: "
 msgstr "偏好的語言："
 
-#: data/ui/gametile.ui:81
+#: data/ui/gametile.ui:223
 msgid "Properties"
 msgstr ""
 
@@ -297,7 +301,7 @@ msgstr "重新整理遊戲清單"
 msgid "Regedit"
 msgstr ""
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:41
 msgid "Russian"
 msgstr "俄文"
 
@@ -331,11 +335,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "僅顯示已安裝的遊戲"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:42
 msgid "Simplified Chinese"
 msgstr ""
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:43
 msgid "Spanish"
 msgstr "西班牙文"
 
@@ -355,7 +359,7 @@ msgstr "商店頁面"
 msgid "Support"
 msgstr "支援"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:44
 msgid "Swedish"
 msgstr "瑞典文"
 
@@ -391,24 +395,24 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "遊戲會安裝在"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:45
 msgid "Traditional Chinese"
 msgstr ""
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:46
 msgid "Turkish"
 msgstr "土耳其文"
 
-#: minigalaxy/constants.py:45
+#: minigalaxy/constants.py:47
 msgid "Ukrainian"
 msgstr ""
 
-#: data/ui/gametile.ui:66
+#: data/ui/gametile.ui:208
 #, fuzzy
 msgid "Uninstall"
 msgstr "解除安裝"
 
-#: data/ui/gametile.ui:51
+#: data/ui/gametile.ui:193
 #, fuzzy
 msgid "Update"
 msgstr "更新"
@@ -423,7 +427,7 @@ msgstr ""
 msgid "Variable flags:"
 msgstr ""
 
-#: minigalaxy/ui/properties.py:139
+#: minigalaxy/ui/properties.py:142
 msgid "Version"
 msgstr ""
 
@@ -465,35 +469,39 @@ msgstr ""
 msgid "Winecfg"
 msgstr ""
 
-#: minigalaxy/ui/gametile.py:450
+#: minigalaxy/ui/gametile.py:460
 msgid "download"
 msgstr "下載"
 
-#: minigalaxy/ui/gametile.py:489
+#: minigalaxy/ui/gametile.py:500
 msgid "downloading…"
 msgstr "正在下載…"
 
-#: minigalaxy/ui/gametile.py:481
+#: minigalaxy/ui/gametile.py:491
 msgid "in queue…"
 msgstr "在佇列中…"
 
-#: minigalaxy/ui/gametile.py:469
+#: minigalaxy/ui/gametile.py:479
 msgid "install"
 msgstr "安裝"
 
-#: minigalaxy/ui/gametile.py:499
+#: minigalaxy/ui/gametile.py:511
 msgid "installing…"
 msgstr "正在安裝…"
 
-#: minigalaxy/ui/gametile.py:513 minigalaxy/ui/gametile.py:543
+#: minigalaxy/ui/gametile.py:526 minigalaxy/ui/gametile.py:556
 msgid "play"
 msgstr "遊玩"
 
-#: minigalaxy/ui/gametile.py:529
+#: minigalaxy/ui/gametile.py:542
 msgid "uninstalling…"
 msgstr "正在解除安裝…"
 
-#: minigalaxy/ui/gametile.py:552
+#: minigalaxy/ui/properties.py:136
+msgid "unknown"
+msgstr ""
+
+#: minigalaxy/ui/gametile.py:565
 msgid "updating…"
 msgstr "正在更新…"
 

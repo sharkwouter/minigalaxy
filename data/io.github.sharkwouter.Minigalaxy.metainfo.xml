@@ -41,6 +41,32 @@
     </provides>
 
     <releases>
+        <release version="1.1.0" date="2021-11-09">
+            <description>
+                <p>Implements the following changes:</p>
+                <ul>
+                    <li>Improve integrity check after downloading (thanks to makson96)</li>
+                    <li>Show an error showing Windows games cannot be enabled</li>
+                    <li>Add properties menu for games where game specific actions can be made like setting launch options and opening the store page (thanks to Odelpasso and makson96)</li>
+                    <li>Add a disk space check before downloading (thanks to SvdB-nonp and makson96)</li>
+                    <li>Use a different color for the play button for installed games</li>
+                    <li>Put installed games at the top of the list</li>
+                    <li>Store saved installers in ``~/GOG Games/installer`` by default again (thanks to makson96)</li>
+                    <li>Remember if the user had the installed filter enabled (thanks to makson96)</li>
+                    <li>Extract Windows games in the background if Innoextract is available (thanks to makson96)</li>
+                    <li>Extract Windows games in the background (thanks to Odelpasso)</li>
+                    <li>Fix installing DLC for Windows games (thanks to makson96)</li>
+                    <li>Fix an error showing if the user has no games (thanks to makson96)</li>
+                    <li>Add option to hide games (thanks to TotalCaesar659)</li>
+                    <li>Ask user if they are sure when logging out (thanks to TotalCaesar659)</li>
+                    <li>Add a dark theme (thanks to TotalCaesar659)</li>
+                    <li>Run post install script after installation. This fixes Full Throttle Remastered (thanks to makson96)</li>
+                    <li>Fix games being shown twice</li>
+                    <li>Fix crash when GOG is down (thanks to lmeunier)</li>
+                    <li>Make the language configurable (thanks to TotalCaesar659 and zweif)</li>
+                </ul>
+            </description>
+        </release>
         <release version="1.0.2" date="2021-01-14">
             <description>
                 <p>Implements the following changes:</p>
@@ -189,7 +215,7 @@
                 </ul>
             </description>
         </release>
-        <release version="0.9.0" date="2019-12-25"> 
+        <release version="0.9.0" date="2019-12-25">
             <description>
                 <p>Initial release.</p>
             </description>

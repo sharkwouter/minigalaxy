@@ -8,6 +8,7 @@ from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.game import Game
 from minigalaxy.ui.gametile import GameTile
+from minigalaxy.ui.gametilelist import GameTileList
 from minigalaxy.ui.gtk import Gtk, GLib
 from minigalaxy.translation import _
 
@@ -98,7 +99,11 @@ class Library(Gtk.Viewport):
                 self.__add_gametile(game)
 
     def __add_gametile(self, game):
-        self.flowbox.add(GameTile(self, game))
+        view = Config.get("view")
+        if view == "grid":
+            self.flowbox.add(GameTile(self, game))
+        elif view == "list":
+            self.flowbox.add(GameTileList(self, game))
         self.sort_library()
         self.flowbox.show_all()
 

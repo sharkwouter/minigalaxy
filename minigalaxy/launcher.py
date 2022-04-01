@@ -21,6 +21,13 @@ def regedit_game(game):
     subprocess.Popen(['wine', 'regedit'])
 
 
+def winetricks_game(game):
+    prefix = os.path.join(game.install_dir, "prefix")
+
+    os.environ["WINEPREFIX"] = prefix
+    subprocess.Popen(['winetricks'])
+
+
 def start_game(game):
     error_message = ""
     process = None
@@ -52,6 +59,11 @@ def get_execute_command(game) -> list:
     else:
         # If no executable was found at all, raise an error
         raise FileNotFoundError()
+    if game.get_info("use_gamemode") is True:
+        exe_cmd.insert(0, "gamemoderun")
+    if game.get_info("use_mangohud") is True:
+        exe_cmd.insert(0, "mangohud")
+        exe_cmd.insert(1, "--dlsym")
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
     return exe_cmd
 
@@ -74,8 +86,8 @@ def determine_launcher_type(files):
 
 
 def get_exe_cmd_with_var_command(game, exe_cmd):
-    command_list = game.get_info("command").split()
     var_list = game.get_info("variable").split()
+    command_list = game.get_info("command").split()
 
     if var_list:
         if var_list[0] not in ["env"]:

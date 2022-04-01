@@ -7,6 +7,7 @@ m_gi = MagicMock()
 m_window = MagicMock()
 m_preferences = MagicMock()
 m_gametile = MagicMock()
+m_gametilelist = MagicMock()
 
 
 class UnitTestGtkTemplate:
@@ -51,6 +52,7 @@ sys.modules['gi'] = m_gi
 sys.modules['minigalaxy.ui.window'] = m_window
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.gametile'] = m_gametile
+sys.modules['minigalaxy.ui.gametilelist'] = m_gametilelist
 from minigalaxy.game import Game           # noqa: E402
 from minigalaxy.ui.library import Library, get_installed_windows_games  # noqa: E402
 
@@ -199,3 +201,4 @@ del sys.modules['gi.repository']
 del sys.modules['minigalaxy.ui.window']
 del sys.modules['minigalaxy.ui.preferences']
 del sys.modules['minigalaxy.ui.gametile']
+del sys.modules['minigalaxy.ui.gametilelist']

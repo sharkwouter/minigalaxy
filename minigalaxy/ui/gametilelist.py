@@ -21,9 +21,9 @@ from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "gametile.ui"))
-class GameTile(Gtk.Box):
-    __gtype_name__ = "GameTile"
+@Gtk.Template.from_file(os.path.join(UI_DIR, "gametilelist.ui"))
+class GameTileList(Gtk.Box):
+    __gtype_name__ = "GameTileList"
 
     image = Gtk.Template.Child()
     button = Gtk.Template.Child()
@@ -37,6 +37,7 @@ class GameTile(Gtk.Box):
     dlc_horizontal_box = Gtk.Template.Child()
     menu_button_information = Gtk.Template.Child()
     menu_button_properties = Gtk.Template.Child()
+    game_label = Gtk.Template.Child()
 
     state = Enum('state',
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
@@ -67,6 +68,8 @@ class GameTile(Gtk.Box):
         self.current_state = self.state.DOWNLOADABLE
 
         self.image.set_tooltip_text(self.game.name)
+
+        self.game_label.set_label(self.game.name)
 
         # Set folder for download installer
         self.download_dir = os.path.join(CACHE_DIR, "download", self.game.get_install_directory_name())
@@ -446,7 +449,7 @@ class GameTile(Gtk.Box):
 
     def __create_progress_bar(self) -> None:
         self.progress_bar = Gtk.ProgressBar()
-        self.progress_bar.set_halign(Gtk.Align.CENTER)
+        self.progress_bar.set_halign(Gtk.Align.START)
         self.progress_bar.set_size_request(196, -1)
         self.progress_bar.set_hexpand(False)
         self.progress_bar.set_vexpand(False)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-27 22:44-0400\n"
+"POT-Creation-Date: 2021-11-26 14:30-0800\n"
 "PO-Revision-Date: 2021-09-30 12:59+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -56,7 +56,7 @@ msgstr "Oletko varma että halua kirjautua ulos palvelusta GOG?"
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Oletko varma että haluat poistaa asennuksen %s?"
 
-#: minigalaxy/constants.py:7
+#: minigalaxy/constants.py:7 minigalaxy/constants.py:30
 msgid "Brazilian Portuguese"
 msgstr "Brasilian portugali"
 
@@ -91,7 +91,11 @@ msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
 msgstr "Luo valikon pikakuvakkeet: "
 
-#: data/ui/gametile.ui:36
+#: minigalaxy/constants.py:31
+msgid "Czech"
+msgstr ""
+
+#: data/ui/gametile.ui:178
 msgid "DLC"
 msgstr "DLC-lisäosa"
 
@@ -99,15 +103,15 @@ msgstr "DLC-lisäosa"
 msgid "Danish"
 msgstr "Tanska"
 
-#: minigalaxy/ui/gametile.py:207 minigalaxy/ui/gametile.py:236
+#: minigalaxy/ui/gametile.py:207 minigalaxy/ui/gametile.py:237
 msgid "Download error"
 msgstr "Latausvirhe"
 
-#: minigalaxy/constants.py:10 minigalaxy/constants.py:30
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:32
 msgid "Dutch"
 msgstr "Hollanti"
 
-#: minigalaxy/constants.py:11 minigalaxy/constants.py:31
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:33
 msgid "English"
 msgstr "Englanti"
 
@@ -117,39 +121,39 @@ msgid ""
 "system."
 msgstr ""
 
-#: minigalaxy/ui/gametile.py:298
+#: minigalaxy/ui/gametile.py:301
 msgid "Failed to install {}"
 msgstr "{} asentaminen epäonnistui"
 
-#: minigalaxy/ui/library.py:152
+#: minigalaxy/ui/library.py:141
 msgid "Failed to retrieve library"
 msgstr "Kirjaston noutaminen epäonnistui"
 
-#: minigalaxy/launcher.py:36 minigalaxy/ui/gametile.py:122
+#: minigalaxy/launcher.py:34 minigalaxy/ui/gametile.py:122
 msgid "Failed to start {}:"
 msgstr "Kohteen {} käynnistäminen epäonnistui:"
 
-#: minigalaxy/constants.py:12 minigalaxy/constants.py:32
+#: minigalaxy/constants.py:12 minigalaxy/constants.py:34
 msgid "Finnish"
 msgstr "Suomi"
 
-#: minigalaxy/constants.py:13 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:35
 msgid "French"
 msgstr "Ranska"
 
-#: minigalaxy/ui/properties.py:137
+#: minigalaxy/ui/properties.py:140
 msgid "Genre"
 msgstr "Genre"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:36
 msgid "German"
 msgstr "Saksa"
 
-#. A link to the Github page
+#. A link to the GitHub page
 #: data/ui/about.ui:12
 msgctxt "github_page_link"
-msgid "Github page"
-msgstr "Github-sivu"
+msgid "GitHub page"
+msgstr "GitHub-sivu"
 
 #: data/ui/properties.ui:105
 msgid "Hide game:"
@@ -179,7 +183,7 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "Asennetut"
 
-#: minigalaxy/constants.py:16
+#: minigalaxy/constants.py:16 minigalaxy/constants.py:37
 msgid "Italian"
 msgstr "Italia"
 
@@ -221,7 +225,7 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
-#: minigalaxy/launcher.py:184
+#: minigalaxy/launcher.py:179
 msgid "No executable was found in {}"
 msgstr "Ajettavaa käynnistystiedostoa ei löytynyt kohteelle {}"
 
@@ -229,11 +233,11 @@ msgstr "Ajettavaa käynnistystiedostoa ei löytynyt kohteelle {}"
 msgid "Norwegian"
 msgstr "Norja"
 
-#: minigalaxy/constants.py:35
+#: minigalaxy/constants.py:38
 msgid "Norwegian Bokmål"
 msgstr "Norja (kirjakieli)"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:39
 msgid "Norwegian Nynorsk"
 msgstr "Norja (Nynorsk)"
 
@@ -254,11 +258,11 @@ msgstr "Avaa tiedostot"
 msgid "Please check your internet connection"
 msgstr "Ole hyvä ja tarkista, että internet-yhteytesi on toiminnassa"
 
-#: minigalaxy/constants.py:20 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:40
 msgid "Polish"
 msgstr "Puola"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:21
 msgid "Portuguese"
 msgstr "Portugali"
 
@@ -272,13 +276,13 @@ msgctxt "preferences"
 msgid "Preferences"
 msgstr "Asetukset"
 
-#. Prefered language for downloading games in. Ends with ": ".
+#. Preferred language for downloading games in. Ends with ": ".
 #: data/ui/preferences.ui:93
 msgctxt "preferred_game_language"
 msgid "Preferred game language: "
 msgstr "Ensisijainen kieli peleille: "
 
-#: data/ui/gametile.ui:81
+#: data/ui/gametile.ui:223
 msgid "Properties"
 msgstr "Ominaisuudet"
 
@@ -296,7 +300,7 @@ msgstr "Virkistä peliluettelo"
 msgid "Regedit"
 msgstr "Regedit-muokkaus"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:41
 msgid "Russian"
 msgstr "Venäjä"
 
@@ -328,11 +332,11 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Näytä ainoastaan asennetut pelit"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:42
 msgid "Simplified Chinese"
 msgstr "Yksinkertaistettu kiina"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:43
 msgid "Spanish"
 msgstr "Espanja"
 
@@ -350,7 +354,7 @@ msgstr "Kauppa"
 msgid "Support"
 msgstr "Tuki"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:44
 msgid "Swedish"
 msgstr "Ruotsi"
 
@@ -385,23 +389,23 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Tämä on sijainti johon pelit asennetaan"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:45
 msgid "Traditional Chinese"
 msgstr "Perinteinen kiina"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:46
 msgid "Turkish"
 msgstr "Turkki"
 
-#: minigalaxy/constants.py:45
+#: minigalaxy/constants.py:47
 msgid "Ukrainian"
 msgstr "Ukraina"
 
-#: data/ui/gametile.ui:66
+#: data/ui/gametile.ui:208
 msgid "Uninstall"
 msgstr "Poista asennus"
 
-#: data/ui/gametile.ui:51
+#: data/ui/gametile.ui:193
 msgid "Update"
 msgstr "Päivitä"
 
@@ -415,7 +419,7 @@ msgstr "Käytä tummaa teemaa: "
 msgid "Variable flags:"
 msgstr "Muuttujat:"
 
-#: minigalaxy/ui/properties.py:139
+#: minigalaxy/ui/properties.py:142
 msgid "Version"
 msgstr "Versio"
 
@@ -459,35 +463,39 @@ msgstr ""
 msgid "Winecfg"
 msgstr "Winecfg-asetukset"
 
-#: minigalaxy/ui/gametile.py:450
+#: minigalaxy/ui/gametile.py:460
 msgid "download"
 msgstr "lataa"
 
-#: minigalaxy/ui/gametile.py:489
+#: minigalaxy/ui/gametile.py:500
 msgid "downloading…"
 msgstr "ladataan…"
 
-#: minigalaxy/ui/gametile.py:481
+#: minigalaxy/ui/gametile.py:491
 msgid "in queue…"
 msgstr "jonossa…"
 
-#: minigalaxy/ui/gametile.py:469
+#: minigalaxy/ui/gametile.py:479
 msgid "install"
 msgstr "asenna"
 
-#: minigalaxy/ui/gametile.py:499
+#: minigalaxy/ui/gametile.py:511
 msgid "installing…"
 msgstr "asennetaan…"
 
-#: minigalaxy/ui/gametile.py:513 minigalaxy/ui/gametile.py:543
+#: minigalaxy/ui/gametile.py:526 minigalaxy/ui/gametile.py:556
 msgid "play"
 msgstr "pelaa"
 
-#: minigalaxy/ui/gametile.py:529
+#: minigalaxy/ui/gametile.py:542
 msgid "uninstalling…"
 msgstr "poistetaan asennusta…"
 
-#: minigalaxy/ui/gametile.py:552
+#: minigalaxy/ui/properties.py:136
+msgid "unknown"
+msgstr ""
+
+#: minigalaxy/ui/gametile.py:565
 msgid "updating…"
 msgstr "päivitetään…"
 
