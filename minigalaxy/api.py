@@ -1,3 +1,4 @@
+import http
 import os
 import time
 from urllib.parse import urlencode
@@ -166,16 +167,53 @@ class Api:
         return self.__request(url)['downlink']
 
     def get_download_file_md5(self, url):
-        xml_link = self.__request(url)['checksum']
-        xml_string = SESSION.get(xml_link).text
-        root = ET.fromstring(xml_string)
-        return root.attrib['md5']
+        """
+        Returns a download file's md5 sum
+        Returns an empty string if anything goes wrong
+        :param url: Url to get download and checksum links from the API
+        :return: the md5 sum as string
+        """
+        result = ""
+        checksum_data = self.__request(url)
+        if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
+            root = self.__get_xml_checksum(checksum_data['checksum'])
+            if "md5" in root.keys() or len(root.attrib["md5"]) > 0:
+                result = root.attrib["md5"]
+
+        if not result:
+            print("Couldn't find md5 in xml checksum data")
+
+        return result
 
     def get_file_size(self, url):
-        xml_link = self.__request(url)['checksum']
-        xml_string = SESSION.get(xml_link).text
-        root = ET.fromstring(xml_string)
-        return root.attrib["total_size"]
+        """
+        Returns the file size according to an XML file offered by GOG
+        Returns 0 if anything goes wrong
+        :param url: Url to get download and checksum links from the API
+        :return: probable file size in bytes as int
+        """
+        result = 0
+        checksum_data = self.__request(url)
+        if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
+            root = self.__get_xml_checksum(checksum_data['checksum'])
+            if "total_size" in root.keys() or int(root.attrib["total_size"]) > 0:
+                result = int(root.attrib["total_size"])
+
+        if not result:
+            print("Couldn't find file size in xml checksum data")
+
+        return result
+
+    def __get_xml_checksum(self, url):
+        result = {}
+        response = SESSION.get(url)
+        if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
+            result = ET.fromstring(response.text)
+        else:
+            print("Couldn't read xml data. Response with code {} received with the following content: {}".format(
+                response.status_code, response.text
+            ))
+        return result
 
     def get_user_info(self) -> str:
         username = Config.get("username")
