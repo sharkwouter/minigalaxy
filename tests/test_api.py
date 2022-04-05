@@ -236,17 +236,6 @@ class TestApi(TestCase):
         obs = api.get_file_size("url")
         self.assertEqual(exp, obs)
 
-    def test_get_file_size_returns_zero_on_empty_response(self):
-        api = Api()
-        api._Api__request = MagicMock()
-        api._Api__request.return_value = {"checksum": "url"}
-        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
-        m_constants.SESSION.get().text = ""
-
-        exp = 0
-        obs = api.get_file_size("url")
-        self.assertEqual(exp, obs)
-
     def test_get_file_size_returns_zero_on_missing_total_size(self):
         api = Api()
         api._Api__request = MagicMock()
