@@ -173,17 +173,6 @@ class TestApi(TestCase):
         obs = api.get_download_file_md5("url")
         self.assertEqual(exp, obs)
 
-    def test_get_download_file_md5_returns_empty_string_on_empty_response(self):
-        api = Api()
-        api._Api__request = MagicMock()
-        api._Api__request.return_value = {"checksum": "url"}
-        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
-        m_constants.SESSION.get().text = ""
-
-        exp = ""
-        obs = api.get_download_file_md5("url")
-        self.assertEqual(exp, obs)
-
     def test_get_download_file_md5_returns_empty_string_on_missing_md5(self):
         api = Api()
         api._Api__request = MagicMock()
