@@ -141,15 +141,21 @@ def extract_windows(game, installer, temp_dir):
 def extract_by_innoextract(installer, temp_dir):
     err_msg = ""
     if shutil.which("innoextract"):
-        cmd = ["innoextract", installer, "-d", temp_dir]
+        cmd = ["innoextract", installer, "-d", temp_dir, "--gog"]
         stdout, stderr, exitcode = _exe_cmd(cmd)
         if exitcode not in [0]:
             err_msg = _("Innoextract extraction failed.")
         else:
+            # In the case the game is installed in "temp_dir/app" like Zeus + Poseidon (Acropolis)
             inno_app_dir = os.path.join(temp_dir, "app")
             if os.path.isdir(inno_app_dir):
                 _mv(inno_app_dir, temp_dir)
-            innoextract_unneeded_dirs = ["__redist", "tmp", "commonappdata", "app"]
+            # In the case the game is installed in "temp_dir/game" like Dragon Age™: Origins - Ultimate Edition
+            inno_game_dir = os.path.join(temp_dir, "game")
+            if os.path.isdir(inno_game_dir):
+                _mv(inno_game_dir, temp_dir)
+            innoextract_unneeded_dirs = ["__redist", "tmp", "commonappdata", "app", "DirectXpackage", "dotNet35"]
+            innoextract_unneeded_dirs += ["MSVC2005", "MSVC2005_x64", "support", "__unpacker", "userdocs", "game"]
             for unneeded_dir in innoextract_unneeded_dirs:
                 unneeded_dir_full_path = os.path.join(temp_dir, unneeded_dir)
                 if os.path.isdir(unneeded_dir_full_path):
