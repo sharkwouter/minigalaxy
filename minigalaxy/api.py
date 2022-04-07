@@ -90,14 +90,17 @@ class Api:
                         # Only support Linux unless the show_windows_games setting is enabled
                         if product["worksOn"]["Linux"]:
                             platform = "linux"
+                            supported_platforms = [platform, "windows"]
                         elif Config.get("show_windows_games"):
                             platform = "windows"
+                            supported_platforms = [platform]
                         else:
                             continue
                         if not product["url"]:
                             print("{} ({}) has no store page url".format(product["title"], product['id']))
                         game = Game(name=product["title"], url=product["url"], game_id=product["id"],
-                                    image_url=product["image"], platform=platform)
+                                    image_url=product["image"], platform=platform,
+                                    supported_platforms=supported_platforms)
                         games.append(game)
                 if current_page == total_pages:
                     all_pages_processed = True
@@ -134,7 +137,7 @@ class Api:
         return response
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> dict:
+    def get_download_info(self, game: Game, operating_system="", dlc_installers="") -> dict:
         if dlc_installers:
             installers = dlc_installers
         else:
@@ -186,6 +189,13 @@ class Api:
             Config.set("username", username)
         return username
 
+    def get_download_version(self, game: Game):
+        if not game.get_info("platform"):
+            platform_version = game.platform
+        else:
+            platform_version = game.get_info("platform")
+        return platform_version
+        
     def get_version(self, game: Game, gameinfo=None, dlc_name="") -> str:
         if gameinfo is None:
             gameinfo = self.get_info(game)
