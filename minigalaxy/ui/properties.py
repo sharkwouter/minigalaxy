@@ -1,8 +1,9 @@
 import os
 import shutil
 import subprocess
+import requests
 
-from minigalaxy.paths import UI_DIR
+from minigalaxy.paths import UI_DIR, CACHE_DIR
 from minigalaxy.translation import _
 from minigalaxy.launcher import config_game, regedit_game, winetricks_game
 from minigalaxy.ui.gtk import Gtk
@@ -22,10 +23,12 @@ class Properties(Gtk.Dialog):
     switch_properties_hide_game = Gtk.Template.Child()
     switch_properties_use_gamemode = Gtk.Template.Child()
     switch_properties_use_mangohud = Gtk.Template.Child()
+    switch_properties_use_dxvk = Gtk.Template.Child()
     entry_properties_variable = Gtk.Template.Child()
     entry_properties_command = Gtk.Template.Child()
     button_properties_cancel = Gtk.Template.Child()
     button_properties_ok = Gtk.Template.Child()
+    dxvk_label = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
@@ -52,6 +55,9 @@ class Properties(Gtk.Dialog):
 
         # Keep switch use MangoHud disabled/enabled
         self.switch_properties_use_mangohud.set_active(self.game.get_info("use_mangohud"))
+        
+        # Keep switch use DXVK disabled/enabled
+        self.switch_properties_use_dxvk.set_active(self.game.get_info("use_dxvk"))
 
         # Retrieve variable & command each time properties is open
         self.entry_properties_variable.set_text(self.game.get_info("variable"))
@@ -79,6 +85,13 @@ class Properties(Gtk.Dialog):
                 self.game.set_info("use_mangohud", False)
             else:
                 self.game.set_info("use_mangohud", self.switch_properties_use_mangohud.get_active())
+            if not self.switch_properties_use_dxvk.get_active():
+                self.install_uninstall_dxvk("uninstall", self.game)
+                self.game.set_info("use_dxvk", False)
+            else:
+                self.game.set_info("use_dxvk", self.switch_properties_use_dxvk.get_active())
+                self.install_uninstall_dxvk("install", self.game)              
+                                
             self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
             self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
@@ -105,6 +118,35 @@ class Properties(Gtk.Dialog):
         self.game.set_install_dir()
         subprocess.call(["xdg-open", self.game.install_dir])
 
+    # Check if a new version is available
+    def check_for_dxvk(self):
+        version = self.api.get_info_dxvk()
+        dxvk_archive = os.path.join(CACHE_DIR, "dxvk-{}.tar.gz".format(version))
+        
+        if not os.path.isfile(dxvk_archive):
+            url = "https://github.com/doitsujin/dxvk/releases/download/v{}/dxvk-{}.tar.gz".format(version, version)
+            r = requests.get(url, allow_redirects=True)
+            open('{}/dxvk-{}.tar.gz'.format(CACHE_DIR, version), 'wb').write(r.content)
+        
+        shutil.unpack_archive(dxvk_archive, CACHE_DIR)
+    
+    # Install DXVK 
+    def install_uninstall_dxvk(self, state, game):
+        version = self.api.get_info_dxvk()
+        dxvk_folder = os.path.join(CACHE_DIR, "dxvk-{}".format(version))
+        if not dxvk_folder:
+            self.check_for_dxvk()
+            
+        prefix = os.path.join(game.install_dir, "prefix")
+        os.environ["WINEPREFIX"] = prefix
+    
+        setup_dxvk = os.path.join(dxvk_folder, "setup_dxvk.sh")
+        
+        if state == "install":
+            install = subprocess.Popen([setup_dxvk, 'install'])
+        if state == "uninstall":
+            uninstall = subprocess.Popen([setup_dxvk, 'uninstall'])           
+        
     def button_sensitive(self, game):
         if not game.is_installed():
             self.button_properties_regedit.set_sensitive(False)
@@ -115,6 +157,7 @@ class Properties(Gtk.Dialog):
             self.switch_properties_show_fps.set_sensitive(False)
             self.switch_properties_use_gamemode.set_sensitive(False)
             self.switch_properties_use_mangohud.set_sensitive(False)
+            self.switch_properties_use_dxvk.set_sensitive(False)
             self.entry_properties_variable.set_sensitive(False)
             self.entry_properties_command.set_sensitive(False)
 
@@ -122,3 +165,5 @@ class Properties(Gtk.Dialog):
             self.button_properties_regedit.hide()
             self.button_properties_winecfg.hide()
             self.button_properties_winetricks.hide()
+            self.switch_properties_use_dxvk.hide()
+            self.dxvk_label.hide()
