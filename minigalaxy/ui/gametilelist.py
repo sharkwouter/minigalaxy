@@ -359,7 +359,7 @@ class GameTileList(Gtk.Box):
         def finish_func(save_location):
             self.__install_dlc(save_location, dlc_title=dlc_title)
 
-        download_info = self.api.get_download_info(self.game, self.api.get_download_version(self.game), 
+        download_info = self.api.get_download_info(self.game, self.api.get_download_version(self.game),
                                                    dlc_installers=dlc_installers)
         dlc_title = self.game.name
         for dlc in self.game.dlcs:
@@ -405,7 +405,7 @@ class GameTileList(Gtk.Box):
             self.dlc_horizontal_box.pack_start(dlc_box, False, True, 0)
             dlc_box.show_all()
             self.get_async_image_dlc_icon(icon, title)
-        download_info = self.api.get_download_info(self.game, self.api.get_download_version(self.game), 
+        download_info = self.api.get_download_info(self.game, self.api.get_download_version(self.game),
                                                    dlc_installers=installer)
         if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=title):
             icon_name = "emblem-synchronizing"
