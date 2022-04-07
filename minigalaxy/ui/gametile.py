@@ -348,7 +348,7 @@ class GameTile(Gtk.Box):
                 self.image.set_tooltip_text(self.game.name)
         for dlc in self.game.dlcs:
             download_info = self.api.get_download_info(self.game, self.api.get_download_version(self.game),
-                            dlc_installers=dlc["downloads"]["installers"])
+                                                       dlc_installers=dlc["downloads"]["installers"])
             if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=dlc["title"]):
                 self.__download_dlc(dlc["downloads"]["installers"])
 
@@ -357,7 +357,7 @@ class GameTile(Gtk.Box):
             self.__install_dlc(save_location, dlc_title=dlc_title)
 
         download_info = self.api.get_download_info(self.game, self.api.get_download_version(self.game),
-                        dlc_installers=dlc_installers)
+                                                   dlc_installers=dlc_installers)
         dlc_title = self.game.name
         for dlc in self.game.dlcs:
             if dlc["downloads"]["installers"] == dlc_installers:
@@ -403,7 +403,7 @@ class GameTile(Gtk.Box):
             dlc_box.show_all()
             self.get_async_image_dlc_icon(icon, title)
         download_info = self.api.get_download_info(self.game, self.api.get_download_version(self.game),
-                        dlc_installers=installer)
+                                                   dlc_installers=installer)
         if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=title):
             icon_name = "emblem-synchronizing"
             self.dlc_dict[title][0].set_sensitive(True)
