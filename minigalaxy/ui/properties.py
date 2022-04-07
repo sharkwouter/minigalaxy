@@ -134,7 +134,8 @@ class Properties(Gtk.Dialog):
     def install_uninstall_dxvk(self, state, game):
         version = self.api.get_info_dxvk()
         dxvk_folder = os.path.join(CACHE_DIR, "dxvk-{}".format(version))
-        if not dxvk_folder:
+        if not os.path.exists(dxvk_folder):
+            print("hello")
             self.check_for_dxvk()
 
         prefix = os.path.join(game.install_dir, "prefix")
