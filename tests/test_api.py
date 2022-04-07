@@ -1,3 +1,4 @@
+import http
 from unittest import TestCase, mock
 from unittest.mock import MagicMock
 import copy
@@ -139,7 +140,9 @@ class TestApi(TestCase):
     def test_get_download_file_md5(self):
         api = Api()
         api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
         m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
         m_constants.SESSION.get().text = '''<file name="gog_tis_100_2.0.0.3.sh" available="1" notavailablemsg="" md5="8acedf66c0d2986e7dee9af912b7df4f" chunks="4" timestamp="2015-07-30 17:11:12" total_size="36717998">
     <chunk id="0" from="0" to="10485759" method="md5">7e62ce101221ccdae2e9bff5c16ed9e0</chunk>
     <chunk id="1" from="10485760" to="20971519" method="md5">b80960a2546ce647bffea87f85385535</chunk>
@@ -148,6 +151,102 @@ class TestApi(TestCase):
 </file>'''
         exp = "8acedf66c0d2986e7dee9af912b7df4f"
         obs = api.get_download_file_md5("url")
+        self.assertEqual(exp, obs)
+
+    def test_get_download_file_md5_returns_empty_string_on_empty_response(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
+        m_constants.SESSION.get().text = ""
+
+        exp = ""
+        obs = api.get_download_file_md5("url")
+        self.assertEqual(exp, obs)
+
+    def test_get_download_file_md5_returns_empty_string_on_response_error(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().status_code = http.HTTPStatus.NOT_FOUND
+
+        exp = ""
+        obs = api.get_download_file_md5("url")
+        self.assertEqual(exp, obs)
+
+    def test_get_download_file_md5_returns_empty_string_on_missing_md5(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
+        m_constants.SESSION.get().text = '''<file name="gog_tis_100_2.0.0.3.sh" available="1" notavailablemsg="" md5="" chunks="4" timestamp="2015-07-30 17:11:12" total_size="36717998">
+    <chunk id="0" from="0" to="10485759" method="md5">7e62ce101221ccdae2e9bff5c16ed9e0</chunk>
+    <chunk id="1" from="10485760" to="20971519" method="md5">b80960a2546ce647bffea87f85385535</chunk>
+    <chunk id="2" from="20971520" to="31457279" method="md5">5464b4499cd4368bb83ea35f895d3560</chunk>
+    <chunk id="3" from="31457280" to="36717997" method="md5">0261b9225fc10c407df083f6d254c47b</chunk>
+</file>'''
+
+        exp = ""
+        obs = api.get_download_file_md5("url")
+        self.assertEqual(exp, obs)
+
+    def test_get_file_size(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
+        m_constants.SESSION.get().text = '''<file name="gog_tis_100_2.0.0.3.sh" available="1" notavailablemsg="" md5="8acedf66c0d2986e7dee9af912b7df4f" chunks="4" timestamp="2015-07-30 17:11:12" total_size="36717998">
+    <chunk id="0" from="0" to="10485759" method="md5">7e62ce101221ccdae2e9bff5c16ed9e0</chunk>
+    <chunk id="1" from="10485760" to="20971519" method="md5">b80960a2546ce647bffea87f85385535</chunk>
+    <chunk id="2" from="20971520" to="31457279" method="md5">5464b4499cd4368bb83ea35f895d3560</chunk>
+    <chunk id="3" from="31457280" to="36717997" method="md5">0261b9225fc10c407df083f6d254c47b</chunk>
+</file>'''
+        exp = 36717998
+        obs = api.get_file_size("url")
+        self.assertEqual(exp, obs)
+
+    def test_get_file_size_returns_zero_on_empty_response(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
+        m_constants.SESSION.get().text = ""
+
+        exp = 0
+        obs = api.get_file_size("url")
+        self.assertEqual(exp, obs)
+
+    def test_get_file_size_returns_zero_on_response_error(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().status_code = http.HTTPStatus.NOT_FOUND
+
+        exp = 0
+        obs = api.get_file_size("url")
+        self.assertEqual(exp, obs)
+
+    def test_get_file_size_returns_zero_on_missing_total_size(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
+        m_constants.SESSION.get().text = '''<file name="gog_tis_100_2.0.0.3.sh" available="1" notavailablemsg="" md5="8acedf66c0d2986e7dee9af912b7df4f" chunks="4" timestamp="2015-07-30 17:11:12">
+    <chunk id="0" from="0" to="10485759" method="md5">7e62ce101221ccdae2e9bff5c16ed9e0</chunk>
+    <chunk id="1" from="10485760" to="20971519" method="md5">b80960a2546ce647bffea87f85385535</chunk>
+    <chunk id="2" from="20971520" to="31457279" method="md5">5464b4499cd4368bb83ea35f895d3560</chunk>
+    <chunk id="3" from="31457280" to="36717997" method="md5">0261b9225fc10c407df083f6d254c47b</chunk>
+</file>'''
+
+        exp = 0
+        obs = api.get_file_size("url")
         self.assertEqual(exp, obs)
 
     def test1_get_gamesdb_info(self):

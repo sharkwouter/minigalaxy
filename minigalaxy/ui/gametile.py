@@ -245,7 +245,7 @@ class GameTile(Gtk.Box):
                 GLib.idle_add(self.parent.parent.show_error, _("Download error"), _(str(e)))
                 download_success = False
                 break
-            total_file_size += int(self.api.get_file_size(file_info["downlink"]))
+            total_file_size += self.api.get_file_size(file_info["downlink"])
             try:
                 # Extract the filename from the download url (filename is between %2F and &token)
                 filename = urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1))
@@ -255,7 +255,9 @@ class GameTile(Gtk.Box):
             if key == 0:
                 # If key = 0, denote the file as the executable's path
                 executable_path = download_path
-            self.game.md5sum[os.path.basename(download_path)] = self.api.get_download_file_md5(file_info["downlink"])
+            md5sum = self.api.get_download_file_md5(file_info["downlink"])
+            if md5sum:
+                self.game.md5sum[os.path.basename(download_path)] = md5sum
             download = Download(
                 url=download_url,
                 save_location=download_path,
