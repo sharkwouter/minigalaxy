@@ -29,6 +29,8 @@ class Properties(Gtk.Dialog):
     button_properties_cancel = Gtk.Template.Child()
     button_properties_ok = Gtk.Template.Child()
     label_wine_custom = Gtk.Template.Child()
+    radiobutton_linux_type = Gtk.Template.Child()
+    radiobutton_windows_type = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
@@ -93,6 +95,10 @@ class Properties(Gtk.Dialog):
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
         self.game.set_info("custom_wine", str(self.button_properties_wine.get_filename()))
         self.parent.parent.filter_library()
+        if self.radiobutton_linux_type.get_active():
+            self.game.set_platform("linux")
+        elif self.radiobutton_windows_type.get_active():
+            self.game.set_platform("windows")
         self.destroy()
 
     @Gtk.Template.Callback("on_button_properties_regedit_clicked")
@@ -135,10 +141,18 @@ class Properties(Gtk.Dialog):
             self.entry_properties_variable.set_sensitive(False)
             self.entry_properties_command.set_sensitive(False)
 
-        if game.platform == 'linux':
+        if game.platform in ["linux"]:
             self.button_properties_regedit.hide()
             self.button_properties_winecfg.hide()
             self.button_properties_winetricks.hide()
             self.button_properties_wine.hide()
             self.button_properties_reset.hide()
             self.label_wine_custom.hide()
+            self.radiobutton_linux_type.set_active(True)
+        elif game.platform in ["windows"]:
+            self.radiobutton_windows_type.set_active(True)
+
+        if "linux" not in self.game.supported_platforms:
+            self.radiobutton_linux_type.set_sensitive(False)
+        if "windows" not in self.game.supported_platforms or not shutil.which("wine"):
+            self.radiobutton_windows_type.set_sensitive(False)

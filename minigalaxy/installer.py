@@ -112,7 +112,7 @@ def make_tmp_dir(game):
 
 def extract_installer(game, installer, temp_dir):
     # Extract the installer
-    if game.platform in ["linux"]:
+    if game.platform in ["linux"] and not game.get_info("platform") or game.get_info("platform") == "linux":
         err_msg = extract_linux(installer, temp_dir)
     else:
         err_msg = extract_windows(game, installer, temp_dir)
