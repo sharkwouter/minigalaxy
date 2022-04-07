@@ -28,7 +28,7 @@ class Properties(Gtk.Dialog):
     button_properties_ok = Gtk.Template.Child()
     radiobutton_linux_type = Gtk.Template.Child()
     radiobutton_windows_type = Gtk.Template.Child()
-    
+
     def __init__(self, parent, game, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
                             modal=True)

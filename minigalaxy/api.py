@@ -195,7 +195,7 @@ class Api:
         else:
             platform_version = game.get_info("platform")
         return platform_version
-        
+
     def get_version(self, game: Game, gameinfo=None, dlc_name="") -> str:
         if gameinfo is None:
             gameinfo = self.get_info(game)

@@ -19,7 +19,7 @@ class Game:
         self.status_file_path = self.get_status_file_path()
         self.platform = self.get_info("platform") if self.get_info("platform") else platform
         self.supported_platforms = [platform] if supported_platforms is None else supported_platforms
-        
+
     def get_stripped_name(self):
         return self.__strip_string(self.name)
 
@@ -144,7 +144,7 @@ class Game:
     def set_platform(self, platform):
         self.platform = platform
         self.set_info("platform", platform)
-        
+
     def __str__(self):
         return self.name
 
