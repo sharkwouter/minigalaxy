@@ -176,9 +176,9 @@ class Api:
         result = ""
         checksum_data = self.__request(url)
         if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
-            root = self.__get_xml_checksum(checksum_data['checksum'])
-            if "md5" in root.keys() or len(root.attrib["md5"]) > 0:
-                result = root.attrib["md5"]
+            xml_data = self.__get_xml_checksum(checksum_data['checksum'])
+            if xml_data and "md5" in xml_data.keys() and len(xml_data["md5"]) > 0:
+                result = xml_data["md5"]
 
         if not result:
             print("Couldn't find md5 in xml checksum data")
@@ -195,9 +195,9 @@ class Api:
         result = 0
         checksum_data = self.__request(url)
         if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
-            root = self.__get_xml_checksum(checksum_data['checksum'])
-            if "total_size" in root.keys() or int(root.attrib["total_size"]) > 0:
-                result = int(root.attrib["total_size"])
+            xml_data = self.__get_xml_checksum(checksum_data['checksum'])
+            if xml_data and "total_size" in xml_data.keys() and int(xml_data["total_size"]) > 0:
+                result = int(xml_data["total_size"])
 
         if not result:
             print("Couldn't find file size in xml checksum data")
@@ -205,10 +205,12 @@ class Api:
         return result
 
     def __get_xml_checksum(self, url):
-        result = {}
+        result = None
         response = SESSION.get(url)
         if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
-            result = ET.fromstring(response.text)
+            response_object = ET.fromstring(response.text)
+            if response_object and response_object.attrib:
+                result = response_object.attrib
         else:
             print("Couldn't read xml data. Response with code {} received with the following content: {}".format(
                 response.status_code, response.text

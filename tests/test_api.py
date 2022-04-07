@@ -141,6 +141,7 @@ class TestApi(TestCase):
         api = Api()
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
         m_constants.SESSION.get().status_code = http.HTTPStatus.OK
         m_constants.SESSION.get().text = '''<file name="gog_tis_100_2.0.0.3.sh" available="1" notavailablemsg="" md5="8acedf66c0d2986e7dee9af912b7df4f" chunks="4" timestamp="2015-07-30 17:11:12" total_size="36717998">
     <chunk id="0" from="0" to="10485759" method="md5">7e62ce101221ccdae2e9bff5c16ed9e0</chunk>
@@ -156,6 +157,7 @@ class TestApi(TestCase):
         api = Api()
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
         m_constants.SESSION.get().status_code = http.HTTPStatus.OK
         m_constants.SESSION.get().text = ""
 
@@ -167,6 +169,7 @@ class TestApi(TestCase):
         api = Api()
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
         m_constants.SESSION.get().status_code = http.HTTPStatus.NOT_FOUND
 
         exp = ""
@@ -177,6 +180,7 @@ class TestApi(TestCase):
         api = Api()
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
         m_constants.SESSION.get().status_code = http.HTTPStatus.OK
         m_constants.SESSION.get().text = '''<file name="gog_tis_100_2.0.0.3.sh" available="1" notavailablemsg="" md5="" chunks="4" timestamp="2015-07-30 17:11:12" total_size="36717998">
     <chunk id="0" from="0" to="10485759" method="md5">7e62ce101221ccdae2e9bff5c16ed9e0</chunk>
@@ -193,6 +197,7 @@ class TestApi(TestCase):
         api = Api()
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
         m_constants.SESSION.get().status_code = http.HTTPStatus.OK
         m_constants.SESSION.get().text = '''<file name="gog_tis_100_2.0.0.3.sh" available="1" notavailablemsg="" md5="8acedf66c0d2986e7dee9af912b7df4f" chunks="4" timestamp="2015-07-30 17:11:12" total_size="36717998">
     <chunk id="0" from="0" to="10485759" method="md5">7e62ce101221ccdae2e9bff5c16ed9e0</chunk>
@@ -208,6 +213,7 @@ class TestApi(TestCase):
         api = Api()
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
         m_constants.SESSION.get().status_code = http.HTTPStatus.OK
         m_constants.SESSION.get().text = ""
 
@@ -219,6 +225,7 @@ class TestApi(TestCase):
         api = Api()
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
         m_constants.SESSION.get().status_code = http.HTTPStatus.NOT_FOUND
 
         exp = 0
@@ -229,6 +236,7 @@ class TestApi(TestCase):
         api = Api()
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = MagicMock()
         m_constants.SESSION.get().status_code = http.HTTPStatus.OK
         m_constants.SESSION.get().text = '''<file name="gog_tis_100_2.0.0.3.sh" available="1" notavailablemsg="" md5="8acedf66c0d2986e7dee9af912b7df4f" chunks="4" timestamp="2015-07-30 17:11:12">
     <chunk id="0" from="0" to="10485759" method="md5">7e62ce101221ccdae2e9bff5c16ed9e0</chunk>
