@@ -150,12 +150,7 @@ def extract_by_innoextract(installer, temp_dir):
             inno_app_dir = os.path.join(temp_dir, "app")
             if os.path.isdir(inno_app_dir):
                 _mv(inno_app_dir, temp_dir)
-            # In the case the game is installed in "temp_dir/game" like Dragon Age™: Origins - Ultimate Edition
-            inno_game_dir = os.path.join(temp_dir, "game")
-            if os.path.isdir(inno_game_dir):
-                _mv(inno_game_dir, temp_dir)
-            innoextract_unneeded_dirs = ["__redist", "tmp", "commonappdata", "app", "DirectXpackage", "dotNet35"]
-            innoextract_unneeded_dirs += ["MSVC2005", "MSVC2005_x64", "support", "__unpacker", "userdocs", "game"]
+            innoextract_unneeded_dirs = ["__redist", "tmp", "commonappdata", "app"]
             for unneeded_dir in innoextract_unneeded_dirs:
                 unneeded_dir_full_path = os.path.join(temp_dir, unneeded_dir)
                 if os.path.isdir(unneeded_dir_full_path):
