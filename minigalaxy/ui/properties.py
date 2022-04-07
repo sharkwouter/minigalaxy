@@ -55,7 +55,7 @@ class Properties(Gtk.Dialog):
 
         # Keep switch use MangoHud disabled/enabled
         self.switch_properties_use_mangohud.set_active(self.game.get_info("use_mangohud"))
-        
+
         # Keep switch use DXVK disabled/enabled
         self.switch_properties_use_dxvk.set_active(self.game.get_info("use_dxvk"))
 
@@ -90,8 +90,8 @@ class Properties(Gtk.Dialog):
                 self.game.set_info("use_dxvk", False)
             else:
                 self.game.set_info("use_dxvk", self.switch_properties_use_dxvk.get_active())
-                self.install_uninstall_dxvk("install", self.game)              
-                                
+                self.install_uninstall_dxvk("install", self.game)
+
             self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
             self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
@@ -122,31 +122,31 @@ class Properties(Gtk.Dialog):
     def check_for_dxvk(self):
         version = self.api.get_info_dxvk()
         dxvk_archive = os.path.join(CACHE_DIR, "dxvk-{}.tar.gz".format(version))
-        
+
         if not os.path.isfile(dxvk_archive):
             url = "https://github.com/doitsujin/dxvk/releases/download/v{}/dxvk-{}.tar.gz".format(version, version)
             r = requests.get(url, allow_redirects=True)
             open('{}/dxvk-{}.tar.gz'.format(CACHE_DIR, version), 'wb').write(r.content)
-        
+
         shutil.unpack_archive(dxvk_archive, CACHE_DIR)
-    
-    # Install DXVK 
+
+    # Install DXVK
     def install_uninstall_dxvk(self, state, game):
         version = self.api.get_info_dxvk()
         dxvk_folder = os.path.join(CACHE_DIR, "dxvk-{}".format(version))
         if not dxvk_folder:
             self.check_for_dxvk()
-            
+
         prefix = os.path.join(game.install_dir, "prefix")
         os.environ["WINEPREFIX"] = prefix
-    
+
         setup_dxvk = os.path.join(dxvk_folder, "setup_dxvk.sh")
-        
+
         if state == "install":
-            install = subprocess.Popen([setup_dxvk, 'install'])
+            subprocess.Popen([setup_dxvk, 'install'])
         if state == "uninstall":
-            uninstall = subprocess.Popen([setup_dxvk, 'uninstall'])           
-        
+            subprocess.Popen([setup_dxvk, 'uninstall'])
+
     def button_sensitive(self, game):
         if not game.is_installed():
             self.button_properties_regedit.set_sensitive(False)

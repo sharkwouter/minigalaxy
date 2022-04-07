@@ -140,7 +140,7 @@ class Api:
         response = SESSION.get(request_url)
         response_params = response.json()
         return response_params["tag_name"][1:]
-        
+
     # This returns a unique download url and a link to the checksum of the download
     def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> dict:
         if dlc_installers:
