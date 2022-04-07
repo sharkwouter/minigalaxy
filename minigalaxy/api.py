@@ -177,7 +177,7 @@ class Api:
         checksum_data = self.__request(url)
         if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
             xml_data = self.__get_xml_checksum(checksum_data['checksum'])
-            if xml_data and "md5" in xml_data.keys() and len(xml_data["md5"]) > 0:
+            if "md5" in xml_data.keys() and len(xml_data["md5"]) > 0:
                 result = xml_data["md5"]
 
         if not result:
@@ -196,7 +196,7 @@ class Api:
         checksum_data = self.__request(url)
         if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
             xml_data = self.__get_xml_checksum(checksum_data['checksum'])
-            if xml_data and "total_size" in xml_data.keys() and int(xml_data["total_size"]) > 0:
+            if "total_size" in xml_data.keys() and int(xml_data["total_size"]) > 0:
                 result = int(xml_data["total_size"])
 
         if not result:
@@ -205,7 +205,7 @@ class Api:
         return result
 
     def __get_xml_checksum(self, url):
-        result = None
+        result = {}
         response = SESSION.get(url)
         if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
             response_object = ET.fromstring(response.text)
