@@ -131,6 +131,7 @@ class __DownloadManger:
         resume_header = {'Range': 'bytes={}-'.format(start_point)}
         download_request = SESSION.get(download.url, headers=resume_header, stream=True, timeout=30)
         downloaded_size = start_point
+        # TODO: The content-length header may be missing (None returned)
         file_size = int(download_request.headers.get('content-length'))
         result = True
         if downloaded_size < file_size:
