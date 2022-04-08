@@ -8,8 +8,11 @@ from minigalaxy.translation import _
 
 
 def get_wine_path(game):
+    binary_name = "wine"
     custom_wine_path = game.get_info("custom_wine")
-    return custom_wine_path if custom_wine_path else shutil.which("wine")
+    if custom_wine_path and custom_wine_path != shutil.which(binary_name):
+        binary_name = custom_wine_path
+    return binary_name
 
 
 def config_game(game):
