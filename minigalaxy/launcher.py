@@ -11,6 +11,7 @@ def get_wine_path(game):
     custom_wine_path = game.get_info("custom_wine")
     return custom_wine_path if custom_wine_path else shutil.which("wine")
 
+
 def config_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
 
