@@ -14,28 +14,21 @@ class Properties(Gtk.Dialog):
     gogBaseUrl = "https://www.gog.com"
 
     button_properties_regedit = Gtk.Template.Child()
-<<<<<<< HEAD
     button_properties_winecfg = Gtk.Template.Child()
     button_properties_winetricks = Gtk.Template.Child()
     button_properties_open_files = Gtk.Template.Child()
     switch_properties_check_for_updates = Gtk.Template.Child()
-=======
     button_properties_wine = Gtk.Template.Child()
     button_properties_reset = Gtk.Template.Child()
->>>>>>> 8ed9235 (Add the possibility to use custom Wine instead of Wine system.)
     switch_properties_show_fps = Gtk.Template.Child()
     switch_properties_hide_game = Gtk.Template.Child()
     switch_properties_use_gamemode = Gtk.Template.Child()
     switch_properties_use_mangohud = Gtk.Template.Child()
     entry_properties_variable = Gtk.Template.Child()
     entry_properties_command = Gtk.Template.Child()
-<<<<<<< HEAD
     button_properties_cancel = Gtk.Template.Child()
     button_properties_ok = Gtk.Template.Child()
-=======
-    label_game_description = Gtk.Template.Child()
     label_wine_custom = Gtk.Template.Child()
->>>>>>> 8ed9235 (Add the possibility to use custom Wine instead of Wine system.)
 
     def __init__(self, parent, game, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
@@ -52,7 +45,10 @@ class Properties(Gtk.Dialog):
         self.switch_properties_check_for_updates.set_active(self.game.get_info("check_for_updates"))
 
         # Retrieve custom wine path each time Properties is open
-        self.button_properties_wine.set_filename(self.game.get_info("custom_wine"))
+        if self.game.get_info("custom_wine"):
+            self.button_properties_wine.set_filename(self.game.get_info("custom_wine"))
+        else:
+            self.button_properties_wine.set_filename(shutil.which("wine"))
 
         # Keep switch FPS disabled/enabled
         self.switch_properties_show_fps.set_active(self.game.get_info("show_fps"))
@@ -95,6 +91,7 @@ class Properties(Gtk.Dialog):
             self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
             self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
+        self.game.set_info("custom_wine", str(self.button_properties_wine.get_filename()))
         self.parent.parent.filter_library()
         self.destroy()
 
@@ -102,15 +99,9 @@ class Properties(Gtk.Dialog):
     def on_menu_button_regedit(self, widget):
         regedit_game(self.game)
 
-    @Gtk.Template.Callback("on_button_properties_wine_file_set")
-    def on_button_properties_wine(self, widget):
-        self.game.set_info("custom_wine", str(self.button_properties_wine.get_filename()))
-
     @Gtk.Template.Callback("on_button_properties_reset_clicked")
     def on_menu_button_reset(self, widget):
-        if self.game.get_info("custom_wine"):
-            self.button_properties_wine.unselect_filename(self.game.get_info("custom_wine"))
-            self.game.set_info("custom_wine", "")
+        self.button_properties_wine.select_filename(shutil.which("wine"))
 
     @Gtk.Template.Callback("on_button_properties_winecfg_clicked")
     def on_menu_button_winecfg(self, widget):
