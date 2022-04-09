@@ -75,7 +75,8 @@ def install_uninstall_dxvk(state, game):
         os.makedirs(DXVK_DIR, mode=0o755)
 
     # Download DXVK
-    download_latest_dxvk(DXVK_DIR)
+    if not os.path.exists(dxvk_folder):
+        download_latest_dxvk(DXVK_DIR)
 
     # Retrieve d3d9.dll hash
     d3d9_prefix = hashlib.md5(
@@ -105,7 +106,8 @@ def install_uninstall_vkd3d(state, game):
         os.makedirs(VKD3D_DIR, mode=0o755)
 
     # Download VKD3D-Proton
-    download_latest_vkd3d(VKD3D_DIR)
+    if not os.path.exists(vkd3d_folder):
+        download_latest_vkd3d(VKD3D_DIR)
 
     # Retrieve d3d12.dll hash
     d3d12_prefix = hashlib.md5(
