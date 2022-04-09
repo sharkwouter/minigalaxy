@@ -88,10 +88,12 @@ class Properties(Gtk.Dialog):
                 self.game.set_info("use_mangohud", self.switch_properties_use_mangohud.get_active())
             if self.switch_properties_use_dxvk_vkd3d.get_active():
                 self.game.set_info("use_dxvk", self.switch_properties_use_dxvk_vkd3d.get_active())
-                self.install_uninstall_dxvk_vkd3d("install", self.game)
+                self.install_uninstall_dxvk("install", self.game)
+                self.install_uninstall_vkd3d("install", self.game)
             else:
-                self.install_uninstall_dxvk_vkd3d("uninstall", self.game)
                 self.game.set_info("use_dxvk", False)
+                self.install_uninstall_dxvk("uninstall", self.game)
+                self.install_uninstall_vkd3d("uninstall", self.game)
 
             self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
             self.game.set_info("command", str(self.entry_properties_command.get_text()))
@@ -118,7 +120,7 @@ class Properties(Gtk.Dialog):
     def on_menu_button_open_files(self, widget):
         self.game.set_install_dir()
         subprocess.call(["xdg-open", self.game.install_dir])
-
+        
     # Check if a new dxvk version is available
     def download_latest_dxvk(self, dxvk_dir):
         version = self.api.get_info_dxvk()
@@ -155,43 +157,63 @@ class Properties(Gtk.Dialog):
         os.remove(vkd3d_archive_tar)
 
     # Install DXVK
-    def install_uninstall_dxvk_vkd3d(self, state, game):
+    def install_uninstall_dxvk(self, state, game):
         DXVK_DIR = os.path.join(CACHE_DIR, 'DXVK')
-        VKD3D_DIR = os.path.join(CACHE_DIR, 'VKD3D')
-
         dxvk_version = self.api.get_info_dxvk()
         dxvk_folder = os.path.join(DXVK_DIR, "dxvk-{}".format(dxvk_version))
-        vkd3d_version = self.api.get_info_vkd3d()
-        vkd3d_folder = os.path.join(VKD3D_DIR, "vkd3d-proton-{}".format(vkd3d_version))
         setup_dxvk = os.path.join(dxvk_folder, "setup_dxvk.sh")
-        setup_vkd3d = os.path.join(vkd3d_folder, "setup_vkd3d_proton.sh")
 
         prefix = os.path.join(game.install_dir, "prefix")
         os.environ["WINEPREFIX"] = prefix
 
-        if not os.path.exists(DXVK_DIR) and not os.path.exists(VKD3D_DIR):
+        if not os.path.exists(DXVK_DIR):
             os.makedirs(DXVK_DIR, mode=0o755)
-            os.makedirs(VKD3D_DIR, mode=0o755)
 
-        if not os.path.exists(dxvk_folder) and not os.path.exists(vkd3d_folder):
-            self.download_latest_vkd3d(VKD3D_DIR)
-            self.download_latest_dxvk(DXVK_DIR)
+        # Download DXVK
+        self.download_latest_dxvk(DXVK_DIR)
 
         # Retrieve d3d9.dll hash
         d3d9_prefix = hashlib.md5(
             open((os.path.join(prefix, "dosdevices/c:/windows/system32/d3d9.dll")), 'rb').read()).hexdigest()
         d3d9_dxvk = hashlib.md5(open((os.path.join(dxvk_folder, "x64/d3d9.dll")), 'rb').read()).hexdigest()
 
-        # DXVK/VKD3D are installed/uninstalled each time the user clicks on button_properties_ok.
-        # Even if DXVK/VKD3D are already installed.
+        # DXVK is installed/uninstalled each time the user clicks on button_properties_ok.
+        # Even if DXVK are already installed.
         # These conditions check if dxvk/vkd3d are installed in the prefix and avoid this issue.
         if d3d9_prefix != d3d9_dxvk and state == "install":
             subprocess.Popen([setup_dxvk, 'install'])
-            subprocess.Popen([setup_vkd3d, 'install'])
         if d3d9_prefix == d3d9_dxvk and state == "uninstall":
             subprocess.Popen([setup_dxvk, 'uninstall'])
-            subprocess.Popen([setup_vkd3d, 'uninstall'])
 
+    # Install VKD3D
+    def install_uninstall_vkd3d(self, state, game):
+        VKD3D_DIR = os.path.join(CACHE_DIR, 'VKD3D')
+        vkd3d_version = self.api.get_info_vkd3d()
+        vkd3d_folder = os.path.join(VKD3D_DIR, "vkd3d-proton-{}".format(vkd3d_version))
+        setup_vkd3d = os.path.join(vkd3d_folder, "setup_vkd3d_proton.sh")
+        
+        prefix = os.path.join(game.install_dir, "prefix")
+        os.environ["WINEPREFIX"] = prefix
+        
+        if not os.path.exists(VKD3D_DIR):
+            os.makedirs(VKD3D_DIR, mode=0o755)
+
+        # Download VKD3D-Proton
+        self.download_latest_vkd3d(VKD3D_DIR)
+
+        # Retrieve d3d12.dll hash
+        d3d12_prefix = hashlib.md5(
+            open((os.path.join(prefix, "dosdevices/c:/windows/system32/d3d12.dll")), 'rb').read()).hexdigest()
+        d3d12_vkd3d = hashlib.md5(open((os.path.join(vkd3d_folder, "x64/d3d12.dll")), 'rb').read()).hexdigest()
+
+        # DXVK/VKD3D are installed/uninstalled each time the user clicks on button_properties_ok.
+        # Even if DXVK/VKD3D are already installed.
+        # These conditions check if dxvk/vkd3d are installed in the prefix and avoid this issue.
+        if d3d12_prefix != d3d12_vkd3d and state == "install":
+            subprocess.Popen([setup_vkd3d, 'install'])
+        if d3d12_prefix == d3d12_vkd3d and state == "uninstall":
+            subprocess.Popen([setup_vkd3d, 'uninstall'])
+            
     def button_sensitive(self, game):
         if not game.is_installed():
             self.button_properties_regedit.set_sensitive(False)
