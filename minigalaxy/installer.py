@@ -49,6 +49,8 @@ def install_game(game, installer):  # noqa: C901
     if not error_message:
         error_message, tmp_dir = make_tmp_dir(game)
     if not error_message:
+        error_message = set_wine_prefix(game)
+    if not error_message:
         error_message = extract_installer(game, installer, tmp_dir)
     if not error_message:
         error_message = move_and_overwrite(game, tmp_dir)
@@ -137,6 +139,17 @@ def extract_windows(game, installer, temp_dir):
         err_msg = extract_by_wine(game, installer, temp_dir)
     return err_msg
 
+def set_wine_prefix(game):
+    # Set the prefix for Windows games. Needed for DXVK/VKD3D to avoid issue.
+    if game.platform == "windows":
+        prefix_dir = os.path.join(game.install_dir, "prefix")
+        if not os.path.exists(prefix_dir):
+            os.makedirs(prefix_dir, mode=0o755)
+        # It's possible to set install dir as argument before installation
+        command = ["env", "WINEPREFIX={}".format(prefix_dir), "wineboot"]
+        stdout, stderr, exitcode = _exe_cmd(command)
+        if exitcode not in [0]:
+            err_msg = _("Wine prefix creation failed.")
 
 def extract_by_innoextract(installer, temp_dir):
     err_msg = ""
