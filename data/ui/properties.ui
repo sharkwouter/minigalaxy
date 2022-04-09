@@ -275,7 +275,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">Use DXVK:</property>
+                        <property name="label" translatable="yes">Use DXVK / VKD3D:</property>
                         <property name="justify">center</property>
                       </object>
                       <packing>
@@ -284,7 +284,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSwitch" id="switch_properties_use_dxvk">
+                      <object class="GtkSwitch" id="switch_properties_use_dxvk_vkd3d">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="halign">start</property>

@@ -141,6 +141,13 @@ class Api:
         response_params = response.json()
         return response_params["tag_name"][1:]
 
+    # Get the latest version of vkd3d available
+    def get_info_vkd3d(self):
+        request_url = "https://api.github.com/repos/HansKristian-Work/vkd3d-proton/releases/latest"
+        response = SESSION.get(request_url)
+        response_params = response.json()
+        return response_params["tag_name"][1:]
+
     # This returns a unique download url and a link to the checksum of the download
     def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> dict:
         if dlc_installers:
