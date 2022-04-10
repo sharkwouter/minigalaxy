@@ -11,6 +11,8 @@ CONFIG_FILE_PATH = os.path.join(CONFIG_DIR, "config.json")
 CACHE_DIR = os.path.join(os.getenv('XDG_CACHE_HOME', os.path.expanduser('~/.cache')), "minigalaxy")
 
 THUMBNAIL_DIR = os.path.join(CACHE_DIR, "thumbnails")
+DXVK_DIR = os.path.join(CACHE_DIR, "DXVK")
+VKD3D_DIR = os.path.join(CACHE_DIR, "VKD3D")
 APPLICATIONS_DIR = os.path.expanduser("~/.local/share/applications")
 DEFAULT_INSTALL_DIR = os.path.expanduser("~/GOG Games")
 

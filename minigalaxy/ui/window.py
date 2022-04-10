@@ -6,7 +6,7 @@ from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
-from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR
+from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR, DXVK_DIR, VKD3D_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
 from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf
@@ -65,7 +65,15 @@ class Window(Gtk.ApplicationWindow):
         # Create the thumbnails directory
         if not os.path.exists(THUMBNAIL_DIR):
             os.makedirs(THUMBNAIL_DIR, mode=0o755)
+        
+        # Create the DXVK directory
+        if not os.path.exists(DXVK_DIR):
+            os.makedirs(DXVK_DIR, mode=0o755)
 
+        # Create the VKD3D directory
+        if not os.path.exists(VKD3D_DIR):
+            os.makedirs(VKD3D_DIR, mode=0o755)
+            
         # Interact with the API
         self.offline = not self.api.can_connect()
         if not self.offline:
