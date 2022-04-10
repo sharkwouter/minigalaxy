@@ -272,7 +272,6 @@ def compare_directories(dir1, dir2):
 def remove_installer(game, installer):
     error_message = ""
     installer_directory = os.path.dirname(installer)
-
     if not os.path.isdir(installer_directory):
         error_message = "No installer directory is present: {}".format(installer_directory)
         return error_message
@@ -291,7 +290,8 @@ def remove_installer(game, installer):
             except Exception as e:
                 error_message = str(e)
     else:
-        os.remove(installer)
+        for file in os.listdir(installer_directory):
+            os.remove(os.path.join(installer_directory, file))
 
     return error_message
 
