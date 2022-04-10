@@ -8,6 +8,7 @@ from minigalaxy.paths import CACHE_DIR
 from minigalaxy.constants import SESSION
 from minigalaxy.paths import DXVK_DIR, VKD3D_DIR
 
+
 # Get the latest version of DXVK available
 def get_info_dxvk():
     request_url = "https://api.github.com/repos/doitsujin/dxvk/releases/latest"
@@ -61,6 +62,24 @@ def download_latest_vkd3d():
     os.remove(vkd3d_archive_tar)
 
 
+# Remove old DXVK version
+def remove_old_dxvk():
+    version = get_info_dxvk()
+    if not len(os.listdir(DXVK_DIR)) == '0':
+        for directory in os.listdir(DXVK_DIR):
+            if directory[5:] != version:
+                shutil.rmtree(os.path.join(DXVK_DIR, directory))
+
+
+# Remove old VKD3D version
+def remove_old_vkd3d():
+    version = get_info_vkd3d()
+    if not len(os.listdir(VKD3D_DIR)):
+        for directory in os.listdir(VKD3D_DIR):
+            if directory[13:] != version:
+                shutil.rmtree(os.path.join(VKD3D_DIR, directory))
+
+
 # Install DXVK
 def install_uninstall_dxvk(state, game):
     dxvk_version = get_info_dxvk()
@@ -73,6 +92,9 @@ def install_uninstall_dxvk(state, game):
     # Download DXVK
     if not os.path.exists(dxvk_folder):
         download_latest_dxvk()
+
+    # Remove old version DXVK directory
+    remove_old_dxvk()
 
     # Retrieve d3d9.dll hash
     d3d9_prefix = hashlib.md5(
@@ -100,6 +122,9 @@ def install_uninstall_vkd3d(state, game):
     # Download VKD3D-Proton
     if not os.path.exists(vkd3d_folder):
         download_latest_vkd3d()
+
+    # Remove old version vkd3d directory
+    remove_old_vkd3d()
 
     # Retrieve d3d12.dll hash
     d3d12_prefix = hashlib.md5(
