@@ -31,6 +31,7 @@ class Properties(Gtk.Dialog):
     label_wine_custom = Gtk.Template.Child()
     radiobutton_linux_type = Gtk.Template.Child()
     radiobutton_windows_type = Gtk.Template.Child()
+    label_properties_platform = Gtk.Template.Child()
 
     def __init__(self, parent, game, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
@@ -153,6 +154,6 @@ class Properties(Gtk.Dialog):
             self.radiobutton_windows_type.set_active(True)
 
         if "linux" not in self.game.supported_platforms:
-            self.radiobutton_linux_type.set_sensitive(False)
-        if "windows" not in self.game.supported_platforms or not shutil.which("wine"):
-            self.radiobutton_windows_type.set_sensitive(False)
+            self.radiobutton_linux_type.hide()
+            self.radiobutton_windows_type.hide()
+            self.label_properties_platform.hide()
