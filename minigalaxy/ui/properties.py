@@ -47,7 +47,7 @@ class Properties(Gtk.Dialog):
         # Retrieve custom wine path each time Properties is open
         if self.game.get_info("custom_wine"):
             self.button_properties_wine.set_filename(self.game.get_info("custom_wine"))
-        else:
+        elif shutil.which("wine"):
             self.button_properties_wine.set_filename(shutil.which("wine"))
 
         # Keep switch FPS disabled/enabled
