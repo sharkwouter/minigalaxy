@@ -333,18 +333,20 @@ class Test(TestCase):
         exp = "No installer directory is present: /home/i/.cache/minigalaxy/download/Beneath a Steel Sky"
         self.assertEqual(obs, exp)
 
-    @mock.patch('os.remove')
-    @mock.patch('shutil.rmtree')
-    @mock.patch('minigalaxy.config.Config.get')
-    @mock.patch('minigalaxy.installer.compare_directories')
     @mock.patch('os.path.isdir')
-    def test_remove_installer_no_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_os_remove):
+    @mock.patch('minigalaxy.installer.compare_directories')
+    @mock.patch('minigalaxy.config.Config.get')
+    @mock.patch('shutil.rmtree')
+    @mock.patch('os.remove')
+    @mock.patch('os.listdir')
+    def test_remove_installer_no_keep(self, mock_list_dir, mock_os_remove, mock_shutil_rmtree, mock_config, mock_compare_directories, mock_os_path_isdir):
         """
         Disabled keep_installer
         """
         mock_os_path_isdir.return_value = True
         mock_compare_directories.return_value = False
         mock_config.return_value = False
+        mock_list_dir.return_value = ["beneath_a_steel_sky_en_gog_2_20150.sh"]
 
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
         installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
