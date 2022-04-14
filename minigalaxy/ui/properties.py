@@ -153,7 +153,7 @@ class Properties(Gtk.Dialog):
         elif game.platform in ["windows"]:
             self.radiobutton_windows_type.set_active(True)
 
-        if "linux" not in self.game.supported_platforms:
+        if "linux" not in self.game.supported_platforms or game.is_installed():
             self.radiobutton_linux_type.hide()
             self.radiobutton_windows_type.hide()
             self.label_properties_platform.hide()
