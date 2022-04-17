@@ -6,7 +6,7 @@ from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
-from minigalaxy.paths import THUMBNAIL_DIR, ICON_DIR, UI_DIR, LOGO_IMAGE_PATH
+from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR, COVER_DIR, ICON_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
 from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf
@@ -62,13 +62,7 @@ class Window(Gtk.ApplicationWindow):
             self.maximize()
         self.show_all()
 
-        # Create the thumbnails directory
-        if not os.path.exists(THUMBNAIL_DIR):
-            os.makedirs(THUMBNAIL_DIR, mode=0o755)
-
-        # Create the icons directory
-        if not os.path.exists(ICON_DIR):
-            os.makedirs(ICON_DIR, mode=0o755)
+        self.make_directories()
 
         # Interact with the API
         self.offline = not self.api.can_connect()
@@ -126,6 +120,17 @@ class Window(Gtk.ApplicationWindow):
         if self.library.offline:
             self.__authenticate()
         self.library.update_library()
+
+    def make_directories(self):
+        # Create the thumbnails directory
+        if not os.path.exists(THUMBNAIL_DIR):
+            os.makedirs(THUMBNAIL_DIR, mode=0o755)
+        # Create the covers directory
+        if not os.path.exists(COVER_DIR):
+            os.makedirs(COVER_DIR, mode=0o755)
+        # Create the icons directory
+        if not os.path.exists(ICON_DIR):
+            os.makedirs(ICON_DIR, mode=0o755)
 
     def reset_library(self):
         self.library.reset()

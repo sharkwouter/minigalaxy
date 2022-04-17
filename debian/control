@@ -7,6 +7,7 @@ Build-Depends: debhelper-compat (= 12),
                python3-all,
                python3-setuptools,
                help2man,
+               gettext,
 Standards-Version: 4.5.0
 Rules-Requires-Root: no
 Vcs-Git: https://github.com/sharkwouter/minigalaxy.git
@@ -26,6 +27,7 @@ Depends: ${misc:Depends},
          gir1.2-webkit2-4.0,
          unzip,
          xdg-utils,
+         unrar,
 Suggests: dosbox,
           scummvm,
           wine32 | wine32-development | wine-stable-i386 | wine-devel-i386 | wine-staging-i386,

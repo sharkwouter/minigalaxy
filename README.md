@@ -77,6 +77,7 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 - PyGObject 3.29.1+
 - Webkit2gtk with API version 4.0 support
 - Python Requests
+- gettext
 
 ## Installation
 
@@ -199,6 +200,7 @@ Special thanks goes out to all contributors:
 - JoshuaFern for packaging Minigalaxy for NixOS and for contributing code
 - stephanlachnit for upstreaming to Debian and multiple code contributions
 - sgn for fixing a bug
+- otaconix for fixing a bug
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
