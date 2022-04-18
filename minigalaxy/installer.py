@@ -141,8 +141,10 @@ def extract_windows(game, installer, temp_dir):
 
 def extract_by_innoextract(installer, temp_dir):
     err_msg = ""
+    lang = lang_install(installer)
+    print(lang)
     if shutil.which("innoextract"):
-        cmd = ["innoextract", installer, "-d", temp_dir, "--gog"]
+        cmd = ["innoextract", installer, "-d", temp_dir, "--gog", lang]
         stdout, stderr, exitcode = _exe_cmd(cmd)
         if exitcode not in [0]:
             err_msg = _("Innoextract extraction failed.")
@@ -335,3 +337,28 @@ def _mv(source_dir, target_dir):
             if os.path.exists(dst_file):
                 os.remove(dst_file)
             shutil.move(file_to_copy, destination_dir)
+
+
+# Some installers allow to choose game's language before installation (Divinity Original Sin or XCom EE / XCom 2)
+# "--list-languages" option returns "en-US", "fr-FR" etc... for these games.
+# Others installers return "French : Français" but disallow to choose game's language before installation
+def lang_install(installer):
+    languages = []
+    arg = ""
+    process = subprocess.Popen(["innoextract", installer, "--list-languages"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    output = stdout.decode("utf-8")
+
+    for line in output.split('\n'):
+        if not line.startswith(' -'):
+            continue
+        languages.append(line[3:])
+    for lang in languages:
+        if "-" in lang:  # lang must be like "en-US" only.
+            if Config.get("lang") == lang[0:2]:
+                arg = "--language={}".format(lang)
+                break
+            else:
+                arg = "--language=en-US"
+                break
+    return arg
