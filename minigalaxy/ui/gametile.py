@@ -7,7 +7,7 @@ import time
 import urllib.parse
 from enum import Enum
 from minigalaxy.translation import _
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, UI_DIR
+from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
 from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
@@ -16,7 +16,7 @@ from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound
-from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
+from minigalaxy.ui.gtk import Gtk, GLib
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 
@@ -381,16 +381,17 @@ class GameTile(Gtk.Box):
         dlcs = game_info["expanded_dlcs"]
         for dlc in dlcs:
             if dlc["is_installable"] and dlc["id"] in self.parent.owned_products_ids:
+                d_id = dlc["id"]
                 d_installer = dlc["downloads"]["installers"]
                 d_icon = dlc["images"]["sidebarIcon"]
                 d_name = dlc["title"]
-                GLib.idle_add(self.update_gtk_box_for_dlc, d_icon, d_name, d_installer)
+                GLib.idle_add(self.update_gtk_box_for_dlc, d_id, d_icon, d_name, d_installer)
                 if dlc not in self.game.dlcs:
                     self.game.dlcs.append(dlc)
         if self.game.dlcs:
             GLib.idle_add(self.menu_button_dlc.show)
 
-    def update_gtk_box_for_dlc(self, icon, title, installer):
+    def update_gtk_box_for_dlc(self, dlc_id, icon, title, installer):
         if title not in self.dlc_dict:
             dlc_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             dlc_box.set_spacing(8)
@@ -405,7 +406,7 @@ class GameTile(Gtk.Box):
             self.dlc_dict[title][0].connect("clicked", self.__dlc_button_clicked, installer)
             self.dlc_horizontal_box.pack_start(dlc_box, False, True, 0)
             dlc_box.show_all()
-            self.get_async_image_dlc_icon(icon, title)
+            self.get_async_image_dlc_icon(dlc_id, image, icon, title)
         download_info = self.api.get_download_info(self.game, dlc_installers=installer)
         if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=title):
             icon_name = "emblem-synchronizing"
@@ -425,16 +426,17 @@ class GameTile(Gtk.Box):
         button.set_sensitive(False)
         threading.Thread(target=self.__download_dlc, args=(installer,)).start()
 
-    def get_async_image_dlc_icon(self, icon, title):
+    def get_async_image_dlc_icon(self, dlc_id, image, icon, title):
+        dlc_icon_path = os.path.join(ICON_DIR, "{}.jpg".format(dlc_id))
         if icon:
-            url = "http:{}".format(icon)
-            response = Gio.File.new_for_uri(url)
-            response.read_async(3, None, self.set_proper_dlc_icon, title)
-
-    def set_proper_dlc_icon(self, source, async_res, user_data):
-        response = source.read_finish(async_res)
-        pixbuf = GdkPixbuf.Pixbuf.new_from_stream(response)
-        self.dlc_dict[user_data][1].set_from_pixbuf(pixbuf)
+            if os.path.isfile(dlc_icon_path):
+                GLib.idle_add(image.set_from_file, dlc_icon_path)
+            else:
+                url = "http:{}".format(icon)
+                dlc_icon = os.path.join(ICON_DIR, "{}.jpg".format(dlc_id))
+                download = Download(url, dlc_icon)
+                DownloadManager.download_now(download)
+                GLib.idle_add(image.set_from_file, dlc_icon_path)
 
     def set_progress(self, percentage: int):
         if self.current_state in [self.state.QUEUED, self.state.INSTALLED]:

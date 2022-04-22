@@ -12,6 +12,7 @@ CACHE_DIR = os.path.join(os.getenv('XDG_CACHE_HOME', os.path.expanduser('~/.cach
 
 THUMBNAIL_DIR = os.path.join(CACHE_DIR, "thumbnails")
 COVER_DIR = os.path.join(CACHE_DIR, "covers")
+ICON_DIR = os.path.join(CACHE_DIR, "icons")
 APPLICATIONS_DIR = os.path.expanduser("~/.local/share/applications")
 DEFAULT_INSTALL_DIR = os.path.expanduser("~/GOG Games")
 

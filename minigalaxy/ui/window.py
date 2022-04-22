@@ -6,7 +6,7 @@ from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
 from minigalaxy.config import Config
-from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR, COVER_DIR
+from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR, COVER_DIR, ICON_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
 from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf
@@ -128,6 +128,9 @@ class Window(Gtk.ApplicationWindow):
         # Create the covers directory
         if not os.path.exists(COVER_DIR):
             os.makedirs(COVER_DIR, mode=0o755)
+        # Create the icons directory
+        if not os.path.exists(ICON_DIR):
+            os.makedirs(ICON_DIR, mode=0o755)
 
     def reset_library(self):
         self.library.reset()
