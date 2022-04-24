@@ -129,8 +129,8 @@ class Api:
 
     # Get Extrainfo about a game
     def get_info(self, game: Game) -> dict:
-        request_url = "https://api.gog.com/products/{}?locale=en-US&expand=downloads,expanded_dlcs,description,screenshots,videos," \
-                      "related_products,changelog".format(str(game.id))
+        request_url = "https://api.gog.com/products/{}?locale=en-US&expand=downloads,expanded_dlcs,description,screenshots," \
+                      "videos,related_products,changelog".format(str(game.id))
         response = self.__request(request_url)
         return response
 
