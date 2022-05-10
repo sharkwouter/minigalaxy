@@ -1,0 +1,40 @@
+name: Release
+
+on: workflow_dispatch
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: release-process-automation
+          fetch-depth: 0
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-all python3-setuptools help2man devscripts gettext lsb-release xmlstarlet git
+    - name: Prepare release files
+      run: |
+        ./scripts/create-release.sh
+    - name: Build deb package
+      run: |
+        dpkg-buildpackage -us -uc
+    - name: Commit changes
+      run: |
+        git config --global user.name 'Wouter Wijsman'
+        git config --global user.email 'sharkwouter@users.noreply.github.com'
+        git add data/io.github.sharkwouter.Minigalaxy.metainfo.xml debian/changelog
+        git commit -m "Update changelogs for Debian and Flatpak"
+        git push
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.tag.outputs.VERSION }}
+        body_path: release.md
+        files: |
+          *.deb
+        prerelease: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
