@@ -31,7 +31,7 @@ add_release_file_entry() {
 
 finish_release_file() {
   echo "" >> "${RELEASE_FILE}"
-  echo "As usual, a deb file for installing this release on Debian and Ubuntu can be found below. Packages most distributions will most likely become available soon. See the [website](https://github.com/sharkwouter/minigalaxy/) for installation instructions.">> "${RELEASE_FILE}"
+  echo "As usual, a deb file for installing this release on Debian and Ubuntu can be found below. Packages most distributions will most likely become available soon. See the [website](https://sharkwouter.github.io/minigalaxy/) for installation instructions.">> "${RELEASE_FILE}"
 }
 
 init_metadata() {
