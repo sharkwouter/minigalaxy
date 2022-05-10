@@ -3,18 +3,17 @@ name: Release
 on: workflow_dispatch
 
 jobs:
-  prepare:
+  release:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        ref: release-process-automation
-        fetch-depth: 0
     - name: Install dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y debhelper-compat dh-sequence-python3 python3-all python3-setuptools help2man devscripts gettext lsb-release xmlstarlet git
+    - uses: actions/checkout@v3
+      with:
+        ref: release-process-automation
     - name: Prepare release files
       run: |
         ./scripts/create-release.sh
