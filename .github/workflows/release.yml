@@ -31,7 +31,7 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ steps.tag.outputs.VERSION }}-prerelease
+        tag_name: ${{ steps.tag.outputs.VERSION }}_test
         body_path: release.md
         files: |
           ../*.deb
