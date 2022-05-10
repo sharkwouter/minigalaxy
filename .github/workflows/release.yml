@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: release-process-automation
-          fetch-depth: 0
+    - uses: actions/checkout@v3
+      with:
+        ref: release-process-automation
+        fetch-depth: 0
     - name: Install dependencies
       run: |
         sudo apt-get update
