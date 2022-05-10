@@ -57,6 +57,11 @@ add_metadata_entry() {
   "${METADATA_FILE}"
 }
 
+init_debian_changelog() {
+  export DEBFULLNAME="Wouter Wijsman"
+  export DEBEMAIL="wwijsman@live.nl"
+}
+
 add_debian_changelog_entry() {
   dch -v "${VERSION}" -M "$(echo $@|sed 's/^- //')"
 }
@@ -81,6 +86,7 @@ return_version_info() {
 check_changelog
 
 set_version
+init_debian_changelog
 init_metadata
 init_release_file
 
