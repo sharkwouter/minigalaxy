@@ -18,6 +18,9 @@ jobs:
       id: tag
       run: |
         ./scripts/create-release.sh
+      env:
+        DEBFULLNAME: ${{ secrets.DEBFULLNAME }}
+        DEBEMAIL: ${{ secrets.DEBEMAIL }}
     - name: Build deb package
       run: |
         dpkg-buildpackage -us -uc
