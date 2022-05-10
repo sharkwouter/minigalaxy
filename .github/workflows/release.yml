@@ -34,7 +34,7 @@ jobs:
         tag_name: ${{ steps.tag.outputs.VERSION }}_test
         body_path: release.md
         files: |
-          ../*.deb
+          ../minigalaxy_*.deb
         prerelease: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
