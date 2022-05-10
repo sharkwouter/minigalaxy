@@ -15,6 +15,7 @@ jobs:
       with:
         ref: release-process-automation
     - name: Prepare release files
+      id: tag
       run: |
         ./scripts/create-release.sh
     - name: Build deb package
