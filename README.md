@@ -201,6 +201,7 @@ Special thanks goes out to all contributors:
 - stephanlachnit for upstreaming to Debian and multiple code contributions
 - sgn for fixing a bug
 - otaconix for fixing a bug
+- phlash for fixing a bug
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
