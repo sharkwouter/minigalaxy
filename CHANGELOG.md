@@ -1,5 +1,6 @@
 **1.2.0**
 - Allow DLC to be queued up for downloading (thanks to flagrama)
+- Fix signing in with Facebook (thanks to phlash)
 
 **1.1.0**
 - Improve integrity check after downloading (thanks to makson96)
