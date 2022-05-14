@@ -140,9 +140,8 @@ def extract_windows(game, installer, temp_dir):
 
 def extract_by_innoextract(installer, temp_dir):
     err_msg = ""
-    lang = lang_install(installer)
-    print(lang)
     if shutil.which("innoextract"):
+        lang = lang_install(installer)
         cmd = ["innoextract", installer, "-d", temp_dir, "--gog", lang]
         stdout, stderr, exitcode = _exe_cmd(cmd)
         if exitcode not in [0]:
