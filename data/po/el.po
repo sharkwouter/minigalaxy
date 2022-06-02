@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-31 08:18+0300\n"
-"PO-Revision-Date: 2022-06-02 06:56+0300\n"
+"POT-Creation-Date: 2022-06-02 18:47+0300\n"
+"PO-Revision-Date: 2022-06-02 18:49+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -59,7 +59,7 @@ msgstr "Είστε σίγουρος/η ότι θέλετε να αποσυνδε
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Είστε σίγουρος/η ότι θέλετε να απεγκαταστήσετε το %s ;"
 
-#: minigalaxy/constants.py:7 minigalaxy/constants.py:31
+#: minigalaxy/constants.py:7 minigalaxy/constants.py:30
 msgid "Brazilian Portuguese"
 msgstr "Πορτογαλικά (Βραζιλίας)"
 
@@ -103,7 +103,7 @@ msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
 msgstr "Δημιουργία καταχωρίσεων μενού: "
 
-#: minigalaxy/constants.py:32
+#: minigalaxy/constants.py:31
 msgid "Czech"
 msgstr "Τσέχικα"
 
@@ -120,11 +120,11 @@ msgstr "Δανέζικα"
 msgid "Download error"
 msgstr "Σφάλμα κατα την διαρκεια κατεβασματος"
 
-#: minigalaxy/constants.py:10 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:32
 msgid "Dutch"
 msgstr "Ολλανδικά"
 
-#: minigalaxy/constants.py:11 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:33
 msgid "English"
 msgstr "Αγγλικά"
 
@@ -153,7 +153,7 @@ msgstr "Αδυναμία εύρεσης βιβλιοθήκης"
 msgid "Failed to start {}:"
 msgstr "Αδυναμία έναρξης {}:"
 
-#: minigalaxy/constants.py:12 minigalaxy/constants.py:35
+#: minigalaxy/constants.py:12 minigalaxy/constants.py:34
 msgid "Finnish"
 msgstr "Φινλανδικά"
 
@@ -161,7 +161,7 @@ msgstr "Φινλανδικά"
 msgid "Forum"
 msgstr "Φόρουμ"
 
-#: minigalaxy/constants.py:13 minigalaxy/constants.py:36
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:35
 msgid "French"
 msgstr "Γαλλικά"
 
@@ -175,7 +175,7 @@ msgstr ""
 msgid "Genre"
 msgstr "Είδος"
 
-#: minigalaxy/constants.py:14 minigalaxy/constants.py:37
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:36
 msgid "German"
 msgstr "Γερμανικά"
 
@@ -185,11 +185,11 @@ msgctxt "github_page_link"
 msgid "GitHub page"
 msgstr "Σελίδα GitHub"
 
-#: minigalaxy/constants.py:50
+#: minigalaxy/constants.py:49
 msgid "Greek"
 msgstr "Ελληνικά"
 
-#: minigalaxy/constants.py:54
+#: minigalaxy/constants.py:53
 msgid "Grid"
 msgstr "Πλέγμα"
 
@@ -229,7 +229,7 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "Εγκατεστημένα"
 
-#: minigalaxy/constants.py:16 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:16 minigalaxy/constants.py:37
 msgid "Italian"
 msgstr "Ιταλικά"
 
@@ -261,7 +261,7 @@ msgctxt "language"
 msgid "Language: "
 msgstr "Γλώσσα: "
 
-#: minigalaxy/constants.py:55
+#: minigalaxy/constants.py:54
 msgid "List"
 msgstr "Λίστα"
 
@@ -289,11 +289,11 @@ msgstr "Αποτυχία εύρεσης εκτελέσιμου {}"
 msgid "Norwegian"
 msgstr "Νορβηγικά"
 
-#: minigalaxy/constants.py:39
+#: minigalaxy/constants.py:38
 msgid "Norwegian Bokmål"
 msgstr "Νορβηγικά Bokmål"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:39
 msgid "Norwegian Nynorsk"
 msgstr "Νορβηγικά Nynorsk"
 
@@ -317,7 +317,7 @@ msgstr "Άνοιγμα αρχείων"
 msgid "Please check your internet connection"
 msgstr "Παρακαλώ ελέγξτε την σύνδεση του δικτύου σας"
 
-#: minigalaxy/constants.py:20 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:40
 msgid "Polish"
 msgstr "Πολωνικά"
 
@@ -363,7 +363,7 @@ msgstr "Επεξεργασία μητρώου wine"
 msgid "Reset wine executable"
 msgstr "Επαναφορά εκτελέσιμου wine"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:42
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:41
 msgid "Russian"
 msgstr "Ρώσικα"
 
@@ -375,13 +375,13 @@ msgstr "Αποθήκευση"
 
 #: data/ui/properties.ui:128
 msgid "Show FPS in game:"
-msgstr "Εμφάνιση των  FPS στο παιχνίδι:"
+msgstr "Προβολή FPS στο παιχνίδι:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:275
 msgctxt "show_windows_games"
 msgid "Show Windows games: "
-msgstr "Εμφάνιση παιχνιδιών Windows: "
+msgstr "Προβολή παιχνιδιών Windows: "
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:249
@@ -393,17 +393,17 @@ msgstr "Προβολή κρυφών παιχνιδιών: "
 #: data/ui/application.ui:105
 msgctxt "tooltip_installed"
 msgid "Show only installed games"
-msgstr "Προβολή μόνο εγκατεστημένων παιχνιδιών"
+msgstr "Προβολή μόνο ληφθέντων παιχνιδιών"
 
-#: minigalaxy/constants.py:43
+#: minigalaxy/constants.py:42
 msgid "Simplified Chinese"
 msgstr "Κινεζικά Απλοποιημένα"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:44
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:43
 msgid "Spanish"
 msgstr "Ισπανικά"
 
-#: minigalaxy/constants.py:45
+#: minigalaxy/constants.py:44
 msgid "Spanish (Spain)"
 msgstr "Ισπανικά (Ισπανίας)"
 
@@ -421,11 +421,11 @@ msgstr "Κατάστημα"
 msgid "Support"
 msgstr "Υποστήριξη"
 
-#: minigalaxy/constants.py:24 minigalaxy/constants.py:46
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:45
 msgid "Swedish"
 msgstr "Σουηδικά"
 
-#: minigalaxy/constants.py:30
+#: minigalaxy/constants.py:29
 msgid "System default"
 msgstr "Προκαθορισμένη Συστήματος"
 
@@ -459,15 +459,15 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Εδώ θα εγκαθίστανται τα παιχνίδια"
 
-#: minigalaxy/constants.py:47
+#: minigalaxy/constants.py:46
 msgid "Traditional Chinese"
 msgstr "Κινεζικά Παραδοσιακά"
 
-#: minigalaxy/constants.py:25 minigalaxy/constants.py:48
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:47
 msgid "Turkish"
 msgstr "Τουρκικά"
 
-#: minigalaxy/constants.py:49
+#: minigalaxy/constants.py:48
 msgid "Ukrainian"
 msgstr "Ουκρανικά"
 
