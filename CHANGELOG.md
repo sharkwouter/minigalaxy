@@ -2,6 +2,7 @@
 - Allow DLC to be queued up for downloading (thanks to flagrama)
 - Fix signing in with Facebook (thanks to phlash)
 - Updated Czech translation (thanks to jakbuz23)
+- Added Greek translation (thanks to Pyrofanis)
 
 **1.1.0**
 - Improve integrity check after downloading (thanks to makson96)
