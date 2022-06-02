@@ -22,7 +22,7 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
     ["ru", _("Russian")],
     ["es", _("Spanish")],
     ["sv", _("Swedish")],
-    ["tr", _("Turkish")], 
+    ["tr", _("Turkish")],
 ]
 
 SUPPORTED_LOCALES = [
