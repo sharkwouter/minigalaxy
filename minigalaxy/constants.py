@@ -23,6 +23,7 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
     ["es", _("Spanish")],
     ["sv", _("Swedish")],
     ["tr", _("Turkish")],
+   
 ]
 
 SUPPORTED_LOCALES = [
@@ -46,6 +47,7 @@ SUPPORTED_LOCALES = [
     ["zh_TW", _("Traditional Chinese")],
     ["tr", _("Turkish")],
     ["uk", _("Ukrainian")],
+    ["el", _("Greek")],
 ]
 
 VIEWS = [
