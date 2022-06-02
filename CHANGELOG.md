@@ -2,7 +2,9 @@
 - Add list view (thanks to TotalCaesar659)
 - Allow DLC to be queued up for downloading (thanks to flagrama)
 - Fix changing library to a directory with special characters in the name (thanks to makson96)
-- Translation update: Norwegian Bokmål (thanks to kimmalmo)
+- Fix signing in with Facebook (thanks to phlash)
+- Update Norwegian Bokmål translation (thanks to kimmalmo)
+- Update Czech translation (thanks to jakbuz23)
 
 **1.1.0**
 - Improve integrity check after downloading (thanks to makson96)
