@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-02 18:47+0300\n"
-"PO-Revision-Date: 2022-06-02 18:49+0300\n"
+"PO-Revision-Date: 2022-06-02 18:51+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: el\n"
@@ -393,7 +393,7 @@ msgstr "Προβολή κρυφών παιχνιδιών: "
 #: data/ui/application.ui:105
 msgctxt "tooltip_installed"
 msgid "Show only installed games"
-msgstr "Προβολή μόνο ληφθέντων παιχνιδιών"
+msgstr "Προβολή μόνο εγκατεστημένων παιχνιδιών"
 
 #: minigalaxy/constants.py:42
 msgid "Simplified Chinese"
