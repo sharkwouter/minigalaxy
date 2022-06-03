@@ -46,6 +46,7 @@ SUPPORTED_LOCALES = [
     ["zh_TW", _("Traditional Chinese")],
     ["tr", _("Turkish")],
     ["uk", _("Ukrainian")],
+    ["el", _("Greek")],
 ]
 
 VIEWS = [

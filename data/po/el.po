@@ -1,0 +1,619 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-06-02 18:47+0300\n"
+"PO-Revision-Date: 2022-06-02 18:51+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. A short description of what Minigalaxy is
+#: data/ui/about.ui:10
+msgctxt "short_description"
+msgid "A simple GOG client for Linux"
+msgstr "Ένας απλός εξυπηρετητής για το GOG"
+
+#: minigalaxy/ui/about.py:13
+msgid "About"
+msgstr "Περί"
+
+#. Opens about dialog
+#: data/ui/application.ui:58
+msgctxt "about"
+msgid "About"
+msgstr "Περί"
+
+#: data/ui/properties.ui:265
+msgid "Added at the end of the command used to launch the game"
+msgstr ""
+"Χρησιμοποιείται για την εκκίνηση του παιχνιδιού,Προστίθεται στο τέλος της "
+"εντολής"
+
+#: data/ui/properties.ui:240
+msgid "Added in front of the command used to launch the game"
+msgstr ""
+"Χρησιμοποιείται για την εκκίνηση του παιχνιδιού,Προστίθεται στην αρχή της "
+"εντολής"
+
+#: minigalaxy/ui/gametilelist.py:143 minigalaxy/ui/gametile.py:140
+msgid "Are you sure you want to cancel downloading {}?"
+msgstr "Είστε σίγουρος/η ότι θέλετε να ακυρώσετε την εγκατάσταση του {};"
+
+#: minigalaxy/ui/window.py:98
+msgid "Are you sure you want to log out of GOG?"
+msgstr "Είστε σίγουρος/η ότι θέλετε να αποσυνδεθείτε από το GOG;"
+
+#: minigalaxy/ui/gametilelist.py:156 minigalaxy/ui/gametile.py:153
+#, python-format
+msgid "Are you sure you want to uninstall %s?"
+msgstr "Είστε σίγουρος/η ότι θέλετε να απεγκαταστήσετε το %s ;"
+
+#: minigalaxy/constants.py:7 minigalaxy/constants.py:30
+msgid "Brazilian Portuguese"
+msgstr "Πορτογαλικά (Βραζιλίας)"
+
+#: data/ui/properties.ui:336
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#: data/ui/preferences.ui:20
+msgctxt "cancel"
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#: data/ui/properties.ui:103
+msgid "Check for updates:"
+msgstr "Έλεγχος για ενημερώσεις:"
+
+#: minigalaxy/constants.py:8
+msgid "Chinese"
+msgstr "Κινεζικά"
+
+#: data/ui/properties.ui:253
+msgid "Command flags:"
+msgstr "Παράμετροι εντολών:"
+
+#: minigalaxy/ui/information.py:72 minigalaxy/ui/information.py:82
+#: minigalaxy/ui/information.py:92
+msgid "Couldn't open forum page"
+msgstr "Δεν μπορούσαμε να ανοίξουμε την σελίδα φόρουμ"
+
+#: minigalaxy/ui/information.py:62
+msgid "Couldn't open store page"
+msgstr "Δεν μπορούσαμε να ανοίξουμε την σελίδα του καταστήματος"
+
+#: minigalaxy/ui/information.py:52
+msgid "Couldn't open support page"
+msgstr "Δεν μπορούσαμε να ανοίξουμε την σελίδα υποστήριξης"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:313
+msgctxt "create_menu_shortcuts"
+msgid "Create menu shortcuts: "
+msgstr "Δημιουργία καταχωρίσεων μενού: "
+
+#: minigalaxy/constants.py:31
+msgid "Czech"
+msgstr "Τσέχικα"
+
+#: data/ui/gametilelist.ui:194 data/ui/gametile.ui:193
+msgid "DLC"
+msgstr "DLC"
+
+#: minigalaxy/constants.py:9
+msgid "Danish"
+msgstr "Δανέζικα"
+
+#: minigalaxy/ui/gametilelist.py:222 minigalaxy/ui/gametilelist.py:252
+#: minigalaxy/ui/gametile.py:219 minigalaxy/ui/gametile.py:249
+msgid "Download error"
+msgstr "Σφάλμα κατα την διαρκεια κατεβασματος"
+
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:32
+msgid "Dutch"
+msgstr "Ολλανδικά"
+
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:33
+msgid "English"
+msgstr "Αγγλικά"
+
+#: minigalaxy/ui/login.py:45
+msgid "Facebook Login"
+msgstr "Σύνδεση μέσο Facebook"
+
+#: minigalaxy/ui/preferences.py:122
+msgid ""
+"Failed to change program language. Make sure locale is generated on your "
+"system."
+msgstr ""
+"Αδυναμία αλλαγής γλωσσάς προγράμματος.Βεβαιωθείτε ότι έχει δημιουργηθεί η "
+"καταχώρηση τοπικότητας στο σύστημα σας."
+
+#: minigalaxy/ui/gametilelist.py:318 minigalaxy/ui/gametile.py:315
+msgid "Failed to install {}"
+msgstr "Αδυναμία εγκατάστασης {}"
+
+#: minigalaxy/ui/library.py:146
+msgid "Failed to retrieve library"
+msgstr "Αδυναμία εύρεσης βιβλιοθήκης"
+
+#: minigalaxy/launcher.py:52 minigalaxy/ui/gametilelist.py:127
+#: minigalaxy/ui/gametile.py:124
+msgid "Failed to start {}:"
+msgstr "Αδυναμία έναρξης {}:"
+
+#: minigalaxy/constants.py:12 minigalaxy/constants.py:34
+msgid "Finnish"
+msgstr "Φινλανδικά"
+
+#: data/ui/information.ui:89
+msgid "Forum"
+msgstr "Φόρουμ"
+
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:35
+msgid "French"
+msgstr "Γαλλικά"
+
+#: minigalaxy/ui/properties.py:82
+msgid "GameMode wasn't found. Using GameMode cannot be enabled."
+msgstr ""
+"Αποτυχία εύρεσης του GameMode. Δεν είναι δυνατή η ενεργοποιήσει χρίσης "
+"GameMode."
+
+#: minigalaxy/ui/information.py:138
+msgid "Genre"
+msgstr "Είδος"
+
+#: minigalaxy/constants.py:14 minigalaxy/constants.py:36
+msgid "German"
+msgstr "Γερμανικά"
+
+#. A link to the GitHub page
+#: data/ui/about.ui:12
+msgctxt "github_page_link"
+msgid "GitHub page"
+msgstr "Σελίδα GitHub"
+
+#: minigalaxy/constants.py:49
+msgid "Greek"
+msgstr "Ελληνικά"
+
+#: minigalaxy/constants.py:53
+msgid "Grid"
+msgstr "Πλέγμα"
+
+#: data/ui/properties.ui:153
+msgid "Hide game:"
+msgstr "Απόκρυψη παιχνιδιού:"
+
+#: minigalaxy/constants.py:15
+msgid "Hungarian"
+msgstr "Ουγγαρέζικα"
+
+#: data/ui/gametilelist.ui:239 data/ui/gametile.ui:223
+msgid "Information"
+msgstr "Πληροφορίες"
+
+#: minigalaxy/ui/information.py:28
+msgid "Information about {}"
+msgstr "Πληροφορίες περί {}"
+
+#: minigalaxy/installer.py:147
+msgid "Innoextract extraction failed."
+msgstr "Αποτυχία αποσυμπίεσης Innoextract."
+
+#: minigalaxy/installer.py:164
+msgid "Innoextract not installed."
+msgstr "Δεν εγκαταστάθηκε το Innoextract."
+
+#. The place directory in which games are installed. Has to end with ": "
+#: data/ui/preferences.ui:143
+msgctxt "install_path"
+msgid "Installation path: "
+msgstr "Προορισμός εγκατάστασης: "
+
+#. Used next to a checkbox which switches between showing all games and only installed ones
+#: data/ui/application.ui:116
+msgctxt "installed"
+msgid "Installed"
+msgstr "Εγκατεστημένα"
+
+#: minigalaxy/constants.py:16 minigalaxy/constants.py:37
+msgid "Italian"
+msgstr "Ιταλικά"
+
+#: minigalaxy/constants.py:17
+msgid "Japanese"
+msgstr "Ιαπωνικά"
+
+#: minigalaxy/ui/preferences.py:48
+msgid ""
+"Keep installers after downloading a game.\n"
+"Installers are stored in: {}"
+msgstr ""
+"Διατήρηση αρχείων εγκατάστασης μετά από την λήψη \n"
+"Τα αρχεία αποθηκεύονται στον: {}"
+
+#. Whether installer files are kept after download. Has to end with ": "
+#: data/ui/preferences.ui:170
+msgctxt "keep_installer"
+msgid "Keep installers: "
+msgstr "Διατήρηση αρχείων εγκατάστασης: "
+
+#: minigalaxy/constants.py:18
+msgid "Korean"
+msgstr "Κορεάτικα"
+
+#. The preferred language on Minigalaxy start. Has to end with ": "
+#: data/ui/preferences.ui:68
+msgctxt "language"
+msgid "Language: "
+msgstr "Γλώσσα: "
+
+#: minigalaxy/constants.py:54
+msgid "List"
+msgstr "Λίστα"
+
+#: minigalaxy/ui/login.py:20
+msgid "Login"
+msgstr "Σύνδεση"
+
+#. Logs the users gog account out and returns to login page
+#: data/ui/application.ui:17
+msgctxt "logout"
+msgid "Logout"
+msgstr "Αποσύνδεση"
+
+#: minigalaxy/ui/properties.py:87
+msgid "MangoHud wasn't found. Using MangoHud cannot be enabled."
+msgstr ""
+"Αποτυχία εύρεσης του MangoHud. Δεν είναι δυνατή η ενεργοποιήσει χρίσης "
+"MangoHud."
+
+#: minigalaxy/launcher.py:205
+msgid "No executable was found in {}"
+msgstr "Αποτυχία εύρεσης εκτελέσιμου {}"
+
+#: minigalaxy/constants.py:19
+msgid "Norwegian"
+msgstr "Νορβηγικά"
+
+#: minigalaxy/constants.py:38
+msgid "Norwegian Bokmål"
+msgstr "Νορβηγικά Bokmål"
+
+#: minigalaxy/constants.py:39
+msgid "Norwegian Nynorsk"
+msgstr "Νορβηγικά Nynorsk"
+
+#: minigalaxy/installer.py:97
+msgid "Not enough space to extract game. Required: {} Available: {}"
+msgstr ""
+"Δεν επαρκεί χώρος για την αποσυμπίεση του παιχνιδιού.Χρειάζονται:{}Διαθέσιμα:"
+"{}"
+
+#: data/ui/information.ui:165 data/ui/properties.ui:350
+msgid "OK"
+msgstr "Εντάξει"
+
+#: data/ui/properties.ui:74
+msgid "Open files"
+msgstr "Άνοιγμα αρχείων"
+
+#: minigalaxy/ui/information.py:53 minigalaxy/ui/information.py:63
+#: minigalaxy/ui/information.py:73 minigalaxy/ui/information.py:83
+#: minigalaxy/ui/information.py:93
+msgid "Please check your internet connection"
+msgstr "Παρακαλώ ελέγξτε την σύνδεση του δικτύου σας"
+
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:40
+msgid "Polish"
+msgstr "Πολωνικά"
+
+#: minigalaxy/constants.py:21
+msgid "Portuguese"
+msgstr "Πορτογάλικα"
+
+#: minigalaxy/ui/preferences.py:31
+msgid "Preferences"
+msgstr "Προτιμήσεις"
+
+#. Opens preferences dialog
+#: data/ui/application.ui:32
+msgctxt "preferences"
+msgid "Preferences"
+msgstr "Προτιμήσεις"
+
+#. Preferred language for downloading games in. Has to end with ": "
+#: data/ui/preferences.ui:93
+msgctxt "preferred_game_language"
+msgid "Preferred game language: "
+msgstr "Προεπιλεγμένη γλωσσά παιχνιδιών: "
+
+#: data/ui/gametilelist.ui:254 data/ui/gametile.ui:238
+msgid "Properties"
+msgstr "Ιδιότητες"
+
+#: minigalaxy/ui/properties.py:34
+msgid "Properties of {}"
+msgstr "Ιδιότητες του {}"
+
+#. Tooltip for refresh button
+#: data/ui/application.ui:89
+msgctxt "refresh"
+msgid "Refresh game list"
+msgstr "Ανανέωση λίστας παιχνιδιών"
+
+#: data/ui/properties.ui:48
+msgid "Regedit"
+msgstr "Επεξεργασία μητρώου wine"
+
+#: data/ui/properties.ui:275
+msgid "Reset wine executable"
+msgstr "Επαναφορά εκτελέσιμου wine"
+
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:41
+msgid "Russian"
+msgstr "Ρώσικα"
+
+#. Saves the preferences
+#: data/ui/preferences.ui:34
+msgctxt "save"
+msgid "Save"
+msgstr "Αποθήκευση"
+
+#: data/ui/properties.ui:128
+msgid "Show FPS in game:"
+msgstr "Προβολή FPS στο παιχνίδι:"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:275
+msgctxt "show_windows_games"
+msgid "Show Windows games: "
+msgstr "Προβολή παιχνιδιών Windows: "
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:249
+msgctxt "show_hidden_games"
+msgid "Show hidden games: "
+msgstr "Προβολή κρυφών παιχνιδιών: "
+
+#. Tooltip for the switch which allows only showing installed games or all games
+#: data/ui/application.ui:105
+msgctxt "tooltip_installed"
+msgid "Show only installed games"
+msgstr "Προβολή μόνο εγκατεστημένων παιχνιδιών"
+
+#: minigalaxy/constants.py:42
+msgid "Simplified Chinese"
+msgstr "Κινεζικά Απλοποιημένα"
+
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:43
+msgid "Spanish"
+msgstr "Ισπανικά"
+
+#: minigalaxy/constants.py:44
+msgid "Spanish (Spain)"
+msgstr "Ισπανικά (Ισπανίας)"
+
+#. Whether the user will stay logged in after closing Minigalaxy. Has to end with ": "
+#: data/ui/preferences.ui:196
+msgctxt "stay_logged_in"
+msgid "Stay logged in:"
+msgstr "Διατήρηση Σύνδεσης:"
+
+#: data/ui/information.ui:76
+msgid "Store"
+msgstr "Κατάστημα"
+
+#: data/ui/information.ui:63
+msgid "Support"
+msgstr "Υποστήριξη"
+
+#: minigalaxy/constants.py:24 minigalaxy/constants.py:45
+msgid "Swedish"
+msgstr "Σουηδικά"
+
+#: minigalaxy/constants.py:29
+msgid "System default"
+msgstr "Προκαθορισμένη Συστήματος"
+
+#: minigalaxy/installer.py:128
+msgid "The installation of {} failed. Please try again."
+msgstr "Η εγκατάσταση του {} απέτυχε.Παρακαλώ προσπαθήστε ξανά."
+
+#: data/ui/preferences.ui:90
+msgctxt "preferred_game_language_tooltip"
+msgid "The preferred language for downloading games in"
+msgstr "Επιθυμητή γλωσσά για την λήψη παιχνιδιών"
+
+#: data/ui/preferences.ui:65
+msgctxt "language_tooltip"
+msgid "The preferred language on Minigalaxy start"
+msgstr "Επιθυμητή γλωσσά κατά την εκκίνηση του Minigalaxy"
+
+#: data/ui/preferences.ui:115
+msgctxt "view_tooltip"
+msgid "The preferred view of game library"
+msgstr "Επιθυμητή απεικόνιση βιβλιοθήκης παιχνιδιών"
+
+#: minigalaxy/ui/gametilelist.py:223 minigalaxy/ui/gametile.py:220
+msgid ""
+"There was an error when trying to fetch the download link!\n"
+"{}"
+msgstr "Σφάλμα κατά την προσπάθεια απόκτησης συνδέσμου λήψης!"
+
+#: data/ui/preferences.ui:140
+msgctxt "install_path_tooltip"
+msgid "This is where games will be installed"
+msgstr "Εδώ θα εγκαθίστανται τα παιχνίδια"
+
+#: minigalaxy/constants.py:46
+msgid "Traditional Chinese"
+msgstr "Κινεζικά Παραδοσιακά"
+
+#: minigalaxy/constants.py:25 minigalaxy/constants.py:47
+msgid "Turkish"
+msgstr "Τουρκικά"
+
+#: minigalaxy/constants.py:48
+msgid "Ukrainian"
+msgstr "Ουκρανικά"
+
+#: data/ui/gametilelist.ui:224 data/ui/gametile.ui:208
+msgid "Uninstall"
+msgstr "Απεγκατάσταση"
+
+#: data/ui/gametilelist.ui:209 data/ui/gametile.ui:172
+msgid "Update"
+msgstr "Ενημέρωση"
+
+#: data/ui/properties.ui:178
+msgid "Use GameMode:"
+msgstr "Χρήση GameMode:"
+
+#: data/ui/properties.ui:203
+msgid "Use MangoHud:"
+msgstr "Χρήση MangoHud:"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:223
+msgctxt "use_dark_theme"
+msgid "Use dark theme: "
+msgstr "Χρύση σκοτεινού θέματος: "
+
+#: data/ui/properties.ui:228
+msgid "Variable flags:"
+msgstr "Μεταβλητές παραμέτρων:"
+
+#: minigalaxy/ui/information.py:140
+msgid "Version"
+msgstr "Εκδοσή"
+
+#. The preferred view of game library. Has to end with ": "
+#: data/ui/preferences.ui:118
+msgctxt "view"
+msgid "View: "
+msgstr "Απεικόνιση: "
+
+#: data/ui/preferences.ui:193
+msgctxt "stay_logged_in_tooltip"
+msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
+msgstr ""
+"Όταν απενεργοποιηθεί θα σας ζητείται σύνδεση κάθε φόρα που εκκινείται το "
+"Minigalaxy"
+
+#: data/ui/preferences.ui:220
+msgctxt "use_dark_theme_tooltip"
+msgid "Whether Minigalaxy should use dark theme or not"
+msgstr ""
+"Άμα θα επιτρέπεται στο Minigalaxy να χρησιμοποιήσει το σκοτεινό θέμα η όχι"
+
+#: data/ui/preferences.ui:272
+msgctxt "show_windows_games_tooltip"
+msgid "Whether Windows games are shown in the library or not"
+msgstr ""
+"Άμα θα επιτρέπεται στα παιχνίδια windows η προβολή στην βιβλιοθήκη η όχι"
+
+#: data/ui/preferences.ui:246
+msgctxt "show_hidden_games_tooltip"
+msgid "Whether hidden games are shown in the library or not"
+msgstr ""
+"Άμα θα επιτρέπεται στα κριμένα παιχνίδια η προβολή στην βιβλιοθήκη η όχι"
+
+#: data/ui/preferences.ui:310
+msgctxt "create_menu_shortcuts_tooltip"
+msgid "Whether shortcuts are created for newly installed games or not"
+msgstr ""
+"Άμα θα επιτρέπεται η δημιουργία συντομεύσεων για τα νέα εγκατεστημένα "
+"παιχνίδια η όχι"
+
+#: data/ui/properties.ui:291
+msgid "Wine executable:"
+msgstr "Εκτελέσιμο wine:"
+
+#: minigalaxy/installer.py:178
+msgid "Wine extraction failed."
+msgstr "Αποτυχία αποσυμπίεσης wine."
+
+#: minigalaxy/ui/preferences.py:192
+msgid "Wine wasn't found. Showing Windows games cannot be enabled."
+msgstr ""
+"Αποτυχία εύρεσης wine.Δεν είναι δυνατή η δυνατότητα προβολής παιχνιδιών "
+"Windows."
+
+#: data/ui/properties.ui:61
+msgid "Winecfg"
+msgstr "Winecfg"
+
+#: data/ui/properties.ui:87
+msgid "Winetricks"
+msgstr "Winetricks"
+
+#: minigalaxy/ui/properties.py:113
+msgid "Winetricks wasn't found and cannot be used."
+msgstr "Αποτυχία εύρεσης winetricks.Δεν είναι δυνατή η χρήση του."
+
+#: minigalaxy/ui/gametilelist.py:483 minigalaxy/ui/gametile.py:480
+msgid "download"
+msgstr "λήψη"
+
+#: minigalaxy/ui/gametilelist.py:523 minigalaxy/ui/gametile.py:520
+msgid "downloading…"
+msgstr "ενυμέρωση…"
+
+#: minigalaxy/ui/gametilelist.py:514 minigalaxy/ui/gametile.py:511
+msgid "in queue…"
+msgstr "σε αναμονή…"
+
+#: minigalaxy/ui/gametilelist.py:502 minigalaxy/ui/gametile.py:499
+msgid "install"
+msgstr "εγκατάστασή"
+
+#: minigalaxy/ui/gametilelist.py:534 minigalaxy/ui/gametile.py:531
+msgid "installing…"
+msgstr "εγκαθίσταται…"
+
+#: minigalaxy/ui/gametilelist.py:549 minigalaxy/ui/gametilelist.py:579
+#: minigalaxy/ui/gametile.py:546 minigalaxy/ui/gametile.py:576
+msgid "play"
+msgstr "παίξε"
+
+#: minigalaxy/ui/gametilelist.py:565 minigalaxy/ui/gametile.py:562
+msgid "uninstalling…"
+msgstr "απ εγκαθίσταται…"
+
+#: minigalaxy/ui/information.py:134
+msgid "unknown"
+msgstr "άγνωστο"
+
+#: minigalaxy/ui/gametilelist.py:588 minigalaxy/ui/gametile.py:585
+msgid "updating…"
+msgstr "ενημερώνεται…"
+
+#: minigalaxy/installer.py:130
+msgid "{} could not be unzipped."
+msgstr "{} αδυναμία αποσυμπίεσης."
+
+#: minigalaxy/installer.py:73
+msgid "{} failed to download."
+msgstr "() αποτυχία λήψης."
+
+#: minigalaxy/ui/preferences.py:204
+msgid "{} isn't a usable path"
+msgstr "()μη εύχρηστη διαδρομη"
+
+#: minigalaxy/installer.py:85
+msgid "{} was corrupted. Please download it again."
+msgstr "()διαφθείρει.Παρακαλώ κατεβαστε το ξανά."
