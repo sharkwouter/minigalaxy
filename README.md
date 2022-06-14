@@ -202,6 +202,8 @@ Special thanks goes out to all contributors:
 - sgn for fixing a bug
 - otaconix for fixing a bug
 - phlash for fixing a bug
+- mareksapota for fixing a bug
+- zocker-160 for code cleanup
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
@@ -213,6 +215,8 @@ Special thanks goes out to all contributors:
 - dummyx for translating to simplified Chinese
 - juanborda, advy99 and LocalPinkRobin for translating to Spanish
 - Newbytee for translating to Swedish
+- Pyrofanis for translating to Greek
+- mbarrio for translating to Spanish
 - jubalh for packaging Minigalaxy for openSUSE
 - gasinvein for packaging Minigalaxy for flathub
 - metafarion for packaging Minigalaxy for Gentoo
