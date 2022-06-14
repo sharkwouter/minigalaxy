@@ -5,6 +5,7 @@
 - Fix signing in with Facebook (thanks to phlash)
 - Update Norwegian Bokmål translation (thanks to kimmalmo)
 - Update Czech translation (thanks to jakbuz23)
+- Add Greek translation (thanks to Pyrofanis)
 
 **1.1.0**
 - Improve integrity check after downloading (thanks to makson96)
