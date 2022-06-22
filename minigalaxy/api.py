@@ -174,12 +174,14 @@ class Api:
         :return: the md5 sum as string
         """
         result = ""
-        checksum_data = self.__request(url)
-        if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
-            xml_data = self.__get_xml_checksum(checksum_data['checksum'])
-            if "md5" in xml_data.keys() and len(xml_data["md5"]) > 0:
-                result = xml_data["md5"]
-
+        try:
+            checksum_data = self.__request(url)
+            if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
+                xml_data = self.__get_xml_checksum(checksum_data['checksum'])
+                if "md5" in xml_data.keys() and len(xml_data["md5"]) > 0:
+                    result = xml_data["md5"]
+        except requests.exceptions.RequestException as e:
+            print("Couldn't retrieve md5. Encountered HTTP exception: {}".format(e))
         if not result:
             print("Couldn't find md5 in xml checksum data")
 
@@ -204,26 +206,32 @@ class Api:
 
         return result
 
-    def __get_xml_checksum(self, url):
+    @staticmethod
+    def __get_xml_checksum(url):
         result = {}
-        response = SESSION.get(url)
-        if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
-            response_object = ET.fromstring(response.text)
-            if response_object and response_object.attrib:
-                result = response_object.attrib
-        else:
-            print("Couldn't read xml data. Response with code {} received with the following content: {}".format(
-                response.status_code, response.text
-            ))
-        return result
+        try:
+            response = SESSION.get(url)
+            if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
+                response_object = ET.fromstring(response.text)
+                if response_object and response_object.attrib:
+                    result = response_object.attrib
+            else:
+                print("Couldn't read xml data. Response with code {} received with the following content: {}".format(
+                    response.status_code, response.text
+                ))
+        except requests.exceptions.RequestException as e:
+            print("Couldn't read xml data. Received RequestException : {}".format(e))
+        finally:
+            return result
 
     def get_user_info(self) -> str:
         username = Config.get("username")
         if not username:
             url = "https://embed.gog.com/userData.json"
             response = self.__request(url)
-            username = response["username"]
-            Config.set("username", username)
+            if "username" in response.keys():
+                username = response["username"]
+                Config.set("username", username)
         return username
 
     def get_version(self, game: Game, gameinfo=None, dlc_name="") -> str:
@@ -269,13 +277,22 @@ class Api:
         headers = {
             'Authorization': "Bearer {}".format(str(self.active_token)),
         }
-        response = SESSION.get(url, headers=headers, params=params)
-        if self.debug:
+        result = {}
+        try:
+            response = SESSION.get(url, headers=headers, params=params)
+            if self.debug:
+                print("Request: {}".format(url))
+                print("Return code: {}".format(response.status_code))
+                print("Response body: {}".format(response.text))
+                print("")
+            if response.status_code < 300:
+                result = response.json()
+        except requests.exceptions.RequestException as e:
+            print("Encountered exception while making HTTP request.")
             print("Request: {}".format(url))
-            print("Return code: {}".format(response.status_code))
-            print("Response body: {}".format(response.text))
+            print("Exception: {}".format(e))
             print("")
-        return response.json()
+        return result
 
     @staticmethod
     def __request_gamesdb(game: Game):

@@ -23,6 +23,7 @@
 - Fix changing installation path causing crashes in rare cases (thanks to makson96)
 - Fall back to English when locale cannot be determined (thanks to flagrama)
 - Add gettext to build dependencies (thanks to larslindq)
+- Improve error handling upon API errors
 
 - Add Greek translation (thanks to Pyrofanis)
 - Add Spanish (Spain) translation (thanks to mbarrio)

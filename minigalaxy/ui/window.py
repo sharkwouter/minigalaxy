@@ -71,7 +71,7 @@ class Window(Gtk.ApplicationWindow):
                 self.__authenticate()
                 self.HeaderBar.set_subtitle(self.api.get_user_info())
             except Exception as e:
-                print(e)
+                print("Starting in offline mode, after receiving exception: {}".format(e))
                 self.offline = True
         self.sync_library()
 

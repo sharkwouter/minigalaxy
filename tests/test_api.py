@@ -104,6 +104,7 @@ class TestApi(TestCase):
         response_mock = MagicMock()
         response_mock.json.return_value = response_dict
         m_constants.SESSION.get.return_value = response_mock
+        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
         exp = "Neverwinter Nights: Enhanced Edition"
         retrieved_games, err_msg = api.get_library()
         obs = retrieved_games[0].name
@@ -232,6 +233,26 @@ class TestApi(TestCase):
         obs = api.get_file_size("url")
         self.assertEqual(exp, obs)
 
+    def test_get_file_size_returns_zero_on_request_exception(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = requests.exceptions.RequestException("test")
+
+        exp = 0
+        obs = api.get_file_size("url")
+        self.assertEqual(exp, obs)
+
+    def test_get_file_size_returns_zero_on_request_timeout_exception(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = requests.exceptions.ReadTimeout("test")
+
+        exp = 0
+        obs = api.get_file_size("url")
+        self.assertEqual(exp, obs)
+
     def test_get_file_size_returns_zero_on_missing_total_size(self):
         api = Api()
         api._Api__request = MagicMock()
@@ -279,6 +300,38 @@ class TestApi(TestCase):
         exp = copy.deepcopy(GAMESDB_INFO_STELLARIS)
         exp['genre'] = {}
         obs = api.get_gamesdb_info(test_game)
+        self.assertEqual(exp, obs)
+
+    def test_get_user_info_from_api(self):
+        username = "test"
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"username": username}
+        m_config.Config.get.return_value = ""
+        m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
+
+        obs = api.get_user_info()
+        self.assertEqual(username, obs)
+
+    def test_get_user_info_from_config(self):
+        username = "test"
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"username": "wrong"}
+        m_config.Config.get.return_value = username
+
+        obs = api.get_user_info()
+        self.assertEqual(username, obs)
+
+    def test_get_user_info_return_empty_string_when_nothing_is_returned(self):
+        api = Api()
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {}
+        m_config.Config.get.return_value = ""
+
+        exp = ""
+        obs = api.get_user_info()
         self.assertEqual(exp, obs)
 
 
