@@ -104,7 +104,88 @@ class Test(TestCase):
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'MetroExodus.exe', 'unins000.exe',
                  'goggame-1407287452.info', 'goggame-1414471894.info']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ["wine", "MetroExodus.exe"]
+        exp = ['wine', 'start', '/b', '/wait', '/d', '.', 'MetroExodus.exe']
+        obs = launcher.get_windows_exe_cmd(game, files)
+        self.assertEqual(exp, obs)
+
+    @mock.patch('builtins.open', new_callable=mock_open, read_data="")
+    @mock.patch('os.chdir')
+    def test3_get_windows_exe_cmd(self, mock_os_chdir, mo):
+        goggame_1207658919_info_content = """{
+        "buildId": "52095557858882770",
+        "clientId": "49843178982252086",
+        "gameId": "1207658919",
+        "language": "English",
+        "languages": [
+        "en-US"
+        ],
+        "name": "Rayman Forever",
+        "playTasks": [
+        {
+        "arguments": "-conf \\"..\\\\dosboxRayman.conf\\" -conf \\"..\\\\dosboxRayman_single.conf\\" -noconsole -c \\"exit\\"",
+        "category": "game",
+        "isPrimary": true,
+        "languages": [
+            "*"
+        ],
+        "name": "Rayman Forever",
+        "path": "DOSBOX\\\\dosbox.exe",
+        "type": "FileTask",
+        "workingDir": "DOSBOX"
+        },
+        {
+        "arguments": "1207658919",
+        "category": "tool",
+        "languages": [
+            "*"
+        ],
+        "name": "Graphic Mode Setup",
+        "path": "DOSBOX\\\\GOGDOSConfig.exe",
+        "type": "FileTask",
+        "workingDir": "DOSBOX"
+        },
+        {
+        "category": "document",
+        "languages": [
+            "*"
+        ],
+        "link": "http://www.gog.com/support/rayman_forever",
+        "name": "Support",
+        "type": "URLTask"
+        },
+        {
+        "category": "document",
+        "languages": [
+            "*"
+        ],
+        "name": "Manual",
+        "path": "Manual.pdf",
+        "type": "FileTask"
+        },
+        {
+        "category": "tool",
+        "languages": [
+            "*"
+        ],
+        "name": "Mapper",
+        "path": "RayKit\\\\Mapper.exe",
+        "type": "FileTask",
+        "workingDir": "RayKit"
+        }
+        ],
+        "rootGameId": "1207658919",
+        "version": 1
+        }"""
+        mo.side_effect = (mock_open(read_data=goggame_1207658919_info_content).return_value,)
+        files = ['goggame-1207658919.script', 'DOSBOX', 'thumbnail.jpg', 'game.gog', 'unins000.dat', 'webcache.zip',
+                 'EULA.txt', 'Music', 'dosboxRayman_single.conf', 'Rayman', 'unins000.exe', 'support.ico', 'prefix',
+                 'goggame-1207658919.info', 'Manual.pdf', 'gog.ico', 'unins000.msg', 'goggame-1207658919.hashdb',
+                 'RayFan', 'dosboxRayman.conf', 'unins000.ini', 'thumbnail_100.jpg', 'RayKit', 'game.ins',
+                 'goggame-1207658919.ico', 'goglog.ini', 'Launch Rayman Forever.lnk', 'cloud_saves',
+                 'thumbnail_196.jpg']
+        game = Game("Test Game", install_dir="/test/install/dir")
+        exp = ['wine', 'start', '/b', '/wait', '/d', 'DOSBOX', 'DOSBOX\\dosbox.exe', '-conf', '"..\\dosboxRayman.conf"',
+               '-conf', '"..\\dosboxRayman_single.conf"', '-noconsole', '-c', '"exit"']
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 

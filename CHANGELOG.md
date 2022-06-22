@@ -24,6 +24,7 @@
 - Fall back to English when locale cannot be determined (thanks to flagrama)
 - Add gettext to build dependencies (thanks to larslindq)
 - Improve error handling upon API errors
+- Fix several issues with launching Windows games from Minigalaxy
 
 - Add Greek translation (thanks to Pyrofanis)
 - Add Spanish (Spain) translation (thanks to mbarrio)
