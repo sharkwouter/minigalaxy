@@ -122,13 +122,9 @@ def get_windows_exe_cmd(game, files):
                 info = json.loads(info_file.read())
                 # if we have the workingDir property, start the executable at that directory
                 if "playTasks" in info:
-                    has_primary = False
                     for task in info["playTasks"]:
-                        if "isPrimary" in task:
-                            has_primary = True
-                            print("Primary playTask found")
-                            break
-                    for task in info["playTasks"]:
+                        if "isPrimary" not in task or not task["isPrimary"]:
+                            continue
                         if "category" in task and task["category"] == "game" and "path" in task:
                             working_dir = task["workingDir"] if "workingDir" in task else "."
                             path = task["path"]
@@ -136,8 +132,7 @@ def get_windows_exe_cmd(game, files):
                                        path]
                             if "arguments" in task:
                                 exe_cmd += task["arguments"].split(" ")
-                            if not has_primary or ("isPrimary" in task and task["isPrimary"]):
-                                break
+                            break
     if exe_cmd == [""]:
         # in case no goggame info file was found
         executables = glob.glob(game.install_dir + '/*.exe')
