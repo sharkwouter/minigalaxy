@@ -76,6 +76,7 @@ def get_execute_command(game) -> list:
         exe_cmd.insert(0, "mangohud")
         exe_cmd.insert(1, "--dlsym")
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
+    print("Launch command for {}: {}".format(game.name, " ".join(exe_cmd)))
     return exe_cmd
 
 
@@ -115,17 +116,23 @@ def get_windows_exe_cmd(game, files):
 
     # Find game executable file
     for file in files:
-        if re.match(r'^goggame-[0-9]*\.info$', file):
+        if re.match(r'^goggame-\d*\.info$', file):
             os.chdir(game.install_dir)
             with open(file, 'r') as info_file:
                 info = json.loads(info_file.read())
                 # if we have the workingDir property, start the executable at that directory
-                if info["playTasks"]:
-                    if "workingDir" in info["playTasks"][0] and info["playTasks"][0]["workingDir"]:
-                        exe_cmd = [get_wine_path(game), "start", "/b", "/wait", "/d", info["playTasks"][0]["workingDir"],
-                                   info["playTasks"][0]["path"]]
-                    else:
-                        exe_cmd = [get_wine_path(game), info["playTasks"][0]["path"]]
+                if "playTasks" in info:
+                    for task in info["playTasks"]:
+                        if "isPrimary" not in task or not task["isPrimary"]:
+                            continue
+                        if "category" in task and task["category"] == "game" and "path" in task:
+                            working_dir = task["workingDir"] if "workingDir" in task else "."
+                            path = task["path"]
+                            exe_cmd = [get_wine_path(game), "start", "/b", "/wait", "/d", working_dir,
+                                       path]
+                            if "arguments" in task:
+                                exe_cmd += task["arguments"].split(" ")
+                            break
     if exe_cmd == [""]:
         # in case no goggame info file was found
         executables = glob.glob(game.install_dir + '/*.exe')
@@ -140,9 +147,9 @@ def get_dosbox_exe_cmd(game, files):
     dosbox_config = ""
     dosbox_config_single = ""
     for file in files:
-        if re.match(r'^dosbox_?([a-z]|[A-Z]|[0-9])+\.conf$', file):
+        if re.match(r'^dosbox_?([a-z]|[A-Z]|\d)+\.conf$', file):
             dosbox_config = file
-        if re.match(r'^dosbox_?([a-z]|[A-Z]|[0-9])+_single\.conf$', file):
+        if re.match(r'^dosbox_?([a-z]|[A-Z]|\d)+_single\.conf$', file):
             dosbox_config_single = file
     print("Using system's dosbox to launch {}".format(game.name))
     return ["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
