@@ -204,6 +204,7 @@ Special thanks goes out to all contributors:
 - phlash for fixing a bug
 - mareksapota for fixing a bug
 - zocker-160 for code cleanup
+- waltercool for contributing code
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
