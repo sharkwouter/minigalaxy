@@ -28,6 +28,7 @@
 
 - Add Greek translation (thanks to Pyrofanis)
 - Add Spanish (Spain) translation (thanks to mbarrio)
+- Add Romanian (Romania) translation (thanks to xSlendiX)
 
 - Update Norwegian Bokmål translation (thanks to kimmalmo)
 - Update Czech translation (thanks to jakbuz23)
