@@ -25,4 +25,4 @@ jobs:
         flake8 . --count --show-source --statistics --exit-zero
     - name: Run unit tests
       run: |
-        python -m unittest tests/*.py
+        python3 -m coverage run -m unittest discover -v tests/ && python3 -m coverage report -m --include="minigalaxy/**,bin/*"
