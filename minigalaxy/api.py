@@ -4,6 +4,8 @@ import time
 from urllib.parse import urlencode
 import requests
 import xml.etree.ElementTree as ET
+
+from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
 from minigalaxy.config import Config
@@ -166,45 +168,31 @@ class Api:
     def get_real_download_link(self, url):
         return self.__request(url)['downlink']
 
-    def get_download_file_md5(self, url):
+    def get_download_file_info(self, url):
         """
-        Returns a download file's md5 sum
-        Returns an empty string if anything goes wrong
+        Returns some information about a downloadable file based on an XML file offered by GOG
         :param url: Url to get download and checksum links from the API
-        :return: the md5 sum as string
+        :return: a FileInfo object with md5 set to the md5 or and empty string and size set to the file size or 0
         """
-        result = ""
+        file_info = FileInfo(md5="", size=0)
         try:
             checksum_data = self.__request(url)
             if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
                 xml_data = self.__get_xml_checksum(checksum_data['checksum'])
                 if "md5" in xml_data.keys() and len(xml_data["md5"]) > 0:
-                    result = xml_data["md5"]
+                    file_info.md5 = xml_data["md5"]
+                if "total_size" in xml_data.keys() and len(xml_data["total_size"]) > 0:
+                    file_info.size = int(xml_data["total_size"])
         except requests.exceptions.RequestException as e:
-            print("Couldn't retrieve md5. Encountered HTTP exception: {}".format(e))
-        if not result:
+            print("Couldn't retrieve file info. Encountered HTTP exception: {}".format(e))
+
+        if not file_info.md5:
             print("Couldn't find md5 in xml checksum data")
 
-        return result
-
-    def get_file_size(self, url):
-        """
-        Returns the file size according to an XML file offered by GOG
-        Returns 0 if anything goes wrong
-        :param url: Url to get download and checksum links from the API
-        :return: probable file size in bytes as int
-        """
-        result = 0
-        checksum_data = self.__request(url)
-        if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
-            xml_data = self.__get_xml_checksum(checksum_data['checksum'])
-            if "total_size" in xml_data.keys() and int(xml_data["total_size"]) > 0:
-                result = int(xml_data["total_size"])
-
-        if not result:
+        if not file_info.size:
             print("Couldn't find file size in xml checksum data")
 
-        return result
+        return file_info
 
     @staticmethod
     def __get_xml_checksum(url):

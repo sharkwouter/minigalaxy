@@ -25,6 +25,7 @@
 - Add gettext to build dependencies (thanks to larslindq)
 - Improve error handling upon API errors
 - Fix several issues with launching Windows games from Minigalaxy
+- Fix some games getting stuck on in queue
 
 - Add Greek translation (thanks to Pyrofanis)
 - Add Spanish (Spain) translation (thanks to mbarrio)
