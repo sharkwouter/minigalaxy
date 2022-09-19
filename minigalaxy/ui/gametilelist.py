@@ -247,7 +247,7 @@ class GameTileList(Gtk.Box):
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
-    def __download(self, download_info, download_type, finish_func, cancel_to_state):
+    def __download(self, download_info, download_type, finish_func, cancel_to_state):  # noqa: C901
         download_success = True
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
 
