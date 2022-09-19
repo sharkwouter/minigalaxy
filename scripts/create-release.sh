@@ -10,6 +10,7 @@ CHANGELOG_FILE="${WORK_DIR}/CHANGELOG.md"
 METADATA_FILE="${WORK_DIR}/data/io.github.sharkwouter.Minigalaxy.metainfo.xml"
 RELEASE_FILE="${WORK_DIR}/release.md"
 VERSION_FILE="${WORK_DIR}/minigalaxy/version.py"
+TOML_FILE="${WORK_DIR}/pyproject.toml"
 VERSION="$(head -1 "${CHANGELOG_FILE}"|tr -d "*")"
 
 check_changelog() {
@@ -67,6 +68,7 @@ set_debian_changelog_release() {
 
 set_version() {
   echo "VERSION = \"${VERSION}\"" > "${VERSION_FILE}"
+  sed -i "s/version = .*/version = \"${VERSION}\"/" "${TOML_FILE}"
 }
 
 return_version_info() {

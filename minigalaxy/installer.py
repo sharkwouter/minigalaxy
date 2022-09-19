@@ -42,6 +42,7 @@ def check_diskspace(required_size, location):
 def install_game(game, installer):  # noqa: C901
     error_message = ""
     tmp_dir = ""
+    print("Installing {}".format(game.name))
     if not error_message:
         error_message = verify_installer_integrity(game, installer)
     if not error_message:
