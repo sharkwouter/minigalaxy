@@ -1,0 +1,15 @@
+[project]
+name = "minigalaxy"
+description = "A simple GOG Linux client"
+version = "1.1.0"
+authors = [
+    { name = "Wouter Wijsman", email = "wwijsman@live.nl" }
+]
+dependencies = [
+    "PyGObject",
+    "requests"
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta:__legacy__"

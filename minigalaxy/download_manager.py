@@ -4,7 +4,7 @@ import time
 import threading
 import queue
 
-from requests.exceptions import ConnectionError
+from requests.exceptions import RequestException
 from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION
 from minigalaxy.download import Download
@@ -85,7 +85,7 @@ class __DownloadManger:
                 start_point, download_mode = self.get_start_point_and_download_mode(download)
                 result = self.download_operation(download, start_point, download_mode)
                 break
-            except ConnectionError as e:
+            except RequestException as e:
                 print(e)
                 download_attempt += 1
         # Successful downloads
