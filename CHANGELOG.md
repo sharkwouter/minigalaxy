@@ -1,3 +1,6 @@
+**2.0.0**
+- Fix downloads failing when content length is not returned by the server
+
 **1.2.0**
 - Split game information and properties into different windows (thanks to TotalCaesar659)
 - Add list view (thanks to TotalCaesar659)
