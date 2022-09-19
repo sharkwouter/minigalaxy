@@ -1,6 +1,7 @@
-**2.0.0**
+**1.2.1**
 - Fix downloads failing when content length is not returned by the server
 - Allow different types of downloads to happen at the same time (thanks to jgerrish)
+- Fix metadata file
 
 **1.2.0**
 - Split game information and properties into different windows (thanks to TotalCaesar659)

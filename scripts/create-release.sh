@@ -58,6 +58,11 @@ add_metadata_entry() {
   "${METADATA_FILE}"
 }
 
+sort_metadata() {
+  xmlstarlet tr --xinclude  "${WORK_DIR}/sort-releases.xls" "${METADATA_FILE}" > "${METADATA_FILE}.tmp"
+  mv "${METADATA_FILE}.tmp" "${METADATA_FILE}"
+}
+
 add_debian_changelog_entry() {
   dch -v "${VERSION}" -M "$(echo $@|sed 's/^- //')"
 }
@@ -106,4 +111,5 @@ done < "${CHANGELOG_FILE}"
 
 set_debian_changelog_release
 finish_release_file
+sort_metadata
 return_version_info
