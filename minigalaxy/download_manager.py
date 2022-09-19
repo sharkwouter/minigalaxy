@@ -361,7 +361,7 @@ class __DownloadManger:
         file_size = None
         try:
             file_size = int(download_request.headers.get('content-length'))
-        except ValueError:
+        except (ValueError, TypeError):
             print(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
         result = True
         if not file_size or downloaded_size < file_size:
