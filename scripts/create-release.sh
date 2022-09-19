@@ -20,7 +20,7 @@ check_changelog() {
 init_release_file() {
   echo "Minigalaxy version ${VERSION} is now available. For new users, Minigalaxy is a simple GOG client for Linux. The download and a breakdown of the changes can be found below." > "${RELEASE_FILE}"
   echo "" >> "${RELEASE_FILE}"
-  echo "![screenshot](https://raw.githubusercontent.com/sharkwouter/minigalaxy/1.1.0/screenshot.jpg)" >> "${RELEASE_FILE}"
+  echo "![screenshot](https://raw.githubusercontent.com/sharkwouter/minigalaxy/${VERSION}/screenshot.jpg)" >> "${RELEASE_FILE}"
   echo "" >> "${RELEASE_FILE}"
   echo "## Changes" >> "${RELEASE_FILE}"
   echo "" >> "${RELEASE_FILE}"
