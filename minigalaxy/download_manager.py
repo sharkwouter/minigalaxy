@@ -131,9 +131,13 @@ class __DownloadManger:
         resume_header = {'Range': 'bytes={}-'.format(start_point)}
         download_request = SESSION.get(download.url, headers=resume_header, stream=True, timeout=30)
         downloaded_size = start_point
-        file_size = int(download_request.headers.get('content-length'))
+        file_size = None
+        try:
+            file_size = int(download_request.headers.get('content-length'))
+        except ValueError:
+            print(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
         result = True
-        if downloaded_size < file_size:
+        if not file_size or downloaded_size < file_size:
             with open(download.save_location, download_mode) as save_file:
                 for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
                     # Pause if needed
@@ -144,7 +148,7 @@ class __DownloadManger:
                     if self.__cancel:
                         result = False
                         break
-                    if file_size > 0:
+                    if file_size:
                         progress = int(downloaded_size / file_size * 100)
                         download.set_progress(progress)
                 save_file.close()
