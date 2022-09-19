@@ -25,7 +25,8 @@ import queue
 from requests.exceptions import RequestException
 from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
-from minigalaxy.download import Download, DownloadType
+from minigalaxy.entity.download import Download
+from minigalaxy.entity.download_type import DownloadType
 import minigalaxy.logger    # noqa: F401
 
 module_logger = logging.getLogger("minigalaxy.download_manager")

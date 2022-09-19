@@ -5,7 +5,7 @@ import webbrowser
 from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR, COVER_DIR
 from minigalaxy.translation import _
 from minigalaxy.config import Config
-from minigalaxy.download import Download
+from minigalaxy.entity.download import Download
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
 

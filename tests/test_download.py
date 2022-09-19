@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import MagicMock, Mock
 
-from minigalaxy.download import Download
+from minigalaxy.entity.download import Download
 
 
 class TestDownload(TestCase):

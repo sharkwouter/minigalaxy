@@ -9,7 +9,8 @@ from enum import Enum
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
 from minigalaxy.config import Config
-from minigalaxy.download import Download, DownloadType
+from minigalaxy.entity.download_type import DownloadType
+from minigalaxy.entity.download import Download
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
