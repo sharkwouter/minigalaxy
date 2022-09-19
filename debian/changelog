@@ -1,3 +1,13 @@
+minigalaxy (1.2.1) focal; urgency=medium
+
+  * Fix downloads failing when content length is not returned by the
+    server
+  * Allow different types of downloads to happen at the same time
+    (thanks to jgerrish)
+  * Fix metadata file having releases in wrong order
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Mon, 19 Sep 2022 23:47:07 +0000
+
 minigalaxy (1.2.0) focal; urgency=medium
 
   * Split game information and properties into different windows (thanks
