@@ -59,8 +59,9 @@ add_metadata_entry() {
 }
 
 sort_metadata() {
-  xmlstarlet tr --xinclude  "${WORK_DIR}/sort-releases.xls" "${METADATA_FILE}" > "${METADATA_FILE}.tmp"
+  xmlstarlet tr --xinclude  "${SCRIPT_DIR}/sort-releases.xls" "${METADATA_FILE}" > "${METADATA_FILE}.tmp"
   mv "${METADATA_FILE}.tmp" "${METADATA_FILE}"
+  sed -i '1s/^/<?xml version="1.0" encoding="UTF-8"?>\n/' "${METADATA_FILE}"
 }
 
 add_debian_changelog_entry() {
