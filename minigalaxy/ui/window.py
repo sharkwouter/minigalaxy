@@ -1,11 +1,7 @@
 import os
 import locale
 
-try:
-    from minigalaxy.ui.login import Login
-except ValueError as err:
-    print("Login UI disabled due lack of dependencies: {}".format(err))
-
+from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
@@ -191,7 +187,7 @@ class Window(Gtk.ApplicationWindow):
 
         authenticated = self.api.authenticate(refresh_token=token, login_code=url)
 
-        while not authenticated and 'Login' in dir():
+        while not authenticated:
             login_url = self.api.get_login_url()
             redirect_url = self.api.get_redirect_url()
             login = Login(login_url=login_url, redirect_url=redirect_url, parent=self)
