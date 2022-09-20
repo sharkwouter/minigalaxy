@@ -9,7 +9,7 @@
   <xsl:template match="releases">
     <xsl:copy>
       <xsl:apply-templates select="release">
-        <xsl:sort order="descending" select="@date"/>
+        <xsl:sort order="descending" select="@version"/>
       </xsl:apply-templates>
     </xsl:copy>
   </xsl:template>

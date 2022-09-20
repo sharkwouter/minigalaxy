@@ -33,7 +33,16 @@
   <provides>
     <binary>minigalaxy</binary>
   </provides>
-  <releases><release version="1.2.0" date="2022-09-19">
+  <releases><release version="1.2.1" date="2022-09-19">
+      <description>
+        <p>Implements the following changes:</p>
+        <ul>
+          <li>Fix downloads failing when content length is not returned by the server</li>
+          <li>Allow different types of downloads to happen at the same time (thanks to jgerrish)</li>
+          <li>Fix metadata file having releases in wrong order</li>
+        </ul>
+      </description>
+    </release><release version="1.2.0" date="2022-09-19">
       <description>
         <p>Implements the following changes:</p>
         <ul>
@@ -70,15 +79,6 @@
           <li>Add Romanian (Romania) translation (thanks to xSlendiX)</li>
           <li>Update Norwegian Bokmål translation (thanks to kimmalmo)</li>
           <li>Update Czech translation (thanks to jakbuz23)</li>
-        </ul>
-      </description>
-    </release><release version="1.2.1" date="2022-09-19">
-      <description>
-        <p>Implements the following changes:</p>
-        <ul>
-          <li>Fix downloads failing when content length is not returned by the server</li>
-          <li>Allow different types of downloads to happen at the same time (thanks to jgerrish)</li>
-          <li>Fix metadata file having releases in wrong order</li>
         </ul>
       </description>
     </release><release version="1.1.0" date="2021-11-09">
