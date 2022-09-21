@@ -1,12 +1,18 @@
 import http
+import json
 import os
 import time
+from collections import namedtuple
 from urllib.parse import urlencode
 import requests
 import xml.etree.ElementTree as ET
 
+from minigalaxy.entity.platform import Platform
 from minigalaxy.file_info import FileInfo
+from minigalaxy.galaxy.filter_products_response import FilterProductsResponse
+from minigalaxy.galaxy.test import dict_to_dataclass
 from minigalaxy.game import Game
+from minigalaxy.entity.game import Game as game_data
 from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
 from minigalaxy.config import Config
 
@@ -71,7 +77,44 @@ class Api:
             refresh_token = ""
         return refresh_token
 
-    # Get all Linux games in the library of the user. Ignore other platforms and movies
+    # # Get all Linux games in the library of the user. Ignore other platforms and movies
+    # def get_library(self):
+    #     err_msg = ""
+    #     games = []
+    #     if self.active_token:
+    #         current_page = 1
+    #         all_pages_processed = False
+    #         url = "https://embed.gog.com/account/getFilteredProducts"
+    #
+    #         while not all_pages_processed:
+    #             params = {
+    #                 'mediaType': 1,  # 1 means game
+    #                 'page': current_page,
+    #             }
+    #             response = self.__request(url, params=params)
+    #             total_pages = response["totalPages"]
+    #
+    #             for product in response["products"]:
+    #                 if product["id"] not in IGNORE_GAME_IDS:
+    #                     # Only support Linux unless the show_windows_games setting is enabled
+    #                     if product["worksOn"]["Linux"]:
+    #                         platform = "linux"
+    #                     elif Config.get("show_windows_games"):
+    #                         platform = "windows"
+    #                     else:
+    #                         continue
+    #                     if not product["url"]:
+    #                         print("{} ({}) has no store page url".format(product["title"], product['id']))
+    #                     game = Game(name=product["title"], url=product["url"], game_id=product["id"],
+    #                                 image_url=product["image"], platform=platform)
+    #                     games.append(game)
+    #             if current_page == total_pages:
+    #                 all_pages_processed = True
+    #             current_page += 1
+    #     else:
+    #         err_msg = "Couldn't connect to GOG servers"
+    #     return games, err_msg
+
     def get_library(self):
         err_msg = ""
         games = []
@@ -86,23 +129,24 @@ class Api:
                     'page': current_page,
                 }
                 response = self.__request(url, params=params)
-                total_pages = response["totalPages"]
+                filter_products_response = dict_to_dataclass(response, FilterProductsResponse)
 
-                for product in response["products"]:
-                    if product["id"] not in IGNORE_GAME_IDS:
+                for product in filter_products_response.products:
+                    if product.id not in IGNORE_GAME_IDS:
                         # Only support Linux unless the show_windows_games setting is enabled
-                        if product["worksOn"]["Linux"]:
-                            platform = "linux"
+                        if product.worksOn.Linux:
+                            platform = Platform.LINUX
                         elif Config.get("show_windows_games"):
-                            platform = "windows"
+                            platform = Platform.WINDOWS
                         else:
                             continue
-                        if not product["url"]:
-                            print("{} ({}) has no store page url".format(product["title"], product['id']))
-                        game = Game(name=product["title"], url=product["url"], game_id=product["id"],
-                                    image_url=product["image"], platform=platform)
+                        if not product.url:
+                            print("{} ({}) has no store page url".format(product.title, product.id))
+
+                        game = Game(name=product.title, url=product.url, game_id=product.id,
+                                    image_url=product.image, platform=platform)
                         games.append(game)
-                if current_page == total_pages:
+                if current_page == filter_products_response.totalPages:
                     all_pages_processed = True
                 current_page += 1
         else:
