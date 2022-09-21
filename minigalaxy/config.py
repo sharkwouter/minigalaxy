@@ -27,7 +27,7 @@ class Config:
             config_dir = os.path.dirname(self.__config_file)
             os.makedirs(config_dir, mode=0o700, exist_ok=True)
         temp_file = f"{self.__config_file}.tmp"
-        with open(self.__config_file, "w") as file:
+        with open(temp_file, "w") as file:
             file.write(json.dumps(self.__config, ensure_ascii=False))
         os.rename(temp_file, self.__config_file)
 
@@ -77,6 +77,14 @@ class Config:
     @username.setter
     def username(self, new_value: str) -> None:
         self.set("username", new_value)
+
+    @property
+    def refresh_token(self) -> str:
+        return self.get("refresh_token", "")
+
+    @refresh_token.setter
+    def refresh_token(self, new_value: str) -> None:
+        self.set("refresh_token", new_value)
 
     @property
     def keep_installers(self) -> bool:
@@ -142,5 +150,10 @@ class Config:
     def create_applications_file(self, new_value: bool) -> None:
         self.set("create_applications_file", new_value)
 
+    @property
+    def current_downloads(self) -> list[int]:
+        return self.get("current_downloads", [])
 
-
+    @current_downloads.setter
+    def create_applications_file(self, new_value: list[int]) -> None:
+        self.set("current_downloads", new_value)

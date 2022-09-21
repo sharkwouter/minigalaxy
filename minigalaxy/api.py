@@ -8,7 +8,6 @@ import xml.etree.ElementTree as ET
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
-from minigalaxy.config import Config
 
 
 class NoDownloadLinkFound(BaseException):
@@ -16,7 +15,8 @@ class NoDownloadLinkFound(BaseException):
 
 
 class Api:
-    def __init__(self):
+    def __init__(self, config: 'Config'):
+        self.config = config
         self.login_success_url = "https://embed.gog.com/on_login_success"
         self.redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
         self.client_id = "46899977096215655"
@@ -93,7 +93,7 @@ class Api:
                         # Only support Linux unless the show_windows_games setting is enabled
                         if product["worksOn"]["Linux"]:
                             platform = "linux"
-                        elif Config.get("show_windows_games"):
+                        elif self.config.show_windows_games:
                             platform = "windows"
                         else:
                             continue
@@ -155,7 +155,7 @@ class Api:
 
         download_info = possible_downloads[0]
         for installer in possible_downloads:
-            if installer['language'] == Config.get("lang"):
+            if installer['language'] == self.config.lang:
                 download_info = installer
                 break
             if installer['language'] == "en":
@@ -213,13 +213,13 @@ class Api:
             return result
 
     def get_user_info(self) -> str:
-        username = Config.get("username")
+        username = self.config.username
         if not username:
             url = "https://embed.gog.com/userData.json"
             response = self.__request(url)
             if "username" in response.keys():
                 username = response["username"]
-                Config.set("username", username)
+                self.config.username = username
         return username
 
     def get_version(self, game: Game, gameinfo=None, dlc_name="") -> str:
@@ -258,8 +258,8 @@ class Api:
         # Refresh the token if needed
         if self.active_token_expiration_time < time.time():
             print("Refreshing token")
-            refresh_token = Config.get("refresh_token")
-            Config.set("refresh_token", self.__refresh_token(refresh_token))
+            refresh_token = self.config.refresh_token
+            self.config.refresh_token = self.__refresh_token(refresh_token)
 
         # Make the request
         headers = {

@@ -27,7 +27,7 @@ gettext.textdomain(TRANSLATION_DOMAIN)
 os.unsetenv("LANGUAGE")
 os.unsetenv("LANG")
 
-current_locale = Config.get("locale")
+current_locale = Config().locale
 default_locale = locale.getdefaultlocale()[0]
 if current_locale == '':
     if default_locale is None:

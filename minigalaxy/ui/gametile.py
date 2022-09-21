@@ -8,7 +8,6 @@ import urllib.parse
 from enum import Enum
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
-from minigalaxy.config import Config
 from minigalaxy.download import Download, DownloadType
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game
@@ -43,7 +42,8 @@ class GameTile(Gtk.Box):
                  ' UPDATING UPDATE_INSTALLABLE')
 
     def __init__(self, parent, game):
-        current_locale = Config.get("locale")
+        self.config = parent.config
+        current_locale = self.config.locale
         default_locale = locale.getdefaultlocale()[0]
         if current_locale == '':
             locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
@@ -72,7 +72,7 @@ class GameTile(Gtk.Box):
         self.download_dir = os.path.join(CACHE_DIR, "download", self.game.get_install_directory_name())
 
         # Set folder if user wants to keep installer (disabled by default)
-        self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
+        self.keep_dir = os.path.join(self.config.install_dir, "installer")
         self.keep_path = os.path.join(self.keep_dir, self.game.get_install_directory_name())
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR, mode=0o755)
@@ -92,7 +92,7 @@ class GameTile(Gtk.Box):
 
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):
-        download_ids = Config.get("current_downloads")
+        download_ids = self.config.current_downloads
         if download_ids:
             for download_id in download_ids:
                 if download_id and download_id == self.game.id and self.current_state == self.state.DOWNLOADABLE:
@@ -101,14 +101,14 @@ class GameTile(Gtk.Box):
 
     # Do not restart the download if Minigalaxy is restarted
     def prevent_resume_on_startup(self):
-        download_ids = Config.get("current_downloads")
+        download_ids = self.config.current_downloads
         if download_ids:
             new_download_ids = set()
             for download_id in download_ids:
                 if not (download_id and download_id == self.game.id):
                     new_download_ids.add(download_id)
 
-            Config.set("current_downloads", list(new_download_ids))
+            self.config.current_downloads = list(new_download_ids)
 
     def __str__(self):
         return self.game.name
@@ -221,13 +221,13 @@ class GameTile(Gtk.Box):
             result = True
         except NoDownloadLinkFound as e:
             print(e)
-            current_download_ids = Config.get("current_downloads")
+            current_download_ids = self.config.current_downloads
             if current_download_ids:
                 new_current_download_ids = set()
                 for current_download_id in current_download_ids:
                     if current_download_id != self.game.id:
                         new_current_download_ids.add(current_download_id)
-                Config.set("current_downloads", list(new_current_download_ids))
+                self.config.current_downloads = list(new_current_download_ids)
             GLib.idle_add(self.parent.parent.show_error, _("Download error"),
                           _("There was an error when trying to fetch the download link!\n{}".format(e)))
             download_info = False
@@ -249,13 +249,13 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
 
         # Need to update the config with DownloadType metadata
-        current_download_ids = Config.get("current_downloads")
+        current_download_ids = self.config.current_downloads
         if current_download_ids is None:
             current_download_ids = set()
         else:
             current_download_ids = set(current_download_ids)
         current_download_ids.add(self.game.id)
-        Config.set("current_downloads", list(current_download_ids))
+        self.config.current_downloads = list(current_download_ids)
         # Start the download for all files
         self.download_list = []
         number_of_files = len(download_info['files'])
@@ -297,7 +297,7 @@ class GameTile(Gtk.Box):
             download_files.insert(0, download)
         self.download_list.extend(download_files)
 
-        if check_diskspace(total_file_size, Config.get("install_dir")):
+        if check_diskspace(total_file_size, self.config.install_dir):
             DownloadManager.download(download_files)
             ds_msg_title = ""
             ds_msg_text = ""
