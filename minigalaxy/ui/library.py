@@ -5,7 +5,6 @@ import threading
 from typing import List
 from minigalaxy.paths import UI_DIR
 from minigalaxy.api import Api
-from minigalaxy.config import Config
 from minigalaxy.game import Game
 from minigalaxy.ui.gametile import GameTile
 from minigalaxy.ui.gametilelist import GameTileList
@@ -19,11 +18,12 @@ class Library(Gtk.Viewport):
 
     flowbox = Gtk.Template.Child()
 
-    def __init__(self, parent, api: Api):
+    def __init__(self, parent, config: 'Config', api: Api):
         Gtk.Viewport.__init__(self)
         self.parent = parent
+        self.config = config
         self.api = api
-        self.show_installed_only = Config.get("installed_filter")
+        self.show_installed_only = self.config.installed_filter
         self.search_string = ""
         self.offline = False
         self.games = []
@@ -74,7 +74,7 @@ class Library(Gtk.Viewport):
             if tile.current_state in [tile.state.DOWNLOADABLE, tile.state.INSTALLABLE]:
                 return False
 
-        if not Config.get("show_hidden_games") and tile.game.get_info("hide_game"):
+        if not self.config.show_hidden_games and tile.game.get_info("hide_game"):
             return False
 
         return True
@@ -99,7 +99,7 @@ class Library(Gtk.Viewport):
                 self.__add_gametile(game)
 
     def __add_gametile(self, game):
-        view = Config.get("view")
+        view = self.config.view
         if view == "grid":
             self.flowbox.add(GameTile(self, game))
         elif view == "list":
@@ -109,13 +109,13 @@ class Library(Gtk.Viewport):
 
     def __get_installed_games(self) -> List[Game]:
         # Make sure the install directory exists
-        library_dir = Config.get("install_dir")
+        library_dir = self.config.install_dir
         if not os.path.exists(library_dir):
             os.makedirs(library_dir, mode=0o755)
         directories = os.listdir(library_dir)
         games = []
         for directory in directories:
-            full_path = os.path.join(Config.get("install_dir"), directory)
+            full_path = os.path.join(self.config.install_dir, directory)
             # Only scan directories
             if not os.path.isdir(full_path):
                 continue

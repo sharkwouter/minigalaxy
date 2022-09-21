@@ -1,4 +1,3 @@
-import sys
 from unittest import TestCase
 from unittest.mock import MagicMock, patch, mock_open
 
@@ -57,6 +56,7 @@ class TestConfig(TestCase):
         self.assertEqual("grid", config.view)
         self.assertEqual("", config.username)
         self.assertEqual(DEFAULT_INSTALL_DIR, config.install_dir)
+        self.assertEqual("", config.username)
         self.assertEqual(False, config.keep_installers)
         self.assertEqual(True, config.stay_logged_in)
         self.assertEqual(False, config.use_dark_theme)
