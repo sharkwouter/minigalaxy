@@ -6,6 +6,8 @@ import re
 import time
 import urllib.parse
 from enum import Enum
+
+from minigalaxy.config import Config
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
 from minigalaxy.download import Download, DownloadType
@@ -42,7 +44,7 @@ class GameTile(Gtk.Box):
                  ' UPDATING UPDATE_INSTALLABLE')
 
     def __init__(self, parent, game):
-        self.config = parent.config
+        self.config: Config = parent.config
         current_locale = self.config.locale
         default_locale = locale.getdefaultlocale()[0]
         if current_locale == '':
@@ -132,7 +134,7 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_information_clicked")
     def show_information(self, button):
-        information_window = Information(self, self.game, self.api)
+        information_window = Information(self, self.game, self.config, self.api)
         information_window.run()
         information_window.destroy()
 
@@ -310,6 +312,8 @@ class GameTile(Gtk.Box):
         return download_success
 
     def __install_game(self, save_location):
+        if self.game.id in self.config.current_downloads:
+            self.config.current_downloads.remove(self.game.id)
         self.download_list = []
         self.game.set_install_dir()
         install_success = self.__install(save_location)
