@@ -9,6 +9,7 @@ from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR, COVER_DIR, 
 from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
 from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf
+from minigalaxy.config import Config
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
@@ -24,7 +25,7 @@ class Window(Gtk.ApplicationWindow):
     menu_logout = Gtk.Template.Child()
     window_library = Gtk.Template.Child()
 
-    def __init__(self, config: 'config', api: 'Api', name="Minigalaxy"):
+    def __init__(self, config: Config, api: 'Api', name="Minigalaxy"):
         current_locale = config.locale
         default_locale = locale.getdefaultlocale()[0]
         if current_locale == '':

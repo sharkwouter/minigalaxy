@@ -9,6 +9,7 @@ from minigalaxy.game import Game
 from minigalaxy.ui.gametile import GameTile
 from minigalaxy.ui.gametilelist import GameTileList
 from minigalaxy.ui.gtk import Gtk, GLib
+from minigalaxy.config import Config
 from minigalaxy.translation import _
 
 
@@ -18,7 +19,7 @@ class Library(Gtk.Viewport):
 
     flowbox = Gtk.Template.Child()
 
-    def __init__(self, parent, config: 'Config', api: Api):
+    def __init__(self, parent, config: Config, api: Api):
         Gtk.Viewport.__init__(self)
         self.parent = parent
         self.config = config
