@@ -6,6 +6,7 @@ from minigalaxy.paths import UI_DIR
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES, VIEWS
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.ui.gtk import Gtk
+from minigalaxy.config import Config
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "preferences.ui"))
@@ -26,7 +27,7 @@ class Preferences(Gtk.Dialog):
     button_cancel = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
 
-    def __init__(self, parent, config: 'Config'):
+    def __init__(self, parent, config: Config):
         Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
         self.parent = parent
         self.config = config

@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
+from minigalaxy.config import Config
 
 
 class NoDownloadLinkFound(BaseException):
@@ -15,7 +16,7 @@ class NoDownloadLinkFound(BaseException):
 
 
 class Api:
-    def __init__(self, config: 'Config'):
+    def __init__(self, config: Config):
         self.config = config
         self.login_success_url = "https://embed.gog.com/on_login_success"
         self.redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
