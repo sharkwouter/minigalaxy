@@ -24,11 +24,12 @@ class Information(Gtk.Dialog):
     button_information_pcgamingwiki = Gtk.Template.Child()
     label_game_description = Gtk.Template.Child()
 
-    def __init__(self, parent, game, api):
+    def __init__(self, parent, game, config: Config, api):
         Gtk.Dialog.__init__(self, title=_("Information about {}").format(game.name), parent=parent.parent.parent,
                             modal=True)
         self.parent = parent
         self.game = game
+        self.config = config
         self.api = api
         self.gamesdb_info = self.api.get_gamesdb_info(self.game)
 
@@ -117,7 +118,7 @@ class Information(Gtk.Dialog):
 
     def load_description(self):
         description = ""
-        lang = Config.get("lang")
+        lang = self.config.lang
         if self.gamesdb_info["summary"]:
             desc_lang = "*"
             for summary_key in self.gamesdb_info["summary"].keys():

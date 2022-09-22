@@ -135,7 +135,7 @@ class GameTileList(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_information_clicked")
     def show_information(self, button):
-        information_window = Information(self, self.game, self.api)
+        information_window = Information(self, self.game, self.config, self.api)
         information_window.run()
         information_window.destroy()
 
@@ -313,6 +313,8 @@ class GameTileList(Gtk.Box):
         return download_success
 
     def __install_game(self, save_location):
+        if self.game.id in self.config.current_downloads:
+            self.config.current_downloads.remove(self.game.id)
         self.download_list = []
         self.game.set_install_dir()
         install_success = self.__install(save_location)

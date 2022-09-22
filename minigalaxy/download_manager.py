@@ -23,7 +23,6 @@ import threading
 import queue
 
 from requests.exceptions import RequestException
-from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
 from minigalaxy.download import Download, DownloadType
 import minigalaxy.logger    # noqa: F401
@@ -297,8 +296,6 @@ class __DownloadManger:
                 finish_thread = threading.Thread(target=download.finish)
                 finish_thread.start()
             self.__remove_download_from_active_downloads(download)
-            if download_queue.empty():
-                Config.unset("current_downloads")
         # Unsuccessful downloads and cancels
         else:
             if download in self.__cancel:
