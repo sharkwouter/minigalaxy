@@ -155,5 +155,5 @@ class Config:
         return self.get("current_downloads", [])
 
     @current_downloads.setter
-    def create_applications_file(self, new_value: list[int]) -> None:
+    def current_downloads(self, new_value: list[int]) -> None:
         self.set("current_downloads", new_value)
