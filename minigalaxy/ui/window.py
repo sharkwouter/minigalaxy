@@ -83,7 +83,7 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
-        preferences_window = Preferences(self)
+        preferences_window = Preferences(self, self.config)
         preferences_window.run()
         preferences_window.destroy()
 
