@@ -18,8 +18,8 @@ class UnitTestGtkTemplate:
 
     def from_file(self, lib_file):
         def passthrough(func):
-            def passthrough2():
-                return func()
+            def passthrough2(*args, **kwargs):
+                return func(*args, **kwargs)
             return passthrough2
         return passthrough
 
@@ -61,26 +61,38 @@ from minigalaxy.ui.window import Window  # noqa: E402
 class TestWindow(TestCase):
     def test1_init(self):
         with patch('minigalaxy.ui.window.Api.can_connect', return_value=False):
-            test_window = Window()
+            config = MagicMock()
+            config.locale = "en_US.UTF-8"
+            config.keep_window_maximized = False
+            api = MagicMock()
+            api.can_connect.return_value = False
+            test_window = Window(api=api, config=config)
             exp = True
             obs = test_window.offline
             self.assertEqual(exp, obs)
 
     def test2_init(self):
-        with patch('minigalaxy.ui.window.Api.can_connect', return_value=True):
-            with patch('minigalaxy.ui.window.Api.authenticate', return_value=True):
-                test_window = Window()
-                exp = False
-                obs = test_window.offline
-                self.assertEqual(exp, obs)
-                self.assertEqual(test_window.api.authenticate.called, True)
+        config = MagicMock()
+        config.locale = "en_US.UTF-8"
+        config.keep_window_maximized = False
+        api = MagicMock()
+        api.authenticate.return_value = True
+        test_window = Window(api=api, config=config)
+        exp = False
+        obs = test_window.offline
+        self.assertEqual(exp, obs)
+        api.authenticate.assert_called_once()
 
     def test3_init(self):
-        with patch('minigalaxy.ui.window.Api.authenticate', side_effect=JSONDecodeError(msg='mock', doc='mock', pos=0)):
-            test_window = Window()
-            exp = True
-            obs = test_window.offline
-            self.assertEqual(exp, obs)
+        config = MagicMock()
+        config.locale = "en_US.UTF-8"
+        config.keep_window_maximized = False
+        api = MagicMock()
+        api.authenticate.side_effect = JSONDecodeError(msg='mock', doc='mock', pos=0)
+        test_window = Window(api=api, config=config)
+        exp = True
+        obs = test_window.offline
+        self.assertEqual(exp, obs)
 
 
 del sys.modules['gi']
