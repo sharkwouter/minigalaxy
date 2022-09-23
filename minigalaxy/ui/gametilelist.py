@@ -330,7 +330,7 @@ class GameTileList(Gtk.Box):
             failed_state = self.state.DOWNLOADABLE
         success_state = self.state.INSTALLED
         GLib.idle_add(self.update_to_state, processing_state)
-        err_msg = install_game(self.game, save_location)
+        err_msg = install_game(self.game, save_location, self.config.lang, self.config.install_dir, self.config.keep_installers, self.config.create_applications_file)
         if not err_msg:
             GLib.idle_add(self.update_to_state, success_state)
             install_success = True
