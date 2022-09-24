@@ -1,3 +1,6 @@
+**1.2.2**
+- Update Norwegian Bokmål translation (thanks to kimmalmo)
+
 **1.2.1**
 - Fix downloads failing when content length is not returned by the server
 - Allow different types of downloads to happen at the same time (thanks to jgerrish)
