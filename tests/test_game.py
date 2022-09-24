@@ -271,9 +271,8 @@ en-US
         install_directory = "/home/user/GOG Games"
         install_game_name = "Neverwinter Nights"
         config = MagicMock()
-        config.install_dir = install_directory
-        game = Game(install_game_name, config=config)
-        game.set_install_dir()
+        game = Game(install_game_name)
+        game.set_install_dir(install_directory)
         exp = os.path.join(install_directory, install_game_name)
         obs = game.install_dir
         self.assertEqual(exp, obs)

@@ -116,7 +116,6 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_open_files_clicked")
     def on_menu_button_open_files(self, widget):
-        self.game.set_install_dir()
         subprocess.call(["xdg-open", self.game.install_dir])
 
     def button_sensitive(self, game):

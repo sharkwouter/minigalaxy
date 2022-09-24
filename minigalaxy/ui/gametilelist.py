@@ -191,7 +191,7 @@ class GameTileList(Gtk.Box):
 
     def __set_image(self, save_location):
         set_result = False
-        self.game.set_install_dir()
+        self.game.set_install_dir(self.config.install_dir)
         thumbnail_install_dir = os.path.join(self.game.install_dir, "thumbnail.jpg")
         if os.path.isfile(thumbnail_install_dir):
             GLib.idle_add(self.image.set_from_file, thumbnail_install_dir)
@@ -316,7 +316,7 @@ class GameTileList(Gtk.Box):
         if self.game.id in self.config.current_downloads:
             self.config.current_downloads.remove(self.game.id)
         self.download_list = []
-        self.game.set_install_dir()
+        self.game.set_install_dir(self.config.install_dir)
         install_success = self.__install(save_location)
         if install_success:
             self.__check_for_dlc(self.api.get_info(self.game))
@@ -498,7 +498,7 @@ class GameTileList(Gtk.Box):
         self.progress_bar.set_fraction(0.0)
 
     def reload_state(self):
-        self.game.set_install_dir()
+        self.game.set_install_dir(self.config.install_dir)
         dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING,
                               self.state.UPDATING, self.state.DOWNLOADING]
         if self.current_state in dont_act_in_states:
@@ -571,7 +571,7 @@ class GameTileList(Gtk.Box):
         self.menu_button_update.hide()
         self.button_cancel.hide()
 
-        self.game.set_install_dir()
+        self.game.set_install_dir(self.config.install_dir)
 
         if self.progress_bar:
             self.progress_bar.destroy()
@@ -586,7 +586,7 @@ class GameTileList(Gtk.Box):
         self.menu_button.show()
         self.menu_button_uninstall.show()
         self.button_cancel.hide()
-        self.game.set_install_dir()
+        self.game.set_install_dir(self.config.install_dir)
 
         if self.progress_bar:
             self.progress_bar.destroy()
