@@ -1,3 +1,6 @@
+**1.2.2**
+Update Czech translation (thanks to jakbuz23)
+
 **1.2.1**
 - Fix downloads failing when content length is not returned by the server
 - Allow different types of downloads to happen at the same time (thanks to jgerrish)
