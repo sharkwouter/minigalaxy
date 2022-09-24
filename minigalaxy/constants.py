@@ -1,7 +1,4 @@
-import requests
-import platform
 from minigalaxy.translation import _
-from minigalaxy.version import VERSION
 
 SUPPORTED_DOWNLOAD_LANGUAGES = [
     ["br", _("Brazilian Portuguese")],

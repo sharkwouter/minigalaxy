@@ -44,7 +44,7 @@ class GameTile(Gtk.Box):
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
                  ' UPDATING UPDATE_INSTALLABLE')
 
-    def __init__(self, parent: 'Library', game: Game, config: Config, api: Api, download_manager: DownloadManager):
+    def __init__(self, parent, game: Game, config: Config, api: Api, download_manager: DownloadManager):
         self.config = config
         current_locale = self.config.locale
         default_locale = locale.getdefaultlocale()[0]
