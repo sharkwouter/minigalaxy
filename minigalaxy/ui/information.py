@@ -80,7 +80,7 @@ class Information(Gtk.Dialog):
             webbrowser.open("https://www.gogdb.org/product/{}".format(self.game.id))
         except webbrowser.Error:
             self.parent.parent.show_error(
-                _("Couldn't open forum page"),
+                _("Couldn't open GOG Database page"),
                 _("Please check your internet connection")
             )
 
@@ -90,7 +90,7 @@ class Information(Gtk.Dialog):
             webbrowser.open("https://pcgamingwiki.com/api/gog.php?page={}".format(self.game.id))
         except webbrowser.Error:
             self.parent.parent.show_error(
-                _("Couldn't open forum page"),
+                _("Couldn't open PCGamingWiki page"),
                 _("Please check your internet connection")
             )
 
