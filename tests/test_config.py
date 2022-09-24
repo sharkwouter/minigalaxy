@@ -72,6 +72,38 @@ class TestConfig(TestCase):
         self.assertEqual(False, config.create_applications_file)
         self.assertEqual([], config.current_downloads)
 
+    @patch("os.remove")
+    @patch("os.path.isfile")
+    def test_invalid_config_file_is_deleted(self, mock_isfile: MagicMock, mock_remove: MagicMock):
+        mock_isfile.return_value = True
+        filename = "/this/is/a/test"
+        config_data = \
+            """
+            {
+                "locale": "locale",
+            """
+        with patch("builtins.open", mock_open(read_data=config_data)):
+            config = Config(filename)
+
+        mock_remove.assert_called_once_with(filename)
+
+        self.assertEqual("", config.locale)
+        self.assertEqual("en", config.lang)
+        self.assertEqual("grid", config.view)
+        self.assertEqual("", config.username)
+        self.assertEqual(DEFAULT_INSTALL_DIR, config.install_dir)
+        self.assertEqual("", config.refresh_token)
+        self.assertEqual("", config.username)
+        self.assertEqual(False, config.keep_installers)
+        self.assertEqual(True, config.stay_logged_in)
+        self.assertEqual(False, config.use_dark_theme)
+        self.assertEqual(False, config.show_hidden_games)
+        self.assertEqual(False, config.show_windows_games)
+        self.assertEqual(False, config.keep_window_maximized)
+        self.assertEqual(False, config.installed_filter)
+        self.assertEqual(False, config.create_applications_file)
+        self.assertEqual([], config.current_downloads)
+
     @patch('os.path.isfile')
     def test_get(self, mock_isfile: MagicMock):
         mock_isfile.return_value = True
