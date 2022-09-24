@@ -66,7 +66,7 @@ class TestWindow(TestCase):
             config.keep_window_maximized = False
             api = MagicMock()
             api.can_connect.return_value = False
-            test_window = Window(api=api, config=config)
+            test_window = Window(api=api, config=config, download_manager=MagicMock())
             exp = True
             obs = test_window.offline
             self.assertEqual(exp, obs)
@@ -77,7 +77,7 @@ class TestWindow(TestCase):
         config.keep_window_maximized = False
         api = MagicMock()
         api.authenticate.return_value = True
-        test_window = Window(api=api, config=config)
+        test_window = Window(api=api, config=config, download_manager=MagicMock())
         exp = False
         obs = test_window.offline
         self.assertEqual(exp, obs)
@@ -89,7 +89,7 @@ class TestWindow(TestCase):
         config.keep_window_maximized = False
         api = MagicMock()
         api.authenticate.side_effect = JSONDecodeError(msg='mock', doc='mock', pos=0)
-        test_window = Window(api=api, config=config)
+        test_window = Window(api=api, config=config, download_manager=MagicMock())
         exp = True
         obs = test_window.offline
         self.assertEqual(exp, obs)

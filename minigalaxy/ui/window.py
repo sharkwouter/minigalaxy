@@ -1,6 +1,7 @@
 import os
 import locale
 
+from minigalaxy.download_manager import DownloadManager
 from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
@@ -25,7 +26,7 @@ class Window(Gtk.ApplicationWindow):
     menu_logout = Gtk.Template.Child()
     window_library = Gtk.Template.Child()
 
-    def __init__(self, config: Config, api: 'Api', name="Minigalaxy"):
+    def __init__(self, config: Config, api: 'Api', download_manager: DownloadManager, name="Minigalaxy"):
         current_locale = config.locale
         default_locale = locale.getdefaultlocale()[0]
         if current_locale == '':
@@ -43,7 +44,8 @@ class Window(Gtk.ApplicationWindow):
         self.offline = False
 
         # Set library
-        self.library = Library(self, self.config, self.api)
+        self.library = Library(self, config, api, download_manager)
+
         self.window_library.add(self.library)
         self.header_installed.set_active(self.config.installed_filter)
 

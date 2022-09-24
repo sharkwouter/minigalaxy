@@ -1,14 +1,7 @@
 import unittest
-import sys
 import os
 from unittest.mock import MagicMock, mock_open, patch
-
-m_config = MagicMock()
-m_paths = MagicMock()
-sys.modules['minigalaxy.config'] = m_config
-sys.modules['minigalaxy.paths'] = m_paths
-m_paths.CONFIG_GAMES_DIR = "/home/user/.config/minigalaxy/games/"
-from minigalaxy.game import Game  # noqa: E402
+from minigalaxy.game import Game
 
 
 class TestGame(unittest.TestCase):
@@ -356,16 +349,12 @@ en-US
 
     def test1_get_status_file_path(self):
         game = Game(name="Europa Universalis 2")
-        expected = "/home/user/.config/minigalaxy/games/Europa Universalis 2.json"
+        expected = os.path.expanduser("~/.config/minigalaxy/games/Europa Universalis 2.json")
         observed = game.get_status_file_path()
         self.assertEqual(expected, observed)
 
     def test2_get_status_file_path(self):
         game = Game(name="Europa Universalis 2", install_dir="/home/user/GoG Games//Europa Universalis II")
-        expected = "/home/user/.config/minigalaxy/games/Europa Universalis II.json"
+        expected = os.path.expanduser("~/.config/minigalaxy/games/Europa Universalis II.json")
         observed = game.get_status_file_path()
         self.assertEqual(expected, observed)
-
-
-del sys.modules["minigalaxy.config"]
-del sys.modules["minigalaxy.paths"]

@@ -8,6 +8,7 @@ import urllib.parse
 from enum import Enum
 
 from minigalaxy.config import Config
+from minigalaxy.game import Game
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
 from minigalaxy.download import Download, DownloadType
@@ -16,7 +17,7 @@ from minigalaxy.launcher import start_game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
-from minigalaxy.api import NoDownloadLinkFound
+from minigalaxy.api import NoDownloadLinkFound, Api
 from minigalaxy.ui.gtk import Gtk, GLib
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
@@ -43,8 +44,8 @@ class GameTile(Gtk.Box):
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
                  ' UPDATING UPDATE_INSTALLABLE')
 
-    def __init__(self, parent, game):
-        self.config: Config = parent.config
+    def __init__(self, parent, game: Game, config: Config, api: Api, download_manager: DownloadManager):
+        self.config = config
         current_locale = self.config.locale
         default_locale = locale.getdefaultlocale()[0]
         if current_locale == '':
@@ -60,7 +61,8 @@ class GameTile(Gtk.Box):
                                       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         self.parent = parent
         self.game = game
-        self.api = parent.api
+        self.api = api
+        self.download_manager = download_manager
         self.offline = parent.offline
         self.progress_bar = None
         self.thumbnail_set = False
@@ -134,7 +136,7 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_information_clicked")
     def show_information(self, button):
-        information_window = Information(self, self.game, self.config, self.api)
+        information_window = Information(self, self.game, self.config, self.api, self.download_manager)
         information_window.run()
         information_window.destroy()
 
@@ -149,7 +151,7 @@ class GameTile(Gtk.Box):
         question = _("Are you sure you want to cancel downloading {}?").format(self.game.name)
         if self.parent.parent.show_question(question):
             self.prevent_resume_on_startup()
-            DownloadManager.cancel_download(self.download_list)
+            self.download_manager.cancel_download(self.download_list)
             try:
                 for filename in os.listdir(self.download_dir):
                     if self.game.get_install_directory_name() in filename:
@@ -181,7 +183,7 @@ class GameTile(Gtk.Box):
                     thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
                     download = Download(image_url, thumbnail, DownloadType.THUMBNAIL,
                                         finish_func=self.__set_image)
-                    DownloadManager.download_now(download)
+                    self.download_manager.download_now(download)
                     set_result = True
                     break
                 performed_try += 1
@@ -300,7 +302,7 @@ class GameTile(Gtk.Box):
         self.download_list.extend(download_files)
 
         if check_diskspace(total_file_size, self.config.install_dir):
-            DownloadManager.download(download_files)
+            self.download_manager.download(download_files)
             ds_msg_title = ""
             ds_msg_text = ""
         else:
@@ -469,7 +471,7 @@ class GameTile(Gtk.Box):
                 url = "http:{}".format(icon)
                 dlc_icon = os.path.join(ICON_DIR, "{}.jpg".format(dlc_id))
                 download = Download(url, dlc_icon)
-                DownloadManager.download_now(download)
+                self.download_manager.download_now(download)
                 GLib.idle_add(image.set_from_file, dlc_icon_path)
 
     def set_progress(self, percentage: int):
