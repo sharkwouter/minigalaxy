@@ -1,4 +1,5 @@
 **1.2.2**
+- Show DLC titles in English (thanks to TotalCaesar659)
 - Update Norwegian Bokmål translation (thanks to kimmalmo)
 - Update Czech translation (thanks to jakbuz23)
 
