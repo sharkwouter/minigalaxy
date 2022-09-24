@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-26 22:08+0200\n"
-"PO-Revision-Date: 2022-07-26 22:19+0200\n"
+"POT-Creation-Date: 2022-09-24 10:09+0200\n"
+"PO-Revision-Date: 2022-09-24 10:17+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: cs_CZ\n"
@@ -42,15 +42,15 @@ msgstr "Přidáno na konec příkazu pro spuštění hry"
 msgid "Added in front of the command used to launch the game"
 msgstr "Přidáno před příkaz pro spuštění hry"
 
-#: minigalaxy/ui/gametilelist.py:143 minigalaxy/ui/gametile.py:140
+#: minigalaxy/ui/gametilelist.py:150 minigalaxy/ui/gametile.py:147
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Opravdu chcete zrušit stahování {}?"
 
-#: minigalaxy/ui/window.py:102
+#: minigalaxy/ui/window.py:98
 msgid "Are you sure you want to log out of GOG?"
 msgstr "Opravdu se chcete odhlásit z GOG?"
 
-#: minigalaxy/ui/gametilelist.py:156 minigalaxy/ui/gametile.py:153
+#: minigalaxy/ui/gametilelist.py:163 minigalaxy/ui/gametile.py:160
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Opravdu chcete odinstalovat %s?"
@@ -111,8 +111,8 @@ msgstr "Stažitelný obsah (DLC)"
 msgid "Danish"
 msgstr "Dánština"
 
-#: minigalaxy/ui/gametilelist.py:222 minigalaxy/ui/gametilelist.py:252
-#: minigalaxy/ui/gametile.py:219 minigalaxy/ui/gametile.py:249
+#: minigalaxy/ui/gametilelist.py:234 minigalaxy/ui/gametilelist.py:273
+#: minigalaxy/ui/gametile.py:231 minigalaxy/ui/gametile.py:270
 msgid "Download error"
 msgstr "Chyba stahování"
 
@@ -136,7 +136,7 @@ msgstr ""
 "Nepodařilo se změnit jazyk aplikace. Ujistěte se, že je na Vašem systému "
 "vygenerováno příslušné locale."
 
-#: minigalaxy/ui/gametilelist.py:318 minigalaxy/ui/gametile.py:315
+#: minigalaxy/ui/gametilelist.py:340 minigalaxy/ui/gametile.py:337
 msgid "Failed to install {}"
 msgstr "Instalace {} se nezdařila"
 
@@ -144,8 +144,8 @@ msgstr "Instalace {} se nezdařila"
 msgid "Failed to retrieve library"
 msgstr "Knihovnu se nepodařilo získat"
 
-#: minigalaxy/launcher.py:52 minigalaxy/ui/gametilelist.py:127
-#: minigalaxy/ui/gametile.py:124
+#: minigalaxy/launcher.py:52 minigalaxy/ui/gametilelist.py:134
+#: minigalaxy/ui/gametile.py:131
 msgid "Failed to start {}:"
 msgstr "{} se nezdařilo spustit:"
 
@@ -203,13 +203,13 @@ msgstr "Informace"
 msgid "Information about {}"
 msgstr "Informace o {}"
 
-#: minigalaxy/installer.py:148
+#: minigalaxy/installer.py:149
 msgid "Innoextract extraction failed."
 msgstr "Rozbalení pomocí Innoextract se nezdařilo."
 
-#: minigalaxy/installer.py:165
+#: minigalaxy/installer.py:166
 msgid "Innoextract not installed."
-msgstr "Innoextract není nainstalován."
+msgstr "Balík Innoextract není nainstalován."
 
 #. The place directory in which games are installed. Has to end with ": "
 #: data/ui/preferences.ui:143
@@ -271,7 +271,7 @@ msgstr "Odhlásit"
 
 #: minigalaxy/ui/properties.py:87
 msgid "MangoHud wasn't found. Using MangoHud cannot be enabled."
-msgstr "MangoHud nebyl nalezen. MangoHud nelze zapnout."
+msgstr "Balík MangoHud nebyl nalezen. MangoHud nelze zapnout."
 
 #: minigalaxy/launcher.py:212
 msgid "No executable was found in {}"
@@ -442,7 +442,7 @@ msgctxt "view_tooltip"
 msgid "The preferred view of game library"
 msgstr "Preferované zobrazení knihovny"
 
-#: minigalaxy/ui/gametilelist.py:223 minigalaxy/ui/gametile.py:220
+#: minigalaxy/ui/gametilelist.py:235 minigalaxy/ui/gametile.py:232
 msgid ""
 "There was an error when trying to fetch the download link!\n"
 "{}"
@@ -534,7 +534,7 @@ msgstr "Určuje zdali se mají vytvářet zástupci pro nově nainstalované hry
 msgid "Wine executable:"
 msgstr "Cesta k wine:"
 
-#: minigalaxy/installer.py:179
+#: minigalaxy/installer.py:180
 msgid "Wine extraction failed."
 msgstr "Rozbalení Wine se nezdařilo."
 
@@ -552,34 +552,34 @@ msgstr "Winetricks"
 
 #: minigalaxy/ui/properties.py:113
 msgid "Winetricks wasn't found and cannot be used."
-msgstr "Winetricks nebyl nalezen a nemůže být použit."
+msgstr "Balík Winetricks nebyl nalezen a nemůže být použit."
 
-#: minigalaxy/ui/gametilelist.py:483 minigalaxy/ui/gametile.py:480
+#: minigalaxy/ui/gametilelist.py:507 minigalaxy/ui/gametile.py:504
 msgid "download"
 msgstr "stáhnout"
 
-#: minigalaxy/ui/gametilelist.py:523 minigalaxy/ui/gametile.py:520
+#: minigalaxy/ui/gametilelist.py:547 minigalaxy/ui/gametile.py:544
 msgid "downloading…"
 msgstr "stahování…"
 
-#: minigalaxy/ui/gametilelist.py:514 minigalaxy/ui/gametile.py:511
+#: minigalaxy/ui/gametilelist.py:538 minigalaxy/ui/gametile.py:535
 msgid "in queue…"
 msgstr "ve frontě…"
 
-#: minigalaxy/ui/gametilelist.py:502 minigalaxy/ui/gametile.py:499
+#: minigalaxy/ui/gametilelist.py:526 minigalaxy/ui/gametile.py:523
 msgid "install"
 msgstr "nainstalovat"
 
-#: minigalaxy/ui/gametilelist.py:534 minigalaxy/ui/gametile.py:531
+#: minigalaxy/ui/gametilelist.py:558 minigalaxy/ui/gametile.py:555
 msgid "installing…"
 msgstr "instalace…"
 
-#: minigalaxy/ui/gametilelist.py:549 minigalaxy/ui/gametilelist.py:579
-#: minigalaxy/ui/gametile.py:546 minigalaxy/ui/gametile.py:576
+#: minigalaxy/ui/gametilelist.py:573 minigalaxy/ui/gametilelist.py:603
+#: minigalaxy/ui/gametile.py:570 minigalaxy/ui/gametile.py:600
 msgid "play"
 msgstr "hrát"
 
-#: minigalaxy/ui/gametilelist.py:565 minigalaxy/ui/gametile.py:562
+#: minigalaxy/ui/gametilelist.py:589 minigalaxy/ui/gametile.py:586
 msgid "uninstalling…"
 msgstr "odinstalace…"
 
@@ -587,7 +587,7 @@ msgstr "odinstalace…"
 msgid "unknown"
 msgstr "neznámé"
 
-#: minigalaxy/ui/gametilelist.py:588 minigalaxy/ui/gametile.py:585
+#: minigalaxy/ui/gametilelist.py:612 minigalaxy/ui/gametile.py:609
 msgid "updating…"
 msgstr "aktualizace…"
 
