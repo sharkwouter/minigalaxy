@@ -1,5 +1,5 @@
 **1.2.2**
-Update Czech translation (thanks to jakbuz23)
+- Update Czech translation (thanks to jakbuz23)
 
 **1.2.1**
 - Fix downloads failing when content length is not returned by the server
