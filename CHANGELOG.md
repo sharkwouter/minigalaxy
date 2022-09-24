@@ -2,6 +2,7 @@
 - Show DLC titles in English (thanks to TotalCaesar659)
 - Update Norwegian Bokmål translation (thanks to kimmalmo)
 - Update Czech translation (thanks to jakbuz23)
+- Fix connection error texts (thanks to TotalCaesar659)
 
 **1.2.1**
 - Fix downloads failing when content length is not returned by the server
