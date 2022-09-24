@@ -80,7 +80,7 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = len(API_GAMES)
@@ -98,7 +98,7 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = True
@@ -119,7 +119,7 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = True
@@ -142,7 +142,7 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = "http://test_url1"
@@ -160,7 +160,7 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = "Neverwinter Nights: Enhanced Edition"
@@ -174,7 +174,7 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = 1
