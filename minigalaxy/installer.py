@@ -40,7 +40,14 @@ def check_diskspace(required_size, location):
     return diskspace_available >= installed_game_size
 
 
-def install_game(game: Game, installer: str, language: str, install_dir: str, keep_installers: bool, create_desktop_file: bool):  # noqa: C901
+def install_game(  # noqa: C901
+        game: Game,
+        installer: str,
+        language: str,
+        install_dir: str,
+        keep_installers: bool,
+        create_desktop_file: bool
+):
     error_message = ""
     tmp_dir = ""
     print("Installing {}".format(game.name))
