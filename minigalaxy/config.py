@@ -114,7 +114,7 @@ class Config:
 
     @property
     def show_hidden_games(self) -> bool:
-        return self.get("keep_installers", False)
+        return self.get("show_hidden_games", False)
 
     @show_hidden_games.setter
     def show_hidden_games(self, new_value: bool) -> None:
