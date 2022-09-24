@@ -1,5 +1,7 @@
 import os
 import json
+from typing import List
+
 from minigalaxy.paths import CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
 
 
@@ -151,9 +153,9 @@ class Config:
         self.set("create_applications_file", new_value)
 
     @property
-    def current_downloads(self) -> list[int]:
+    def current_downloads(self) -> List[int]:
         return self.get("current_downloads", [])
 
     @current_downloads.setter
-    def current_downloads(self, new_value: list[int]) -> None:
+    def current_downloads(self, new_value: List[int]) -> None:
         self.set("current_downloads", new_value)
