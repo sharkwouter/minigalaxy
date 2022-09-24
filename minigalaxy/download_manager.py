@@ -22,8 +22,9 @@ import time
 import threading
 import queue
 
+from requests import Session
 from requests.exceptions import RequestException
-from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, SESSION, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
+from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
 from minigalaxy.download import Download, DownloadType
 import minigalaxy.logger    # noqa: F401
 
@@ -55,20 +56,22 @@ class QueuedDownloadItem:
             return self.queue_time < other.queue_time
 
 
-class __DownloadManger:
+class DownloadManager:
     """
     A DownloadManager that provides an interface to manage and retry downloads.
 
     First, you need to create a Download object, then pass the Download object to the
     DownloadManager download or download_now method to download it.
     """
-    def __init__(self):
+    def __init__(self, session: Session):
         """
         Create a new DownloadManager Object
 
         Args:
             This initializer takes no arguments
         """
+        self.session = session
+
         # A queue for UI elements
         self.__ui_queue = queue.PriorityQueue()
 
@@ -354,15 +357,16 @@ class __DownloadManger:
               or "ab" to append to a file for download resumes
         """
         resume_header = {'Range': 'bytes={}-'.format(start_point)}
-        download_request = SESSION.get(download.url, headers=resume_header, stream=True, timeout=30)
+        download_request = self.session.get(download.url, headers=resume_header, stream=True, timeout=30)
         downloaded_size = start_point
+        download.set_progress(0)
         file_size = None
         try:
             file_size = int(download_request.headers.get('content-length'))
         except (ValueError, TypeError):
             print(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
         result = True
-        if not file_size or downloaded_size < file_size:
+        if file_size is None or downloaded_size < file_size:
             with open(download.save_location, download_mode) as save_file:
                 for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
                     save_file.write(chunk)
@@ -372,12 +376,10 @@ class __DownloadManger:
                         result = False
                         del self.__cancel[download]
                         break
-                    if file_size:
+                    if file_size is not None:
                         progress = int(downloaded_size / file_size * 100)
                         download.set_progress(progress)
-                save_file.close()
-        else:
-            download.set_progress(100)
+        download.set_progress(100)
         self.logger.debug("Returning result from _download_operation: {}".format(result))
         return result
 
@@ -395,12 +397,9 @@ class __DownloadManger:
             return False
 
         # Check if the first part of the file
-        download_request = SESSION.get(download.url, stream=True)
+        download_request = self.session.get(download.url, stream=True)
         size_to_check = DOWNLOAD_CHUNK_SIZE * 5
         for chunk in download_request.iter_content(chunk_size=size_to_check):
             with open(download.save_location, "rb") as file:
                 file_content = file.read(size_to_check)
                 return file_content == chunk
-
-
-DownloadManager = __DownloadManger()

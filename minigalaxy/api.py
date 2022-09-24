@@ -5,9 +5,11 @@ from urllib.parse import urlencode
 import requests
 import xml.etree.ElementTree as ET
 
+from requests import Session
+
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
-from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
+from minigalaxy.constants import IGNORE_GAME_IDS
 from minigalaxy.config import Config
 
 
@@ -16,8 +18,9 @@ class NoDownloadLinkFound(BaseException):
 
 
 class Api:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, session: Session):
         self.config = config
+        self.session = session
         self.login_success_url = "https://embed.gog.com/on_login_success"
         self.redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
         self.client_id = "46899977096215655"
@@ -61,7 +64,7 @@ class Api:
 
     def __get_refresh_token(self, params: dict) -> str:
         request_url = "https://auth.gog.com/token"
-        response = SESSION.get(request_url, params=params)
+        response = self.session.get(request_url, params=params)
         response_params = response.json()
         if "access_token" in response_params and "expires_in" in response_params and "refresh_token" in response_params:
             self.active_token = response_params["access_token"]
@@ -195,11 +198,10 @@ class Api:
 
         return file_info
 
-    @staticmethod
-    def __get_xml_checksum(url):
+    def __get_xml_checksum(self, url):
         result = {}
         try:
-            response = SESSION.get(url)
+            response = self.session.get(url)
             if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
                 response_object = ET.fromstring(response.text)
                 if response_object and response_object.attrib:
@@ -241,15 +243,14 @@ class Api:
                 break
         return version
 
-    @staticmethod
-    def can_connect() -> bool:
+    def can_connect(self) -> bool:
         urls = [
             "https://embed.gog.com",
             "https://auth.gog.com",
         ]
         for url in urls:
             try:
-                SESSION.get(url, timeout=5)
+                self.session.get(url, timeout=5)
             except requests.exceptions.ConnectionError:
                 return False
         return True
@@ -268,7 +269,7 @@ class Api:
         }
         result = {}
         try:
-            response = SESSION.get(url, headers=headers, params=params)
+            response = self.session.get(url, headers=headers, params=params)
             if self.debug:
                 print("Request: {}".format(url))
                 print("Return code: {}".format(response.status_code))
@@ -283,11 +284,10 @@ class Api:
             print("")
         return result
 
-    @staticmethod
-    def __request_gamesdb(game: Game):
+    def __request_gamesdb(self, game: Game):
         request_url = "https://gamesdb.gog.com/platforms/gog/external_releases/{}".format(game.id)
         try:
-            response = SESSION.get(request_url)
+            response = self.session.get(request_url)
             respones_dict = response.json()
         except (requests.exceptions.ConnectionError, ValueError):
             respones_dict = {}

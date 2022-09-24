@@ -3,6 +3,8 @@ import re
 import json
 import threading
 from typing import List
+
+from minigalaxy.download_manager import DownloadManager
 from minigalaxy.paths import UI_DIR
 from minigalaxy.api import Api
 from minigalaxy.game import Game
@@ -19,11 +21,12 @@ class Library(Gtk.Viewport):
 
     flowbox = Gtk.Template.Child()
 
-    def __init__(self, parent, config: Config, api: Api):
+    def __init__(self, parent, config: Config, api: Api, download_manager: DownloadManager):
         Gtk.Viewport.__init__(self)
         self.parent = parent
         self.config = config
         self.api = api
+        self.download_manager = download_manager
         self.show_installed_only = self.config.installed_filter
         self.search_string = ""
         self.offline = False
@@ -102,9 +105,9 @@ class Library(Gtk.Viewport):
     def __add_gametile(self, game):
         view = self.config.view
         if view == "grid":
-            self.flowbox.add(GameTile(self, game))
+            self.flowbox.add(GameTile(self, game, self.config, self.api, self.download_manager))
         elif view == "list":
-            self.flowbox.add(GameTileList(self, game))
+            self.flowbox.add(GameTileList(self, game, self.config, self.api, self.download_manager))
         self.sort_library()
         self.flowbox.show_all()
 

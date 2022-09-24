@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+import platform
 import sys
 import os
 import argparse
 import shutil
 from os.path import realpath, dirname, normpath
+
+import requests
 
 APPLICATION_NAME = "Minigalaxy"
 
@@ -44,11 +47,15 @@ def main():
     from minigalaxy.ui import Window
     from minigalaxy.config import Config
     from minigalaxy.api import Api
+    from minigalaxy.download_manager import DownloadManager
 
     # Start the application
     config = Config()
-    api = Api(config)
-    window = Window(config, api, APPLICATION_NAME)
+    session = requests.Session()
+    session.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {})'.format(VERSION, platform.machine())})
+    api = Api(config, session)
+    download_manager = DownloadManager(session)
+    window = Window(config, api, download_manager, APPLICATION_NAME)
     window.connect("destroy", Gtk.main_quit)
     Gtk.main()
 
