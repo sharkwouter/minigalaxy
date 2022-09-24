@@ -185,7 +185,7 @@ class TestConfig(TestCase):
             """
         with patch("builtins.open", mock_open(read_data=config_data)):
             config = Config()
-        lang = config.get("lang")
+        lang = config._Config__get("lang")
         self.assertEqual("lang", lang)
 
     @patch("os.rename")
@@ -213,7 +213,7 @@ class TestConfig(TestCase):
             """
         with patch("builtins.open", mock_open(read_data=config_data)):
             config = Config("/path/config.json")
-            config.set("lang", "lang2")
+            config._Config__set("lang", "lang2")
 
         self.assertEqual("lang2", config.lang)
         mock_rename.assert_called_once_with("/path/config.json.tmp", "/path/config.json")
