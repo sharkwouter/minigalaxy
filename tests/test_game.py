@@ -270,7 +270,6 @@ en-US
     def test_set_install_dir(self):
         install_directory = "/home/user/GOG Games"
         install_game_name = "Neverwinter Nights"
-        config = MagicMock()
         game = Game(install_game_name)
         game.set_install_dir(install_directory)
         exp = os.path.join(install_directory, install_game_name)
