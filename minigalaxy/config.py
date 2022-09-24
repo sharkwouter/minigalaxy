@@ -33,129 +33,129 @@ class Config:
             file.write(json.dumps(self.__config, ensure_ascii=False))
         os.rename(temp_file, self.__config_file)
 
-    def get(self, key: str, default: any = None) -> any:
+    def __get(self, key: str, default: any = None) -> any:
         return self.__config[key] if key in self.__config else default
 
-    def set(self, key: str, value: any) -> None:
+    def __set(self, key: str, value: any) -> None:
         self.__config[key] = value
         self.__write()
 
     @property
     def locale(self) -> str:
-        return self.get("locale", "")
+        return self.__get("locale", "")
 
     @locale.setter
     def locale(self, new_value: str) -> None:
-        self.set("locale", new_value)
+        self.__set("locale", new_value)
 
     @property
     def lang(self) -> str:
-        return self.get("lang", "en")
+        return self.__get("lang", "en")
 
     @lang.setter
     def lang(self, new_value: str) -> None:
-        self.set("lang", new_value)
+        self.__set("lang", new_value)
 
     @property
     def view(self) -> str:
-        return self.get("view", "grid")
+        return self.__get("view", "grid")
 
     @view.setter
     def view(self, new_value: str) -> None:
-        self.set("view", new_value)
+        self.__set("view", new_value)
 
     @property
     def install_dir(self) -> str:
-        return self.get("install_dir", DEFAULT_INSTALL_DIR)
+        return self.__get("install_dir", DEFAULT_INSTALL_DIR)
 
     @install_dir.setter
     def install_dir(self, new_value: str) -> None:
-        self.set("install_dir", new_value)
+        self.__set("install_dir", new_value)
 
     @property
     def username(self) -> str:
-        return self.get("username", "")
+        return self.__get("username", "")
 
     @username.setter
     def username(self, new_value: str) -> None:
-        self.set("username", new_value)
+        self.__set("username", new_value)
 
     @property
     def refresh_token(self) -> str:
-        return self.get("refresh_token", "")
+        return self.__get("refresh_token", "")
 
     @refresh_token.setter
     def refresh_token(self, new_value: str) -> None:
-        self.set("refresh_token", new_value)
+        self.__set("refresh_token", new_value)
 
     @property
     def keep_installers(self) -> bool:
-        return self.get("keep_installers", False)
+        return self.__get("keep_installers", False)
 
     @keep_installers.setter
     def keep_installers(self, new_value: bool) -> None:
-        self.set("keep_installers", new_value)
+        self.__set("keep_installers", new_value)
 
     @property
     def stay_logged_in(self) -> bool:
-        return self.get("stay_logged_in", True)
+        return self.__get("stay_logged_in", True)
 
     @stay_logged_in.setter
     def stay_logged_in(self, new_value: bool) -> None:
-        self.set("stay_logged_in", new_value)
+        self.__set("stay_logged_in", new_value)
 
     @property
     def use_dark_theme(self) -> bool:
-        return self.get("use_dark_theme", False)
+        return self.__get("use_dark_theme", False)
 
     @use_dark_theme.setter
     def use_dark_theme(self, new_value: bool) -> None:
-        self.set("use_dark_theme", new_value)
+        self.__set("use_dark_theme", new_value)
 
     @property
     def show_hidden_games(self) -> bool:
-        return self.get("show_hidden_games", False)
+        return self.__get("show_hidden_games", False)
 
     @show_hidden_games.setter
     def show_hidden_games(self, new_value: bool) -> None:
-        self.set("show_hidden_games", new_value)
+        self.__set("show_hidden_games", new_value)
 
     @property
     def show_windows_games(self) -> bool:
-        return self.get("show_windows_games", False)
+        return self.__get("show_windows_games", False)
 
     @show_windows_games.setter
     def show_windows_games(self, new_value: bool) -> None:
-        self.set("show_windows_games", new_value)
+        self.__set("show_windows_games", new_value)
 
     @property
     def keep_window_maximized(self) -> bool:
-        return self.get("keep_window_maximized", False)
+        return self.__get("keep_window_maximized", False)
 
     @keep_window_maximized.setter
     def keep_window_maximized(self, new_value: bool) -> None:
-        self.set("keep_window_maximized", new_value)
+        self.__set("keep_window_maximized", new_value)
 
     @property
     def installed_filter(self) -> bool:
-        return self.get("installed_filter", False)
+        return self.__get("installed_filter", False)
 
     @installed_filter.setter
     def installed_filter(self, new_value: bool) -> None:
-        self.set("installed_filter", new_value)
+        self.__set("installed_filter", new_value)
 
     @property
     def create_applications_file(self) -> bool:
-        return self.get("create_applications_file", False)
+        return self.__get("create_applications_file", False)
 
     @create_applications_file.setter
     def create_applications_file(self, new_value: bool) -> None:
-        self.set("create_applications_file", new_value)
+        self.__set("create_applications_file", new_value)
 
     @property
     def current_downloads(self) -> List[int]:
-        return self.get("current_downloads", [])
+        return self.__get("current_downloads", [])
 
     @current_downloads.setter
     def current_downloads(self, new_value: List[int]) -> None:
-        self.set("current_downloads", new_value)
+        self.__set("current_downloads", new_value)
