@@ -1,7 +1,7 @@
 [project]
 name = "minigalaxy"
 description = "A simple GOG Linux client"
-version = "1.1.0"
+version = "1.2.1"
 authors = [
     { name = "Wouter Wijsman", email = "wwijsman@live.nl" }
 ]

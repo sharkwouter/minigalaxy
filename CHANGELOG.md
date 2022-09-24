@@ -1,3 +1,8 @@
+**1.2.1**
+- Fix downloads failing when content length is not returned by the server
+- Allow different types of downloads to happen at the same time (thanks to jgerrish)
+- Fix metadata file having releases in wrong order
+
 **1.2.0**
 - Split game information and properties into different windows (thanks to TotalCaesar659)
 - Add list view (thanks to TotalCaesar659)
@@ -26,6 +31,7 @@
 - Improve error handling upon API errors
 - Fix several issues with launching Windows games from Minigalaxy
 - Fix some games getting stuck on in queue
+- Fix Windows game installation not caring about preferred language (thanks to Kzimir)
 
 - Add Greek translation (thanks to Pyrofanis)
 - Add Spanish (Spain) translation (thanks to mbarrio)

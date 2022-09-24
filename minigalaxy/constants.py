@@ -71,3 +71,8 @@ MINIMUM_RESUME_SIZE = 50 * 1024**2  # 50 MB
 
 SESSION = requests.Session()
 SESSION.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {})'.format(VERSION, platform.machine())})
+
+# UI download threads are for UI assets like thumbnails or icons
+UI_DOWNLOAD_THREADS = 4
+# Game download threads are for long-running downloads like games, DLC or updates
+GAME_DOWNLOAD_THREADS = 4
