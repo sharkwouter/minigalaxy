@@ -16,9 +16,11 @@ if os.path.isdir(os.path.join(LAUNCH_PATH, "../minigalaxy")):
 from minigalaxy.version import VERSION
 from minigalaxy.paths import CONFIG_DIR, CACHE_DIR
 
+
 def conf_reset():
     shutil.rmtree(CONFIG_DIR, ignore_errors=True)
     shutil.rmtree(CACHE_DIR, ignore_errors=True)
+
 
 def cli_params():
     parser = argparse.ArgumentParser(description="A simple GOG Linux client")
@@ -31,6 +33,7 @@ def cli_params():
 
     return parser.parse_args()
 
+
 def main():
     cli_args = cli_params()
 
@@ -39,9 +42,13 @@ def main():
     # Import the gi module after parsing arguments
     from minigalaxy.ui.gtk import Gtk
     from minigalaxy.ui import Window
+    from minigalaxy.config import Config
+    from minigalaxy.api import Api
 
     # Start the application
-    window = Window(APPLICATION_NAME)
+    config = Config()
+    api = Api(config)
+    window = Window(config, api, APPLICATION_NAME)
     window.connect("destroy", Gtk.main_quit)
     Gtk.main()
 

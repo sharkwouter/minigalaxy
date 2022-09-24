@@ -1,113 +1,161 @@
 import os
-import threading
 import json
-import time
-from minigalaxy.paths import CONFIG_DIR, CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
+from typing import List
 
-# The default values for new configuration files
-DEFAULT_CONFIGURATION = {
-    "locale": "",
-    "lang": "en",
-    "view": "grid",
-    "install_dir": DEFAULT_INSTALL_DIR,
-    "keep_installers": False,
-    "stay_logged_in": True,
-    "use_dark_theme": False,
-    "show_hidden_games": False,
-    "show_windows_games": False,
-    "keep_window_maximized": False,
-    "installed_filter": False,
-    "create_applications_file": False
-}
+from minigalaxy.paths import CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
 
 
-# Make sure you never spawn two instances of this class
-# If multiple instances go out of sync, they will overwrite each others changes
-# The config file is only read once upon starting up
-class __Config:
-    def __init__(self):
-        self.first_run = False
+class Config:
+
+    __config_file: str
+    __config: dict
+
+    def __init__(self, config_file: str = CONFIG_FILE_PATH):
+        self.__config_file = config_file
         self.__config = {}
-        self.__config_file = CONFIG_FILE_PATH
-        self.__update_required = False
+        self.__load()
 
-    def first_run_init(self):
-        if not self.first_run:
-            self.first_run = True
-            self.__config = self.__load_config_file()
-            self.__add_missing_config_entries()
-            # Update the config file regularly to reflect the self.__config dictionary
-            keep_config_synced_thread = threading.Thread(target=self.__keep_config_synced)
-            keep_config_synced_thread.daemon = True
-            keep_config_synced_thread.start()
-
-    def __keep_config_synced(self):
-        while True:
-            if self.__update_required:
-                self.__update_config_file()
-                self.__update_required = False
-            time.sleep(0.1)
-
-    def __load_config_file(self) -> dict:
-        if os.path.exists(self.__config_file):
+    def __load(self) -> None:
+        if os.path.isfile(self.__config_file):
             with open(self.__config_file, "r") as file:
                 try:
-                    return json.loads(file.read())
+                    self.__config = json.loads(file.read())
                 except json.decoder.JSONDecodeError:
                     print("Reading config.json failed, creating new config file.")
-                    return self.__create_config_file()
-        else:
-            return self.__create_config_file()
+                    os.remove(self.__config_file)
 
-    def __create_config_file(self) -> dict:
-        # Make sure the configuration directory exists before creating the configuration file
-        if not os.path.exists(CONFIG_DIR):
-            os.makedirs(CONFIG_DIR, mode=0o755)
-        with open(self.__config_file, "w") as file:
-            file.write(json.dumps(DEFAULT_CONFIGURATION))
-            file.close()
+    def __write(self) -> None:
+        if not os.path.isfile(self.__config_file):
+            config_dir = os.path.dirname(self.__config_file)
+            os.makedirs(config_dir, mode=0o700, exist_ok=True)
+        temp_file = f"{self.__config_file}.tmp"
+        with open(temp_file, "w") as file:
+            file.write(json.dumps(self.__config, ensure_ascii=False))
+        os.rename(temp_file, self.__config_file)
 
-        # Make sure the default installation path exists
-        if not os.path.isdir(DEFAULT_CONFIGURATION['install_dir']):
-            os.makedirs(DEFAULT_CONFIGURATION['install_dir'], mode=0o755)
+    def __get(self, key: str, default: any = None) -> any:
+        return self.__config[key] if key in self.__config else default
 
-        return DEFAULT_CONFIGURATION
-
-    def __update_config_file(self):
-        with open(self.__config_file, "w") as file:
-            file.write(json.dumps(self.__config))
-            file.close()
-
-    def __add_missing_config_entries(self):
-        # Make sure all config values in the default configuration are available
-        added_value = False
-        for key in DEFAULT_CONFIGURATION:
-            if self.get(key) is None:
-                self.set(key, DEFAULT_CONFIGURATION[key])
-                added_value = True
-        if added_value:
-            self.__update_config_file()
-            self.__config = self.__load_config_file()
-
-    def set(self, key, value):
-        self.first_run_init()
+    def __set(self, key: str, value: any) -> None:
         self.__config[key] = value
-        self.__update_required = True
+        self.__write()
 
-    def get(self, key):
-        self.first_run_init()
-        try:
-            return self.__config[key]
-        except KeyError:
-            return None
+    @property
+    def locale(self) -> str:
+        return self.__get("locale", "")
 
-    def unset(self, key):
-        self.first_run_init()
-        try:
-            del self.__config[key]
-            self.__update_required = True
-        except KeyError:
-            pass
+    @locale.setter
+    def locale(self, new_value: str) -> None:
+        self.__set("locale", new_value)
 
+    @property
+    def lang(self) -> str:
+        return self.__get("lang", "en")
 
-Config = __Config()
+    @lang.setter
+    def lang(self, new_value: str) -> None:
+        self.__set("lang", new_value)
+
+    @property
+    def view(self) -> str:
+        return self.__get("view", "grid")
+
+    @view.setter
+    def view(self, new_value: str) -> None:
+        self.__set("view", new_value)
+
+    @property
+    def install_dir(self) -> str:
+        return self.__get("install_dir", DEFAULT_INSTALL_DIR)
+
+    @install_dir.setter
+    def install_dir(self, new_value: str) -> None:
+        self.__set("install_dir", new_value)
+
+    @property
+    def username(self) -> str:
+        return self.__get("username", "")
+
+    @username.setter
+    def username(self, new_value: str) -> None:
+        self.__set("username", new_value)
+
+    @property
+    def refresh_token(self) -> str:
+        return self.__get("refresh_token", "")
+
+    @refresh_token.setter
+    def refresh_token(self, new_value: str) -> None:
+        self.__set("refresh_token", new_value)
+
+    @property
+    def keep_installers(self) -> bool:
+        return self.__get("keep_installers", False)
+
+    @keep_installers.setter
+    def keep_installers(self, new_value: bool) -> None:
+        self.__set("keep_installers", new_value)
+
+    @property
+    def stay_logged_in(self) -> bool:
+        return self.__get("stay_logged_in", True)
+
+    @stay_logged_in.setter
+    def stay_logged_in(self, new_value: bool) -> None:
+        self.__set("stay_logged_in", new_value)
+
+    @property
+    def use_dark_theme(self) -> bool:
+        return self.__get("use_dark_theme", False)
+
+    @use_dark_theme.setter
+    def use_dark_theme(self, new_value: bool) -> None:
+        self.__set("use_dark_theme", new_value)
+
+    @property
+    def show_hidden_games(self) -> bool:
+        return self.__get("show_hidden_games", False)
+
+    @show_hidden_games.setter
+    def show_hidden_games(self, new_value: bool) -> None:
+        self.__set("show_hidden_games", new_value)
+
+    @property
+    def show_windows_games(self) -> bool:
+        return self.__get("show_windows_games", False)
+
+    @show_windows_games.setter
+    def show_windows_games(self, new_value: bool) -> None:
+        self.__set("show_windows_games", new_value)
+
+    @property
+    def keep_window_maximized(self) -> bool:
+        return self.__get("keep_window_maximized", False)
+
+    @keep_window_maximized.setter
+    def keep_window_maximized(self, new_value: bool) -> None:
+        self.__set("keep_window_maximized", new_value)
+
+    @property
+    def installed_filter(self) -> bool:
+        return self.__get("installed_filter", False)
+
+    @installed_filter.setter
+    def installed_filter(self, new_value: bool) -> None:
+        self.__set("installed_filter", new_value)
+
+    @property
+    def create_applications_file(self) -> bool:
+        return self.__get("create_applications_file", False)
+
+    @create_applications_file.setter
+    def create_applications_file(self, new_value: bool) -> None:
+        self.__set("create_applications_file", new_value)
+
+    @property
+    def current_downloads(self) -> List[int]:
+        return self.__get("current_downloads", [])
+
+    @current_downloads.setter
+    def current_downloads(self, new_value: List[int]) -> None:
+        self.__set("current_downloads", new_value)

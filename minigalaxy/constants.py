@@ -23,6 +23,7 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
     ["es", _("Spanish")],
     ["sv", _("Swedish")],
     ["tr", _("Turkish")],
+    ["ro", _("Romanian")],
 ]
 
 SUPPORTED_LOCALES = [
@@ -46,6 +47,8 @@ SUPPORTED_LOCALES = [
     ["zh_TW", _("Traditional Chinese")],
     ["tr", _("Turkish")],
     ["uk", _("Ukrainian")],
+    ["el", _("Greek")],
+    ["ro", _("Romanian")],
 ]
 
 VIEWS = [
@@ -68,3 +71,8 @@ MINIMUM_RESUME_SIZE = 50 * 1024**2  # 50 MB
 
 SESSION = requests.Session()
 SESSION.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {})'.format(VERSION, platform.machine())})
+
+# UI download threads are for UI assets like thumbnails or icons
+UI_DOWNLOAD_THREADS = 4
+# Game download threads are for long-running downloads like games, DLC or updates
+GAME_DOWNLOAD_THREADS = 4

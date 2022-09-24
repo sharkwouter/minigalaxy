@@ -4,6 +4,8 @@ import time
 from urllib.parse import urlencode
 import requests
 import xml.etree.ElementTree as ET
+
+from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS, SESSION
 from minigalaxy.config import Config
@@ -14,7 +16,8 @@ class NoDownloadLinkFound(BaseException):
 
 
 class Api:
-    def __init__(self):
+    def __init__(self, config: Config):
+        self.config = config
         self.login_success_url = "https://embed.gog.com/on_login_success"
         self.redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
         self.client_id = "46899977096215655"
@@ -91,7 +94,7 @@ class Api:
                         # Only support Linux unless the show_windows_games setting is enabled
                         if product["worksOn"]["Linux"]:
                             platform = "linux"
-                        elif Config.get("show_windows_games"):
+                        elif self.config.show_windows_games:
                             platform = "windows"
                         else:
                             continue
@@ -153,7 +156,7 @@ class Api:
 
         download_info = possible_downloads[0]
         for installer in possible_downloads:
-            if installer['language'] == Config.get("lang"):
+            if installer['language'] == self.config.lang:
                 download_info = installer
                 break
             if installer['language'] == "en":
@@ -166,64 +169,58 @@ class Api:
     def get_real_download_link(self, url):
         return self.__request(url)['downlink']
 
-    def get_download_file_md5(self, url):
+    def get_download_file_info(self, url):
         """
-        Returns a download file's md5 sum
-        Returns an empty string if anything goes wrong
+        Returns some information about a downloadable file based on an XML file offered by GOG
         :param url: Url to get download and checksum links from the API
-        :return: the md5 sum as string
+        :return: a FileInfo object with md5 set to the md5 or and empty string and size set to the file size or 0
         """
-        result = ""
-        checksum_data = self.__request(url)
-        if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
-            xml_data = self.__get_xml_checksum(checksum_data['checksum'])
-            if "md5" in xml_data.keys() and len(xml_data["md5"]) > 0:
-                result = xml_data["md5"]
+        file_info = FileInfo(md5="", size=0)
+        try:
+            checksum_data = self.__request(url)
+            if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
+                xml_data = self.__get_xml_checksum(checksum_data['checksum'])
+                if "md5" in xml_data.keys() and len(xml_data["md5"]) > 0:
+                    file_info.md5 = xml_data["md5"]
+                if "total_size" in xml_data.keys() and len(xml_data["total_size"]) > 0:
+                    file_info.size = int(xml_data["total_size"])
+        except requests.exceptions.RequestException as e:
+            print("Couldn't retrieve file info. Encountered HTTP exception: {}".format(e))
 
-        if not result:
+        if not file_info.md5:
             print("Couldn't find md5 in xml checksum data")
 
-        return result
-
-    def get_file_size(self, url):
-        """
-        Returns the file size according to an XML file offered by GOG
-        Returns 0 if anything goes wrong
-        :param url: Url to get download and checksum links from the API
-        :return: probable file size in bytes as int
-        """
-        result = 0
-        checksum_data = self.__request(url)
-        if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
-            xml_data = self.__get_xml_checksum(checksum_data['checksum'])
-            if "total_size" in xml_data.keys() and int(xml_data["total_size"]) > 0:
-                result = int(xml_data["total_size"])
-
-        if not result:
+        if not file_info.size:
             print("Couldn't find file size in xml checksum data")
 
-        return result
+        return file_info
 
-    def __get_xml_checksum(self, url):
+    @staticmethod
+    def __get_xml_checksum(url):
         result = {}
-        response = SESSION.get(url)
-        if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
-            response_object = ET.fromstring(response.text)
-            if response_object and response_object.attrib:
-                result = response_object.attrib
-        else:
-            print("Couldn't read xml data. Response with code {} received with the following content: {}".format(
-                response.status_code, response.text
-            ))
-        return result
+        try:
+            response = SESSION.get(url)
+            if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
+                response_object = ET.fromstring(response.text)
+                if response_object and response_object.attrib:
+                    result = response_object.attrib
+            else:
+                print("Couldn't read xml data. Response with code {} received with the following content: {}".format(
+                    response.status_code, response.text
+                ))
+        except requests.exceptions.RequestException as e:
+            print("Couldn't read xml data. Received RequestException : {}".format(e))
+        finally:
+            return result
 
     def get_user_info(self) -> str:
-        username = Config.get("username")
+        username = self.config.username
         if not username:
             url = "https://embed.gog.com/userData.json"
             response = self.__request(url)
-            username = response["username"]
-            Config.set("username", username)
+            if "username" in response.keys():
+                username = response["username"]
+                self.config.username = username
         return username
 
     def get_version(self, game: Game, gameinfo=None, dlc_name="") -> str:
@@ -262,20 +259,29 @@ class Api:
         # Refresh the token if needed
         if self.active_token_expiration_time < time.time():
             print("Refreshing token")
-            refresh_token = Config.get("refresh_token")
-            Config.set("refresh_token", self.__refresh_token(refresh_token))
+            refresh_token = self.config.refresh_token
+            self.config.refresh_token = self.__refresh_token(refresh_token)
 
         # Make the request
         headers = {
             'Authorization': "Bearer {}".format(str(self.active_token)),
         }
-        response = SESSION.get(url, headers=headers, params=params)
-        if self.debug:
+        result = {}
+        try:
+            response = SESSION.get(url, headers=headers, params=params)
+            if self.debug:
+                print("Request: {}".format(url))
+                print("Return code: {}".format(response.status_code))
+                print("Response body: {}".format(response.text))
+                print("")
+            if response.status_code < 300:
+                result = response.json()
+        except requests.exceptions.RequestException as e:
+            print("Encountered exception while making HTTP request.")
             print("Request: {}".format(url))
-            print("Return code: {}".format(response.status_code))
-            print("Response body: {}".format(response.text))
+            print("Exception: {}".format(e))
             print("")
-        return response.json()
+        return result
 
     @staticmethod
     def __request_gamesdb(game: Game):

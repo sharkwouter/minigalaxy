@@ -2,7 +2,6 @@ import os
 import re
 import json
 
-from minigalaxy.config import Config
 from minigalaxy.paths import CONFIG_GAMES_DIR
 
 
@@ -136,9 +135,13 @@ class Game:
         # End: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
         return value
 
-    def set_install_dir(self):
+    def set_install_dir(self, install_dir) -> None:
+        """
+        Set the install directory based on the given install dir and the game name
+        :param install_dir: the global install directory from the config
+        """
         if not self.install_dir:
-            self.install_dir = os.path.join(Config.get("install_dir"), self.get_install_directory_name())
+            self.install_dir = os.path.join(install_dir, self.get_install_directory_name())
 
     def __str__(self):
         return self.name

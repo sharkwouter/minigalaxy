@@ -6,9 +6,7 @@ import sys
 import requests
 import time
 m_constants = MagicMock()
-m_config = MagicMock()
 sys.modules['minigalaxy.constants'] = m_constants
-sys.modules['minigalaxy.config'] = m_config
 from minigalaxy.api import Api    # noqa: E402
 from minigalaxy.game import Game  # noqa: E402
 
@@ -27,53 +25,60 @@ GAMESDB_INFO_STELLARIS = {'cover': 'https://images.gog.com/8d822a05746670fb2540e
 
 class TestApi(TestCase):
     def test_get_login_url(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         exp = "https://auth.gog.com/auth?client_id=46899977096215655&redirect_uri=https%3A%2F%2Fembed.gog.com%2Fon_login_success%3Forigin%3Dclient&response_type=code&layout=client2"
         obs = api.get_login_url()
         self.assertEqual(exp, obs)
 
     def test_get_redirect_url(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         exp = "https://embed.gog.com/on_login_success?origin=client"
         obs = api.get_redirect_url()
         self.assertEqual(exp, obs)
 
     def test1_can_connect(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         m_constants.return_value = True
         exp = True
         obs = api.can_connect()
         self.assertEqual(exp, obs)
 
     def test2_can_connect(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         m_constants.SESSION.get.side_effect = requests.exceptions.ConnectionError(mock.Mock(status="Connection Error"))
         exp = False
         obs = api.can_connect()
         self.assertEqual(exp, obs)
 
     def test1_get_download_info(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         api.get_info = MagicMock()
         api.get_info.return_value = API_GET_INFO_TOONSTRUCK
-        m_config.Config.get.return_value = "pl"
+        config.lang = "pl"
         test_game = Game("Test Game")
         exp = {'id': 'installer_linux_en', 'name': 'Toonstruck', 'os': 'linux', 'language': 'en', 'language_full': 'English', 'version': 'gog-2', 'total_size': 963641344, 'files': [{'id': 'en3installer0', 'size': 963641344, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en3installer0'}]}
         obs = api.get_download_info(test_game)
         self.assertEqual(exp, obs)
 
     def test2_get_download_info(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         api.get_info = MagicMock()
         api.get_info.return_value = API_GET_INFO_TOONSTRUCK
-        m_config.Config.get.return_value = "fr"
+        config.lang = "fr"
         test_game = Game("Test Game")
         exp = {'id': 'installer_linux_fr', 'name': 'Toonstruck', 'os': 'linux', 'language': 'fr', 'language_full': 'français', 'version': 'gog-2', 'total_size': 1011875840, 'files': [{'id': 'fr3installer0', 'size': 1011875840, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr3installer0'}]}
         obs = api.get_download_info(test_game)
         self.assertEqual(exp, obs)
 
     def test3_get_download_info(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         api.get_info = MagicMock()
         api.get_info.return_value = {'downloads': {'installers': [
             {'id': 'installer_windows_en', 'name': 'Toonstruck', 'os': 'windows', 'language': 'en', 'language_full': 'English', 'version': '1.0', 'total_size': 939524096, 'files': [{'id': 'en1installer0', 'size': 1048576, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer0'}, {'id': 'en1installer1', 'size': 938475520, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer1'}]},
@@ -81,36 +86,40 @@ class TestApi(TestCase):
             {'id': 'installer_windows_fr', 'name': 'Toonstruck', 'os': 'windows', 'language': 'fr', 'language_full': 'français', 'version': '1.0', 'total_size': 985661440, 'files': [{'id': 'fr1installer0', 'size': 1048576, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr1installer0'}, {'id': 'fr1installer1', 'size': 984612864, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr1installer1'}]},
             {'id': 'installer_mac_fr', 'name': 'Toonstruck', 'os': 'mac', 'language': 'fr', 'language_full': 'français', 'version': 'gog-3', 'total_size': 1023410176, 'files': [{'id': 'fr2installer0', 'size': 1023410176, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/fr2installer0'}]}
         ]}}
-        m_config.Config.get.return_value = "en"
+        config.lang = "en"
         test_game = Game("Test Game")
         exp = {'id': 'installer_windows_en', 'name': 'Toonstruck', 'os': 'windows', 'language': 'en', 'language_full': 'English', 'version': '1.0', 'total_size': 939524096, 'files': [{'id': 'en1installer0', 'size': 1048576, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer0'}, {'id': 'en1installer1', 'size': 938475520, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en1installer1'}]}
         obs = api.get_download_info(test_game)
         self.assertEqual(exp, obs)
 
     def test4_get_download_info(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         dlc_test_installer = API_GET_INFO_TOONSTRUCK["downloads"]["installers"]
-        m_config.Config.get.return_value = "en"
+        config.lang = "en"
         test_game = Game("Test Game")
         exp = {'id': 'installer_linux_en', 'name': 'Toonstruck', 'os': 'linux', 'language': 'en', 'language_full': 'English', 'version': 'gog-2', 'total_size': 963641344, 'files': [{'id': 'en3installer0', 'size': 963641344, 'downlink': 'https://api.gog.com/products/1207666633/downlink/installer/en3installer0'}]}
         obs = api.get_download_info(test_game, dlc_installers=dlc_test_installer)
         self.assertEqual(exp, obs)
 
     def test1_get_library(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         api.active_token = True
         response_dict = {'totalPages': 1, 'products': [{'id': 1097893768, 'title': 'Neverwinter Nights: Enhanced Edition', 'image': '//images-2.gog-statics.com/8706f7fb87a4a41bc34254f3b49f59f96cf13d067b2c8bbfd8d41c327392052a', 'url': '/game/neverwinter_nights_enhanced_edition_pack', 'worksOn': {'Windows': True, 'Mac': True, 'Linux': True}}]}
         api.active_token_expiration_time = time.time() + 10.0
         response_mock = MagicMock()
         response_mock.json.return_value = response_dict
         m_constants.SESSION.get.return_value = response_mock
+        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
         exp = "Neverwinter Nights: Enhanced Edition"
         retrieved_games, err_msg = api.get_library()
         obs = retrieved_games[0].name
         self.assertEqual(exp, obs)
 
     def test2_get_library(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         api.active_token = False
         api.active_token_expiration_time = time.time() + 10.0
         response_mock = MagicMock()
@@ -121,14 +130,16 @@ class TestApi(TestCase):
         self.assertEqual(exp, obs)
 
     def test1_get_version(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         test_game = Game("Test Game", platform="linux")
         exp = "gog-2"
         obs = api.get_version(test_game, gameinfo=API_GET_INFO_TOONSTRUCK)
         self.assertEqual(exp, obs)
 
     def test2_get_version(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         test_game = Game("Test Game", platform="linux")
         dlc_name = "Test DLC"
         game_info = API_GET_INFO_TOONSTRUCK
@@ -137,8 +148,9 @@ class TestApi(TestCase):
         obs = api.get_version(test_game, gameinfo=API_GET_INFO_TOONSTRUCK, dlc_name=dlc_name)
         self.assertEqual(exp, obs)
 
-    def test_get_download_file_md5(self):
-        api = Api()
+    def test_get_download_file__info_md5(self):
+        config = MagicMock()
+        api = Api(config)
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
         m_constants.SESSION.get.side_effect = MagicMock()
@@ -150,11 +162,12 @@ class TestApi(TestCase):
     <chunk id="3" from="31457280" to="36717997" method="md5">0261b9225fc10c407df083f6d254c47b</chunk>
 </file>'''
         exp = "8acedf66c0d2986e7dee9af912b7df4f"
-        obs = api.get_download_file_md5("url")
+        obs = api.get_download_file_info("url").md5
         self.assertEqual(exp, obs)
 
-    def test_get_download_file_md5_returns_empty_string_on_empty_response(self):
-        api = Api()
+    def test_get_download_file_info_md5_returns_empty_string_on_empty_response(self):
+        config = MagicMock()
+        api = Api(config)
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
         m_constants.SESSION.get.side_effect = MagicMock()
@@ -162,22 +175,24 @@ class TestApi(TestCase):
         m_constants.SESSION.get().text = ""
 
         exp = ""
-        obs = api.get_download_file_md5("url")
+        obs = api.get_download_file_info("url").md5
         self.assertEqual(exp, obs)
 
-    def test_get_download_file_md5_returns_empty_string_on_response_error(self):
-        api = Api()
+    def test_get_download_file_info_md5_returns_empty_string_on_response_error(self):
+        config = MagicMock()
+        api = Api(config)
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
         m_constants.SESSION.get.side_effect = MagicMock()
         m_constants.SESSION.get().status_code = http.HTTPStatus.NOT_FOUND
 
         exp = ""
-        obs = api.get_download_file_md5("url")
+        obs = api.get_download_file_info("url").md5
         self.assertEqual(exp, obs)
 
-    def test_get_download_file_md5_returns_empty_string_on_missing_md5(self):
-        api = Api()
+    def test_get_download_file_info_md5_returns_empty_string_on_missing_md5(self):
+        config = MagicMock()
+        api = Api(config)
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
         m_constants.SESSION.get.side_effect = MagicMock()
@@ -190,11 +205,12 @@ class TestApi(TestCase):
 </file>'''
 
         exp = ""
-        obs = api.get_download_file_md5("url")
+        obs = api.get_download_file_info("url").md5
         self.assertEqual(exp, obs)
 
-    def test_get_file_size(self):
-        api = Api()
+    def test_get_file_info_size(self):
+        config = MagicMock()
+        api = Api(config)
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
         m_constants.SESSION.get.side_effect = MagicMock()
@@ -206,11 +222,12 @@ class TestApi(TestCase):
     <chunk id="3" from="31457280" to="36717997" method="md5">0261b9225fc10c407df083f6d254c47b</chunk>
 </file>'''
         exp = 36717998
-        obs = api.get_file_size("url")
+        obs = api.get_download_file_info("url").size
         self.assertEqual(exp, obs)
 
-    def test_get_file_size_returns_zero_on_empty_response(self):
-        api = Api()
+    def test_get_file_info_size_returns_zero_on_empty_response(self):
+        config = MagicMock()
+        api = Api(config)
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
         m_constants.SESSION.get.side_effect = MagicMock()
@@ -218,22 +235,46 @@ class TestApi(TestCase):
         m_constants.SESSION.get().text = ""
 
         exp = 0
-        obs = api.get_file_size("url")
+        obs = api.get_download_file_info("url").size
         self.assertEqual(exp, obs)
 
-    def test_get_file_size_returns_zero_on_response_error(self):
-        api = Api()
+    def test_get_file_info_size_returns_zero_on_response_error(self):
+        config = MagicMock()
+        api = Api(config)
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
         m_constants.SESSION.get.side_effect = MagicMock()
         m_constants.SESSION.get().status_code = http.HTTPStatus.NOT_FOUND
 
         exp = 0
-        obs = api.get_file_size("url")
+        obs = api.get_download_file_info("url").size
         self.assertEqual(exp, obs)
 
-    def test_get_file_size_returns_zero_on_missing_total_size(self):
-        api = Api()
+    def test_get_file_info_size_returns_zero_on_request_exception(self):
+        config = MagicMock()
+        api = Api(config)
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = requests.exceptions.RequestException("test")
+
+        exp = 0
+        obs = api.get_download_file_info("url").size
+        self.assertEqual(exp, obs)
+
+    def test_get_file_info_size_returns_zero_on_request_timeout_exception(self):
+        config = MagicMock()
+        api = Api(config)
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"checksum": "url"}
+        m_constants.SESSION.get.side_effect = requests.exceptions.ReadTimeout("test")
+
+        exp = 0
+        obs = api.get_download_file_info("url").size
+        self.assertEqual(exp, obs)
+
+    def test_get_file_info_size_returns_zero_on_missing_total_size(self):
+        config = MagicMock()
+        api = Api(config)
         api._Api__request = MagicMock()
         api._Api__request.return_value = {"checksum": "url"}
         m_constants.SESSION.get.side_effect = MagicMock()
@@ -246,11 +287,12 @@ class TestApi(TestCase):
 </file>'''
 
         exp = 0
-        obs = api.get_file_size("url")
+        obs = api.get_download_file_info("url").size
         self.assertEqual(exp, obs)
 
     def test1_get_gamesdb_info(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         api._Api__request_gamesdb = MagicMock()
         api._Api__request_gamesdb.side_effect = [{}]
         test_game = Game("Test Game")
@@ -259,7 +301,8 @@ class TestApi(TestCase):
         self.assertEqual(exp, obs)
 
     def test2_get_gamesdb_info(self):
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         api._Api__request_gamesdb = MagicMock()
         api._Api__request_gamesdb.side_effect = API_GET_INFO_STELLARIS
         test_game = Game("Stellaris")
@@ -271,7 +314,8 @@ class TestApi(TestCase):
         api_info = copy.deepcopy(API_GET_INFO_STELLARIS)
         api_info[0]["game"]["genres"] = []
         api_info[0]["game"]["genres_ids"] = []
-        api = Api()
+        config = MagicMock()
+        api = Api(config)
         api._Api__request_gamesdb = MagicMock()
         api._Api__request_gamesdb.side_effect = api_info
 
@@ -281,7 +325,41 @@ class TestApi(TestCase):
         obs = api.get_gamesdb_info(test_game)
         self.assertEqual(exp, obs)
 
+    def test_get_user_info_from_api(self):
+        username = "test"
+        config = MagicMock()
+        api = Api(config)
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"username": username}
+        config.username = ""
+        m_constants.SESSION.get.side_effect = MagicMock()
+        m_constants.SESSION.get().status_code = http.HTTPStatus.OK
+
+        obs = api.get_user_info()
+        self.assertEqual(username, obs)
+
+    def test_get_user_info_from_config(self):
+        username = "test"
+        config = MagicMock()
+        api = Api(config)
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {"username": "wrong"}
+        config.username = username
+
+        obs = api.get_user_info()
+        self.assertEqual(username, obs)
+
+    def test_get_user_info_return_empty_string_when_nothing_is_returned(self):
+        config = MagicMock()
+        api = Api(config)
+        api._Api__request = MagicMock()
+        api._Api__request.return_value = {}
+        config.username = ""
+
+        exp = ""
+        obs = api.get_user_info()
+        self.assertEqual(exp, obs)
+
 
 del sys.modules['minigalaxy.constants']
-del sys.modules['minigalaxy.config']
 del sys.modules["minigalaxy.game"]

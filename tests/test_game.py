@@ -270,9 +270,8 @@ en-US
     def test_set_install_dir(self):
         install_directory = "/home/user/GOG Games"
         install_game_name = "Neverwinter Nights"
-        m_config.Config.get.return_value = install_directory
         game = Game(install_game_name)
-        game.set_install_dir()
+        game.set_install_dir(install_directory)
         exp = os.path.join(install_directory, install_game_name)
         obs = game.install_dir
         self.assertEqual(exp, obs)

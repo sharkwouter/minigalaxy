@@ -57,7 +57,7 @@ class Test(TestCase):
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1207658695"
         exp = ""
-        obs = installer.extract_installer(game, installer_path, temp_dir)
+        obs = installer.extract_installer(game, installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
@@ -72,7 +72,7 @@ class Test(TestCase):
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1207658695"
         exp = "The installation of /home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh failed. Please try again."
-        obs = installer.extract_installer(game, installer_path, temp_dir)
+        obs = installer.extract_installer(game, installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
@@ -85,7 +85,7 @@ class Test(TestCase):
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = ""
-        obs = installer.extract_installer(game, installer_path, temp_dir)
+        obs = installer.extract_installer(game, installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
@@ -112,7 +112,7 @@ class Test(TestCase):
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = ""
-        obs = installer.extract_windows(game, installer_path, temp_dir)
+        obs = installer.extract_windows(game, installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
@@ -124,7 +124,7 @@ class Test(TestCase):
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = ""
-        obs = installer.extract_by_innoextract(installer_path, temp_dir)
+        obs = installer.extract_by_innoextract(installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('shutil.which')
@@ -133,7 +133,7 @@ class Test(TestCase):
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = "Innoextract not installed."
-        obs = installer.extract_by_innoextract(installer_path, temp_dir)
+        obs = installer.extract_by_innoextract(installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
@@ -145,7 +145,7 @@ class Test(TestCase):
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = "Innoextract extraction failed."
-        obs = installer.extract_by_innoextract(installer_path, temp_dir)
+        obs = installer.extract_by_innoextract(installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
@@ -329,48 +329,44 @@ class Test(TestCase):
         """
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
         installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
-        obs = installer.remove_installer(game1, installer_path)
+        obs = installer.remove_installer(game1, installer_path, "/this/is/a/fake/directory", False)
         exp = "No installer directory is present: /home/i/.cache/minigalaxy/download/Beneath a Steel Sky"
         self.assertEqual(obs, exp)
 
     @mock.patch('os.path.isdir')
     @mock.patch('minigalaxy.installer.compare_directories')
-    @mock.patch('minigalaxy.config.Config.get')
     @mock.patch('shutil.rmtree')
     @mock.patch('os.remove')
     @mock.patch('os.listdir')
-    def test_remove_installer_no_keep(self, mock_list_dir, mock_os_remove, mock_shutil_rmtree, mock_config, mock_compare_directories, mock_os_path_isdir):
+    def test_remove_installer_no_keep(self, mock_list_dir, mock_os_remove, mock_shutil_rmtree, mock_compare_directories, mock_os_path_isdir):
         """
         Disabled keep_installer
         """
         mock_os_path_isdir.return_value = True
         mock_compare_directories.return_value = False
-        mock_config.return_value = False
         mock_list_dir.return_value = ["beneath_a_steel_sky_en_gog_2_20150.sh"]
 
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
         installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
-        obs = installer.remove_installer(game1, installer_path)
+        obs = installer.remove_installer(game1, installer_path, "/some/directory/test", False)
         assert mock_os_remove.called
         assert not mock_shutil_rmtree.called
         self.assertEqual(obs, "")
 
     @mock.patch('os.remove')
     @mock.patch('shutil.rmtree')
-    @mock.patch('minigalaxy.config.Config.get')
     @mock.patch('minigalaxy.installer.compare_directories')
     @mock.patch('os.path.isdir')
-    def test_remove_installer_same_content(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_os_remove):
+    def test_remove_installer_same_content(self, mock_os_path_isdir, mock_compare_directories, mock_shutil_rmtree, mock_os_remove):
         """
         Same content of installer and keep dir
         """
         mock_os_path_isdir.return_value = True
         mock_compare_directories.return_value = True
-        mock_config.side_effect = [True, "/home/i/GOG Games/installer"]
 
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
         installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
-        obs = installer.remove_installer(game1, installer_path)
+        obs = installer.remove_installer(game1, installer_path, "/home/i/GOG Games/installer", True)
         assert not mock_shutil_rmtree.called
         assert not mock_os_remove.called
         self.assertEqual(obs, "")
@@ -378,42 +374,40 @@ class Test(TestCase):
     @mock.patch('os.remove')
     @mock.patch('shutil.move')
     @mock.patch('shutil.rmtree')
-    @mock.patch('minigalaxy.config.Config.get')
     @mock.patch('minigalaxy.installer.compare_directories')
     @mock.patch('os.path.isdir')
-    def test_remove_installer_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_shutil_move, mock_os_remove):
+    def test_remove_installer_keep(self, mock_os_path_isdir, mock_compare_directories, mock_shutil_rmtree, mock_shutil_move, mock_os_remove):
         """
         Keep installer dir
         """
         mock_os_path_isdir.return_value = True
         mock_compare_directories.return_value = False
-        mock_config.side_effect = [True, "/home/i/GOG Games/installer"]
 
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
         installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
-        obs = installer.remove_installer(game1, installer_path)
+        obs = installer.remove_installer(game1, installer_path, "/home/i/GOG Games/installer", True)
         assert mock_shutil_rmtree.called
         assert mock_shutil_move.called
         assert not mock_os_remove.called
         self.assertEqual(obs, "")
 
+    @patch("os.listdir")
     @mock.patch('os.remove')
     @mock.patch('shutil.move')
     @mock.patch('shutil.rmtree')
-    @mock.patch('minigalaxy.config.Config.get')
     @mock.patch('minigalaxy.installer.compare_directories')
     @mock.patch('os.path.isdir')
-    def test_remove_installer_from_keep(self, mock_os_path_isdir, mock_compare_directories, mock_config, mock_shutil_rmtree, mock_shutil_move, mock_os_remove):
+    def test_remove_installer_from_keep(self, mock_os_path_isdir, mock_compare_directories, mock_shutil_rmtree, mock_shutil_move, mock_os_remove, mock_os_listdir):
         """
         Called from keep dir
         """
         mock_os_path_isdir.return_value = True
         mock_compare_directories.return_value = False
-        mock_config.side_effect = [True, "/home/i/GOG Games"]
+        mock_os_listdir.return_value = []
 
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath A Steel Sky", platform="linux")
         installer_path = "/home/i/GOG Games/installer/Beneath A Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
-        obs = installer.remove_installer(game1, installer_path)
+        obs = installer.remove_installer(game1, installer_path, "/home/i/GOG Games/installer", False)
         assert not mock_shutil_rmtree.called
         assert not mock_shutil_move.called
         assert not mock_os_remove.called
