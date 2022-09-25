@@ -28,7 +28,7 @@ jobs:
       run: |
         git config --global user.name 'Wouter Wijsman'
         git config --global user.email 'sharkwouter@users.noreply.github.com'
-        git add pyproject.toml data/io.github.sharkwouter.Minigalaxy.metainfo.xml debian/changelog
+        git add pyproject.toml data/io.github.sharkwouter.Minigalaxy.metainfo.xml debian/changelog minigalaxy/version.py
         git commit -m "Update changelogs and pyproject.toml to new release"
         git push
     - name: Release
