@@ -5,5 +5,5 @@ CSS_PROVIDER = Gtk.CssProvider()
 try:
     with open(CSS_PATH) as style:
         CSS_PROVIDER.load_from_data(style.read().encode('utf-8'))
-except gi.repository.GLib.Error:
+except Exception:
     print("The CSS in {} could not be loaded".format(CSS_PATH))
