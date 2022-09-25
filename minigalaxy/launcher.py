@@ -88,10 +88,10 @@ def determine_launcher_type(files):
         launcher_type = "dosbox"
     elif "scummvm" in files and shutil.which("scummvm"):
         launcher_type = "scummvm"
-    elif "prefix" in files and shutil.which("wine"):
-        launcher_type = "wine"
     elif "start.sh" in files:
         launcher_type = "start_script"
+    elif "prefix" in files and shutil.which("wine"):
+        launcher_type = "wine"
     elif "game" in files:
         launcher_type = "final_resort"
     return launcher_type
