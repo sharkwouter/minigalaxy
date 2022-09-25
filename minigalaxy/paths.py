@@ -33,3 +33,7 @@ if not os.path.exists(ICON_WINE_PATH):
 LOCALE_DIR = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/mo"))
 if not os.path.exists(LOCALE_DIR):
     LOCALE_DIR = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/translations"))
+
+CSS_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/style.css"))
+if not os.path.exists(CSS_PATH):
+    CSS_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/style.css"))

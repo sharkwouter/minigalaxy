@@ -1,5 +1,9 @@
 from minigalaxy.ui.gtk import Gtk
+from minigalaxy.paths import CSS_PATH
 
-css = '.test { border: 1px solid green; }'
 CSS_PROVIDER = Gtk.CssProvider()
-CSS_PROVIDER.load_from_data(css.encode('utf-8'))
+try:
+    with open(CSS_PATH) as style:
+        CSS_PROVIDER.load_from_data(style.read().encode('utf-8'))
+except Exception:
+    print("The CSS in {} could not be loaded".format(CSS_PATH))
