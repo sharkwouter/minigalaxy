@@ -161,7 +161,7 @@ class DownloadManager:
 
         # This follows the previous logic
         # First cancel all the active downloads
-        self.cancel_queued_downloads(download_dict)
+        self.cancel_active_downloads(download_dict)
 
         # Next, loop through the downloads queued for download, comparing them to the
         # cancel list
@@ -379,7 +379,8 @@ class DownloadManager:
                     if file_size is not None:
                         progress = int(downloaded_size / file_size * 100)
                         download.set_progress(progress)
-        download.set_progress(100)
+        if result:
+            download.set_progress(100)
         self.logger.debug("Returning result from _download_operation: {}".format(result))
         return result
 
