@@ -41,7 +41,7 @@ class QueuedDownloadItem:
         """
         self.priority = priority
         self.item = download
-        self.queue_time = time.time_ns()
+        self.queue_time = time.time()
 
     def __lt__(self, other):
         """
