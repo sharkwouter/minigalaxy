@@ -1,7 +1,9 @@
 **1.2.2**
-- Fix Minigalaxy requiring python 3.7
+- Fix downloads not being cancellable
+- Fix incompatibility with python 3.6
 - Fix connection error texts (thanks to TotalCaesar659)
 - Show DLC titles in English (thanks to TotalCaesar659)
+- Fix version not being updated during a release
 - Update Norwegian Bokmål translation (thanks to kimmalmo)
 - Update Czech translation (thanks to jakbuz23)
 
