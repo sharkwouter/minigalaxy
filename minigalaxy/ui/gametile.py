@@ -477,7 +477,6 @@ class GameTile(Gtk.Box):
     def set_progress(self, percentage: int):
         if self.current_state in [self.state.QUEUED, self.state.INSTALLED]:
             GLib.idle_add(self.update_to_state, self.state.DOWNLOADING)
-            GLib.idle_add(self.__create_progress_bar)
         if self.progress_bar:
             GLib.idle_add(self.progress_bar.set_fraction, percentage / 100)
             GLib.idle_add(self.progress_bar.set_tooltip_text, "{}%".format(percentage))
@@ -494,8 +493,8 @@ class GameTile(Gtk.Box):
         self.progress_bar.set_size_request(196, -1)
         self.progress_bar.set_hexpand(False)
         self.progress_bar.set_vexpand(False)
-        self.set_center_widget(self.progress_bar)
         self.progress_bar.set_fraction(0.0)
+        self.set_center_widget(self.progress_bar)
 
     def reload_state(self):
         self.game.set_install_dir(self.config.install_dir)
