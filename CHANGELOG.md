@@ -1,4 +1,5 @@
 **1.2.2**
+- Fix progress bar not showing up for downloads
 - Fix downloads not being cancellable
 - Fix incompatibility with python 3.6
 - Fix connection error texts (thanks to TotalCaesar659)
