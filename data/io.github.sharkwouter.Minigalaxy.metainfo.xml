@@ -33,7 +33,21 @@
   <provides>
     <binary>minigalaxy</binary>
   </provides>
-  <releases><release version="1.2.1" date="2022-09-19">
+  <releases><release version="1.2.2" date="2022-09-27">
+      <description>
+        <p>Implements the following changes:</p>
+        <ul>
+          <li>Fix progress bar not showing up for downloads</li>
+          <li>Fix downloads not being cancellable</li>
+          <li>Fix incompatibility with python 3.6</li>
+          <li>Fix connection error texts (thanks to TotalCaesar659)</li>
+          <li>Show DLC titles in English (thanks to TotalCaesar659)</li>
+          <li>Fix version not being updated during a release</li>
+          <li>Update Norwegian Bokmål translation (thanks to kimmalmo)</li>
+          <li>Update Czech translation (thanks to jakbuz23)</li>
+        </ul>
+      </description>
+    </release><release version="1.2.1" date="2022-09-19">
       <description>
         <p>Implements the following changes:</p>
         <ul>

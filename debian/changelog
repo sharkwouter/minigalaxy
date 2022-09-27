@@ -1,3 +1,16 @@
+minigalaxy (1.2.2) focal; urgency=medium
+
+  * Fix progress bar not showing up for downloads
+  * Fix downloads not being cancellable
+  * Fix incompatibility with python 3.6
+  * Fix connection error texts (thanks to TotalCaesar659)
+  * Show DLC titles in English (thanks to TotalCaesar659)
+  * Fix version not being updated during a release
+  * Update Norwegian Bokmål translation (thanks to kimmalmo)
+  * Update Czech translation (thanks to jakbuz23)
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Tue, 27 Sep 2022 09:26:25 +0000
+
 minigalaxy (1.2.1) focal; urgency=medium
 
   * Fix downloads failing when content length is not returned by the
