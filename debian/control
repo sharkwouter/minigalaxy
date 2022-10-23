@@ -6,6 +6,7 @@ Build-Depends: debhelper-compat (= 12),
                dh-sequence-python3,
                python3-all,
                python3-setuptools,
+               python3-requests,
                help2man,
                gettext,
 Standards-Version: 4.5.0
