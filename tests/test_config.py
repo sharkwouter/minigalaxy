@@ -174,20 +174,6 @@ class TestConfig(TestCase):
         config.current_downloads = [1, 2, 3]
         self.assertEqual([1, 2, 3], config.current_downloads)
 
-    @patch('os.path.isfile')
-    def test_get(self, mock_isfile: MagicMock):
-        mock_isfile.return_value = True
-        config_data = \
-            """
-            {
-                "lang": "lang"
-            }
-            """
-        with patch("builtins.open", mock_open(read_data=config_data)):
-            config = Config()
-        lang = config._Config__get("lang")
-        self.assertEqual("lang", lang)
-
     @patch("os.rename")
     @patch('os.path.isfile')
     @patch('os.makedirs')
@@ -198,22 +184,4 @@ class TestConfig(TestCase):
             config.lang = "lang"
         self.assertEqual("lang", config.lang)
         mock_makedirs.assert_called_once_with("/path", mode=0o700, exist_ok=True)
-        mock_rename.assert_called_once_with("/path/config.json.tmp", "/path/config.json")
-
-    @patch("os.rename")
-    @patch('os.path.isfile')
-    @patch('os.makedirs')
-    def test_set(self, mock_makedirs: MagicMock, mock_isfile: MagicMock, mock_rename: MagicMock):
-        mock_isfile.return_value = True
-        config_data = \
-            """
-            {
-                "lang": "lang"
-            }
-            """
-        with patch("builtins.open", mock_open(read_data=config_data)):
-            config = Config("/path/config.json")
-            config._Config__set("lang", "lang2")
-
-        self.assertEqual("lang2", config.lang)
         mock_rename.assert_called_once_with("/path/config.json.tmp", "/path/config.json")
