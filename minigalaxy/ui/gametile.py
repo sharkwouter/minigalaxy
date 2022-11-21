@@ -332,7 +332,8 @@ class GameTile(Gtk.Box):
         success_state = self.state.INSTALLED
         GLib.idle_add(self.update_to_state, processing_state)
         err_msg = install_game(
-            self.game, save_location,
+            self.game,
+            save_location,
             self.config.lang,
             self.config.install_dir,
             self.config.keep_installers,

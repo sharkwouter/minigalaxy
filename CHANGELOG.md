@@ -1,3 +1,6 @@
+**x.x.x**
+- Fix game information not showing in list view (thanks to TotalCaesar659)
+
 **1.2.2**
 - Fix progress bar not showing up for downloads
 - Fix downloads not being cancellable
