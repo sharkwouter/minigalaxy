@@ -59,6 +59,7 @@ IGNORE_GAME_IDS = [
     1980301910,  # The Witcher Goodies Collection
     2005648906,  # Spring Sale Goodies Collection #1
     1486144755,  # Cyberpunk 2077 Goodies Collection
+    1581684020,  # A Plague Tale Digital Goodies Pack
 ]
 
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
