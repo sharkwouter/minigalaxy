@@ -62,9 +62,9 @@ class GameTileList(Gtk.Box):
                                       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         self.parent = parent
         self.game = game
-        self.download_manager = download_manager
         self.api = api
-        self.offline = self.parent.offline
+        self.download_manager = download_manager
+        self.offline = parent.offline
         self.progress_bar = None
         self.thumbnail_set = False
         self.download_list = []
@@ -139,7 +139,7 @@ class GameTileList(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_information_clicked")
     def show_information(self, button):
-        information_window = Information(self, self.game, self.config, self.api)
+        information_window = Information(self, self.game, self.config, self.api, self.download_manager)
         information_window.run()
         information_window.destroy()
 
@@ -497,8 +497,8 @@ class GameTileList(Gtk.Box):
         self.progress_bar.set_size_request(196, -1)
         self.progress_bar.set_hexpand(False)
         self.progress_bar.set_vexpand(False)
-        self.set_center_widget(self.progress_bar)
         self.progress_bar.set_fraction(0.0)
+        self.set_center_widget(self.progress_bar)
 
     def reload_state(self):
         self.game.set_install_dir(self.config.install_dir)
