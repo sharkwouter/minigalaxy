@@ -1,5 +1,6 @@
 **1.2.3**
 - Fix game information not showing in list view (thanks to TotalCaesar659)
+- Hide A Plague Tale Digital Goodies Pack (thanks to TotalCaesar659)
 
 **1.2.2**
 - Fix progress bar not showing up for downloads
