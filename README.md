@@ -183,6 +183,10 @@ Currently, help is needed with the following:
 
 Feel free to join the [Minigalaxy Discord](https://discord.gg/RC4cXVD) if you would like to help out.
 
+## Other GOG tools
+
+- [LGOGDownloader](https://sites.google.com/site/gogdownloader/), a GOG client for the command line
+
 ## Special thanks
 
 Special thanks goes out to all contributors:
