@@ -32,6 +32,17 @@ class Library(Gtk.Viewport):
         self.offline = False
         self.games = []
         self.owned_products_ids = []
+        self._queue = []
+
+    def _debounce(self, thunk):
+        if thunk not in self._queue:
+            self._queue.append(thunk)
+            GLib.idle_add(self._run_queue)
+
+    def _run_queue(self):
+        queue, self._queue = self._queue, []
+        for thunk in queue:
+            GLib.idle_add(thunk)
 
     def reset(self):
         self.games = []
@@ -108,8 +119,8 @@ class Library(Gtk.Viewport):
             self.flowbox.add(GameTile(self, game, self.config, self.api, self.download_manager))
         elif view == "list":
             self.flowbox.add(GameTileList(self, game, self.config, self.api, self.download_manager))
-        self.sort_library()
-        self.flowbox.show_all()
+        self._debounce(self.sort_library)
+        self._debounce(self.flowbox.show_all)
 
     def __get_installed_games(self) -> List[Game]:
         # Make sure the install directory exists
