@@ -210,6 +210,7 @@ Special thanks goes out to all contributors:
 - zocker-160 for code cleanup
 - waltercool for contributing code
 - jgerrish for improving the download code
+- LexofLeviafan for fixing a bug
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
