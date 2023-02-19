@@ -59,34 +59,6 @@
                 <property name="position">0</property>
               </packing>
             </child>
-            <child>
-              <object class="GtkMenuButton" id="menu_button">
-                <property name="can-focus">True</property>
-                <property name="focus-on-click">False</property>
-                <property name="receives-default">True</property>
-                <property name="no-show-all">True</property>
-                <property name="halign">end</property>
-                <property name="valign">start</property>
-                <property name="relief">none</property>
-                <property name="use-popover">False</property>
-                <property name="popover">menu</property>
-                <child>
-                  <object class="GtkImage" id="menu_icon">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">center</property>
-                    <property name="valign">center</property>
-                    <property name="icon-name">applications-system-symbolic</property>
-                    <property name="icon_size">3</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
           </object>
         </child>
         <child type="overlay">
@@ -121,24 +93,51 @@
       </packing>
     </child>
     <child>
-      <object class="GtkButton" id="button">
-        <property name="width-request">196</property>
+      <object class="GtkBox">
         <property name="visible">True</property>
-        <property name="can-focus">True</property>
-        <property name="receives-default">True</property>
-        <property name="halign">center</property>
-        <property name="valign">end</property>
-        <signal name="clicked" handler="on_button_clicked" swapped="no"/>
+        <property name="can_focus">False</property>
+        <property name="width-request">196</property>
         <child>
-          <placeholder/>
+          <object class="GtkButton" id="button">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_button_clicked" swapped="no"/>
+            <style>
+              <class name="button-left"/>
+            </style>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+            <packing>
+              <property name="expand">True</property>
+              <property name="fill">True</property>
+              <property name="pack-type">start</property>
+              <property name="position">0</property>
+            </packing>
         </child>
+        <child>
+          <object class="GtkMenuButton" id="menu_button">
+            <property name="use_action_appearance">False</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="use-popover">False</property>
+            <property name="popover">menu</property>
+            <property name="receives-default">True</property>
+            <style>
+              <class name="button-right"/>
+            </style>
+          </object>
+          <packing>
+              <property name="expand">False</property>
+              <property name="fill">True</property>
+              <property name="pack-type">start</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+
       </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="pack-type">end</property>
-        <property name="position">1</property>
-      </packing>
     </child>
     <child>
       <placeholder/>

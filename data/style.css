@@ -3,7 +3,16 @@
   color: red;
   background-color: purple;
 }
-button {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+.button-left {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-right-width: 0px;
+  margin-right: 0px;
+}
+.button-right {
+  margin-left: 0px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
 }

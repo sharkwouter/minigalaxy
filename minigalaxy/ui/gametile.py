@@ -59,6 +59,9 @@ class GameTile(Gtk.Box):
         Gtk.StyleContext.add_provider(self.button.get_style_context(),
                                       CSS_PROVIDER,
                                       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        Gtk.StyleContext.add_provider(self.menu_button.get_style_context(),
+                                      CSS_PROVIDER,
+                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
         self.parent = parent
         self.game = game
         self.api = api
@@ -581,6 +584,7 @@ class GameTile(Gtk.Box):
     def __state_installed(self):
         self.button.set_label(_("play"))
         self.button.get_style_context().add_class("suggested-action")
+        self.menu_button.get_style_context().add_class("suggested-action")
         self.button.set_sensitive(True)
         self.image.set_sensitive(True)
         self.menu_button.show()
@@ -597,6 +601,7 @@ class GameTile(Gtk.Box):
     def __state_uninstalling(self):
         self.button.set_label(_("uninstalling…"))
         self.button.get_style_context().remove_class("suggested-action")
+        self.menu_button.get_style_context().remove_class("suggested-action")
         self.button.set_sensitive(False)
         self.image.set_sensitive(False)
         self.menu_button.hide()
