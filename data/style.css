@@ -3,3 +3,7 @@
   color: red;
   background-color: purple;
 }
+button {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
