@@ -516,7 +516,7 @@ class GameTile(Gtk.Box):
             self.update_to_state(self.state.DOWNLOADABLE)
 
     def __state_downloadable(self):
-        self.button.set_label(_("download"))
+        self.button.set_label(_("Download"))
         self.button.set_sensitive(True)
         self.image.set_sensitive(False)
 
@@ -535,7 +535,7 @@ class GameTile(Gtk.Box):
             self.progress_bar.destroy()
 
     def __state_installable(self):
-        self.button.set_label(_("install"))
+        self.button.set_label(_("Install"))
         self.button.set_sensitive(True)
         self.image.set_sensitive(False)
         self.menu_button.hide()
