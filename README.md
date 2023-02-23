@@ -220,10 +220,13 @@ Special thanks goes out to all contributors:
 - protheory8 for translating to Russian
 - LordPilum for translating to Norwegian Nynorsk
 - dummyx for translating to simplified Chinese
-- juanborda, advy99 and LocalPinkRobin for translating to Spanish
+- juanborda for translating to Spanish
+- advy99i for translating to Spanish
+- LocalPinkRobin for translating to Spanish
 - Newbytee for translating to Swedish
 - Pyrofanis for translating to Greek
 - mbarrio for translating to Spanish
+- manurtinez for translating to Spanish
 - jubalh for packaging Minigalaxy for openSUSE
 - gasinvein for packaging Minigalaxy for flathub
 - metafarion for packaging Minigalaxy for Gentoo
