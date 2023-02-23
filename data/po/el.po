@@ -244,7 +244,7 @@ msgstr "Δεν εγκαταστάθηκε το Innoextract."
 #: minigalaxy/ui/gametile.py:538
 #, fuzzy
 msgid "Install"
-msgstr "Εγκατεστημένα"
+msgstr "εγκατάστασή"
 
 #. The place directory in which games are installed. Has to end with ": "
 #: data/ui/preferences.ui:143
@@ -347,7 +347,7 @@ msgstr "Άνοιγμα αρχείων"
 
 #: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
 msgid "Play"
-msgstr ""
+msgstr "παίξε"
 
 #: minigalaxy/ui/information.py:56 minigalaxy/ui/information.py:66
 #: minigalaxy/ui/information.py:76 minigalaxy/ui/information.py:86

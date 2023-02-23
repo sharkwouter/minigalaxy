@@ -238,7 +238,7 @@ msgstr "未安装Innoextract"
 #: minigalaxy/ui/gametile.py:538
 #, fuzzy
 msgid "Install"
-msgstr "仅显示已安装的游戏"
+msgstr "安装"
 
 #. The place directory in which games are installed. Has to end with ": "
 #: data/ui/preferences.ui:143
@@ -336,7 +336,7 @@ msgstr "打开文件"
 
 #: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
 msgid "Play"
-msgstr ""
+msgstr "开始游戏"
 
 #: minigalaxy/ui/information.py:56 minigalaxy/ui/information.py:66
 #: minigalaxy/ui/information.py:76 minigalaxy/ui/information.py:86

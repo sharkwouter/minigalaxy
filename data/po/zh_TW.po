@@ -238,7 +238,7 @@ msgstr ""
 #: minigalaxy/ui/gametile.py:538
 #, fuzzy
 msgid "Install"
-msgstr "已安裝"
+msgstr "安裝"
 
 #. The place directory in which games are installed. Has to end with ": "
 #: data/ui/preferences.ui:143
@@ -339,7 +339,7 @@ msgstr "開啟檔案"
 
 #: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
 msgid "Play"
-msgstr ""
+msgstr "遊玩"
 
 #: minigalaxy/ui/information.py:56 minigalaxy/ui/information.py:66
 #: minigalaxy/ui/information.py:76 minigalaxy/ui/information.py:86
