@@ -553,3 +553,35 @@ msgstr "{} se ha corrompido. Por favor descargalo nuevamente."
 
 #~ msgid "No error message was returned"
 #~ msgstr "Ningún mensaje de error fue devuelto"
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Descarga"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Descargando…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "En cola…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Instalar"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Instalando…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Jugar"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Desinstalando…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Descargando…"

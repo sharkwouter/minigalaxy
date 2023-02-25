@@ -515,3 +515,35 @@ msgstr "Невозможно использовать {} для установк
 #: minigalaxy/installer.py:85
 msgid "{} was corrupted. Please download it again."
 msgstr "{} поврежден. Пожалуйста, загрузите заново."
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Загрузить"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Загрузка…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "В очереди…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Установить"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Установка…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Играть"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Удаление…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Обновление…"

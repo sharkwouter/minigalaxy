@@ -569,3 +569,35 @@ msgstr "{} 已損毀。請再下載一次。"
 
 #~ msgid "Try again with an active internet connection"
 #~ msgstr "使用有效的網際網路連線重試"
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "下載"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "正在下載…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "在佇列中…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "安裝"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "正在安裝…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "遊玩"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "正在解除安裝…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "正在更新…"

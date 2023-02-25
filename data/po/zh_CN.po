@@ -529,3 +529,35 @@ msgstr "{} 已损坏，请重新下载。"
 
 #~ msgid "No error message was returned"
 #~ msgstr "未返回错误信息"
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "下载"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "正在下载…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "队列中…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "安装"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "正在安装…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "开始游戏"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "正在卸载…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "正在更新…"

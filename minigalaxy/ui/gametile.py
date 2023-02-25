@@ -516,7 +516,7 @@ class GameTile(Gtk.Box):
             self.update_to_state(self.state.DOWNLOADABLE)
 
     def __state_downloadable(self):
-        self.button.set_label(_("download"))
+        self.button.set_label(_("Download"))
         self.button.set_sensitive(True)
         self.image.set_sensitive(False)
 
@@ -535,7 +535,7 @@ class GameTile(Gtk.Box):
             self.progress_bar.destroy()
 
     def __state_installable(self):
-        self.button.set_label(_("install"))
+        self.button.set_label(_("Install"))
         self.button.set_sensitive(True)
         self.image.set_sensitive(False)
         self.menu_button.hide()
@@ -547,7 +547,7 @@ class GameTile(Gtk.Box):
             self.progress_bar.destroy()
 
     def __state_queued(self):
-        self.button.set_label(_("in queue…"))
+        self.button.set_label(_("In queue…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(False)
         self.menu_button_uninstall.hide()
@@ -556,7 +556,7 @@ class GameTile(Gtk.Box):
         self.__create_progress_bar()
 
     def __state_downloading(self):
-        self.button.set_label(_("downloading…"))
+        self.button.set_label(_("Downloading…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(False)
         self.menu_button_uninstall.hide()
@@ -567,7 +567,7 @@ class GameTile(Gtk.Box):
         self.progress_bar.show_all()
 
     def __state_installing(self):
-        self.button.set_label(_("installing…"))
+        self.button.set_label(_("Installing…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(True)
         self.menu_button_uninstall.hide()
@@ -582,7 +582,7 @@ class GameTile(Gtk.Box):
         self.parent.filter_library()
 
     def __state_installed(self):
-        self.button.set_label(_("play"))
+        self.button.set_label(_("Play"))
         self.button.get_style_context().add_class("suggested-action")
         self.menu_button.get_style_context().add_class("suggested-action")
         self.button.set_sensitive(True)
@@ -599,7 +599,7 @@ class GameTile(Gtk.Box):
         self.update_icon.hide()
 
     def __state_uninstalling(self):
-        self.button.set_label(_("uninstalling…"))
+        self.button.set_label(_("Uninstalling…"))
         self.button.get_style_context().remove_class("suggested-action")
         self.menu_button.get_style_context().remove_class("suggested-action")
         self.button.set_sensitive(False)
@@ -614,7 +614,7 @@ class GameTile(Gtk.Box):
     def __state_updatable(self):
         self.update_icon.show()
         self.update_icon.set_from_icon_name("emblem-synchronizing", Gtk.IconSize.LARGE_TOOLBAR)
-        self.button.set_label(_("play"))
+        self.button.set_label(_("Play"))
         self.menu_button.show()
         tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")
         self.image.set_tooltip_text(tooltip_text)
@@ -623,7 +623,7 @@ class GameTile(Gtk.Box):
             self.wine_icon.set_margin_left(22)
 
     def __state_updating(self):
-        self.button.set_label(_("updating…"))
+        self.button.set_label(_("Updating…"))
 
     STATE_UPDATE_HANDLERS = {
         state.DOWNLOADABLE: __state_downloadable,
