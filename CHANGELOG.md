@@ -5,6 +5,7 @@
 - Remove round corners from top of the "play" button (thanks to lmeunier)
 - Move the Gametile menu button alongside the Play button (thanks to lmeunier)
 - Update Spanish translation (thanks to manurtinez)
+- Capitalize first letter of the "play/download/..." button (thanks to lmeunier)
 
 **1.2.2**
 - Fix progress bar not showing up for downloads
