@@ -3,6 +3,7 @@ import shutil
 import subprocess
 import hashlib
 import textwrap
+import traceback
 
 from minigalaxy.game import Game
 from minigalaxy.translation import _
@@ -46,31 +47,33 @@ def install_game(  # noqa: C901
         language: str,
         install_dir: str,
         keep_installers: bool,
-        create_desktop_file: bool
+        create_desktop_file: bool,
+        use_innoextract: bool = True,  # not set externally as of yet
 ):
     error_message = ""
     tmp_dir = ""
     print("Installing {}".format(game.name))
-    if not error_message:
-        error_message = verify_installer_integrity(game, installer)
-    if not error_message:
-        error_message = verify_disk_space(game, installer)
-    if not error_message:
-        error_message, tmp_dir = make_tmp_dir(game)
-    if not error_message:
-        error_message = extract_installer(game, installer, tmp_dir, language)
-    if not error_message:
-        error_message = move_and_overwrite(game, tmp_dir)
-    if not error_message:
-        error_message = copy_thumbnail(game)
-    if not error_message and create_desktop_file:
-        error_message = create_applications_file(game)
-    if not error_message:
-        error_message = remove_installer(game, installer, install_dir, keep_installers)
-    else:
-        remove_installer(game, installer, install_dir, keep_installers)
-    if not error_message:
-        error_message = postinstaller(game)
+    try:
+        _use_innoextract = use_innoextract and bool(shutil.which('innoextract'))  # single decision point
+        if not error_message:
+            error_message = verify_installer_integrity(game, installer)
+        if not error_message:
+            error_message = verify_disk_space(game, installer)
+        if not error_message:
+            error_message, tmp_dir = make_tmp_dir(game)
+        if not error_message:
+            error_message = extract_installer(game, installer, tmp_dir, language, _use_innoextract)
+        if not error_message:
+            error_message = move_and_overwrite(game, tmp_dir, _use_innoextract)
+        if not error_message:
+            error_message = copy_thumbnail(game)
+        if not error_message and create_desktop_file:
+            error_message = create_applications_file(game)
+    except Exception:
+        print(traceback.format_exc())
+        error_message = _("Unhandled error.")
+    _removal_error = remove_installer(game, installer, install_dir, keep_installers)
+    error_message = error_message or _removal_error or postinstaller(game)
     if error_message:
         print(error_message)
     return error_message
@@ -119,12 +122,12 @@ def make_tmp_dir(game):
     return error_message, temp_dir
 
 
-def extract_installer(game: Game, installer: str, temp_dir: str, language: str):
+def extract_installer(game: Game, installer: str, temp_dir: str, language: str, use_innoextract: bool):
     # Extract the installer
     if game.platform in ["linux"]:
         err_msg = extract_linux(installer, temp_dir)
     else:
-        err_msg = extract_windows(game, installer, temp_dir, language)
+        err_msg = extract_windows(game, installer, temp_dir, language, use_innoextract)
     return err_msg
 
 
@@ -140,16 +143,16 @@ def extract_linux(installer, temp_dir):
     return err_msg
 
 
-def extract_windows(game: Game, installer: str, temp_dir: str, language: str):
-    err_msg = extract_by_innoextract(installer, temp_dir, language)
+def extract_windows(game: Game, installer: str, temp_dir: str, language: str, use_innoextract: bool):
+    err_msg = extract_by_innoextract(installer, temp_dir, language, use_innoextract)
     if err_msg:
         err_msg = extract_by_wine(game, installer, temp_dir)
     return err_msg
 
 
-def extract_by_innoextract(installer: str, temp_dir: str, language: str):
+def extract_by_innoextract(installer: str, temp_dir: str, language: str, use_innoextract: bool):
     err_msg = ""
-    if shutil.which("innoextract"):
+    if use_innoextract:
         lang = lang_install(installer, language)
         cmd = ["innoextract", installer, "-d", temp_dir, "--gog", lang]
         stdout, stderr, exitcode = _exe_cmd(cmd)
@@ -179,24 +182,32 @@ def extract_by_wine(game, installer, temp_dir):
     err_msg = ""
     # Set the prefix for Windows games
     prefix_dir = os.path.join(game.install_dir, "prefix")
+    drive = os.path.join(prefix_dir, "dosdevices", "d:")
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
+        # Creating the prefix before modifying dosdevices
+        _exe_cmd(["env", "WINEPREFIX={}".format(prefix_dir), "wine", "start", "/B", "cmd", "/C", "exit"])
+    if os.path.exists(drive):
+        os.unlink(drive)
+    os.symlink(temp_dir, drive)
+    _dir = os.path.join(temp_dir, os.path.basename(game.install_dir))  # can't install to drive root
     # It's possible to set install dir as argument before installation
-    command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir), "/VERYSILENT"]
+    command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(_dir), "/VERYSILENT"]
     stdout, stderr, exitcode = _exe_cmd(command)
     if exitcode not in [0]:
         err_msg = _("Wine extraction failed.")
+    else:
+        os.unlink(drive)
+        os.symlink("../../..", drive)
     return err_msg
 
 
-def move_and_overwrite(game, temp_dir):
+def move_and_overwrite(game, temp_dir, use_innoextract):
     # Copy the game files into the correct directory
     error_message = ""
-    if game.platform == "linux":
-        source_dir = os.path.join(temp_dir, "data/noarch")
-    else:
-        innoextract_dir = os.path.join(temp_dir, "minigalaxy_game_files")
-        source_dir = temp_dir if not os.path.isdir(innoextract_dir) else innoextract_dir
+    source_dir = (os.path.join(temp_dir, "data", "noarch") if game.platform == 'linux' else
+                  temp_dir if use_innoextract else
+                  os.path.join(temp_dir, os.path.basename(game.install_dir)))
     target_dir = game.install_dir
     _mv(source_dir, target_dir)
 
