@@ -561,3 +561,35 @@ msgstr "{} var korrumpert. Ver venleg å last den ned på ny."
 
 #~ msgid "Try again with an active internet connection"
 #~ msgstr "Prøv igjen med ein aktiv internettilkopling"
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Last ned"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Lastar ned…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "I kø…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Installer"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Installerar…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Spel"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Avinstallerar…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Oppdaterar…"

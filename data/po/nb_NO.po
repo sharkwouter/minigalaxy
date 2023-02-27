@@ -635,3 +635,35 @@ msgstr "{} ble ødelagt. Vennligst last ned på nytt."
 
 #~ msgid "Try again with an active internet connection"
 #~ msgstr "Prøv igjen med en aktiv internettforbindelse"
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Last ned"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Laster ned…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "I kø…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Installer"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Installerer…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Spill"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Avinstallerer…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Oppdaterer…"

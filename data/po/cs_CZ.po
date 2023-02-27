@@ -606,3 +606,35 @@ msgstr "{} není použitelná cesta"
 #: minigalaxy/installer.py:86
 msgid "{} was corrupted. Please download it again."
 msgstr "{} byl poškozen. Stáhněte ho znovu."
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Stáhnout"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Stahování…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "Ve frontě…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Nainstalovat"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Instalace…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Hrát"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Odinstalace…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Aktualizace…"

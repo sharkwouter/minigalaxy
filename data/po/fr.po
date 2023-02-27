@@ -565,3 +565,35 @@ msgstr "{} a été corrompu. Veuillez le télécharger à nouveau."
 
 #~ msgid "Try again with an active internet connection"
 #~ msgstr "Essayez à nouveau avec une connexion Internet active"
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Télécharger"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Téléchargement…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "Dans la file d'attente…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Installer"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Installation…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Jouer"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Désinstallation…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Mise à jour…"

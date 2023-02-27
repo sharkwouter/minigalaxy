@@ -518,3 +518,35 @@ msgstr "{} nu este o locație validă"
 #: minigalaxy/installer.py:85
 msgid "{} was corrupted. Please download it again."
 msgstr "{} este corupt. Te rog descarcă din nou."
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Descarcă"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Se descarcă…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "În coadă…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Instalează"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Se instalează…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Joacă"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Se dezinstalează…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Se actualizează…"

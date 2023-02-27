@@ -617,3 +617,35 @@ msgstr "()μη εύχρηστη διαδρομη"
 #: minigalaxy/installer.py:85
 msgid "{} was corrupted. Please download it again."
 msgstr "()διαφθείρει.Παρακαλώ κατεβαστε το ξανά."
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Λήψη"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Ενυμέρωση…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "Σε αναμονή…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Εγκατάστασή"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Εγκαθίσταται…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Παίξε"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Απ εγκαθίσταται…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Ενημερώνεται…"

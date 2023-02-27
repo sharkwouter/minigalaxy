@@ -514,3 +514,35 @@ msgstr "{} ei ole käytettävä polku"
 #: minigalaxy/installer.py:85
 msgid "{} was corrupted. Please download it again."
 msgstr "{} korruptoitui. Suorita lataus uudelleen."
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Lataa"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Ladataan…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "Jonossa…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Asenna"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Asennetaan…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Pelaa"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Poistetaan asennusta…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Päivitetään…"
