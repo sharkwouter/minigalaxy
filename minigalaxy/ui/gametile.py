@@ -15,7 +15,6 @@ from minigalaxy.download import Download, DownloadType
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
-from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound, Api
 from minigalaxy.ui.gtk import Gtk, GLib
@@ -39,6 +38,7 @@ class GameTile(Gtk.Box):
     dlc_horizontal_box = Gtk.Template.Child()
     menu_button_information = Gtk.Template.Child()
     menu_button_properties = Gtk.Template.Child()
+    progress_bar = Gtk.Template.Child()
 
     state = Enum('state',
                  'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
@@ -56,18 +56,12 @@ class GameTile(Gtk.Box):
             except NameError:
                 locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
         Gtk.Frame.__init__(self)
-        Gtk.StyleContext.add_provider(self.button.get_style_context(),
-                                      CSS_PROVIDER,
-                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-        Gtk.StyleContext.add_provider(self.menu_button.get_style_context(),
-                                      CSS_PROVIDER,
-                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
         self.parent = parent
         self.game = game
         self.api = api
         self.download_manager = download_manager
         self.offline = parent.offline
-        self.progress_bar = None
         self.thumbnail_set = False
         self.download_list = []
         self.dlc_dict = {}
@@ -491,15 +485,6 @@ class GameTile(Gtk.Box):
         GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
         GLib.idle_add(self.reload_state)
 
-    def __create_progress_bar(self) -> None:
-        self.progress_bar = Gtk.ProgressBar()
-        self.progress_bar.set_halign(Gtk.Align.CENTER)
-        self.progress_bar.set_size_request(196, -1)
-        self.progress_bar.set_hexpand(False)
-        self.progress_bar.set_vexpand(False)
-        self.progress_bar.set_fraction(0.0)
-        self.set_center_widget(self.progress_bar)
-
     def reload_state(self):
         self.game.set_install_dir(self.config.install_dir)
         dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING,
@@ -526,13 +511,10 @@ class GameTile(Gtk.Box):
         self.menu_button_update.hide()
         self.menu_button_dlc.hide()
         self.menu_button_uninstall.hide()
-
         self.button_cancel.hide()
+        self.progress_bar.hide()
 
         self.game.install_dir = ""
-
-        if self.progress_bar:
-            self.progress_bar.destroy()
 
     def __state_installable(self):
         self.button.set_label(_("Install"))
@@ -540,11 +522,9 @@ class GameTile(Gtk.Box):
         self.image.set_sensitive(False)
         self.menu_button.hide()
         self.button_cancel.hide()
+        self.progress_bar.hide()
 
         self.game.install_dir = ""
-
-        if self.progress_bar:
-            self.progress_bar.destroy()
 
     def __state_queued(self):
         self.button.set_label(_("In queue…"))
@@ -553,7 +533,7 @@ class GameTile(Gtk.Box):
         self.menu_button_uninstall.hide()
         self.menu_button_update.hide()
         self.button_cancel.show()
-        self.__create_progress_bar()
+        self.progress_bar.show()
 
     def __state_downloading(self):
         self.button.set_label(_("Downloading…"))
@@ -562,9 +542,7 @@ class GameTile(Gtk.Box):
         self.menu_button_uninstall.hide()
         self.menu_button_update.hide()
         self.button_cancel.show()
-        if not self.progress_bar:
-            self.__create_progress_bar()
-        self.progress_bar.show_all()
+        self.progress_bar.show()
 
     def __state_installing(self):
         self.button.set_label(_("Installing…"))
@@ -573,12 +551,9 @@ class GameTile(Gtk.Box):
         self.menu_button_uninstall.hide()
         self.menu_button_update.hide()
         self.button_cancel.hide()
+        self.progress_bar.hide()
 
         self.game.set_install_dir(self.config.install_dir)
-
-        if self.progress_bar:
-            self.progress_bar.destroy()
-
         self.parent.filter_library()
 
     def __state_installed(self):
@@ -590,13 +565,11 @@ class GameTile(Gtk.Box):
         self.menu_button.show()
         self.menu_button_uninstall.show()
         self.button_cancel.hide()
-        self.game.set_install_dir(self.config.install_dir)
-
-        if self.progress_bar:
-            self.progress_bar.destroy()
-
+        self.progress_bar.hide()
         self.menu_button_update.hide()
         self.update_icon.hide()
+
+        self.game.set_install_dir(self.config.install_dir)
 
     def __state_uninstalling(self):
         self.button.set_label(_("Uninstalling…"))
@@ -608,7 +581,6 @@ class GameTile(Gtk.Box):
         self.button_cancel.hide()
 
         self.game.install_dir = ""
-
         self.parent.filter_library()
 
     def __state_updatable(self):

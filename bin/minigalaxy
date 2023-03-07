@@ -48,8 +48,10 @@ def main():
     from minigalaxy.config import Config
     from minigalaxy.api import Api
     from minigalaxy.download_manager import DownloadManager
+    from minigalaxy.css import load_css
 
     # Start the application
+    load_css()
     config = Config()
     session = requests.Session()
     session.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {})'.format(VERSION, platform.machine())})
