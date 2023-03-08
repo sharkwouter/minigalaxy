@@ -3,6 +3,7 @@
 <interface domain="minigalaxy">
   <requires lib="gtk+" version="3.20"/>
   <template class="GameTile" parent="GtkBox">
+    <property name="name">gametile</property>
     <property name="width-request">196</property>
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -84,6 +85,16 @@
           <packing>
             <property name="index">3</property>
           </packing>
+        </child>
+        <child type="overlay">
+          <object class="GtkProgressBar" id="progress_bar">
+            <property name="visible">False</property>
+            <property name="no-show-all">True</property>
+            <property name="valign">end</property>
+            <style>
+              <class name="progress-bar"/>
+            </style>
+          </object>
         </child>
       </object>
       <packing>
