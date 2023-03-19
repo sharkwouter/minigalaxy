@@ -6,6 +6,7 @@
 - Move the Gametile menu button alongside the Play button (thanks to lmeunier)
 - Update Spanish translation (thanks to manurtinez)
 - Capitalize first letter of the "play/download/..." button (thanks to lmeunier)
+- Update Traditional Chinese translation (thanks to s8321414)
 
 **1.2.2**
 - Fix progress bar not showing up for downloads
