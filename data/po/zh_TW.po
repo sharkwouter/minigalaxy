@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# Jeff Huang <s8321414@gmail.com>, 2019, 2020.
+# Jeff Huang <s8321414@gmail.com>, 2019, 2020, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-26 14:30-0800\n"
-"PO-Revision-Date: 2020-11-15 07:53+0800\n"
+"PO-Revision-Date: 2023-03-19 20:48+0800\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>\n"
 "Language-Team: Chinese <zh-l10n@linux.org.tw>\n"
 "Language: zh_TW\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Lokalize 19.08.3\n"
+"X-Generator: Lokalize 22.12.3\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -35,11 +35,11 @@ msgstr "關於"
 
 #: data/ui/properties.ui:129
 msgid "Added at the end of the command used to launch the game"
-msgstr ""
+msgstr "新增於用來啟動遊戲的指令結尾"
 
 #: data/ui/properties.ui:141
 msgid "Added in front of the command used to launch the game"
-msgstr ""
+msgstr "新增於用來啟動遊戲的指令之前"
 
 #: minigalaxy/ui/gametile.py:132
 msgid "Are you sure you want to cancel downloading {}?"
@@ -47,7 +47,7 @@ msgstr "您確定您想要取消下載 {} 嗎？"
 
 #: minigalaxy/ui/window.py:100
 msgid "Are you sure you want to log out of GOG?"
-msgstr ""
+msgstr "您確定要登出 GOG？"
 
 #: minigalaxy/ui/gametile.py:145
 #, python-format
@@ -59,7 +59,6 @@ msgid "Brazilian Portuguese"
 msgstr "葡萄牙文（巴西）"
 
 #: data/ui/properties.ui:266
-#, fuzzy
 msgid "Cancel"
 msgstr "取消"
 
@@ -74,12 +73,11 @@ msgstr "中文"
 
 #: data/ui/properties.ui:180
 msgid "Command flags:"
-msgstr ""
+msgstr "命令列旗標："
 
 #: minigalaxy/ui/properties.py:103
-#, fuzzy
 msgid "Couldn't open store page"
-msgstr "無法開啟支援頁面"
+msgstr "無法開啟商店頁面"
 
 #: minigalaxy/ui/properties.py:93
 msgid "Couldn't open support page"
@@ -89,11 +87,11 @@ msgstr "無法開啟支援頁面"
 #: data/ui/preferences.ui:288
 msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
-msgstr ""
+msgstr "建立選單捷徑："
 
 #: minigalaxy/constants.py:31
 msgid "Czech"
-msgstr ""
+msgstr "捷克文"
 
 #: data/ui/gametile.ui:178
 msgid "DLC"
@@ -119,7 +117,7 @@ msgstr "英文"
 msgid ""
 "Failed to change program language. Make sure locale is generated on your "
 "system."
-msgstr ""
+msgstr "變更程式語言失敗。請確定您的系統上以產生對應的語系檔。"
 
 #: minigalaxy/ui/gametile.py:301
 msgid "Failed to install {}"
@@ -143,7 +141,7 @@ msgstr "法文"
 
 #: minigalaxy/ui/properties.py:140
 msgid "Genre"
-msgstr ""
+msgstr "類型"
 
 #: minigalaxy/constants.py:14 minigalaxy/constants.py:36
 msgid "German"
@@ -157,7 +155,7 @@ msgstr "GitHub 頁面"
 
 #: data/ui/properties.ui:105
 msgid "Hide game:"
-msgstr ""
+msgstr "隱藏遊戲："
 
 #: minigalaxy/constants.py:15
 msgid "Hungarian"
@@ -165,11 +163,11 @@ msgstr "匈牙利文"
 
 #: minigalaxy/installer.py:147
 msgid "Innoextract extraction failed."
-msgstr ""
+msgstr "Innoextract 擷取失敗。"
 
 #: minigalaxy/installer.py:158
 msgid "Innoextract not installed."
-msgstr ""
+msgstr "Innoextract 未安裝。"
 
 #. The place directory in which games are installed. Ends with ": ".
 #: data/ui/preferences.ui:118
@@ -213,7 +211,7 @@ msgstr "韓文"
 #: data/ui/preferences.ui:68
 msgctxt "language"
 msgid "Language: "
-msgstr ""
+msgstr "語言："
 
 #: minigalaxy/ui/login.py:20
 msgid "Login"
@@ -234,22 +232,20 @@ msgid "Norwegian"
 msgstr "挪威文"
 
 #: minigalaxy/constants.py:38
-#, fuzzy
 msgid "Norwegian Bokmål"
-msgstr "挪威文"
+msgstr "書面挪威文"
 
 #: minigalaxy/constants.py:39
-#, fuzzy
 msgid "Norwegian Nynorsk"
-msgstr "挪威文"
+msgstr "新挪威文"
 
 #: minigalaxy/installer.py:97
 msgid "Not enough space to extract game. Required: {} Available: {}"
-msgstr ""
+msgstr "沒有足夠的空間可以用來解壓縮遊戲。需要：{} 可用：{}"
 
 #: data/ui/properties.ui:280
 msgid "OK"
-msgstr ""
+msgstr "確定"
 
 #: data/ui/properties.ui:216
 msgid "Open files"
@@ -285,11 +281,11 @@ msgstr "偏好的語言："
 
 #: data/ui/gametile.ui:223
 msgid "Properties"
-msgstr ""
+msgstr "屬性"
 
 #: minigalaxy/ui/properties.py:33
 msgid "Properties of {}"
-msgstr ""
+msgstr "{} 的屬性"
 
 #. Tooltip for refresh button
 #: data/ui/application.ui:89
@@ -299,7 +295,7 @@ msgstr "重新整理遊戲清單"
 
 #: data/ui/properties.ui:203
 msgid "Regedit"
-msgstr ""
+msgstr "登錄檔編輯"
 
 #: minigalaxy/constants.py:22 minigalaxy/constants.py:41
 msgid "Russian"
@@ -312,7 +308,6 @@ msgid "Save"
 msgstr "儲存"
 
 #: data/ui/properties.ui:154
-#, fuzzy
 msgid "Show FPS in game:"
 msgstr "在遊戲中顯示 FPS："
 
@@ -324,10 +319,9 @@ msgstr "顯示 Windows 遊戲："
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:224
-#, fuzzy
 msgctxt "show_hidden_games"
 msgid "Show hidden games: "
-msgstr "顯示 Windows 遊戲："
+msgstr "顯示隱藏的遊戲："
 
 #. Tooltip for the switch which allows only showing installed games or all games
 #: data/ui/application.ui:105
@@ -337,7 +331,7 @@ msgstr "僅顯示已安裝的遊戲"
 
 #: minigalaxy/constants.py:42
 msgid "Simplified Chinese"
-msgstr ""
+msgstr "簡體中文"
 
 #: minigalaxy/constants.py:23 minigalaxy/constants.py:43
 msgid "Spanish"
@@ -350,12 +344,10 @@ msgid "Stay logged in:"
 msgstr "保持登入："
 
 #: data/ui/properties.ui:77
-#, fuzzy
 msgid "Store"
-msgstr "商店頁面"
+msgstr "商店"
 
 #: data/ui/properties.ui:63
-#, fuzzy
 msgid "Support"
 msgstr "支援"
 
@@ -365,7 +357,7 @@ msgstr "瑞典文"
 
 #: minigalaxy/constants.py:29
 msgid "System default"
-msgstr ""
+msgstr "系統預設"
 
 #: minigalaxy/installer.py:128
 msgid "The installation of {} failed. Please try again."
@@ -377,10 +369,9 @@ msgid "The preferred language for downloading games in"
 msgstr "下載遊戲的偏好語言"
 
 #: data/ui/preferences.ui:65
-#, fuzzy
 msgctxt "language_tooltip"
 msgid "The preferred language on Minigalaxy start"
-msgstr "下載遊戲的偏好語言"
+msgstr "Minigalaxy 啟動時的偏好語言"
 
 #: minigalaxy/ui/gametile.py:208
 msgid ""
@@ -397,7 +388,7 @@ msgstr "遊戲會安裝在"
 
 #: minigalaxy/constants.py:45
 msgid "Traditional Chinese"
-msgstr ""
+msgstr "正體中文"
 
 #: minigalaxy/constants.py:25 minigalaxy/constants.py:46
 msgid "Turkish"
@@ -405,15 +396,13 @@ msgstr "土耳其文"
 
 #: minigalaxy/constants.py:47
 msgid "Ukrainian"
-msgstr ""
+msgstr "烏克蘭文"
 
 #: data/ui/gametile.ui:208
-#, fuzzy
 msgid "Uninstall"
 msgstr "解除安裝"
 
 #: data/ui/gametile.ui:193
-#, fuzzy
 msgid "Update"
 msgstr "更新"
 
@@ -421,15 +410,15 @@ msgstr "更新"
 #: data/ui/preferences.ui:198
 msgctxt "use_dark_theme"
 msgid "Use dark theme: "
-msgstr ""
+msgstr "使用深色佈景主題："
 
 #: data/ui/properties.ui:167
 msgid "Variable flags:"
-msgstr ""
+msgstr "變數旗標："
 
 #: minigalaxy/ui/properties.py:142
 msgid "Version"
-msgstr ""
+msgstr "版本"
 
 #: data/ui/preferences.ui:168
 msgctxt "stay_logged_in_tooltip"
@@ -439,7 +428,7 @@ msgstr "若停用，您每次打開 Minigalaxy 時都會被要求登入"
 #: data/ui/preferences.ui:195
 msgctxt "use_dark_theme_tooltip"
 msgid "Whether Minigalaxy should use dark theme or not"
-msgstr ""
+msgstr "Minigalaxy 是否應該使用深色佈景主題"
 
 #: data/ui/preferences.ui:247
 msgctxt "show_windows_games_tooltip"
@@ -447,27 +436,26 @@ msgid "Whether Windows games are shown in the library or not"
 msgstr "Windows 遊戲是否要顯示在收藏庫中"
 
 #: data/ui/preferences.ui:221
-#, fuzzy
 msgctxt "show_hidden_games_tooltip"
 msgid "Whether hidden games are shown in the library or not"
-msgstr "Windows 遊戲是否要顯示在收藏庫中"
+msgstr "隱藏的遊戲是否要顯示在收藏庫中"
 
 #: data/ui/preferences.ui:285
 msgctxt "create_menu_shortcuts_tooltip"
 msgid "Whether shortcuts are created for newly installed games or not"
-msgstr ""
+msgstr "新安裝的遊戲是否應建立捷徑"
 
 #: minigalaxy/installer.py:172
 msgid "Wine extraction failed."
-msgstr ""
+msgstr "Wine 解壓縮失敗。"
 
 #: minigalaxy/ui/preferences.py:162
 msgid "Wine wasn't found. Showing Windows games cannot be enabled."
-msgstr ""
+msgstr "找不到 Wine。無法啟用顯示 Windows 遊戲。"
 
 #: data/ui/properties.ui:190
 msgid "Winecfg"
-msgstr ""
+msgstr "Winecfg"
 
 #: minigalaxy/ui/gametile.py:460
 msgid "download"
@@ -499,7 +487,7 @@ msgstr "正在解除安裝…"
 
 #: minigalaxy/ui/properties.py:136
 msgid "unknown"
-msgstr ""
+msgstr "未知"
 
 #: minigalaxy/ui/gametile.py:565
 msgid "updating…"
@@ -520,6 +508,38 @@ msgstr "{} 不是可用的路徑"
 #: minigalaxy/installer.py:85
 msgid "{} was corrupted. Please download it again."
 msgstr "{} 已損毀。請再下載一次。"
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "下載"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "正在下載…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "在佇列中…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "安裝"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "正在安裝…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "遊玩"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "正在解除安裝…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "正在更新…"
 
 #~ msgid "Couldn't connect to GOG servers"
 #~ msgstr "無法連線至 GOG 伺服器"
@@ -569,35 +589,3 @@ msgstr "{} 已損毀。請再下載一次。"
 
 #~ msgid "Try again with an active internet connection"
 #~ msgstr "使用有效的網際網路連線重試"
-
-#: minigalaxy/ui/gametile.py:519
-msgid "Download"
-msgstr "下載"
-
-#: minigalaxy/ui/gametile.py:559
-msgid "Downloading…"
-msgstr "正在下載…"
-
-#: minigalaxy/ui/gametile.py:550
-msgid "In queue…"
-msgstr "在佇列中…"
-
-#: minigalaxy/ui/gametile.py:538
-msgid "Install"
-msgstr "安裝"
-
-#: minigalaxy/ui/gametile.py:570
-msgid "Installing…"
-msgstr "正在安裝…"
-
-#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
-msgid "Play"
-msgstr "遊玩"
-
-#: minigalaxy/ui/gametile.py:602
-msgid "Uninstalling…"
-msgstr "正在解除安裝…"
-
-#: minigalaxy/ui/gametile.py:626
-msgid "Updating…"
-msgstr "正在更新…"
