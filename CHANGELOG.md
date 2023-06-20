@@ -7,6 +7,7 @@
 - Update Spanish translation (thanks to manurtinez)
 - Capitalize first letter of the "play/download/..." button (thanks to lmeunier)
 - Update Traditional Chinese translation (thanks to s8321414)
+- Added additional tooltips to buttons, labels, menu items and radio buttons (thanks to orende)
 
 **1.2.2**
 - Fix progress bar not showing up for downloads
