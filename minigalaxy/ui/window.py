@@ -9,7 +9,7 @@ from minigalaxy.api import Api
 from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR, COVER_DIR, ICON_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
-from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf
+from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf, Notify
 from minigalaxy.config import Config
 
 
@@ -42,6 +42,9 @@ class Window(Gtk.ApplicationWindow):
         self.config = config
         self.search_string = ""
         self.offline = False
+
+        # Initialize notifications module
+        Notify.init("minigalaxy")
 
         # Set library
         self.library = Library(self, config, api, download_manager)

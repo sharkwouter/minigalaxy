@@ -45,6 +45,7 @@ class UnitTestGiRepository:
     GdkPixbuf = MagicMock()
     Gio = MagicMock()
     GLib = MagicMock
+    Notify = MagicMock()
 
 
 u_gi_repository = UnitTestGiRepository()
