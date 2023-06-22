@@ -517,12 +517,14 @@ class GameTileList(Gtk.Box):
 
     def __state_downloadable(self):
         self.button.set_label(_("download"))
+        self.button.set_tooltip_text(_("Download and install the game"))
         self.button.set_sensitive(True)
         self.image.set_sensitive(False)
 
-        # The user must have the possibilty to access
+        # The user must have the possibility to access
         # to the store button even if the game is not installed
         self.menu_button.show()
+        self.menu_button.set_tooltip_text(_("Show game options menu"))
         self.menu_button_update.hide()
         self.menu_button_dlc.hide()
         self.menu_button_uninstall.hide()
@@ -536,6 +538,7 @@ class GameTileList(Gtk.Box):
 
     def __state_installable(self):
         self.button.set_label(_("install"))
+        self.button.set_tooltip_text(_("Install the game"))
         self.button.set_sensitive(True)
         self.image.set_sensitive(False)
         self.menu_button.hide()
@@ -583,10 +586,12 @@ class GameTileList(Gtk.Box):
 
     def __state_installed(self):
         self.button.set_label(_("play"))
+        self.button.set_tooltip_text(_("Launch the game"))
         self.button.get_style_context().add_class("suggested-action")
         self.button.set_sensitive(True)
         self.image.set_sensitive(True)
         self.menu_button.show()
+        self.menu_button.set_tooltip_text(_("Show game options menu"))
         self.menu_button_uninstall.show()
         self.button_cancel.hide()
         self.game.set_install_dir(self.config.install_dir)

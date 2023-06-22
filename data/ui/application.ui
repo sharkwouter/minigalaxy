@@ -127,6 +127,7 @@
             <property name="valign">center</property>
             <property name="use_popover">False</property>
             <property name="popover">menu</property>
+            <property name="tooltip_text" translatable="yes" context="menu" comments="Tooltip for header menu button">Options menu</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
@@ -147,6 +148,7 @@
             <property name="primary_icon_name">edit-find-symbolic</property>
             <property name="primary_icon_activatable">False</property>
             <property name="primary_icon_sensitive">False</property>
+            <property name="tooltip_text" translatable="yes" context="search" comments="Tooltip for search field">Search games list</property>
             <signal name="search-changed" handler="filter_library" swapped="no"/>
           </object>
           <packing>
