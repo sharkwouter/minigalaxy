@@ -8,6 +8,7 @@
 - Capitalize first letter of the "play/download/..." button (thanks to lmeunier)
 - Update Traditional Chinese translation (thanks to s8321414)
 - Added additional tooltips to buttons, labels, menu items and radio buttons (thanks to orende)
+- Hide CDPR Goodie Pack Content
 
 **1.2.2**
 - Fix progress bar not showing up for downloads

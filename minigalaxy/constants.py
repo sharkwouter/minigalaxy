@@ -60,6 +60,7 @@ IGNORE_GAME_IDS = [
     2005648906,  # Spring Sale Goodies Collection #1
     1486144755,  # Cyberpunk 2077 Goodies Collection
     1581684020,  # A Plague Tale Digital Goodies Pack
+    1185685769,  # CDPR Goodie Pack Content
 ]
 
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
