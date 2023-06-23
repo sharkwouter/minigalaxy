@@ -327,7 +327,6 @@ class GameTileList(Gtk.Box):
             popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
                                             .format(self.game.name), "dialog-information")
             popup.show()
-            popup.close()
 
     def __install(self, save_location, update=False, dlc_title=""):
         if update:
