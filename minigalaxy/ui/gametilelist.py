@@ -18,7 +18,7 @@ from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound, Api
-from minigalaxy.ui.gtk import Gtk, GLib
+from minigalaxy.ui.gtk import Gtk, GLib, Notify
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 
@@ -324,6 +324,10 @@ class GameTileList(Gtk.Box):
         install_success = self.__install(save_location)
         if install_success:
             self.__check_for_dlc(self.api.get_info(self.game))
+            popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
+                                            .format(self.game.name), "dialog-information")
+            popup.show()
+            popup.close()
 
     def __install(self, save_location, update=False, dlc_title=""):
         if update:

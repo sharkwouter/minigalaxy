@@ -45,6 +45,9 @@ class UnitTestGiRepository:
     class GLib:
         pass
 
+    class Notify:
+        pass
+
 
 u_gi_repository = UnitTestGiRepository()
 sys.modules['gi.repository'] = u_gi_repository

@@ -17,7 +17,7 @@ from minigalaxy.launcher import start_game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound, Api
-from minigalaxy.ui.gtk import Gtk, GLib
+from minigalaxy.ui.gtk import Gtk, GLib, Notify
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 
@@ -343,6 +343,9 @@ class GameTile(Gtk.Box):
                 self.game.set_dlc_info("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title)
             else:
                 self.game.set_info("version", self.api.get_version(self.game))
+            popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
+                                            .format(self.game.name), "dialog-information")
+            popup.show()
         else:
             GLib.idle_add(self.parent.parent.show_error, _("Failed to install {}").format(self.game.name), err_msg)
             GLib.idle_add(self.update_to_state, failed_state)
