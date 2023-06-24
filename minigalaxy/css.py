@@ -1,3 +1,4 @@
+from minigalaxy.logger import logger
 from minigalaxy.ui.gtk import Gtk, Gdk
 from minigalaxy.paths import CSS_PATH
 
@@ -9,5 +10,5 @@ def load_css():
         with open(CSS_PATH) as style:
             CSS_PROVIDER.load_from_data(style.read().encode('utf-8'))
     except Exception:
-        print("The CSS in {} could not be loaded".format(CSS_PATH))
+        logger.error("The CSS in %s could not be loaded", CSS_PATH, exc_info=1)
     Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), CSS_PROVIDER, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)

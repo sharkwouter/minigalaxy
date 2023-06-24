@@ -290,7 +290,7 @@ class DownloadManager:
                 result = self.__download_operation(download, start_point, download_mode)
                 break
             except RequestException as e:
-                print(e)
+                self.logger.error("Error downloading file {}, received error {}".format(download.url, e))
                 download_attempt += 1
         # Successful downloads
         if result:
@@ -364,7 +364,7 @@ class DownloadManager:
         try:
             file_size = int(download_request.headers.get('content-length'))
         except (ValueError, TypeError):
-            print(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
+            self.logger.error(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
         result = True
         if file_size is None or downloaded_size < file_size:
             with open(download.save_location, download_mode) as save_file:

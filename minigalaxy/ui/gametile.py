@@ -9,6 +9,7 @@ from enum import Enum
 
 from minigalaxy.config import Config
 from minigalaxy.game import Game
+from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
 from minigalaxy.download import Download, DownloadType
@@ -221,7 +222,7 @@ class GameTile(Gtk.Box):
             download_info = self.api.get_download_info(self.game, platform)
             result = True
         except NoDownloadLinkFound as e:
-            print(e)
+            logger.error("No download link found", exc_info=1)
             current_download_ids = self.config.current_downloads
             if current_download_ids:
                 new_current_download_ids = set()
@@ -267,7 +268,7 @@ class GameTile(Gtk.Box):
             try:
                 download_url = self.api.get_real_download_link(file_info["downlink"])
             except ValueError as e:
-                print(e)
+                logger.error("Error getting download URL from file_info downlink: %s", file_info["downlink"], exc_info=1)
                 GLib.idle_add(self.parent.parent.show_error, _("Download error"), _(str(e)))
                 download_success = False
                 break
