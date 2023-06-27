@@ -3,6 +3,7 @@ import locale
 
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.logger import logger
+from minigalaxy.ui.categoryfilters import CategoryFilters
 from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
@@ -99,6 +100,12 @@ class Window(Gtk.ApplicationWindow):
         about_window = About(self)
         about_window.run()
         about_window.destroy()
+
+    @Gtk.Template.Callback("on_menu_category_filter_clicked")
+    def show_categories(self, button):
+        category_filters_window = CategoryFilters(self)
+        category_filters_window.run()
+        category_filters_window.destroy()
 
     @Gtk.Template.Callback("on_menu_logout_clicked")
     def logout(self, button):

@@ -142,6 +142,27 @@
           </packing>
         </child>
         <child>
+          <object class="GtkButton" id="category_filter_button">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="tooltip_text" translatable="yes" context="category_filter" comments="Tooltip for category filter button">Category filters</property>
+            <property name="valign">center</property>
+            <signal name="clicked" handler="on_menu_category_filter_clicked" swapped="no"/>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="icon_name">filter-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack_type">end</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkSearchEntry" id="header_search">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -153,7 +174,7 @@
           </object>
           <packing>
             <property name="pack_type">end</property>
-            <property name="position">2</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>
