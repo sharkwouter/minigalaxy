@@ -282,10 +282,11 @@ class Api:
         request_url = "https://gamesdb.gog.com/platforms/gog/external_releases/{}".format(game.id)
         try:
             response = self.session.get(request_url)
-            respones_dict = response.json()
+            response_dict = response.json()
         except (requests.exceptions.ConnectionError, ValueError):
-            respones_dict = {}
-        return respones_dict
+            logger.error("Error retrieving game info for gamesdb", exc_info=1)
+            response_dict = {}
+        return response_dict
 
     def get_gamesdb_info(self, game: Game) -> dict:
         gamesdb_dict = {"cover": "", "vertical_cover": "", "background": ""}
@@ -300,8 +301,13 @@ class Api:
                 gamesdb_dict["summary"][summary_key] = response_json["game"]["summary"][summary_key]
             gamesdb_dict["genre"] = {}
             if len(response_json["game"]["genres"]) > 0:
-                for genre_key in response_json["game"]["genres"][0]["name"]:
-                    gamesdb_dict["genre"][genre_key] = response_json["game"]["genres"][0]["name"][genre_key]
+                for genre in response_json["game"]["genres"]:
+                    for genre_key, genre_value in genre["name"].items():
+                        if genre_key in gamesdb_dict["genre"] and len(gamesdb_dict["genre"][genre_key]) > 0:
+                            gamesdb_dict["genre"][genre_key] += ', '
+                        else:
+                            gamesdb_dict["genre"][genre_key] = ''
+                        gamesdb_dict["genre"][genre_key] += genre["name"][genre_key]
         else:
             gamesdb_dict["summary"] = {}
             gamesdb_dict["genre"] = {}
