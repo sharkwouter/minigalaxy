@@ -5,7 +5,8 @@ import threading
 from typing import List
 
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.paths import UI_DIR
+from minigalaxy.logger import logger
+from minigalaxy.paths import UI_DIR, CATEGORIES_FILE_PATH
 from minigalaxy.api import Api
 from minigalaxy.game import Game
 from minigalaxy.ui.gametile import GameTile
@@ -129,6 +130,7 @@ class Library(Gtk.Viewport):
             os.makedirs(library_dir, mode=0o755)
         directories = os.listdir(library_dir)
         games = []
+        game_categories_dict = read_game_categories_file()
         for directory in directories:
             full_path = os.path.join(self.config.install_dir, directory)
             # Only scan directories
@@ -147,9 +149,10 @@ class Library(Gtk.Viewport):
                         game_id = 0
                     else:
                         game_id = int(game_id)
-                games.append(Game(name=name, game_id=game_id, install_dir=full_path))
+                category = game_categories_dict.get(game_id, "")
+                games.append(Game(name=name, game_id=game_id, install_dir=full_path, category=category))
             else:
-                games.extend(get_installed_windows_games(full_path))
+                games.extend(get_installed_windows_games(full_path, game_categories_dict))
         return games
 
     def __add_games_from_api(self):
@@ -158,7 +161,9 @@ class Library(Gtk.Viewport):
             self.offline = False
         else:
             self.offline = True
+            logger.info("Client is offline, showing installed games only")
             GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _(err_msg))
+        game_category_dict = {}
         for game in retrieved_games:
             if game not in self.games:
                 self.games.append(game)
@@ -167,20 +172,45 @@ class Library(Gtk.Viewport):
                 self.games[self.games.index(game)].name = game.name
             self.games[self.games.index(game)].image_url = game.image_url
             self.games[self.games.index(game)].url = game.url
+            self.games[self.games.index(game)].category = game.category
+            if len(game.category) > 0:  # exclude games without set category
+                game_category_dict[str(game.id)] = game.category
+        update_game_categories_file(game_category_dict)
 
 
-def get_installed_windows_games(full_path):
+def get_installed_windows_games(full_path, game_categories_dict=None):
     games = []
     game_files = os.listdir(full_path)
     for file in game_files:
         if re.match(r'^goggame-[0-9]*\.info$', file):
             with open(os.path.join(full_path, file), 'rb') as info_file:
                 info = json.loads(info_file.read().decode('utf-8-sig'))
+                game_id = int(info["gameId"])
                 game = Game(
                     name=info["name"],
-                    game_id=int(info["gameId"]),
+                    game_id=game_id,
                     install_dir=full_path,
-                    platform="windows"
+                    platform="windows",
+                    category=(game_categories_dict or {}).get(game_id, "")
                 )
                 games.append(game)
     return games
+
+
+def update_game_categories_file(game_category_dict):
+    if not os.path.exists(CATEGORIES_FILE_PATH):  # if file does not exist, create it and write dict
+        with open(CATEGORIES_FILE_PATH, 'wt') as fd:
+            json.dump(game_category_dict, fd)
+    else:
+        with open(CATEGORIES_FILE_PATH, 'r+t') as fd:  # if file exists, write dict only if not equal to file data
+            cached_game_category_dict = json.load(fd)
+            if game_category_dict != cached_game_category_dict:
+                json.dump(game_category_dict, fd)
+
+
+def read_game_categories_file():
+    cached_game_category_dict = {}
+    if os.path.exists(CATEGORIES_FILE_PATH):
+        with open(CATEGORIES_FILE_PATH, 'rt') as fd:
+            cached_game_category_dict = json.load(fd)
+    return cached_game_category_dict

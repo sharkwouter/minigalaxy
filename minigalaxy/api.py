@@ -105,7 +105,7 @@ class Api:
                         if not product["url"]:
                             logger.warn("{} ({}) has no store page url".format(product["title"], product['id']))
                         game = Game(name=product["title"], url=product["url"], game_id=product["id"],
-                                    image_url=product["image"], platform=platform)
+                                    image_url=product["image"], platform=platform, category=product["category"])
                         games.append(game)
                 if current_page == total_pages:
                     all_pages_processed = True
@@ -188,7 +188,7 @@ class Api:
                     file_info.md5 = xml_data["md5"]
                 if "total_size" in xml_data.keys() and len(xml_data["total_size"]) > 0:
                     file_info.size = int(xml_data["total_size"])
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException:
             logger.error("Couldn't retrieve file info. Encountered HTTP exception: {}", exc_info=1)
 
         if not file_info.md5:
@@ -210,7 +210,7 @@ class Api:
             else:
                 logger.error("Couldn't read xml data. Response with code %s received with the following content: %s",
                              response.status_code, response.text, exc_info=1)
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException:
             logger.error("Couldn't read xml data. Received RequestException", exc_info=1)
         finally:
             return result
@@ -274,7 +274,7 @@ class Api:
                 logger.debug("Request %s, return code %s, response body %s", url, response.status_code, response.text)
             if response.status_code < 300:
                 result = response.json()
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException:
             logger.error("Encountered exception while making HTTP request. Request: %s", url, exc_info=1)
         return result
 
