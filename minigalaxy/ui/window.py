@@ -103,7 +103,7 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_category_filter_clicked")
     def show_categories(self, button):
-        category_filters_window = CategoryFilters(self)
+        category_filters_window = CategoryFilters(self, self.library)
         category_filters_window.run()
         category_filters_window.destroy()
 

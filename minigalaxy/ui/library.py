@@ -79,6 +79,7 @@ class Library(Gtk.Viewport):
             self.show_installed_only = widget.get_active()
         elif isinstance(widget, Gtk.SearchEntry):
             self.search_string = widget.get_text()
+        # TODO add category filter
         self.flowbox.set_filter_func(self.__filter_library_func)
 
     def __filter_library_func(self, child):
@@ -92,6 +93,8 @@ class Library(Gtk.Viewport):
 
         if not self.config.show_hidden_games and tile.game.get_info("hide_game"):
             return False
+
+        # TODO add category filter
 
         return True
 
@@ -198,6 +201,8 @@ def get_installed_windows_games(full_path, game_categories_dict=None):
 
 
 def update_game_categories_file(game_category_dict):
+    if len(game_category_dict) == 0:
+        return
     if not os.path.exists(CATEGORIES_FILE_PATH):  # if file does not exist, create it and write dict
         with open(CATEGORIES_FILE_PATH, 'wt') as fd:
             json.dump(game_category_dict, fd)
@@ -205,6 +210,8 @@ def update_game_categories_file(game_category_dict):
         with open(CATEGORIES_FILE_PATH, 'r+t') as fd:  # if file exists, write dict only if not equal to file data
             cached_game_category_dict = json.load(fd)
             if game_category_dict != cached_game_category_dict:
+                fd.seek(os.SEEK_SET)
+                fd.truncate(0)
                 json.dump(game_category_dict, fd)
 
 
