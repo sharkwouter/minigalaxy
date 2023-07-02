@@ -139,7 +139,7 @@ class Library(Gtk.Viewport):
             os.makedirs(library_dir, mode=0o755)
         directories = os.listdir(library_dir)
         games = []
-        game_categories_dict = read_game_categories_file()
+        game_categories_dict = read_game_categories_file(CATEGORIES_FILE_PATH)
         for directory in directories:
             full_path = os.path.join(self.config.install_dir, directory)
             # Only scan directories
@@ -184,7 +184,7 @@ class Library(Gtk.Viewport):
             self.games[self.games.index(game)].category = game.category
             if len(game.category) > 0:  # exclude games without set category
                 game_category_dict[game.name] = game.category
-        update_game_categories_file(game_category_dict)
+        update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
 
 
 def get_installed_windows_games(full_path, game_categories_dict=None):
@@ -205,14 +205,14 @@ def get_installed_windows_games(full_path, game_categories_dict=None):
     return games
 
 
-def update_game_categories_file(game_category_dict):
+def update_game_categories_file(game_category_dict, categories_file_path):
     if len(game_category_dict) == 0:
         return
-    if not os.path.exists(CATEGORIES_FILE_PATH):  # if file does not exist, create it and write dict
-        with open(CATEGORIES_FILE_PATH, 'wt') as fd:
+    if not os.path.exists(categories_file_path):  # if file does not exist, create it and write dict
+        with open(categories_file_path, 'wt') as fd:
             json.dump(game_category_dict, fd)
     else:
-        with open(CATEGORIES_FILE_PATH, 'r+t') as fd:  # if file exists, write dict only if not equal to file data
+        with open(categories_file_path, 'r+t') as fd:  # if file exists, write dict only if not equal to file data
             cached_game_category_dict = json.load(fd)
             if game_category_dict != cached_game_category_dict:
                 fd.seek(os.SEEK_SET)
@@ -220,9 +220,9 @@ def update_game_categories_file(game_category_dict):
                 json.dump(game_category_dict, fd)
 
 
-def read_game_categories_file():
+def read_game_categories_file(categories_file_path):
     cached_game_category_dict = {}
-    if os.path.exists(CATEGORIES_FILE_PATH):
-        with open(CATEGORIES_FILE_PATH, 'rt') as fd:
+    if os.path.exists(categories_file_path):
+        with open(categories_file_path, 'rt') as fd:
             cached_game_category_dict = json.load(fd)
     return cached_game_category_dict
