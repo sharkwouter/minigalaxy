@@ -9,6 +9,7 @@ from minigalaxy.logger import logger
 from minigalaxy.paths import UI_DIR, CATEGORIES_FILE_PATH
 from minigalaxy.api import Api
 from minigalaxy.game import Game
+from minigalaxy.ui.categoryfilters import CategoryFilters
 from minigalaxy.ui.gametile import GameTile
 from minigalaxy.ui.gametilelist import GameTileList
 from minigalaxy.ui.gtk import Gtk, GLib
@@ -34,6 +35,7 @@ class Library(Gtk.Viewport):
         self.games = []
         self.owned_products_ids = []
         self._queue = []
+        self.category_filters = []
 
     def _debounce(self, thunk):
         if thunk not in self._queue:
@@ -79,7 +81,9 @@ class Library(Gtk.Viewport):
             self.show_installed_only = widget.get_active()
         elif isinstance(widget, Gtk.SearchEntry):
             self.search_string = widget.get_text()
-        # TODO add category filter
+        elif isinstance(widget, Gtk.Dialog) and isinstance(widget, CategoryFilters):
+            # filter all true category-bool pairs and then extract category names
+            self.category_filters = [j[0] for j in filter(lambda i: i[1], widget.filter_dict.items())]
         self.flowbox.set_filter_func(self.__filter_library_func)
 
     def __filter_library_func(self, child):
@@ -94,7 +98,9 @@ class Library(Gtk.Viewport):
         if not self.config.show_hidden_games and tile.game.get_info("hide_game"):
             return False
 
-        # TODO add category filter
+        if len(self.category_filters) > 0:
+            if tile.game.category not in self.category_filters:
+                return False
 
         return True
 
