@@ -1,10 +1,14 @@
+import datetime
 import http
 from unittest import TestCase
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock, Mock, patch
 import copy
 import requests
 import time
 from minigalaxy.api import Api
+from minigalaxy.entity.download_info import DownloadInfo
+from minigalaxy.entity.download_chunk import DownloadChunk
+from minigalaxy.entity.xml_exception import XmlException
 from minigalaxy.game import Game
 
 API_GET_INFO_TOONSTRUCK = {'downloads': {'installers': [
@@ -383,3 +387,187 @@ class TestApi(TestCase):
         exp = ""
         obs = api.get_user_info()
         self.assertEqual(exp, obs)
+
+    def test_get_xml_data(self):
+        config = MagicMock()
+        session = MagicMock()
+        session.get().status_code = http.HTTPStatus.OK
+        session.get().text = """<file name="absolute_drift_5f6049d_65600.sh" available="1" notavailablemsg="" md5="dadbd2ca395b26c493763571dad10b7d" chunks="15" timestamp="2023-06-26 09:42:00" total_size="156521363">
+	<chunk id="0" from="0" to="10485759" method="md5">1a046e241432b9d91f86ddc44b34aeb4</chunk>
+	<chunk id="1" from="10485760" to="20971519" method="md5">634dd37b513c6882915f4497fc7c2997</chunk>
+	<chunk id="2" from="20971520" to="31457279" method="md5">45f5b893f79d580aa44d2d2519ac1a29</chunk>
+	<chunk id="3" from="31457280" to="41943039" method="md5">a2ed5b554a678b08ebeb452ef0897ae3</chunk>
+	<chunk id="4" from="41943040" to="52428799" method="md5">f650b8a35eb4fc2733389c57d80dadb4</chunk>
+	<chunk id="5" from="52428800" to="62914559" method="md5">c490e480f2210590fc6ba48315bf46f1</chunk>
+	<chunk id="6" from="62914560" to="73400319" method="md5">aa184a1569316d0efc2e41ce48812ded</chunk>
+	<chunk id="7" from="73400320" to="83886079" method="md5">5251e1872d554ee13e062c596389378d</chunk>
+	<chunk id="8" from="83886080" to="94371839" method="md5">3f539fb0e641a016e51414723d9745f1</chunk>
+	<chunk id="9" from="94371840" to="104857599" method="md5">4296209767474e8046351b07469e2876</chunk>
+	<chunk id="10" from="104857600" to="115343359" method="md5">f5931103125d1c821f8aeb9bd89fe871</chunk>
+	<chunk id="11" from="115343360" to="125829119" method="md5">32e10a9a46013f8201a3099cacb73e2f</chunk>
+	<chunk id="12" from="125829120" to="136314879" method="md5">6e08694f6af5539c29f15575b6c3045b</chunk>
+	<chunk id="13" from="136314880" to="146800639" method="md5">f0748e25b3970d4651e70fe3bb42f639</chunk>
+	<chunk id="14" from="146800640" to="156521362" method="md5">723ada73785c66726ae747e1e2731b55</chunk>
+</file>
+"""
+        api = Api(config, session)
+
+        expected = DownloadInfo(
+            name="absolute_drift_5f6049d_65600.sh",
+            available=1,
+            not_availablemsg="",
+            md5="dadbd2ca395b26c493763571dad10b7d",
+            chunks=[
+                DownloadChunk(
+                    chunk_id=0,
+                    from_byte=0,
+                    to_byte=10485759,
+                    method="md5",
+                    checksum="1a046e241432b9d91f86ddc44b34aeb4",
+                ),
+                DownloadChunk(
+                    chunk_id=1,
+                    from_byte=10485760,
+                    to_byte=20971519,
+                    method="md5",
+                    checksum="634dd37b513c6882915f4497fc7c2997",
+                ),
+                DownloadChunk(
+                    chunk_id=2,
+                    from_byte=20971520,
+                    to_byte=31457279,
+                    method="md5",
+                    checksum="45f5b893f79d580aa44d2d2519ac1a29",
+                ),
+                DownloadChunk(
+                    chunk_id=3,
+                    from_byte=31457280,
+                    to_byte=41943039,
+                    method="md5",
+                    checksum="a2ed5b554a678b08ebeb452ef0897ae3",
+                ),
+                DownloadChunk(
+                    chunk_id=4,
+                    from_byte=41943040,
+                    to_byte=52428799,
+                    method="md5",
+                    checksum="f650b8a35eb4fc2733389c57d80dadb4",
+                ),
+                DownloadChunk(
+                    chunk_id=5,
+                    from_byte=52428800,
+                    to_byte=62914559,
+                    method="md5",
+                    checksum="c490e480f2210590fc6ba48315bf46f1",
+                ),
+                DownloadChunk(
+                    chunk_id=6,
+                    from_byte=62914560,
+                    to_byte=73400319,
+                    method="md5",
+                    checksum="aa184a1569316d0efc2e41ce48812ded",
+                ),
+                DownloadChunk(
+                    chunk_id=7,
+                    from_byte=73400320,
+                    to_byte=83886079,
+                    method="md5",
+                    checksum="5251e1872d554ee13e062c596389378d",
+                ),
+                DownloadChunk(
+                    chunk_id=8,
+                    from_byte=83886080,
+                    to_byte=94371839,
+                    method="md5",
+                    checksum="3f539fb0e641a016e51414723d9745f1",
+                ),
+                DownloadChunk(
+                    chunk_id=9,
+                    from_byte=94371840,
+                    to_byte=104857599,
+                    method="md5",
+                    checksum="4296209767474e8046351b07469e2876",
+                ),
+                DownloadChunk(
+                    chunk_id=10,
+                    from_byte=104857600,
+                    to_byte=115343359,
+                    method="md5",
+                    checksum="f5931103125d1c821f8aeb9bd89fe871",
+                ),
+                DownloadChunk(
+                    chunk_id=11,
+                    from_byte=115343360,
+                    to_byte=125829119,
+                    method="md5",
+                    checksum="32e10a9a46013f8201a3099cacb73e2f",
+                ),
+                DownloadChunk(
+                    chunk_id=12,
+                    from_byte=125829120,
+                    to_byte=136314879,
+                    method="md5",
+                    checksum="6e08694f6af5539c29f15575b6c3045b",
+                ),
+                DownloadChunk(
+                    chunk_id=13,
+                    from_byte=136314880,
+                    to_byte=146800639,
+                    method="md5",
+                    checksum="f0748e25b3970d4651e70fe3bb42f639",
+                ),
+                DownloadChunk(
+                    chunk_id=14,
+                    from_byte=146800640,
+                    to_byte=156521362,
+                    method="md5",
+                    checksum="723ada73785c66726ae747e1e2731b55",
+                ),
+            ],
+            timestamp=datetime.datetime.fromisoformat("2023-06-26 09:42:00"),
+            total_size=156521363,
+        )
+
+        actual = api.get_xml_data("")
+        self.assertEqual(expected, actual)
+
+    def test_get_xml_data_thows_XmlException(self):
+        config = MagicMock()
+        session = MagicMock()
+        session.get().status_code = http.HTTPStatus.OK
+        api = Api(config, session)
+
+        # First test a working one changes
+        session.get().text = """<file name="gog_akalabeth_world_of_doom_2.0.0.3.sh" available="1" notavailablemsg="" md5="11a770db592af2ac463e6cdc453b555b" chunks="1" timestamp="2015-07-01 18:38:21" total_size="7569960">
+	<chunk id="0" from="0" to="7569959" method="md5">11a770db592af2ac463e6cdc453b555b</chunk>
+</file>"""
+        api.get_xml_data("")
+
+        # Test all kinds of exceptions
+        session.get().text = """<file available="1" notavailablemsg="" md5="11a770db592af2ac463e6cdc453b555b" chunks="1" timestamp="2015-07-01 18:38:21" total_size="7569960">
+	<chunk id="0" from="0" to="7569959" method="md5">11a770db592af2ac463e6cdc453b555b</chunk>
+</file>"""
+        self.assertRaises(XmlException, api.get_xml_data, "")
+
+        session.get().text = """<file name="gog_akalabeth_world_of_doom_2.0.0.3.sh" available="1" notavailablemsg="" chunks="1" timestamp="2015-07-01 18:38:21" total_size="7569960">
+	<chunk id="0" from="0" to="7569959" method="md5">11a770db592af2ac463e6cdc453b555b</chunk>
+</file>"""
+        self.assertRaises(XmlException, api.get_xml_data, "")
+
+        session.get().text = """<file name="gog_akalabeth_world_of_doom_2.0.0.3.sh" available="1" notavailablemsg="" md5="11a770db592af2ac463e6cdc453b555b" chunks="1" total_size="7569960">
+	<chunk id="0" from="0" to="7569959" method="md5">11a770db592af2ac463e6cdc453b555b</chunk>
+</file>"""
+        self.assertRaises(XmlException, api.get_xml_data, "")
+
+        session.get().text = """<file name="gog_akalabeth_world_of_doom_2.0.0.3.sh" available="1" notavailablemsg="" md5="11a770db592af2ac463e6cdc453b555b" chunks="1" timestamp="2015-07-01 18:38:21">
+	<chunk id="0" from="0" to="7569959" method="md5">11a770db592af2ac463e6cdc453b555b</chunk>
+</file>"""
+        self.assertRaises(XmlException, api.get_xml_data, "")
+
+        session.get().text = """invalid<file name="gog_akalabeth_world_of_doom_2.0.0.3.sh" available="1" notavailablemsg="" md5="11a770db592af2ac463e6cdc453b555b" chunks="1" timestamp="2015-07-01 18:38:21" total_size="7569960">
+	<chunk id="0" from="0" to="7569959" method="md5">11a770db592af2ac463e6cdc453b555b</chunk>
+</file>"""
+        self.assertRaises(XmlException, api.get_xml_data, "")
+
+        session.get().text = ""
+        self.assertRaises(XmlException, api.get_xml_data, "")

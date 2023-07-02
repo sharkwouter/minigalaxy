@@ -8,6 +8,7 @@ import urllib.parse
 from enum import Enum
 
 from minigalaxy.config import Config
+from minigalaxy.entity.download_info import DownloadInfo
 from minigalaxy.game import Game
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
@@ -271,8 +272,8 @@ class GameTile(Gtk.Box):
                 GLib.idle_add(self.parent.parent.show_error, _("Download error"), _(str(e)))
                 download_success = False
                 break
-            info = self.api.get_download_file_info(file_info["downlink"])
-            total_file_size += info.size
+            info: DownloadInfo = self.api.get_download_file_info(file_info["downlink"])
+            total_file_size += info.total_size
             try:
                 # Extract the filename from the download url (filename is between %2F and &token)
                 filename = urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1))

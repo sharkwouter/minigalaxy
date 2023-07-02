@@ -1,4 +1,5 @@
 import http
+import logging
 import os
 import time
 from urllib.parse import urlencode
@@ -7,7 +8,8 @@ import xml.etree.ElementTree as ET
 
 from requests import Session
 
-from minigalaxy.file_info import FileInfo
+from minigalaxy.entity.download_info import DownloadInfo
+from minigalaxy.entity.xml_exception import XmlException
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS
 from minigalaxy.config import Config
@@ -146,6 +148,7 @@ class Api:
             installers = dlc_installers
         else:
             response = self.get_info(game)
+            print(response)
             installers = response["downloads"]["installers"]
         possible_downloads = []
         for installer in installers:
@@ -178,42 +181,20 @@ class Api:
         :param url: Url to get download and checksum links from the API
         :return: a FileInfo object with md5 set to the md5 or and empty string and size set to the file size or 0
         """
-        file_info = FileInfo(md5="", size=0)
-        try:
-            checksum_data = self.__request(url)
-            if 'checksum' in checksum_data.keys() and len(checksum_data['checksum']) > 0:
-                xml_data = self.__get_xml_checksum(checksum_data['checksum'])
-                if "md5" in xml_data.keys() and len(xml_data["md5"]) > 0:
-                    file_info.md5 = xml_data["md5"]
-                if "total_size" in xml_data.keys() and len(xml_data["total_size"]) > 0:
-                    file_info.size = int(xml_data["total_size"])
-        except requests.exceptions.RequestException as e:
-            print("Couldn't retrieve file info. Encountered HTTP exception: {}".format(e))
+        checksum_data = self.__request(url)
+        return self.get_xml_data(checksum_data['checksum'])
 
-        if not file_info.md5:
-            print("Couldn't find md5 in xml checksum data")
-
-        if not file_info.size:
-            print("Couldn't find file size in xml checksum data")
-
-        return file_info
-
-    def __get_xml_checksum(self, url):
-        result = {}
+    def get_xml_data(self, url):
         try:
             response = self.session.get(url)
             if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
-                response_object = ET.fromstring(response.text)
-                if response_object and response_object.attrib:
-                    result = response_object.attrib
+                return DownloadInfo.from_xml(xml=response.text)
             else:
-                print("Couldn't read xml data. Response with code {} received with the following content: {}".format(
+                raise XmlException("Couldn't read xml data. Response with code {} received with the following content: {}".format(
                     response.status_code, response.text
                 ))
         except requests.exceptions.RequestException as e:
-            print("Couldn't read xml data. Received RequestException : {}".format(e))
-        finally:
-            return result
+            raise XmlException("Couldn't read xml data. Received RequestException") from e
 
     def get_user_info(self) -> str:
         username = self.config.username

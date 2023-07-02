@@ -1,0 +1,2 @@
+class XmlException(Exception):
+    pass
