@@ -158,7 +158,7 @@ class Library(Gtk.Viewport):
                         game_id = 0
                     else:
                         game_id = int(game_id)
-                category = game_categories_dict.get(game_id, "")
+                category = game_categories_dict.get(name, "")
                 games.append(Game(name=name, game_id=game_id, install_dir=full_path, category=category))
             else:
                 games.extend(get_installed_windows_games(full_path, game_categories_dict))
@@ -183,7 +183,7 @@ class Library(Gtk.Viewport):
             self.games[self.games.index(game)].url = game.url
             self.games[self.games.index(game)].category = game.category
             if len(game.category) > 0:  # exclude games without set category
-                game_category_dict[str(game.id)] = game.category
+                game_category_dict[game.name] = game.category
         update_game_categories_file(game_category_dict)
 
 
@@ -194,13 +194,12 @@ def get_installed_windows_games(full_path, game_categories_dict=None):
         if re.match(r'^goggame-[0-9]*\.info$', file):
             with open(os.path.join(full_path, file), 'rb') as info_file:
                 info = json.loads(info_file.read().decode('utf-8-sig'))
-                game_id = int(info["gameId"])
                 game = Game(
                     name=info["name"],
-                    game_id=game_id,
+                    game_id=int(info["gameId"]),
                     install_dir=full_path,
                     platform="windows",
-                    category=(game_categories_dict or {}).get(game_id, "")
+                    category=(game_categories_dict or {}).get(info["name"], "")
                 )
                 games.append(game)
     return games
