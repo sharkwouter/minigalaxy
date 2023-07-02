@@ -30,21 +30,21 @@ class CategoryFilters(Gtk.Dialog):
         self.library = library
 
         for idx, category in enumerate(self.categories):
-            self.filter_dict[category] = False
-            self.genre_filtering_grid.attach(FilterSwitch(
-                self,
-                category,
-                lambda key, value: self.filter_dict.__setitem__(key, value)),
-                left=idx % 3, top=int(idx / 3), width=1, height=1
-            )
-            # TODO restore toggle-button state based on library.category_filters
+            initial_state = category in self.library.category_filters
+            self.filter_dict[category] = initial_state
+            filter_switch = FilterSwitch(self,
+                                         category,
+                                         lambda key, value: self.filter_dict.__setitem__(key, value),
+                                         initial_state)
+            self.genre_filtering_grid.attach(
+                filter_switch, left=idx % 3, top=int(idx / 3), width=1, height=1)
 
         # Center filters window
         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
 
     @Gtk.Template.Callback("on_button_category_filters_apply_clicked")
     def on_apply_clicked(self, button):
-        logger.debug("Filtering library according to category filter dict: {}", self.filter_dict)
+        logger.debug("Filtering library according to category filter dict: %s", self.filter_dict)
         self.library.filter_library(self)
         self.destroy()
 

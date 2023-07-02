@@ -12,11 +12,11 @@ class FilterSwitch(Gtk.Box):
     label_category_filter = Gtk.Template.Child()
     switch_category_filter = Gtk.Template.Child()
 
-    def __init__(self, parent, category_name, on_toggle_fn):
+    def __init__(self, parent, category_name, on_toggle_fn, initial_state=False):
         Gtk.Frame.__init__(self)
         self.parent = parent
         self.label_category_filter.set_label(_(category_name))
-        self.switch_category_filter.set_active(False)
+        self.switch_category_filter.set_active(initial_state)
 
         def on_click(self):
             on_toggle_fn(category_name, self.get_active())
