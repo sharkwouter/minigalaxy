@@ -6,8 +6,12 @@ import re
 import time
 import urllib.parse
 from enum import Enum
+from typing import Callable
 
 from minigalaxy.config import Config
+from minigalaxy.entity.download_info import DownloadInfo
+from minigalaxy.entity.game_download_info import GameDownloadInfo
+from minigalaxy.entity.xml_exception import XmlException
 from minigalaxy.game import Game
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
@@ -251,49 +255,25 @@ class GameTileList(Gtk.Box):
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
-    def __download(self, download_info, download_type, finish_func, cancel_to_state):  # noqa: C901
-        download_success = True
+    def __download(self, game_download_info: GameDownloadInfo, download_type: DownloadType, finish_func: Callable, cancel_to_state: Callable):  # noqa: C901
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
 
-        # Need to update the config with DownloadType metadata
-        current_download_ids = self.config.current_downloads
-        if current_download_ids is None:
-            current_download_ids = set()
-        else:
-            current_download_ids = set(current_download_ids)
-        current_download_ids.add(self.game.id)
-        self.config.current_downloads = list(current_download_ids)
+        self.config.current_downloads = list({self.game.id}.union(self.config.current_downloads))
         # Start the download for all files
         self.download_list = []
-        number_of_files = len(download_info['files'])
+        number_of_files = len(game_download_info.files)
         total_file_size = 0
-        executable_path = None
+        executable_path = os.path.join(self.download_dir, game_download_info.files[0].name)
         download_files = []
-        for key, file_info in enumerate(download_info['files']):
-            try:
-                download_url = self.api.get_real_download_link(file_info["downlink"])
-            except ValueError as e:
-                print(e)
-                GLib.idle_add(self.parent.parent.show_error, _("Download error"), _(str(e)))
-                download_success = False
-                break
-            info = self.api.get_download_file_info(file_info["downlink"])
-            total_file_size += info.size
-            try:
-                # Extract the filename from the download url (filename is between %2F and &token)
-                filename = urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1))
-            except AttributeError:
-                filename = "{}-{}.bin".format(self.game.get_stripped_name(), key)
+        for key, file_info in enumerate(game_download_info.files):
+            total_file_size += file_info.total_size
+            filename = file_info.name
             download_path = os.path.join(self.download_dir, filename)
-            if key == 0:
-                # If key = 0, denote the file as the executable's path
-                executable_path = download_path
-            if info.md5:
-                self.game.md5sum[os.path.basename(download_path)] = info.md5
+            self.game.md5sum[os.path.basename(download_path)] = file_info.md5
             download = Download(
-                url=download_url,
+                url=file_info.download_url,
                 save_location=download_path,
-                download_type=DownloadType.GAME,
+                download_type=download_type,
                 finish_func=finish_func if download_path == executable_path else None,
                 progress_func=self.set_progress,
                 cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
@@ -306,13 +286,11 @@ class GameTileList(Gtk.Box):
 
         if check_diskspace(total_file_size, self.config.install_dir):
             self.download_manager.download(download_files)
-            ds_msg_title = ""
-            ds_msg_text = ""
+            download_success = True
         else:
             ds_msg_title = "Download error"
             ds_msg_text = "Not enough disk space to install game."
             download_success = False
-        if ds_msg_title:
             GLib.idle_add(self.parent.parent.show_error, _(ds_msg_title), _(ds_msg_text))
         return download_success
 

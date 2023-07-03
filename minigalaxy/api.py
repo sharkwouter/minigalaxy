@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 from requests import Session
 
 from minigalaxy.entity.download_info import DownloadInfo
+from minigalaxy.entity.game_download_info import GameDownloadInfo
 from minigalaxy.entity.xml_exception import XmlException
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS
@@ -147,8 +148,7 @@ class Api:
         if dlc_installers:
             installers = dlc_installers
         else:
-            response = self.get_info(game)
-            print(response)
+            response = self.__request("https://api.gog.com/products/{}?locale=en-US&expand=downloads".format(str(game.id)))
             installers = response["downloads"]["installers"]
         possible_downloads = []
         for installer in installers:
@@ -163,17 +163,16 @@ class Api:
         download_info = possible_downloads[0]
         for installer in possible_downloads:
             if installer['language'] == self.config.lang:
-                download_info = installer
+                download_info = GameDownloadInfo.from_dict(data=installer)
+                for download_file in installer["files"]:
+                    download_info.files.append(self.get_download_file_info(download_file["downlink"]))
                 break
             if installer['language'] == "en":
-                download_info = installer
+                download_info = GameDownloadInfo.from_dict(data=installer)
+                for download_file in installer["files"]:
+                    download_info.files.append(self.get_download_file_info(download_file["downlink"]))
 
-        # Return last entry in possible_downloads. This will either be English or the first langauge in the list
-        # This is just a backup, if the preferred language has been found, this part won't execute
         return download_info
-
-    def get_real_download_link(self, url):
-        return self.__request(url)['downlink']
 
     def get_download_file_info(self, url):
         """
@@ -182,16 +181,15 @@ class Api:
         :return: a FileInfo object with md5 set to the md5 or and empty string and size set to the file size or 0
         """
         checksum_data = self.__request(url)
-        return self.get_xml_data(checksum_data['checksum'])
-
-    def get_xml_data(self, url):
+        print(checksum_data)
+        download_url = checksum_data["downlink"]
         try:
-            response = self.session.get(url)
-            if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
-                return DownloadInfo.from_xml(xml=response.text)
+            xml_data = self.session.get(checksum_data['checksum'])
+            if xml_data.status_code == http.HTTPStatus.OK and len(xml_data.text) > 0:
+                return DownloadInfo.from_xml(download_url=download_url, xml=xml_data.text)
             else:
                 raise XmlException("Couldn't read xml data. Response with code {} received with the following content: {}".format(
-                    response.status_code, response.text
+                    xml_data.status_code, xml_data.text
                 ))
         except requests.exceptions.RequestException as e:
             raise XmlException("Couldn't read xml data. Received RequestException") from e

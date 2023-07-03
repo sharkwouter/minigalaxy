@@ -11,6 +11,7 @@ from minigalaxy.entity.xml_exception import XmlException
 @dataclass
 class DownloadInfo:
     name: str
+    download_url: str
     available: int
     not_availablemsg: str
     md5: str
@@ -19,10 +20,11 @@ class DownloadInfo:
     total_size: int
 
     @staticmethod
-    def from_xml(xml: str) -> 'DownloadInfo':
+    def from_xml(download_url: str, xml: str) -> 'DownloadInfo':
         """
         Convert xml data into a DownloadInfo object
         Can throw XmlException if the xml is not readable
+        :param download_url: where to download the file
         :param xml: xml content as string
         :return: a new DownloadInfo object
         """
@@ -31,6 +33,7 @@ class DownloadInfo:
             if xml_data and xml_data.attrib:
                     download_data = DownloadInfo(
                         name=xml_data.attrib["name"],
+                        download_url=download_url,
                         available=int(xml_data.attrib.get("available", "0")),
                         not_availablemsg=xml_data.get("not_availablemsg", ""),
                         md5=xml_data.attrib["md5"],
