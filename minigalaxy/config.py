@@ -2,6 +2,7 @@ import os
 import json
 from typing import List
 
+from minigalaxy.logger import logger
 from minigalaxy.paths import CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
 
 
@@ -21,7 +22,7 @@ class Config:
                 try:
                     self.__config = json.loads(file.read())
                 except json.decoder.JSONDecodeError:
-                    print("Reading config.json failed, creating new config file.")
+                    logger.warn("Reading config.json failed, creating new config file.")
                     os.remove(self.__config_file)
 
     def __write(self) -> None:

@@ -11,6 +11,7 @@ from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS
 from minigalaxy.config import Config
+from minigalaxy.logger import logger
 
 
 class NoDownloadLinkFound(BaseException):
@@ -102,9 +103,9 @@ class Api:
                         else:
                             continue
                         if not product["url"]:
-                            print("{} ({}) has no store page url".format(product["title"], product['id']))
+                            logger.warn("{} ({}) has no store page url".format(product["title"], product['id']))
                         game = Game(name=product["title"], url=product["url"], game_id=product["id"],
-                                    image_url=product["image"], platform=platform)
+                                    image_url=product["image"], platform=platform, category=product["category"])
                         games.append(game)
                 if current_page == total_pages:
                     all_pages_processed = True
@@ -187,14 +188,14 @@ class Api:
                     file_info.md5 = xml_data["md5"]
                 if "total_size" in xml_data.keys() and len(xml_data["total_size"]) > 0:
                     file_info.size = int(xml_data["total_size"])
-        except requests.exceptions.RequestException as e:
-            print("Couldn't retrieve file info. Encountered HTTP exception: {}".format(e))
+        except requests.exceptions.RequestException:
+            logger.error("Couldn't retrieve file info. Encountered HTTP exception: {}", exc_info=1)
 
         if not file_info.md5:
-            print("Couldn't find md5 in xml checksum data")
+            logger.warn("Couldn't find md5 in xml checksum data")
 
         if not file_info.size:
-            print("Couldn't find file size in xml checksum data")
+            logger.warn("Couldn't find file size in xml checksum data")
 
         return file_info
 
@@ -207,11 +208,10 @@ class Api:
                 if response_object and response_object.attrib:
                     result = response_object.attrib
             else:
-                print("Couldn't read xml data. Response with code {} received with the following content: {}".format(
-                    response.status_code, response.text
-                ))
-        except requests.exceptions.RequestException as e:
-            print("Couldn't read xml data. Received RequestException : {}".format(e))
+                logger.error("Couldn't read xml data. Response with code %s received with the following content: %s",
+                             response.status_code, response.text, exc_info=1)
+        except requests.exceptions.RequestException:
+            logger.error("Couldn't read xml data. Received RequestException", exc_info=1)
         finally:
             return result
 
@@ -259,7 +259,7 @@ class Api:
     def __request(self, url: str = None, params: dict = None) -> dict:
         # Refresh the token if needed
         if self.active_token_expiration_time < time.time():
-            print("Refreshing token")
+            logger.debug("Refreshing token")
             refresh_token = self.config.refresh_token
             self.config.refresh_token = self.__refresh_token(refresh_token)
 
@@ -271,27 +271,22 @@ class Api:
         try:
             response = self.session.get(url, headers=headers, params=params)
             if self.debug:
-                print("Request: {}".format(url))
-                print("Return code: {}".format(response.status_code))
-                print("Response body: {}".format(response.text))
-                print("")
+                logger.debug("Request %s, return code %s, response body %s", url, response.status_code, response.text)
             if response.status_code < 300:
                 result = response.json()
-        except requests.exceptions.RequestException as e:
-            print("Encountered exception while making HTTP request.")
-            print("Request: {}".format(url))
-            print("Exception: {}".format(e))
-            print("")
+        except requests.exceptions.RequestException:
+            logger.error("Encountered exception while making HTTP request. Request: %s", url, exc_info=1)
         return result
 
     def __request_gamesdb(self, game: Game):
         request_url = "https://gamesdb.gog.com/platforms/gog/external_releases/{}".format(game.id)
         try:
             response = self.session.get(request_url)
-            respones_dict = response.json()
+            response_dict = response.json()
         except (requests.exceptions.ConnectionError, ValueError):
-            respones_dict = {}
-        return respones_dict
+            logger.error("Error retrieving game info for gamesdb", exc_info=1)
+            response_dict = {}
+        return response_dict
 
     def get_gamesdb_info(self, game: Game) -> dict:
         gamesdb_dict = {"cover": "", "vertical_cover": "", "background": ""}
@@ -306,8 +301,13 @@ class Api:
                 gamesdb_dict["summary"][summary_key] = response_json["game"]["summary"][summary_key]
             gamesdb_dict["genre"] = {}
             if len(response_json["game"]["genres"]) > 0:
-                for genre_key in response_json["game"]["genres"][0]["name"]:
-                    gamesdb_dict["genre"][genre_key] = response_json["game"]["genres"][0]["name"][genre_key]
+                for genre in response_json["game"]["genres"]:
+                    for genre_key, genre_value in genre["name"].items():
+                        if genre_key in gamesdb_dict["genre"] and len(gamesdb_dict["genre"][genre_key]) > 0:
+                            gamesdb_dict["genre"][genre_key] += ', '
+                        else:
+                            gamesdb_dict["genre"][genre_key] = ''
+                        gamesdb_dict["genre"][genre_key] += genre["name"][genre_key]
         else:
             gamesdb_dict["summary"] = {}
             gamesdb_dict["genre"] = {}

@@ -9,6 +9,7 @@ m_library = MagicMock()
 m_preferences = MagicMock()
 m_login = MagicMock()
 m_about = MagicMock()
+m_categoryfilters = MagicMock()
 
 
 class UnitTestGtkTemplate:
@@ -56,6 +57,7 @@ sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.login'] = m_login
 sys.modules['minigalaxy.ui.about'] = m_about
 sys.modules['minigalaxy.ui.gtk'] = u_gi_repository
+sys.modules['minigalaxy.ui.categoryfilters'] = m_categoryfilters
 from minigalaxy.ui.window import Window  # noqa: E402
 
 

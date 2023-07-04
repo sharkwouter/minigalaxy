@@ -7,7 +7,7 @@ from minigalaxy.paths import CONFIG_GAMES_DIR
 
 class Game:
     def __init__(self, name: str, url: str = "", md5sum=None, game_id: int = 0, install_dir: str = "",
-                 image_url="", platform="linux", dlcs=None):
+                 image_url="", platform="linux", dlcs=None, category=""):
         self.name = name
         self.url = url
         self.md5sum = {} if md5sum is None else md5sum
@@ -16,6 +16,7 @@ class Game:
         self.image_url = image_url
         self.platform = platform
         self.dlcs = [] if dlcs is None else dlcs
+        self.category = category
         self.status_file_path = self.get_status_file_path()
 
     def get_stripped_name(self):

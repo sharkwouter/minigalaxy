@@ -5,9 +5,11 @@ import threading
 from typing import List
 
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.paths import UI_DIR
+from minigalaxy.logger import logger
+from minigalaxy.paths import UI_DIR, CATEGORIES_FILE_PATH
 from minigalaxy.api import Api
 from minigalaxy.game import Game
+from minigalaxy.ui.categoryfilters import CategoryFilters
 from minigalaxy.ui.gametile import GameTile
 from minigalaxy.ui.gametilelist import GameTileList
 from minigalaxy.ui.gtk import Gtk, GLib
@@ -33,6 +35,7 @@ class Library(Gtk.Viewport):
         self.games = []
         self.owned_products_ids = []
         self._queue = []
+        self.category_filters = []
 
     def _debounce(self, thunk):
         if thunk not in self._queue:
@@ -78,6 +81,9 @@ class Library(Gtk.Viewport):
             self.show_installed_only = widget.get_active()
         elif isinstance(widget, Gtk.SearchEntry):
             self.search_string = widget.get_text()
+        elif isinstance(widget, Gtk.Dialog) and isinstance(widget, CategoryFilters):
+            # filter all true category-bool pairs and then extract category names
+            self.category_filters = [j[0] for j in filter(lambda i: i[1], widget.filter_dict.items())]
         self.flowbox.set_filter_func(self.__filter_library_func)
 
     def __filter_library_func(self, child):
@@ -91,6 +97,10 @@ class Library(Gtk.Viewport):
 
         if not self.config.show_hidden_games and tile.game.get_info("hide_game"):
             return False
+
+        if len(self.category_filters) > 0:
+            if tile.game.category not in self.category_filters:
+                return False
 
         return True
 
@@ -129,6 +139,7 @@ class Library(Gtk.Viewport):
             os.makedirs(library_dir, mode=0o755)
         directories = os.listdir(library_dir)
         games = []
+        game_categories_dict = read_game_categories_file(CATEGORIES_FILE_PATH)
         for directory in directories:
             full_path = os.path.join(self.config.install_dir, directory)
             # Only scan directories
@@ -147,9 +158,10 @@ class Library(Gtk.Viewport):
                         game_id = 0
                     else:
                         game_id = int(game_id)
-                games.append(Game(name=name, game_id=game_id, install_dir=full_path))
+                category = game_categories_dict.get(name, "")
+                games.append(Game(name=name, game_id=game_id, install_dir=full_path, category=category))
             else:
-                games.extend(get_installed_windows_games(full_path))
+                games.extend(get_installed_windows_games(full_path, game_categories_dict))
         return games
 
     def __add_games_from_api(self):
@@ -158,7 +170,9 @@ class Library(Gtk.Viewport):
             self.offline = False
         else:
             self.offline = True
+            logger.info("Client is offline, showing installed games only")
             GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _(err_msg))
+        game_category_dict = {}
         for game in retrieved_games:
             if game not in self.games:
                 self.games.append(game)
@@ -167,9 +181,13 @@ class Library(Gtk.Viewport):
                 self.games[self.games.index(game)].name = game.name
             self.games[self.games.index(game)].image_url = game.image_url
             self.games[self.games.index(game)].url = game.url
+            self.games[self.games.index(game)].category = game.category
+            if len(game.category) > 0:  # exclude games without set category
+                game_category_dict[game.name] = game.category
+        update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
 
 
-def get_installed_windows_games(full_path):
+def get_installed_windows_games(full_path, game_categories_dict=None):
     games = []
     game_files = os.listdir(full_path)
     for file in game_files:
@@ -180,7 +198,31 @@ def get_installed_windows_games(full_path):
                     name=info["name"],
                     game_id=int(info["gameId"]),
                     install_dir=full_path,
-                    platform="windows"
+                    platform="windows",
+                    category=(game_categories_dict or {}).get(info["name"], "")
                 )
                 games.append(game)
     return games
+
+
+def update_game_categories_file(game_category_dict, categories_file_path):
+    if len(game_category_dict) == 0:
+        return
+    if not os.path.exists(categories_file_path):  # if file does not exist, create it and write dict
+        with open(categories_file_path, 'wt') as fd:
+            json.dump(game_category_dict, fd)
+    else:
+        with open(categories_file_path, 'r+t') as fd:  # if file exists, write dict only if not equal to file data
+            cached_game_category_dict = json.load(fd)
+            if game_category_dict != cached_game_category_dict:
+                fd.seek(os.SEEK_SET)
+                fd.truncate(0)
+                json.dump(game_category_dict, fd)
+
+
+def read_game_categories_file(categories_file_path):
+    cached_game_category_dict = {}
+    if os.path.exists(categories_file_path):
+        with open(categories_file_path, 'rt') as fd:
+            cached_game_category_dict = json.load(fd)
+    return cached_game_category_dict

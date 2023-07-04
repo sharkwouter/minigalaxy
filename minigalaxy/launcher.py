@@ -5,6 +5,8 @@ import re
 import json
 import glob
 import threading
+
+from minigalaxy.logger import logger
 from minigalaxy.translation import _
 
 
@@ -49,8 +51,8 @@ def start_game(game):
     if not error_message:
         send_game_output_to_stdout(process)
     if error_message:
-        print(_("Failed to start {}:").format(game.name))
-        print(error_message)
+        logger.error(_("Failed to start {}:").format(game.name), exc_info=1)
+        logger.error("Cause of error: %s", error_message)
     return error_message
 
 
@@ -76,7 +78,7 @@ def get_execute_command(game) -> list:
         exe_cmd.insert(0, "mangohud")
         exe_cmd.insert(1, "--dlsym")
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
-    print("Launch command for {}: {}".format(game.name, " ".join(exe_cmd)))
+    logger.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
     return exe_cmd
 
 
@@ -151,7 +153,7 @@ def get_dosbox_exe_cmd(game, files):
             dosbox_config = file
         if re.match(r'^dosbox_?([a-z]|[A-Z]|\d)+_single\.conf$', file):
             dosbox_config_single = file
-    print("Using system's dosbox to launch {}".format(game.name))
+    logger.info("Using system's dosbox to launch %s", game.name)
     return ["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
 
 
@@ -161,7 +163,7 @@ def get_scummvm_exe_cmd(game, files):
         if re.match(r'^.*\.ini$', file):
             scummvm_config = file
             break
-    print("Using system's scrummvm to launch {}".format(game.name))
+    logger.info("Using system's scrummvm to launch %s", game.name)
     return ["scummvm", "-c", scummvm_config]
 
 
@@ -251,7 +253,7 @@ def check_if_game_start_process_spawned_final_process(error_message, game):
 def send_game_output_to_stdout(process):
     def _internal_call(process):
         for line in iter(process.stdout.readline, b''):
-            print(line.decode('utf-8'), end='')
+            print(line.decode('utf-8'), end='')  # TODO Is this intentionally a print statement?
         process.stdout.close()
         process.wait()
     t = threading.Thread(target=_internal_call, args=(process,))

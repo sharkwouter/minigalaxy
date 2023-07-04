@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <template class="FilterSwitch" parent="GtkBox">
+    <property name="name">filterswitch</property>
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="halign">start</property>
+    <property name="valign">start</property>
+    <property name="hexpand">False</property>
+    <property name="vexpand">False</property>
+    <property name="orientation">horizontal</property>
+    <property name="spacing">10</property>
+    <child>
+      <object class="GtkCheckButton" id="switch_category_filter">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <property name="halign">end</property>
+        <property name="valign">center</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkLabel" id="label_category_filter">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="halign">start</property>
+        <property name="label" translatable="no">Label text here</property>
+        <property name="justify">fill</property>
+      </object>
+    </child>
+  </template>
+</interface>

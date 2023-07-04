@@ -3,9 +3,9 @@ import shutil
 import subprocess
 import hashlib
 import textwrap
-import traceback
 
 from minigalaxy.game import Game
+from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
@@ -52,7 +52,7 @@ def install_game(  # noqa: C901
 ):
     error_message = ""
     tmp_dir = ""
-    print("Installing {}".format(game.name))
+    logger.info("Installing {}".format(game.name))
     try:
         _use_innoextract = use_innoextract and bool(shutil.which('innoextract'))  # single decision point
         if not error_message:
@@ -70,12 +70,12 @@ def install_game(  # noqa: C901
         if not error_message and create_desktop_file:
             error_message = create_applications_file(game)
     except Exception:
-        print(traceback.format_exc())
+        logger.error("Error installing game %s", game.name, exc_info=1)
         error_message = _("Unhandled error.")
     _removal_error = remove_installer(game, installer, install_dir, keep_installers)
     error_message = error_message or _removal_error or postinstaller(game)
     if error_message:
-        print(error_message)
+        logger.error(error_message)
     return error_message
 
 
@@ -92,12 +92,12 @@ def verify_installer_integrity(game, installer):
             calculated_checksum = hash_md5.hexdigest()
             if installer_file_name in game.md5sum:
                 if game.md5sum[installer_file_name] == calculated_checksum:
-                    print("{} integrity is preserved. MD5 is: {}".format(installer_file_name, calculated_checksum))
+                    logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
                 else:
                     error_message = _("{} was corrupted. Please download it again.").format(installer_file_name)
                     break
             else:
-                print("Warning. No info about correct {} MD5 checksum".format(installer_file_name))
+                logger.warn("Warning. No info about correct %s MD5 checksum", installer_file_name)
     return error_message
 
 
