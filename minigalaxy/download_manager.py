@@ -21,6 +21,7 @@ import shutil
 import time
 import threading
 import queue
+from typing import Tuple, Dict, List
 
 from requests import Session
 from requests.exceptions import RequestException
@@ -35,7 +36,7 @@ class QueuedDownloadItem:
     """
     Wrap downloads in a simple class so we can manage when to download them
     """
-    def __init__(self, download, priority=1):
+    def __init__(self, download: Download, priority: int=1):
         """
         Create a QueuedDownloadItem with a given download and priority level
         """
@@ -43,7 +44,7 @@ class QueuedDownloadItem:
         self.item = download
         self.queue_time = time.time()
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         """
         Only compare QueuedDownloadItems on their priority level and
         time added to the queue.
@@ -98,7 +99,7 @@ class DownloadManager:
                 download_thread.start()
                 self.workers.append(download_thread)
 
-    def download(self, download):
+    def download(self, download: Download) -> None:
         """
         Add a download or list of downloads to the queue for downloading
         You can download a single Download or a list of Downloads
@@ -113,8 +114,8 @@ class DownloadManager:
             for d in download:
                 self.put_in_proper_queue(d)
 
-    def put_in_proper_queue(self, download):
-        "Put the download in the proper queue"
+    def put_in_proper_queue(self, download: Download) -> None:
+        """Put the download in the proper queue"""
         # Add game type downloads to the game queue
         if download.download_type == DownloadType.GAME:
             self.__game_queue.put(QueuedDownloadItem(download, 1))
@@ -130,7 +131,7 @@ class DownloadManager:
             # Add other items to the UI queue
             self.__ui_queue.put(QueuedDownloadItem(download, 0))
 
-    def download_now(self, download):
+    def download_now(self, download: Download) -> None:
         """
         Download an item with a higher priority
         Any item with the download_now priority set will get downloaded
@@ -144,7 +145,7 @@ class DownloadManager:
         """
         self.__ui_queue.put(QueuedDownloadItem(download, 0))
 
-    def cancel_download(self, downloads):
+    def cancel_download(self, downloads: List[Download]) -> None:
         """
         Cancel a download or a list of downloads
 
@@ -167,7 +168,7 @@ class DownloadManager:
         # cancel list
         self.cancel_queued_downloads(download_dict)
 
-    def cancel_active_downloads(self, download_dict):
+    def cancel_active_downloads(self, download_dict: Dict) -> None:
         """
         Cancel active downloads
         This is called by cancel_download
@@ -184,7 +185,7 @@ class DownloadManager:
                     # Remove it from the downloads to cancel
                     del download_dict[download]
 
-    def cancel_queued_downloads(self, download_dict):
+    def cancel_queued_downloads(self, download_dict: Dict) -> None:
         """
         Cancel selected downloads in the queue
         This is called by cancel_download
@@ -219,7 +220,7 @@ class DownloadManager:
                     item = new_queue.get()
                     download_queue.put(item)
 
-    def cancel_current_downloads(self):
+    def cancel_current_downloads(self) -> None:
         """
         Cancel the currentl downloads
         """
@@ -228,7 +229,7 @@ class DownloadManager:
             for download in self.active_downloads:
                 self.__cancel[download] = True
 
-    def cancel_all_downloads(self):
+    def cancel_all_downloads(self) -> None:
         """
         Cancel all current downloads queued
         """
@@ -244,8 +245,8 @@ class DownloadManager:
 
         self.cancel_current_downloads()
 
-    def __remove_download_from_active_downloads(self, download):
-        "Remove a download from the list of active downloads"
+    def __remove_download_from_active_downloads(self, download: Download) -> None:
+        """Remove a download from the list of active downloads"""
         with self.active_downloads_lock:
             if download in self.active_downloads:
                 self.logger.debug("Removing download from active downloads list")
@@ -253,7 +254,7 @@ class DownloadManager:
             else:
                 self.logger.debug("Didn't find download in active downloads list")
 
-    def __download_thread(self, download_queue):
+    def __download_thread(self, download_queue: queue.PriorityQueue) -> None:
         """
         The main DownloadManager thread calls this when it is created
         It checks the queue, starting new downloads when they are available
@@ -265,13 +266,13 @@ class DownloadManager:
                 with self.active_downloads_lock:
                     download = download_queue.get().item
                     self.active_downloads[download] = download
-                self.__download_file(download, download_queue)
+                self.__download_file(download)
                 # Mark the task as done to keep counts correct so
                 # we can use join() or other functions later
                 download_queue.task_done()
             time.sleep(0.01)
 
-    def __download_file(self, download, download_queue):
+    def __download_file(self, download: Download) -> None:
         """
         This is called by __download_thread to download a file
         It is also called directly by the thread created in download_now
@@ -309,7 +310,7 @@ class DownloadManager:
             # We may want to unset current_downloads here
             # For example, if a download was added that is impossible to complete
 
-    def __prepare_location(self, save_location):
+    def __prepare_location(self, save_location: str) -> None:
         """
         Make sure the download directory exists and the file doesn't already exist
 
@@ -326,7 +327,7 @@ class DownloadManager:
             shutil.rmtree(save_location)
             self.logger.debug("{} is a directory. Will remove it, to make place for installer.".format(save_location))
 
-    def __get_start_point_and_download_mode(self, download):
+    def __get_start_point_and_download_mode(self, download) -> Tuple[int, str]:
         """
         Resume the previous download if possible
 
@@ -344,7 +345,7 @@ class DownloadManager:
                 os.remove(download.save_location)
         return start_point, download_mode
 
-    def __download_operation(self, download, start_point, download_mode):
+    def __download_operation(self, download: Download, start_point: int, download_mode: str) -> bool:
         """
         Download the file
         This is called by __download_file to actually perform the download
@@ -384,7 +385,7 @@ class DownloadManager:
         self.logger.debug("Returning result from _download_operation: {}".format(result))
         return result
 
-    def __is_same_download_as_before(self, download):
+    def __is_same_download_as_before(self, download: Download) -> bool:
         """
         Return true if the download is the same as an item with the same save_location
         already downloaded.
