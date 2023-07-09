@@ -8,6 +8,7 @@ from typing import Callable
 
 from minigalaxy.config import Config
 from minigalaxy.entity.game_download_info import GameDownloadInfo
+from minigalaxy.entity.game_downloader import GameDownloader
 from minigalaxy.entity.xml_exception import XmlException
 from minigalaxy.game import Game
 from minigalaxy.translation import _
@@ -237,14 +238,16 @@ class GameTile(Gtk.Box):
         return result, download_info
 
     def __download_game(self) -> None:
-        finish_func = self.__install_game
-        cancel_to_state = self.state.DOWNLOADABLE
-        result, download_info = self.get_download_info()
-        if result:
-            result = self.__download(download_info, DownloadType.GAME, finish_func,
-                                     cancel_to_state)
-        if not result:
-            GLib.idle_add(self.update_to_state, cancel_to_state)
+        # finish_func = self.__install_game
+        # cancel_to_state = self.state.DOWNLOADABLE
+        # result, download_info = self.get_download_info()
+        # if result:
+        #     result = self.__download(download_info, DownloadType.GAME, finish_func,
+        #                              cancel_to_state)
+        # if not result:
+        #     GLib.idle_add(self.update_to_state, cancel_to_state)
+        self.gameDownloader = GameDownloader(api=self.api, config=self.config)
+        self.gameDownloader.download_game(game=self.game)
 
     def __download(self, game_download_info: GameDownloadInfo, download_type: DownloadType, finish_func: Callable, cancel_to_state: Callable):  # noqa: C901
         GLib.idle_add(self.update_to_state, self.state.QUEUED)
@@ -343,18 +346,19 @@ class GameTile(Gtk.Box):
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
     def __check_for_update_dlc(self):
-        if self.game.is_installed() and self.game.id and not self.offline:
-            game_info = self.api.get_info(self.game)
-            if self.game.get_info("check_for_updates") == "":
-                self.game.set_info("check_for_updates", True)
-            if self.game.get_info("check_for_updates"):
-                game_version = self.api.get_version(self.game, gameinfo=game_info)
-                update_available = self.game.is_update_available(game_version)
-                if update_available:
-                    GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
-            self.__check_for_dlc(game_info)
-        if self.offline:
-            GLib.idle_add(self.menu_button_dlc.hide)
+        # if self.game.is_installed() and self.game.id and not self.offline:
+        #     game_info = self.api.get_info(self.game)
+        #     if self.game.get_info("check_for_updates") == "":
+        #         self.game.set_info("check_for_updates", True)
+        #     if self.game.get_info("check_for_updates"):
+        #         game_version = self.api.get_version(self.game, gameinfo=game_info)
+        #         update_available = self.game.is_update_available(game_version)
+        #         if update_available:
+        #             GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
+        #     self.__check_for_dlc(game_info)
+        # if self.offline:
+        #     GLib.idle_add(self.menu_button_dlc.hide)
+        pass
 
     def __update(self, save_location):
         install_success = self.__install(save_location, update=True)
@@ -420,7 +424,7 @@ class GameTile(Gtk.Box):
             dlc_box.show_all()
             self.get_async_image_dlc_icon(dlc_id, image, icon, title)
         download_info = self.api.get_download_info(self.game, dlc_installers=installer)
-        if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=title):
+        if self.game.is_update_available(version_from_api=download_info.version, dlc_title=title):
             icon_name = "emblem-synchronizing"
             self.dlc_dict[title][0].set_sensitive(True)
         elif self.game.is_installed(dlc_title=title):

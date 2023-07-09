@@ -8,3 +8,6 @@ class DownloadChunk:
     to_byte: int
     method: str
     checksum: str
+
+    def get_size(self) -> int:
+        return self.to_byte - self.from_byte

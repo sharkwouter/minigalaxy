@@ -2,6 +2,7 @@ import http
 import logging
 import os
 import time
+from typing import List
 from urllib.parse import urlencode
 import requests
 import xml.etree.ElementTree as ET
@@ -144,7 +145,7 @@ class Api:
         return response
 
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> dict:
+    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> GameDownloadInfo:
         if dlc_installers:
             installers = dlc_installers
         else:
@@ -193,6 +194,35 @@ class Api:
                 ))
         except requests.exceptions.RequestException as e:
             raise XmlException("Couldn't read xml data. Received RequestException") from e
+
+    def get_download_urls(self, game:Game, operating_system="linux", dlc_installers="") -> List[str]:
+        urls = []
+        if dlc_installers:
+            installers = dlc_installers
+        else:
+            response = self.__request("https://api.gog.com/products/{}?locale=en-US&expand=downloads".format(str(game.id)))
+            installers = response["downloads"]["installers"]
+
+        possible_downloads = []
+        for installer in installers:
+            if installer["os"] == operating_system:
+                possible_downloads.append(installer)
+        if not possible_downloads:
+            if operating_system == "linux":
+                return self.get_download_urls(game, "windows")
+            else:
+                raise NoDownloadLinkFound("Error: {} with id {} couldn't be installed".format(game.name, game.id))
+
+        for installer in possible_downloads:
+            if installer['language'] == self.config.lang:
+                for download_file in installer["files"]:
+                    urls.append(download_file["downlink"])
+                break
+            if installer['language'] == "en":
+                for download_file in installer["files"]:
+                    urls.append(download_file["downlink"])
+
+        return urls
 
     def get_user_info(self) -> str:
         username = self.config.username
