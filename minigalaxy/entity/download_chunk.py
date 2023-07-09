@@ -10,4 +10,4 @@ class DownloadChunk:
     checksum: str
 
     def get_size(self) -> int:
-        return self.to_byte - self.from_byte
+        return self.to_byte - (self.from_byte - 1)  # the -1 is because the from-byte is included
