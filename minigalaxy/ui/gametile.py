@@ -5,7 +5,6 @@ import threading
 import re
 import time
 import urllib.parse
-from enum import Enum
 
 from minigalaxy.config import Config
 from minigalaxy.entity.state import State
