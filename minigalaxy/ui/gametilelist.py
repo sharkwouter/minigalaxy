@@ -20,8 +20,6 @@ from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
 from minigalaxy.api import NoDownloadLinkFound, Api
 from minigalaxy.ui.gtk import Gtk, GLib, Notify
-from minigalaxy.ui.information import Information
-from minigalaxy.ui.properties import Properties
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametilelist.ui"))
@@ -42,7 +40,8 @@ class GameTileList(Gtk.Box):
     menu_button_properties = Gtk.Template.Child()
     game_label = Gtk.Template.Child()
 
-    def __init__(self, parent, game: Game, config: Config, api: Api, download_manager: DownloadManager):
+    def __init__(self, parent, game: Game, config: Config, api: Api, download_manager: DownloadManager,
+                 show_properties_callback, show_information_callback):
         self.config = config
         current_locale = self.config.locale
         default_locale = locale.getdefaultlocale()[0]
@@ -67,6 +66,8 @@ class GameTileList(Gtk.Box):
         self.download_list = []
         self.dlc_dict = {}
         self.current_state = State.DOWNLOADABLE
+        self.show_information_callback = show_information_callback
+        self.show_properties_callback = show_properties_callback
 
         self.image.set_tooltip_text(self.game.name)
 
@@ -135,16 +136,12 @@ class GameTileList(Gtk.Box):
             self.parent.parent.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
 
     @Gtk.Template.Callback("on_menu_button_information_clicked")
-    def show_information(self, button):
-        information_window = Information(self, self.game, self.config, self.api, self.download_manager)
-        information_window.run()
-        information_window.destroy()
+    def on_menu_button_information(self, button):
+        self.show_information_callback(self.game, self.download_manager)
 
     @Gtk.Template.Callback("on_menu_button_properties_clicked")
-    def show_properties(self, button):
-        properties_window = Properties(self, self.game, self.api)
-        properties_window.run()
-        properties_window.destroy()
+    def on_menu_button_properties(self, button):
+        self.show_properties_callback(self.game)
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def on_button_cancel(self, widget):

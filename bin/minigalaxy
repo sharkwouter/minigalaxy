@@ -43,12 +43,13 @@ def main():
     if cli_args.reset: conf_reset()
 
     # Import the gi module after parsing arguments
-    from minigalaxy.ui.gtk import Gtk
-    from minigalaxy.ui import Window
+    from minigalaxy.ui.gtk import Gtk, GLib
+    from minigalaxy.ui import Window, LoadingScreen
     from minigalaxy.config import Config
     from minigalaxy.api import Api
     from minigalaxy.download_manager import DownloadManager
     from minigalaxy.css import load_css
+    from minigalaxy.ui.library import Library
 
     # Start the application
     load_css()
@@ -57,8 +58,11 @@ def main():
     session.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {})'.format(VERSION, platform.machine())})
     api = Api(config, session)
     download_manager = DownloadManager(session)
-    window = Window(config, api, download_manager, APPLICATION_NAME)
+    library = Library(config, api, download_manager)
+    window = Window(config, api, library, APPLICATION_NAME)
     window.connect("destroy", Gtk.main_quit)
+    loading_screen = LoadingScreen()
+    library.initialize(loading_screen, window)
     Gtk.main()
 
 

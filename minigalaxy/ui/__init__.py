@@ -3,3 +3,4 @@
 from minigalaxy.ui.window import Window             # noqa: F401
 from minigalaxy.ui.preferences import Preferences   # noqa: F401
 from minigalaxy.ui.gametile import GameTile         # noqa: F401
+from minigalaxy.ui.loadingscreen import LoadingScreen  # noqa: F401
