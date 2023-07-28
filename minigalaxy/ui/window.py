@@ -73,10 +73,14 @@ class Window(Gtk.ApplicationWindow):
         self.make_directories()
 
         # Interact with the API
+        logger.debug("Checking API connectivity...")
         self.offline = not self.api.can_connect()
+        logger.debug("Done checking API connectivity, status: %s", "offline" if self.offline else "online")
         if not self.offline:
             try:
+                logger.debug("Authenticating...")
                 self.__authenticate()
+                logger.debug("Authenticated as: %s", self.api.get_user_info())
                 self.HeaderBar.set_subtitle(self.api.get_user_info())
             except Exception:
                 logger.warn("Starting in offline mode after receiving exception", exc_info=1)

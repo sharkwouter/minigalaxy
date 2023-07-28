@@ -4,6 +4,7 @@ import time
 from urllib.parse import urlencode
 import requests
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from requests import Session
 
@@ -29,6 +30,7 @@ class Api:
         self.debug = os.environ.get("MG_DEBUG")
         self.active_token = False
         self.active_token_expiration_time = time.time()
+        self.conn_check_thpool = ThreadPoolExecutor(max_workers=2)
 
     # use a method to authenticate, based on the information we have
     # Returns an empty string if no information was entered
@@ -248,12 +250,24 @@ class Api:
             "https://embed.gog.com",
             "https://auth.gog.com",
         ]
-        for url in urls:
+        threads = []
+
+        def make_request(url_to_check: str):
             try:
-                self.session.get(url, timeout=5)
+                self.session.get(url_to_check, timeout=5)
+                return True
             except requests.exceptions.ConnectionError:
                 return False
-        return True
+
+        for url in urls:
+            threads.append(self.conn_check_thpool.submit(make_request, url))
+
+        results = []
+        for thread in as_completed(threads):
+            if thread.cancelled():
+                return False
+            results += [thread.result()]
+        return all(results)
 
     # Make a request with the active token
     def __request(self, url: str = None, params: dict = None) -> dict:

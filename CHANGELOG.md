@@ -11,6 +11,7 @@
 - Hide CDPR Goodie Pack Content
 - Add notifications on successful download and installation of games (thanks to orende)
 - Add category filtering dialog for game library (thanks to orende)
+- Parallelize api.can_connect function with threads, futures (thanks to orende)
 
 **1.2.2**
 - Fix progress bar not showing up for downloads
