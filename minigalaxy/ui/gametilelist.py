@@ -250,6 +250,7 @@ class GameTileList(Gtk.Box):
 
     def __download(self, download_info, download_type, finish_func, cancel_to_state):  # noqa: C901
         download_success = True
+        self.game.set_install_dir(self.config.install_dir)
         GLib.idle_add(self.update_to_state, State.QUEUED)
 
         # Need to update the config with DownloadType metadata
@@ -301,7 +302,7 @@ class GameTileList(Gtk.Box):
             download_files.insert(0, download)
         self.download_list.extend(download_files)
 
-        if check_diskspace(total_file_size, self.config.install_dir):
+        if check_diskspace(total_file_size, self.game.install_dir):
             self.download_manager.download(download_files)
             ds_msg_title = ""
             ds_msg_text = ""
