@@ -212,6 +212,7 @@ Special thanks goes out to all contributors:
 - jgerrish for improving the download code
 - LexofLeviafan for fixing a bug
 - orende for contributing code
+- Unrud for contributing code
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
