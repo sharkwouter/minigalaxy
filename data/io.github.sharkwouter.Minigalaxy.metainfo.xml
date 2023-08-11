@@ -33,7 +33,14 @@
   <provides>
     <binary>minigalaxy</binary>
   </provides>
-  <releases><release version="1.2.4" date="2023-08-11">
+  <releases><release version="1.2.5" date="2023-08-11">
+      <description>
+        <p>Implements the following changes:</p>
+        <ul>
+          <li>Fix filtering for installed games</li>
+        </ul>
+      </description>
+    </release><release version="1.2.4" date="2023-08-11">
       <description>
         <p>Implements the following changes:</p>
         <ul>

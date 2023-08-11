@@ -1,3 +1,9 @@
+minigalaxy (1.2.5) jammy; urgency=medium
+
+  * Fix filtering for installed games
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Fri, 11 Aug 2023 14:06:56 +0000
+
 minigalaxy (1.2.4) jammy; urgency=medium
 
   * Fix packages missing a script
