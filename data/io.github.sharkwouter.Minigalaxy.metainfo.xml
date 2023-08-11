@@ -33,7 +33,28 @@
   <provides>
     <binary>minigalaxy</binary>
   </provides>
-  <releases><release version="1.2.2" date="2022-09-27">
+  <releases><release version="1.2.3" date="2023-08-11">
+      <description>
+        <p>Implements the following changes:</p>
+        <ul>
+          <li>Fix short freeze on startup (thanks to LeXofLeviafan)</li>
+          <li>Fix game information not showing in list view (thanks to TotalCaesar659)</li>
+          <li>Hide A Plague Tale Digital Goodies Pack (thanks to TotalCaesar659)</li>
+          <li>Remove round corners from top of the "play" button (thanks to lmeunier)</li>
+          <li>Move the Gametile menu button alongside the Play button (thanks to lmeunier)</li>
+          <li>Update Spanish translation (thanks to manurtinez)</li>
+          <li>Capitalize first letter of the "play/download/..." button (thanks to lmeunier)</li>
+          <li>Update Traditional Chinese translation (thanks to s8321414)</li>
+          <li>Added additional tooltips to buttons, labels, menu items and radio buttons (thanks to orende)</li>
+          <li>Hide CDPR Goodie Pack Content</li>
+          <li>Add notifications on successful download and installation of games (thanks to orende)</li>
+          <li>Add category filtering dialog for game library (thanks to orende)</li>
+          <li>Parallelize api.can_connect function with threads, futures (thanks to orende)</li>
+          <li>Fix available disk space being checked in parent directory (thanks to Unrud)</li>
+          <li>Create new config if reading it fails</li>
+        </ul>
+      </description>
+    </release><release version="1.2.2" date="2022-09-27">
       <description>
         <p>Implements the following changes:</p>
         <ul>

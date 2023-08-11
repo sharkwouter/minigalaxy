@@ -1,3 +1,31 @@
+minigalaxy (1.2.3) jammy; urgency=medium
+
+  * Fix short freeze on startup (thanks to LeXofLeviafan)
+  * Fix game information not showing in list view (thanks to
+    TotalCaesar659)
+  * Hide A Plague Tale Digital Goodies Pack (thanks to TotalCaesar659)
+  * Remove round corners from top of the "play" button (thanks to
+    lmeunier)
+  * Move the Gametile menu button alongside the Play button (thanks to
+    lmeunier)
+  * Update Spanish translation (thanks to manurtinez)
+  * Capitalize first letter of the "play/download/..." button (thanks to
+    lmeunier)
+  * Update Traditional Chinese translation (thanks to s8321414)
+  * Added additional tooltips to buttons, labels, menu items and radio
+    buttons (thanks to orende)
+  * Hide CDPR Goodie Pack Content
+  * Add notifications on successful download and installation of games
+    (thanks to orende)
+  * Add category filtering dialog for game library (thanks to orende)
+  * Parallelize api.can_connect function with threads, futures (thanks
+    to orende)
+  * Fix available disk space being checked in parent directory (thanks
+    to Unrud)
+  * Create new config if reading it fails
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Fri, 11 Aug 2023 09:24:02 +0000
+
 minigalaxy (1.2.2) focal; urgency=medium
 
   * Fix progress bar not showing up for downloads
