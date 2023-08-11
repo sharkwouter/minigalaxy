@@ -1,3 +1,6 @@
+**1.2.5**
+- Fix filtering for installed games
+
 **1.2.4**
 - Fix packages missing a script
 

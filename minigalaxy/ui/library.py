@@ -5,6 +5,7 @@ import threading
 from typing import List
 
 from minigalaxy.download_manager import DownloadManager
+from minigalaxy.entity.state import State
 from minigalaxy.logger import logger
 from minigalaxy.paths import UI_DIR, CATEGORIES_FILE_PATH
 from minigalaxy.api import Api
@@ -92,7 +93,7 @@ class Library(Gtk.Viewport):
             return False
 
         if self.show_installed_only:
-            if tile.current_state in [tile.state.DOWNLOADABLE, tile.state.INSTALLABLE]:
+            if tile.current_state in [State.DOWNLOADABLE, State.INSTALLABLE]:
                 return False
 
         if not self.config.show_hidden_games and tile.game.get_info("hide_game"):
