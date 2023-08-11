@@ -13,6 +13,7 @@
 - Add category filtering dialog for game library (thanks to orende)
 - Parallelize api.can_connect function with threads, futures (thanks to orende)
 - Fix available disk space being checked in parent directory (thanks to Unrud)
+- Create new config if reading it fails
 
 **1.2.2**
 - Fix progress bar not showing up for downloads
