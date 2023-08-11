@@ -1,3 +1,6 @@
+**1.2.4**
+- Fix packages missing a script
+
 **1.2.3**
 - Fix short freeze on startup (thanks to LeXofLeviafan)
 - Fix game information not showing in list view (thanks to TotalCaesar659)
