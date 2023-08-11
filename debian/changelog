@@ -1,3 +1,9 @@
+minigalaxy (1.2.4) jammy; urgency=medium
+
+  * Fix packages missing a script
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Fri, 11 Aug 2023 11:42:09 +0000
+
 minigalaxy (1.2.3) jammy; urgency=medium
 
   * Fix short freeze on startup (thanks to LeXofLeviafan)
