@@ -37,6 +37,7 @@ jobs:
         tag_name: ${{ steps.tag.outputs.VERSION }}
         name: Minigalaxy version ${{ steps.tag.outputs.VERSION }}
         body_path: release.md
+        prerelease: true
         files: |
           ../minigalaxy_*.deb
       env:
