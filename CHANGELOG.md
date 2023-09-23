@@ -1,3 +1,6 @@
+**1.2.6**
+- Fix error detection & reporting on wineprefix creation failure
+
 **1.2.5**
 - Fix filtering for installed games
 

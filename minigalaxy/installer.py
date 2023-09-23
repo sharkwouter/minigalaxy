@@ -1,3 +1,4 @@
+import sys
 import os
 import shutil
 import subprocess
@@ -186,7 +187,11 @@ def extract_by_wine(game, installer, temp_dir):
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
         # Creating the prefix before modifying dosdevices
-        _exe_cmd(["env", "WINEPREFIX={}".format(prefix_dir), "wine", "start", "/B", "cmd", "/C", "exit"])
+        command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", "start", "/B", "cmd", "/C", "exit"]
+        stdout, stderr, exitcode = _exe_cmd(command)
+        if exitcode not in [0]:
+            print(stderr, file=sys.stderr)
+            return _("Wineprefix creation failed.")
     if os.path.exists(drive):
         os.unlink(drive)
     os.symlink(temp_dir, drive)
