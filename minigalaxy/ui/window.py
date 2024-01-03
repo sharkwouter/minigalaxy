@@ -2,8 +2,10 @@ import os
 import locale
 
 from minigalaxy.download_manager import DownloadManager
+from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.ui.categoryfilters import CategoryFilters
+from minigalaxy.ui.information import Information
 from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
@@ -13,6 +15,7 @@ from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
 from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf, Notify
 from minigalaxy.config import Config
+from minigalaxy.ui.properties import Properties
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
@@ -28,7 +31,7 @@ class Window(Gtk.ApplicationWindow):
     menu_logout = Gtk.Template.Child()
     window_library = Gtk.Template.Child()
 
-    def __init__(self, config: Config, api: 'Api', download_manager: DownloadManager, name="Minigalaxy"):
+    def __init__(self, config: Config, api: 'Api', library: Library, name="Minigalaxy"):
         current_locale = config.locale
         default_locale = locale.getdefaultlocale()[0]
         if current_locale == '':
@@ -43,14 +46,11 @@ class Window(Gtk.ApplicationWindow):
         self.api = api
         self.config = config
         self.search_string = ""
-        self.offline = False
 
         # Initialize notifications module
         Notify.init("minigalaxy")
 
-        # Set library
-        self.library = Library(self, config, api, download_manager)
-
+        self.library = library
         self.window_library.add(self.library)
         self.header_installed.set_active(self.config.installed_filter)
 
@@ -65,27 +65,11 @@ class Window(Gtk.ApplicationWindow):
         else:
             settings.set_property("gtk-application-prefer-dark-theme", False)
 
-        # Show the window
+        # Maximize the window
         if self.config.keep_window_maximized:
             self.maximize()
-        self.show_all()
 
         self.make_directories()
-
-        # Interact with the API
-        logger.debug("Checking API connectivity...")
-        self.offline = not self.api.can_connect()
-        logger.debug("Done checking API connectivity, status: %s", "offline" if self.offline else "online")
-        if not self.offline:
-            try:
-                logger.debug("Authenticating...")
-                self.__authenticate()
-                logger.debug("Authenticated as: %s", self.api.get_user_info())
-                self.HeaderBar.set_subtitle(self.api.get_user_info())
-            except Exception:
-                logger.warn("Starting in offline mode after receiving exception", exc_info=1)
-                self.offline = True
-        self.sync_library()
 
     @Gtk.Template.Callback("filter_library")
     def filter_library(self, switch, _=""):
@@ -111,17 +95,28 @@ class Window(Gtk.ApplicationWindow):
         category_filters_window.run()
         category_filters_window.destroy()
 
+    def show_properties(self, game: Game):
+        properties_window = Properties(self, game, self.api)
+        properties_window.run()
+        properties_window.destroy()
+
+    def show_information(self, game: Game, download_manager: DownloadManager):
+        information_window = Information(self, game, self.config, self.api, download_manager)
+        information_window.run()
+        information_window.destroy()
+
     @Gtk.Template.Callback("on_menu_logout_clicked")
     def logout(self, button):
         question = _("Are you sure you want to log out of GOG?")
         if self.show_question(question):
+            logger.debug("Logging user %s out", self.config.username)
             # Unset everything which is specific to this user
             self.HeaderBar.set_subtitle("")
             self.config.username = ""
             self.config.refresh_token = ""
             self.hide()
             # Show the login screen
-            self.__authenticate()
+            self.authenticate()
             self.HeaderBar.set_subtitle(self.api.get_user_info())
             self.sync_library()
             self.show_all()
@@ -136,8 +131,8 @@ class Window(Gtk.ApplicationWindow):
     @Gtk.Template.Callback("on_header_sync_clicked")
     def sync_library(self, _=""):
         if self.library.offline:
-            self.__authenticate()
-        self.library.update_library()
+            self.authenticate()
+        self.library.update_library(self.show_error, self.show_properties, self.show_information)
 
     def make_directories(self):
         # Create the thumbnails directory
@@ -150,11 +145,11 @@ class Window(Gtk.ApplicationWindow):
         if not os.path.exists(ICON_DIR):
             os.makedirs(ICON_DIR, mode=0o755)
 
-    def reset_library(self):
-        self.library.reset()
+    def set_subtitle(self, subtitle_text):
+        self.HeaderBar.set_subtitle(subtitle_text)
 
-    def update_library(self):
-        self.library.update_library()
+    def reset_library(self):
+        self.library.reset(self.show_error, self.show_properties, self.show_information)
 
     def show_error(self, text, secondary_text=""):
         dialog = Gtk.MessageDialog(
@@ -190,7 +185,7 @@ class Window(Gtk.ApplicationWindow):
     The token is not valid for a long time
     """
 
-    def __authenticate(self):
+    def authenticate(self):
         url = None
         if self.config.stay_logged_in:
             token = self.config.refresh_token

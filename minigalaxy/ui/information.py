@@ -26,7 +26,7 @@ class Information(Gtk.Dialog):
     label_game_description = Gtk.Template.Child()
 
     def __init__(self, parent, game, config: Config, api: Api, download_manager: DownloadManager):
-        Gtk.Dialog.__init__(self, title=_("Information about {}").format(game.name), parent=parent.parent.parent,
+        Gtk.Dialog.__init__(self, title=_("Information about {}").format(game.name), parent=parent,
                             modal=True)
         self.parent = parent
         self.game = game

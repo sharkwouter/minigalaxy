@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import uuid
+from json import JSONDecodeError
 from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch, mock_open
 import tempfile
@@ -13,9 +14,12 @@ m_preferences = MagicMock()
 m_gametile = MagicMock()
 m_gametilelist = MagicMock()
 m_categoryfilters = MagicMock()
+m_loadingscreen = MagicMock()
 
 
 class UnitTestGtkTemplate:
+
+    Callback = MagicMock()
 
     def __init__(self):
         self.Child = m_gtk
@@ -34,6 +38,10 @@ class UnitTestGiRepository:
 
         Template = UnitTestGtkTemplate()
         Widget = m_gtk
+        Box = m_gtk
+        Dialog = m_gtk
+        AboutDialog = m_gtk
+        ApplicationWindow = m_gtk
 
         class Viewport:
             pass
@@ -47,8 +55,7 @@ class UnitTestGiRepository:
     class Gio:
         pass
 
-    class GLib:
-        pass
+    GLib = MagicMock()
 
     class Notify:
         pass
@@ -62,6 +69,7 @@ sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.gametile'] = m_gametile
 sys.modules['minigalaxy.ui.gametilelist'] = m_gametilelist
 sys.modules['minigalaxy.ui.categoryfilters'] = m_categoryfilters
+sys.modules['minigalaxy.ui.loadingscreen'] = m_loadingscreen
 from minigalaxy.game import Game           # noqa: E402
 from minigalaxy.ui.library import Library, get_installed_windows_games, read_game_categories_file, \
     update_game_categories_file  # noqa: E402
@@ -79,6 +87,56 @@ API_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath a St
 
 
 class TestLibrary(TestCase):
+
+    def test_init_happy_path(self):
+        with patch('os.listdir', return_value=[]):
+            config_mock = MagicMock()
+            config_mock.locale = "en_US.UTF-8"
+            config_mock.keep_window_maximized = False
+            api_mock = MagicMock()
+            api_mock.authenticate.return_value = True
+            download_manager_mock = MagicMock()
+            test_library = Library(config=config_mock, api=api_mock, download_manager=download_manager_mock)
+            loading_screen_mock = MagicMock()
+            window_mock = MagicMock()
+            test_library._do_initialization(loading_screen_mock, window_mock)
+            expected = False
+            actual = test_library.offline
+            self.assertEqual(expected, actual)
+            window_mock.authenticate.assert_called_once()
+
+    def test_init_fallback_to_offline_mode(self):
+        with patch('os.listdir', return_value=[]):
+            config = MagicMock()
+            config.locale = "en_US.UTF-8"
+            config.keep_window_maximized = False
+            api = MagicMock()
+            api.can_connect.return_value = False
+            download_manager = MagicMock()
+            test_library = Library(config=config, api=api, download_manager=download_manager)
+            loading_screen_mock = MagicMock()
+            window_mock = MagicMock()
+            test_library._do_initialization(loading_screen_mock, window_mock)
+            expected = True
+            actual = test_library.offline
+            self.assertEqual(expected, actual)
+
+    def test_init_network_error_should_lead_to_offline_mode(self):
+        with patch('os.listdir', return_value=[]):
+            config = MagicMock()
+            config.locale = "en_US.UTF-8"
+            config.keep_window_maximized = False
+            api = MagicMock()
+            download_manager = MagicMock()
+            test_library = Library(config=config, api=api, download_manager=download_manager)
+            loading_screen_mock = MagicMock()
+            window_mock = MagicMock()
+            window_mock.authenticate.side_effect = JSONDecodeError(msg='mock', doc='mock', pos=0)
+            test_library._do_initialization(loading_screen_mock, window_mock)
+            expected = True
+            actual = test_library.offline
+            self.assertEqual(expected, actual)
+
     def test1_add_games_from_api(self):
         self_games = []
         for game in SELF_GAMES:
@@ -90,7 +148,8 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        download_manager = MagicMock()
+        test_library = Library(config=config, api=api_mock, download_manager=download_manager)
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = len(API_GAMES)
@@ -108,7 +167,8 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        download_manager = MagicMock()
+        test_library = Library(config=config, api=api_mock, download_manager=download_manager)
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = True
@@ -129,7 +189,8 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        download_manager = MagicMock()
+        test_library = Library(config=config, api=api_mock, download_manager=download_manager)
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = True
@@ -152,7 +213,8 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        download_manager = MagicMock()
+        test_library = Library(config=config, api=api_mock, download_manager=download_manager)
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = "http://test_url1"
@@ -170,7 +232,8 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        download_manager = MagicMock()
+        test_library = Library(config=config, api=api_mock, download_manager=download_manager)
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = "Neverwinter Nights: Enhanced Edition"
@@ -184,7 +247,8 @@ class TestLibrary(TestCase):
         config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        download_manager = MagicMock()
+        test_library = Library(config=config, api=api_mock, download_manager=download_manager)
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = 1

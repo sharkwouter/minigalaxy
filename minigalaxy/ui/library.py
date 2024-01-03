@@ -24,9 +24,8 @@ class Library(Gtk.Viewport):
 
     flowbox = Gtk.Template.Child()
 
-    def __init__(self, parent, config: Config, api: Api, download_manager: DownloadManager):
+    def __init__(self, config: Config, api: Api, download_manager: DownloadManager):
         Gtk.Viewport.__init__(self)
-        self.parent = parent
         self.config = config
         self.api = api
         self.download_manager = download_manager
@@ -38,6 +37,28 @@ class Library(Gtk.Viewport):
         self._queue = []
         self.category_filters = []
 
+    def initialize(self, loading_screen, window):
+        worker_thread = threading.Thread(target=lambda: self._do_initialization(loading_screen, window))
+        worker_thread.start()
+
+    def _do_initialization(self, loading_screen, window):
+        logger.debug("Checking API connectivity...")
+        self.offline = not self.api.can_connect()
+        logger.debug("Done checking API connectivity, status: %s", "offline" if self.offline else "online")
+        if not self.offline:
+            try:
+                logger.debug("Authenticating...")
+                window.authenticate()
+                logger.debug("Authenticated as %s", self.api.get_user_info())
+                window.set_subtitle(self.api.get_user_info())
+            except Exception:
+                logger.warn("Starting in offline mode after receiving exception", exc_info=1)
+                self.offline = True
+        self.update_library(window.show_error, window.show_properties, window.show_information)
+        logger.debug("Worker thread done, closing loading screen, showing main window")
+        loading_screen.destroy()
+        window.show_all()
+
     def _debounce(self, thunk):
         if thunk not in self._queue:
             self._queue.append(thunk)
@@ -48,28 +69,32 @@ class Library(Gtk.Viewport):
         for thunk in queue:
             GLib.idle_add(thunk)
 
-    def reset(self):
+    def reset(self, show_error_callback, show_properties_callback, show_information_callback):
         self.games = []
         for child in self.flowbox.get_children():
             self.flowbox.remove(child)
         self.flowbox.show_all()
-        self.update_library()
+        self.update_library(show_error_callback, show_properties_callback, show_information_callback)
 
-    def update_library(self) -> None:
-        library_update_thread = threading.Thread(target=self.__update_library)
+    def update_library(self, show_error_callback, show_properties_callback, show_information_callback) -> None:
+        library_update_thread = threading.Thread(target=self.__update_library, args=[show_error_callback,
+                                                                                     show_properties_callback,
+                                                                                     show_information_callback])
         library_update_thread.daemon = True
         library_update_thread.start()
 
-    def __update_library(self):
+    def __update_library(self, show_error_callback, show_properties_callback, show_information_callback):
         GLib.idle_add(self.__load_tile_states)
         self.owned_products_ids = self.api.get_owned_products_ids()
         # Get already installed games first
         self.games = self.__get_installed_games()
-        GLib.idle_add(self.__create_gametiles)
+        GLib.idle_add(self.__create_gametiles, show_properties_callback, show_information_callback)
 
         # Get games from the API
-        self.__add_games_from_api()
-        GLib.idle_add(self.__create_gametiles)
+        is_offline, err_msg = self.__add_games_from_api()
+        if is_offline:
+            GLib.idle_add(show_error_callback, _("Failed to retrieve library"), _(err_msg))
+        GLib.idle_add(self.__create_gametiles, show_properties_callback, show_information_callback)
         GLib.idle_add(self.filter_library)
 
     def __load_tile_states(self):
@@ -113,7 +138,7 @@ class Library(Gtk.Viewport):
         tile2 = child2.get_children()[0].game
         return tile2 < tile1
 
-    def __create_gametiles(self) -> None:
+    def __create_gametiles(self, show_properties_callback, show_information_callback) -> None:
         games_with_tiles = []
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
@@ -122,14 +147,16 @@ class Library(Gtk.Viewport):
 
         for game in self.games:
             if game not in games_with_tiles:
-                self.__add_gametile(game)
+                self.__add_gametile(game, show_properties_callback, show_information_callback)
 
-    def __add_gametile(self, game):
+    def __add_gametile(self, game, show_properties_callback, show_information_callback):
         view = self.config.view
         if view == "grid":
-            self.flowbox.add(GameTile(self, game, self.config, self.api, self.download_manager))
+            self.flowbox.add(GameTile(self, game, self.config, self.api, self.download_manager,
+                                      show_properties_callback, show_information_callback))
         elif view == "list":
-            self.flowbox.add(GameTileList(self, game, self.config, self.api, self.download_manager))
+            self.flowbox.add(GameTileList(self, game, self.config, self.api, self.download_manager,
+                                          show_properties_callback, show_information_callback))
         self._debounce(self.sort_library)
         self._debounce(self.flowbox.show_all)
 
@@ -172,7 +199,6 @@ class Library(Gtk.Viewport):
         else:
             self.offline = True
             logger.info("Client is offline, showing installed games only")
-            GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _(err_msg))
         game_category_dict = {}
         for game in retrieved_games:
             if game not in self.games:
@@ -186,6 +212,7 @@ class Library(Gtk.Viewport):
             if len(game.category) > 0:  # exclude games without set category
                 game_category_dict[game.name] = game.category
         update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
+        return self.offline, err_msg
 
 
 def get_installed_windows_games(full_path, game_categories_dict=None):

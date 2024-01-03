@@ -1,5 +1,4 @@
 import http
-import os
 import time
 from urllib.parse import urlencode
 import requests
@@ -27,7 +26,6 @@ class Api:
         self.redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
         self.client_id = "46899977096215655"
         self.client_secret = "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
-        self.debug = os.environ.get("MG_DEBUG")
         self.active_token = False
         self.active_token_expiration_time = time.time()
         self.conn_check_thpool = ThreadPoolExecutor(max_workers=2)
@@ -284,8 +282,7 @@ class Api:
         result = {}
         try:
             response = self.session.get(url, headers=headers, params=params)
-            if self.debug:
-                logger.debug("Request %s, return code %s, response body %s", url, response.status_code, response.text)
+            logger.debug("Request %s, return code %s, response body %s", url, response.status_code, response.text)
             if response.status_code < 300:
                 result = response.json()
         except requests.exceptions.RequestException:

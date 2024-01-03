@@ -1,3 +1,7 @@
+**1.2.6**
+- Show a loading screen on startup (thanks to orende)
+- Hide Cyberpunk 2077 Digital Goodies and Xenonauts 2 Alpha demo (thanks to orende)
+
 **1.2.5**
 - Fix filtering for installed games
 
