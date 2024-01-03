@@ -59,7 +59,6 @@ Minigalaxy should work on the following distributions:
 - Manjaro
 - Fedora Linux 31 or newer
 - openSUSE Tumbleweed and Leap 15.2 or newer
-- Gentoo Linux
 - MX Linux 19 or newer
 - Solus
 - Void Linux
@@ -126,11 +125,6 @@ sudo zypper ar -f obs://games:tools gamestools
 sudo zypper ref
 sudo zypper in minigalaxy
 </pre>
-</details>
-
-<details><summary>Gentoo</summary>
-
-Available in the <a href="https://github.com/metafarion/metahax">Metahax overlay</a>. Follow the instructions in the link to install Minigalaxy on Gentoo.
 </details>
 
 <details><summary>MX Linux</summary>
@@ -231,7 +225,7 @@ Special thanks goes out to all contributors:
 - manurtinez for translating to Spanish
 - jubalh for packaging Minigalaxy for openSUSE
 - gasinvein for packaging Minigalaxy for flathub
-- metafarion for packaging Minigalaxy for Gentoo
+- metafarion for packaging Minigalaxy for Gentoo early on
 - SwampRabbit and Steven Pusser for packaging Minigalaxy for MX Linux
 - karaushu for translating to Ukrainian
 - koraynilay for translating to Italian
