@@ -1,5 +1,6 @@
 **1.2.6**
-- Fix error detection & reporting on wineprefix creation failure
+- Fix changing the install path causing an exception
+- Fix error detection & reporting on wineprefix creation failure (thanks to LeXofLeviafan)
 
 **1.2.5**
 - Fix filtering for installed games

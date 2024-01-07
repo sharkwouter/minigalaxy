@@ -42,6 +42,7 @@ class Window(Gtk.ApplicationWindow):
 
         self.api = api
         self.config = config
+        self.download_manager = download_manager
         self.search_string = ""
         self.offline = False
 
@@ -95,7 +96,7 @@ class Window(Gtk.ApplicationWindow):
 
     @Gtk.Template.Callback("on_menu_preferences_clicked")
     def show_preferences(self, button):
-        preferences_window = Preferences(self, self.config)
+        preferences_window = Preferences(parent=self, config=self.config, download_manager=self.download_manager)
         preferences_window.run()
         preferences_window.destroy()
 

@@ -27,10 +27,11 @@ class Preferences(Gtk.Dialog):
     button_cancel = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
 
-    def __init__(self, parent, config: Config):
+    def __init__(self, parent, config: Config, download_manager: DownloadManager):
         Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
         self.parent = parent
         self.config = config
+        self.download_manager = download_manager
 
         self.__set_locale_list()
         self.__set_language_list()
@@ -199,7 +200,7 @@ class Preferences(Gtk.Dialog):
         # Only change the install_dir is it was actually changed
         if self.button_file_chooser.get_filename() != self.config.install_dir:
             if self.__save_install_dir_choice():
-                DownloadManager.cancel_all_downloads()
+                self.download_manager.cancel_all_downloads()
                 self.parent.reset_library()
             else:
                 self.parent.show_error(_("{} isn't a usable path").format(self.button_file_chooser.get_filename()))
