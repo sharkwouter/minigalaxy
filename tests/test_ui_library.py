@@ -1,6 +1,10 @@
+import json
+import os
 import sys
+import uuid
 from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch, mock_open
+import tempfile
 
 m_gtk = MagicMock()
 m_gi = MagicMock()
@@ -8,6 +12,7 @@ m_window = MagicMock()
 m_preferences = MagicMock()
 m_gametile = MagicMock()
 m_gametilelist = MagicMock()
+m_categoryfilters = MagicMock()
 
 
 class UnitTestGtkTemplate:
@@ -17,8 +22,8 @@ class UnitTestGtkTemplate:
 
     def from_file(self, lib_file):
         def passthrough(func):
-            def passthrough2(parent, api):
-                return func(parent, api)
+            def passthrough2(*args, **kwargs):
+                return func(*args, **kwargs)
             return passthrough2
         return passthrough
 
@@ -45,6 +50,9 @@ class UnitTestGiRepository:
     class GLib:
         pass
 
+    class Notify:
+        pass
+
 
 u_gi_repository = UnitTestGiRepository()
 sys.modules['gi.repository'] = u_gi_repository
@@ -53,8 +61,10 @@ sys.modules['minigalaxy.ui.window'] = m_window
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.gametile'] = m_gametile
 sys.modules['minigalaxy.ui.gametilelist'] = m_gametilelist
+sys.modules['minigalaxy.ui.categoryfilters'] = m_categoryfilters
 from minigalaxy.game import Game           # noqa: E402
-from minigalaxy.ui.library import Library, get_installed_windows_games  # noqa: E402
+from minigalaxy.ui.library import Library, get_installed_windows_games, read_game_categories_file, \
+    update_game_categories_file  # noqa: E402
 
 SELF_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath A Steel Sky": "1207658695",
               "Stellaris (English)": "1508702879"}
@@ -77,9 +87,10 @@ class TestLibrary(TestCase):
         for game in API_GAMES:
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
         err_msg = ""
+        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = len(API_GAMES)
@@ -94,9 +105,10 @@ class TestLibrary(TestCase):
         for game in API_GAMES:
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
         err_msg = ""
+        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = True
@@ -114,9 +126,10 @@ class TestLibrary(TestCase):
         api_gmae_with_id = Game(name="Game without ID", game_id=1234567890)
         api_games.append(api_gmae_with_id)
         err_msg = ""
+        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = True
@@ -136,9 +149,10 @@ class TestLibrary(TestCase):
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]), url="http://test_url{}".format(str(url_nr))))
             url_nr += 1
         err_msg = ""
+        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = "http://test_url1"
@@ -153,9 +167,10 @@ class TestLibrary(TestCase):
         for game in API_GAMES:
             api_games.append(Game(name=game, game_id=int(API_GAMES[game])))
         err_msg = ""
+        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = "Neverwinter Nights: Enhanced Edition"
@@ -166,9 +181,10 @@ class TestLibrary(TestCase):
         self_games = [Game(name="Torchlight 2", game_id=0, install_dir="/home/user/GoG Games/Torchlight II")]
         api_games = [Game(name="Torchlight II", game_id=1958228073)]
         err_msg = ""
+        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), api_mock)
+        test_library = Library(MagicMock(), config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = 1
@@ -195,6 +211,58 @@ class TestLibrary(TestCase):
         obs = games[0].name
         self.assertEqual(exp, obs)
 
+    def test_read_game_categories_file_should_return_populated_dict(self):
+        with tempfile.NamedTemporaryFile(mode='w+t', delete=False) as tmpfile:
+            tmpfile.write('{"Test Game":"Adventure"}')
+            tmpfile.flush()
+
+            actual = read_game_categories_file(tmpfile.name)
+
+            self.assertTrue(len(actual))
+            self.assertEqual(actual, {'Test Game': 'Adventure'})
+
+    @mock.patch('os.path.exists')
+    def test_update_game_categories_file_should_skip_for_empty_dict(self, mock_path_exists: MagicMock):
+        mock_path_exists.side_effect = Exception("Test error")
+
+        update_game_categories_file({}, None)
+
+        self.assertFalse(mock_path_exists.called)
+
+    def test_update_game_categories_file_should_create_file_if_not_found(self):
+        initially_non_existent_file = f'/tmp/{uuid.uuid4()}.json'
+        self.assertFalse(os.path.exists(initially_non_existent_file))
+        expected = {'Test game': 'Adventure'}
+
+        update_game_categories_file(expected, initially_non_existent_file)
+
+        self.assertTrue(os.path.exists(initially_non_existent_file))
+        self.assertDictEqual(expected, read_game_categories_file(initially_non_existent_file))
+
+    def test_update_game_categories_file_should_skip_if_file_found_with_identical_contents(self):
+        expected = {"Test Game": "Adventure"}
+        with tempfile.NamedTemporaryFile(mode='r+t', delete=False) as tmpfile:
+            json.dump(expected, tmpfile)
+            tmpfile.flush()
+
+            update_game_categories_file(expected, tmpfile.name)
+
+            tmpfile.seek(os.SEEK_SET)
+            actual = json.load(tmpfile)
+            self.assertDictEqual(actual, expected)
+
+    def test_update_game_categories_file_should_overwrite_file_if_contents_differ(self):
+        with tempfile.NamedTemporaryFile(mode='w+t', delete=False) as tmpfile:
+            tmpfile.write('{"Test Game":"Adventure"}')
+            tmpfile.flush()
+            expected = {"Test Game": "Adventure", "Another Game": "Strategy"}
+
+            update_game_categories_file(expected, tmpfile.name)
+
+            tmpfile.seek(os.SEEK_SET)
+            actual = json.load(tmpfile)
+            self.assertDictEqual(actual, expected)
+
 
 del sys.modules['gi']
 del sys.modules['gi.repository']
@@ -202,3 +270,4 @@ del sys.modules['minigalaxy.ui.window']
 del sys.modules['minigalaxy.ui.preferences']
 del sys.modules['minigalaxy.ui.gametile']
 del sys.modules['minigalaxy.ui.gametilelist']
+del sys.modules['minigalaxy.ui.categoryfilters']

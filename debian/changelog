@@ -1,3 +1,117 @@
+minigalaxy (1.2.5) jammy; urgency=medium
+
+  * Fix filtering for installed games
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Fri, 11 Aug 2023 14:06:56 +0000
+
+minigalaxy (1.2.4) jammy; urgency=medium
+
+  * Fix packages missing a script
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Fri, 11 Aug 2023 11:42:09 +0000
+
+minigalaxy (1.2.3) jammy; urgency=medium
+
+  * Fix short freeze on startup (thanks to LeXofLeviafan)
+  * Fix game information not showing in list view (thanks to
+    TotalCaesar659)
+  * Hide A Plague Tale Digital Goodies Pack (thanks to TotalCaesar659)
+  * Remove round corners from top of the "play" button (thanks to
+    lmeunier)
+  * Move the Gametile menu button alongside the Play button (thanks to
+    lmeunier)
+  * Update Spanish translation (thanks to manurtinez)
+  * Capitalize first letter of the "play/download/..." button (thanks to
+    lmeunier)
+  * Update Traditional Chinese translation (thanks to s8321414)
+  * Added additional tooltips to buttons, labels, menu items and radio
+    buttons (thanks to orende)
+  * Hide CDPR Goodie Pack Content
+  * Add notifications on successful download and installation of games
+    (thanks to orende)
+  * Add category filtering dialog for game library (thanks to orende)
+  * Parallelize api.can_connect function with threads, futures (thanks
+    to orende)
+  * Fix available disk space being checked in parent directory (thanks
+    to Unrud)
+  * Create new config if reading it fails
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Fri, 11 Aug 2023 09:24:02 +0000
+
+minigalaxy (1.2.2) focal; urgency=medium
+
+  * Fix progress bar not showing up for downloads
+  * Fix downloads not being cancellable
+  * Fix incompatibility with python 3.6
+  * Fix connection error texts (thanks to TotalCaesar659)
+  * Show DLC titles in English (thanks to TotalCaesar659)
+  * Fix version not being updated during a release
+  * Update Norwegian Bokmål translation (thanks to kimmalmo)
+  * Update Czech translation (thanks to jakbuz23)
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Tue, 27 Sep 2022 09:26:25 +0000
+
+minigalaxy (1.2.1) focal; urgency=medium
+
+  * Fix downloads failing when content length is not returned by the
+    server
+  * Allow different types of downloads to happen at the same time
+    (thanks to jgerrish)
+  * Fix metadata file having releases in wrong order
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Mon, 19 Sep 2022 23:47:07 +0000
+
+minigalaxy (1.2.0) focal; urgency=medium
+
+  * Split game information and properties into different windows (thanks
+    to TotalCaesar659)
+  * Add list view (thanks to TotalCaesar659)
+  * Allow DLC to be queued up for downloading (thanks to flagrama)
+  * Fix changing library to a directory with special characters in the
+    name (thanks to makson96)
+  * Fix signing in with Facebook (thanks to phlash)
+  * Always use cached DLC icons and thumbnails (thanks to
+    TotalCaesar659)
+  * Cache information covers (thanks to TotalCaesar659)
+  * Fix installers not being cleaned up like expected (thanks to Kzimir)
+  * Fix error when opening game properties window when wine is not
+    installed (thanks to lmeunier)
+  * Fix freeze for games generating a lot of output (thanks to lmeunier)
+  * Fix extracting rar based games with innoextract (thanks to Kzimir)
+  * Allow setting wine executable per game (thanks to Kzimir)
+  * Add GameMode support (thanks to TotalCaesar659)
+  * Add MangoHud support (thanks to TotalCaesar659)
+  * Add option to use Winetricks (thanks to TotalCaesar659)
+  * Fix updates not always being detected directly after opening
+    Minigalaxy (thanks to TotalCaesar659)
+  * Fix desktop files generated not always being able to launch (thanks
+    to otaconix)
+  * Show percentage when hovering over download progress bar (thanks to
+    TotalCaesar659)
+  * Add option to disable update check per game (thanks to
+    TotalCaesar659)
+  * Add forum, GOG Database and PCGamingWiki URLs to game information
+    (thanks to TotalCaesar659)
+  * List genre as unknown in game information when none is found (thanks
+    to mareksapota)
+  * Fix changing installation path causing crashes in rare cases (thanks
+    to makson96)
+  * Fall back to English when locale cannot be determined (thanks to
+    flagrama)
+  * Add gettext to build dependencies (thanks to larslindq)
+  * Improve error handling upon API errors
+  * Fix several issues with launching Windows games from Minigalaxy
+  * Fix some games getting stuck on in queue
+  * Fix Windows game installation not caring about preferred language
+    (thanks to Kzimir)
+  * Add Greek translation (thanks to Pyrofanis)
+  * Add Spanish (Spain) translation (thanks to mbarrio)
+  * Add Romanian (Romania) translation (thanks to xSlendiX)
+  * Update Norwegian Bokmål translation (thanks to kimmalmo)
+  * Update Czech translation (thanks to jakbuz23)
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Mon, 19 Sep 2022 18:59:03 +0000
+
 minigalaxy (1.1.0) focal; urgency=medium
 
   * Improve integrity check after downloading (thanks to makson96)

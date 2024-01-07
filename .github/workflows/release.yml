@@ -28,8 +28,8 @@ jobs:
       run: |
         git config --global user.name 'Wouter Wijsman'
         git config --global user.email 'sharkwouter@users.noreply.github.com'
-        git add pyproject.toml data/io.github.sharkwouter.Minigalaxy.metainfo.xml debian/changelog
-        git commit -m "Update changelogs and pyproject.toml to new release"
+        git add pyproject.toml data/io.github.sharkwouter.Minigalaxy.metainfo.xml debian/changelog minigalaxy/version.py
+        git commit -m "Add new release"
         git push
     - name: Release
       uses: softprops/action-gh-release@v1
@@ -37,6 +37,7 @@ jobs:
         tag_name: ${{ steps.tag.outputs.VERSION }}
         name: Minigalaxy version ${{ steps.tag.outputs.VERSION }}
         body_path: release.md
+        prerelease: true
         files: |
           ../minigalaxy_*.deb
       env:

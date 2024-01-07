@@ -20,7 +20,7 @@ check_changelog() {
 init_release_file() {
   echo "Minigalaxy version ${VERSION} is now available. For new users, Minigalaxy is a simple GOG client for Linux. The download and a breakdown of the changes can be found below." > "${RELEASE_FILE}"
   echo "" >> "${RELEASE_FILE}"
-  echo "![screenshot](https://raw.githubusercontent.com/sharkwouter/minigalaxy/1.1.0/screenshot.jpg)" >> "${RELEASE_FILE}"
+  echo "![screenshot](https://raw.githubusercontent.com/sharkwouter/minigalaxy/${VERSION}/screenshot.jpg)" >> "${RELEASE_FILE}"
   echo "" >> "${RELEASE_FILE}"
   echo "## Changes" >> "${RELEASE_FILE}"
   echo "" >> "${RELEASE_FILE}"
@@ -56,6 +56,12 @@ add_metadata_entry() {
   -s /component/releases/release[@version="'$VERSION'"]/description/ul \
   -t elem -n li -v "$(echo $@|sed 's/^- //')" \
   "${METADATA_FILE}"
+}
+
+sort_metadata() {
+  xmlstarlet tr --xinclude  "${SCRIPT_DIR}/sort-releases.xls" "${METADATA_FILE}" > "${METADATA_FILE}.tmp"
+  mv "${METADATA_FILE}.tmp" "${METADATA_FILE}"
+  sed -i '1s/^/<?xml version="1.0" encoding="UTF-8"?>\n/' "${METADATA_FILE}"
 }
 
 add_debian_changelog_entry() {
@@ -106,4 +112,5 @@ done < "${CHANGELOG_FILE}"
 
 set_debian_changelog_release
 finish_release_file
+sort_metadata
 return_version_info

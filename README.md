@@ -59,7 +59,6 @@ Minigalaxy should work on the following distributions:
 - Manjaro
 - Fedora Linux 31 or newer
 - openSUSE Tumbleweed and Leap 15.2 or newer
-- Gentoo Linux
 - MX Linux 19 or newer
 - Solus
 - Void Linux
@@ -128,11 +127,6 @@ sudo zypper in minigalaxy
 </pre>
 </details>
 
-<details><summary>Gentoo</summary>
-
-Available in the <a href="https://github.com/metafarion/metahax">Metahax overlay</a>. Follow the instructions in the link to install Minigalaxy on Gentoo.
-</details>
-
 <details><summary>MX Linux</summary>
 
 Available in the <a href="http://mxrepo.com/mx/repo/pool/main/m/minigalaxy/">official repository</a>.  Please use MX Package Installer or Synaptic instead of manually installing the .deb from the repo.
@@ -183,6 +177,10 @@ Currently, help is needed with the following:
 
 Feel free to join the [Minigalaxy Discord](https://discord.gg/RC4cXVD) if you would like to help out.
 
+## Other GOG tools
+
+- [LGOGDownloader](https://sites.google.com/site/gogdownloader/), a GOG client for the command line
+
 ## Special thanks
 
 Special thanks goes out to all contributors:
@@ -205,6 +203,10 @@ Special thanks goes out to all contributors:
 - mareksapota for fixing a bug
 - zocker-160 for code cleanup
 - waltercool for contributing code
+- jgerrish for improving the download code
+- LexofLeviafan for fixing a bug
+- orende for contributing code
+- Unrud for contributing code
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
@@ -214,13 +216,16 @@ Special thanks goes out to all contributors:
 - protheory8 for translating to Russian
 - LordPilum for translating to Norwegian Nynorsk
 - dummyx for translating to simplified Chinese
-- juanborda, advy99 and LocalPinkRobin for translating to Spanish
+- juanborda for translating to Spanish
+- advy99i for translating to Spanish
+- LocalPinkRobin for translating to Spanish
 - Newbytee for translating to Swedish
 - Pyrofanis for translating to Greek
 - mbarrio for translating to Spanish
+- manurtinez for translating to Spanish
 - jubalh for packaging Minigalaxy for openSUSE
 - gasinvein for packaging Minigalaxy for flathub
-- metafarion for packaging Minigalaxy for Gentoo
+- metafarion for packaging Minigalaxy for Gentoo early on
 - SwampRabbit and Steven Pusser for packaging Minigalaxy for MX Linux
 - karaushu for translating to Ukrainian
 - koraynilay for translating to Italian

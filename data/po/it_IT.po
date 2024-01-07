@@ -525,3 +525,35 @@ msgstr "{} era corrotto. Riscaricalo."
 
 #~ msgid "Couldn't connect to GOG servers"
 #~ msgstr "Connessione ai server di GOG non riuscita"
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Scarica"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Scaricando…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "In coda…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Installa"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Installando…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Gioca"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Disinstallando…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Aggiornando…"

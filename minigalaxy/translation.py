@@ -2,23 +2,24 @@ import os
 import gettext
 import locale
 from minigalaxy.config import Config
+from minigalaxy.logger import logger
 from minigalaxy.paths import LOCALE_DIR
 
 TRANSLATION_DOMAIN = "minigalaxy"
 try:
     locale.setlocale(locale.LC_ALL, '')
 except locale.Error:
-    print("Unsupported locale detected, continuing without translation support")
+    logger.error("Unsupported locale detected, continuing without translation support", exc_info=1)
 
 try:
     locale.bindtextdomain(TRANSLATION_DOMAIN, LOCALE_DIR)
 except AttributeError:
-    print("Couldn't run locale.bindtextdomain. Translations might not work correctly.")
+    logger.error("Couldn't run locale.bindtextdomain. Translations might not work correctly.", exc_info=1)
 
 try:
     locale.textdomain(TRANSLATION_DOMAIN)
 except AttributeError:
-    print("Couldn't run locale.textdomain. Translations might not work correctly.")
+    logger.error("Couldn't run locale.textdomain. Translations might not work correctly.", exc_info=1)
 
 gettext.bindtextdomain(TRANSLATION_DOMAIN, LOCALE_DIR)
 gettext.textdomain(TRANSLATION_DOMAIN)
@@ -27,7 +28,7 @@ gettext.textdomain(TRANSLATION_DOMAIN)
 os.unsetenv("LANGUAGE")
 os.unsetenv("LANG")
 
-current_locale = Config.get("locale")
+current_locale = Config().locale
 default_locale = locale.getdefaultlocale()[0]
 if current_locale == '':
     if default_locale is None:

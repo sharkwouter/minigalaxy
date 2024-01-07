@@ -558,3 +558,35 @@ msgstr "{} bozuk. Lütfen yeniden indirin."
 
 #~ msgid "Try again with an active internet connection"
 #~ msgstr "Aktif bir internet bağlantısı ile yeniden deneyiniz"
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Indir"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Indirliyor…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "Sırada…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Yükle"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Yükleniyor…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Oyna"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Siliniyor…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Güncelleniyor…"

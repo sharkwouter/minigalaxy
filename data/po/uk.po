@@ -513,3 +513,35 @@ msgstr "{} некоректний шлях"
 #: minigalaxy/installer.py:85
 msgid "{} was corrupted. Please download it again."
 msgstr "{} пошкоджено. Завантажте ще раз."
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Завантажити"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Завантаження…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "В черзі…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Встановити"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Встановлення…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Грати"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Видалення…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Оновлення…"

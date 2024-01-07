@@ -2,13 +2,12 @@ import os
 import re
 import json
 
-from minigalaxy.config import Config
 from minigalaxy.paths import CONFIG_GAMES_DIR
 
 
 class Game:
     def __init__(self, name: str, url: str = "", md5sum=None, game_id: int = 0, install_dir: str = "",
-                 image_url="", platform="linux", supported_platforms: list = None, dlcs=None):
+                 image_url="", platform="linux", supported_platforms: list = None, dlcs=None, category=""):
         self.name = name
         self.url = url
         self.md5sum = {} if md5sum is None else md5sum
@@ -16,6 +15,7 @@ class Game:
         self.install_dir = install_dir
         self.image_url = image_url
         self.dlcs = [] if dlcs is None else dlcs
+        self.category = category
         self.status_file_path = self.get_status_file_path()
         self.platform = self.get_info("platform") if self.get_info("platform") else platform
         self.supported_platforms = [platform] if supported_platforms is None else supported_platforms
@@ -137,9 +137,13 @@ class Game:
         # End: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
         return value
 
-    def set_install_dir(self):
+    def set_install_dir(self, install_dir) -> None:
+        """
+        Set the install directory based on the given install dir and the game name
+        :param install_dir: the global install directory from the config
+        """
         if not self.install_dir:
-            self.install_dir = os.path.join(Config.get("install_dir"), self.get_install_directory_name())
+            self.install_dir = os.path.join(install_dir, self.get_install_directory_name())
 
     def set_platform(self, platform):
         self.platform = platform

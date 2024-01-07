@@ -565,3 +565,35 @@ msgstr "{} wurde beschädigt. Bitte starte den Download erneut."
 
 #~ msgid "Try again with an active internet connection"
 #~ msgstr "Versuche es mit einer aktiven Internetverbindung erneut"
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Herunterladen"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Wird heruntergeladen…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "In der warteschlange…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Installieren"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Wird installiert…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Spielen"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Wird deinstalliert…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Wird aktualisiert…"

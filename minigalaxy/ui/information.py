@@ -2,6 +2,7 @@ import urllib
 import os
 import webbrowser
 
+from minigalaxy.api import Api
 from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR, COVER_DIR
 from minigalaxy.translation import _
 from minigalaxy.config import Config
@@ -24,12 +25,14 @@ class Information(Gtk.Dialog):
     button_information_pcgamingwiki = Gtk.Template.Child()
     label_game_description = Gtk.Template.Child()
 
-    def __init__(self, parent, game, api):
+    def __init__(self, parent, game, config: Config, api: Api, download_manager: DownloadManager):
         Gtk.Dialog.__init__(self, title=_("Information about {}").format(game.name), parent=parent.parent.parent,
                             modal=True)
         self.parent = parent
         self.game = game
+        self.config = config
         self.api = api
+        self.download_manager = download_manager
         self.gamesdb_info = self.api.get_gamesdb_info(self.game)
 
         # Show the image
@@ -79,7 +82,7 @@ class Information(Gtk.Dialog):
             webbrowser.open("https://www.gogdb.org/product/{}".format(self.game.id))
         except webbrowser.Error:
             self.parent.parent.show_error(
-                _("Couldn't open forum page"),
+                _("Couldn't open GOG Database page"),
                 _("Please check your internet connection")
             )
 
@@ -89,7 +92,7 @@ class Information(Gtk.Dialog):
             webbrowser.open("https://pcgamingwiki.com/api/gog.php?page={}".format(self.game.id))
         except webbrowser.Error:
             self.parent.parent.show_error(
-                _("Couldn't open forum page"),
+                _("Couldn't open PCGamingWiki page"),
                 _("Please check your internet connection")
             )
 
@@ -103,7 +106,7 @@ class Information(Gtk.Dialog):
             else:
                 url = "{}".format(self.gamesdb_info["cover"])
                 download = Download(url, cover_path)
-                DownloadManager.download_now(download)
+                self.download_manager.download_now(download)
                 response = urllib.request.urlopen(url)
                 input_stream = Gio.MemoryInputStream.new_from_data(response.read(), None)
                 pixbuf = GdkPixbuf.Pixbuf.new_from_stream(input_stream, None)
@@ -117,7 +120,7 @@ class Information(Gtk.Dialog):
 
     def load_description(self):
         description = ""
-        lang = Config.get("lang")
+        lang = self.config.lang
         if self.gamesdb_info["summary"]:
             desc_lang = "*"
             for summary_key in self.gamesdb_info["summary"].keys():

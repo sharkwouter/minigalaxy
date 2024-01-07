@@ -1,0 +1,22 @@
+.test {
+  border: 1px solid green;
+  color: red;
+  background-color: purple;
+}
+
+#gametile .button-left {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-right-width: 0px;
+  margin-right: 0px;
+}
+#gametile .button-right {
+  margin-left: 0px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+#gametile .progress-bar * {
+  border-radius: 0px;
+}

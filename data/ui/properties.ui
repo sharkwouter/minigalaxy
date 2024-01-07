@@ -47,6 +47,7 @@
                         <property name="label" translatable="yes">Regedit</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Open Regedit for this game</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_regedit_clicked" swapped="no"/>
                       </object>
@@ -60,6 +61,7 @@
                         <property name="label" translatable="yes">Winecfg</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Open Winecfg for this game</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_winecfg_clicked" swapped="no"/>
                       </object>
@@ -73,6 +75,7 @@
                         <property name="label" translatable="yes">Open files</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Open game install folder</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_open_files_clicked" swapped="no"/>
                       </object>
@@ -86,6 +89,7 @@
                         <property name="label" translatable="yes">Winetricks</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Open Winetricks for this game</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_winetricks_clicked" swapped="no"/>
                       </object>
@@ -100,6 +104,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">Check for updates:</property>
+                        <property name="tooltip-text" translatable="yes">Check for game updates in the background</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -111,6 +116,7 @@
                       <object class="GtkSwitch" id="switch_properties_check_for_updates">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Check for game updates in the background</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                       </object>
@@ -125,6 +131,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">Show FPS in game:</property>
+                        <property name="tooltip-text" translatable="yes">Show an FPS (frames per second) counter overlaid in the game</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -136,6 +143,7 @@
                       <object class="GtkSwitch" id="switch_properties_show_fps">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Show an FPS (frames per second) counter overlaid in the game</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                       </object>
@@ -150,6 +158,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">Hide game:</property>
+                        <property name="tooltip-text" translatable="yes">Hides the game from the games list</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -161,6 +170,7 @@
                       <object class="GtkSwitch" id="switch_properties_hide_game">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Hides the game from the games list</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                       </object>
@@ -175,6 +185,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">Use GameMode:</property>
+                        <property name="tooltip-text" translatable="yes">Enables GameMode, a daemon and library combo that allows games to request a set of optimisations be temporarily applied to the host OS</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -186,6 +197,7 @@
                       <object class="GtkSwitch" id="switch_properties_use_gamemode">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Enables GameMode, a daemon and library combo that allows games to request a set of optimisations be temporarily applied to the host OS</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                       </object>
@@ -200,6 +212,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">Use MangoHud:</property>
+                        <property name="tooltip-text" translatable="yes">Enables MangoHud, an overlay for performance monitoring and benchmarking using Vulcan and OpenGL</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -211,6 +224,7 @@
                       <object class="GtkSwitch" id="switch_properties_use_mangohud">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Enables MangoHud, an overlay for performance monitoring and benchmarking using Vulcan and OpenGL</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                       </object>
@@ -225,6 +239,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">Variable flags:</property>
+                        <property name="tooltip-text" translatable="yes">Added in front of the command used to launch the game</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -250,6 +265,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">Command flags:</property>
+                        <property name="tooltip-text" translatable="yes">Added at the end of the command used to launch the game</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -274,6 +290,7 @@
                         <property name="label" translatable="yes">Reset wine executable</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Reset the wine executable for this game</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_reset_clicked" swapped="no"/>
                       </object>
@@ -288,6 +305,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">Wine executable:</property>
+                        <property name="tooltip-text" translatable="yes">Set Wine executable</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -300,6 +318,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="title" translatable="yes"/>
+                        <property name="tooltip-text" translatable="yes">Set Wine executable</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>

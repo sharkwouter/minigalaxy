@@ -1,12 +1,15 @@
+import sys
 import os
 import shutil
 import subprocess
 import hashlib
 import textwrap
+
+from minigalaxy.game import Game
+from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
-from minigalaxy.config import Config
 
 
 def get_available_disk_space(location):
@@ -39,32 +42,41 @@ def check_diskspace(required_size, location):
     return diskspace_available >= installed_game_size
 
 
-def install_game(game, installer):  # noqa: C901
+def install_game(  # noqa: C901
+        game: Game,
+        installer: str,
+        language: str,
+        install_dir: str,
+        keep_installers: bool,
+        create_desktop_file: bool,
+        use_innoextract: bool = True,  # not set externally as of yet
+):
     error_message = ""
     tmp_dir = ""
-    print("Installing {}".format(game.name))
-    if not error_message:
-        error_message = verify_installer_integrity(game, installer)
-    if not error_message:
-        error_message = verify_disk_space(game, installer)
-    if not error_message:
-        error_message, tmp_dir = make_tmp_dir(game)
-    if not error_message:
-        error_message = extract_installer(game, installer, tmp_dir)
-    if not error_message:
-        error_message = move_and_overwrite(game, tmp_dir)
-    if not error_message:
-        error_message = copy_thumbnail(game)
-    if not error_message:
-        error_message = create_applications_file(game)
-    if not error_message:
-        error_message = remove_installer(game, installer)
-    else:
-        remove_installer(game, installer)
-    if not error_message:
-        error_message = postinstaller(game)
+    logger.info("Installing {}".format(game.name))
+    try:
+        _use_innoextract = use_innoextract and bool(shutil.which('innoextract'))  # single decision point
+        if not error_message:
+            error_message = verify_installer_integrity(game, installer)
+        if not error_message:
+            error_message = verify_disk_space(game, installer)
+        if not error_message:
+            error_message, tmp_dir = make_tmp_dir(game)
+        if not error_message:
+            error_message = extract_installer(game, installer, tmp_dir, language, _use_innoextract)
+        if not error_message:
+            error_message = move_and_overwrite(game, tmp_dir, _use_innoextract)
+        if not error_message:
+            error_message = copy_thumbnail(game)
+        if not error_message and create_desktop_file:
+            error_message = create_applications_file(game)
+    except Exception:
+        logger.error("Error installing game %s", game.name, exc_info=1)
+        error_message = _("Unhandled error.")
+    _removal_error = remove_installer(game, installer, install_dir, keep_installers)
+    error_message = error_message or _removal_error or postinstaller(game)
     if error_message:
-        print(error_message)
+        logger.error(error_message)
     return error_message
 
 
@@ -81,12 +93,12 @@ def verify_installer_integrity(game, installer):
             calculated_checksum = hash_md5.hexdigest()
             if installer_file_name in game.md5sum:
                 if game.md5sum[installer_file_name] == calculated_checksum:
-                    print("{} integrity is preserved. MD5 is: {}".format(installer_file_name, calculated_checksum))
+                    logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
                 else:
                     error_message = _("{} was corrupted. Please download it again.").format(installer_file_name)
                     break
             else:
-                print("Warning. No info about correct {} MD5 checksum".format(installer_file_name))
+                logger.warn("Warning. No info about correct %s MD5 checksum", installer_file_name)
     return error_message
 
 
@@ -111,12 +123,12 @@ def make_tmp_dir(game):
     return error_message, temp_dir
 
 
-def extract_installer(game, installer, temp_dir):
+def extract_installer(game: Game, installer: str, temp_dir: str, language: str, use_innoextract: bool):
     # Extract the installer
     if game.platform in ["linux"] and not game.get_info("platform") or game.get_info("platform") == "linux":
         err_msg = extract_linux(installer, temp_dir)
     else:
-        err_msg = extract_windows(game, installer, temp_dir)
+        err_msg = extract_windows(game, installer, temp_dir, language, use_innoextract)
     return err_msg
 
 
@@ -132,17 +144,17 @@ def extract_linux(installer, temp_dir):
     return err_msg
 
 
-def extract_windows(game, installer, temp_dir):
-    err_msg = extract_by_innoextract(installer, temp_dir)
+def extract_windows(game: Game, installer: str, temp_dir: str, language: str, use_innoextract: bool):
+    err_msg = extract_by_innoextract(installer, temp_dir, language, use_innoextract)
     if err_msg:
         err_msg = extract_by_wine(game, installer, temp_dir)
     return err_msg
 
 
-def extract_by_innoextract(installer, temp_dir):
+def extract_by_innoextract(installer: str, temp_dir: str, language: str, use_innoextract: bool):
     err_msg = ""
-    if shutil.which("innoextract"):
-        lang = lang_install(installer)
+    if use_innoextract:
+        lang = lang_install(installer, language)
         cmd = ["innoextract", installer, "-d", temp_dir, "--gog", lang]
         stdout, stderr, exitcode = _exe_cmd(cmd)
         if exitcode not in [0]:
@@ -171,24 +183,36 @@ def extract_by_wine(game, installer, temp_dir):
     err_msg = ""
     # Set the prefix for Windows games
     prefix_dir = os.path.join(game.install_dir, "prefix")
+    drive = os.path.join(prefix_dir, "dosdevices", "d:")
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
+        # Creating the prefix before modifying dosdevices
+        command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", "start", "/B", "cmd", "/C", "exit"]
+        stdout, stderr, exitcode = _exe_cmd(command)
+        if exitcode not in [0]:
+            print(stderr, file=sys.stderr)
+            return _("Wineprefix creation failed.")
+    if os.path.exists(drive):
+        os.unlink(drive)
+    os.symlink(temp_dir, drive)
+    _dir = os.path.join(temp_dir, os.path.basename(game.install_dir))  # can't install to drive root
     # It's possible to set install dir as argument before installation
-    command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(temp_dir), "/VERYSILENT"]
+    command = ["env", "WINEPREFIX={}".format(prefix_dir), "wine", installer, "/dir={}".format(_dir), "/VERYSILENT"]
     stdout, stderr, exitcode = _exe_cmd(command)
     if exitcode not in [0]:
         err_msg = _("Wine extraction failed.")
+    else:
+        os.unlink(drive)
+        os.symlink("../../..", drive)
     return err_msg
 
 
-def move_and_overwrite(game, temp_dir):
+def move_and_overwrite(game, temp_dir, use_innoextract):
     # Copy the game files into the correct directory
     error_message = ""
-    if game.platform == "linux":
-        source_dir = os.path.join(temp_dir, "data/noarch")
-    else:
-        innoextract_dir = os.path.join(temp_dir, "minigalaxy_game_files")
-        source_dir = temp_dir if not os.path.isdir(innoextract_dir) else innoextract_dir
+    source_dir = (os.path.join(temp_dir, "data", "noarch") if game.platform == 'linux' else
+                  temp_dir if use_innoextract else
+                  os.path.join(temp_dir, os.path.basename(game.install_dir)))
     target_dir = game.install_dir
     _mv(source_dir, target_dir)
 
@@ -221,32 +245,31 @@ def get_exec_line(game):
 
 def create_applications_file(game):
     error_message = ""
-    if Config.get("create_applications_file"):
-        path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))
-        exe_cmd = get_exec_line(game)
-        # Create desktop file definition
-        desktop_context = {
-            "game_bin_path": os.path.join('"{}"'.format(game.install_dir.replace('"', '\\"')), exe_cmd),
-            "game_name": game.name,
-            "game_install_dir": game.install_dir,
-            "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
-            }
-        desktop_definition = """\
-            [Desktop Entry]
-            Type=Application
-            Terminal=false
-            StartupNotify=true
-            Exec={game_bin_path}
-            Path={game_install_dir}
-            Name={game_name}
-            Icon={game_icon_path}""".format(**desktop_context)
-        if not os.path.isfile(path_to_shortcut):
-            try:
-                with open(path_to_shortcut, 'w+') as desktop_file:
-                    desktop_file.writelines(textwrap.dedent(desktop_definition))
-            except Exception as e:
-                os.remove(path_to_shortcut)
-                error_message = e
+    path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))
+    exe_cmd = get_exec_line(game)
+    # Create desktop file definition
+    desktop_context = {
+        "game_bin_path": os.path.join('"{}"'.format(game.install_dir.replace('"', '\\"')), exe_cmd),
+        "game_name": game.name,
+        "game_install_dir": game.install_dir,
+        "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
+        }
+    desktop_definition = """\
+        [Desktop Entry]
+        Type=Application
+        Terminal=false
+        StartupNotify=true
+        Exec={game_bin_path}
+        Path={game_install_dir}
+        Name={game_name}
+        Icon={game_icon_path}""".format(**desktop_context)
+    if not os.path.isfile(path_to_shortcut):
+        try:
+            with open(path_to_shortcut, 'w+') as desktop_file:
+                desktop_file.writelines(textwrap.dedent(desktop_definition))
+        except Exception as e:
+            os.remove(path_to_shortcut)
+            error_message = e
     return error_message
 
 
@@ -271,15 +294,15 @@ def compare_directories(dir1, dir2):
     return result
 
 
-def remove_installer(game, installer):
+def remove_installer(game: Game, installer: str, install_dir: str, keep_installers: bool):
     error_message = ""
     installer_directory = os.path.dirname(installer)
     if not os.path.isdir(installer_directory):
         error_message = "No installer directory is present: {}".format(installer_directory)
         return error_message
 
-    if Config.get("keep_installers"):
-        keep_dir = os.path.join(Config.get("install_dir"), "installer")
+    if keep_installers:
+        keep_dir = os.path.join(install_dir, "installer")
         keep_dir2 = os.path.join(keep_dir, game.get_install_directory_name())
         if keep_dir2 == installer_directory:
             # We are using the keep installer already
@@ -341,7 +364,7 @@ def _mv(source_dir, target_dir):
 # Some installers allow to choose game's language before installation (Divinity Original Sin or XCom EE / XCom 2)
 # "--list-languages" option returns "en-US", "fr-FR" etc... for these games.
 # Others installers return "French : Français" but disallow to choose game's language before installation
-def lang_install(installer):
+def lang_install(installer: str, language: str):
     languages = []
     arg = ""
     process = subprocess.Popen(["innoextract", installer, "--list-languages"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -354,7 +377,7 @@ def lang_install(installer):
         languages.append(line[3:])
     for lang in languages:
         if "-" in lang:  # lang must be like "en-US" only.
-            if Config.get("lang") == lang[0:2]:
+            if language == lang[0:2]:
                 arg = "--language={}".format(lang)
                 break
             else:

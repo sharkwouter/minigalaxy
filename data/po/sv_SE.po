@@ -532,3 +532,35 @@ msgstr "{} var korrupt. Försök ladda ner det igen."
 #~ msgstr ""
 #~ "Visa bildhastighet (FPS) i spel. Fungerar endast med AMD och NVIDIA "
 #~ "grafikkort."
+
+#: minigalaxy/ui/gametile.py:519
+msgid "Download"
+msgstr "Ladda ner"
+
+#: minigalaxy/ui/gametile.py:559
+msgid "Downloading…"
+msgstr "Laddar ner…"
+
+#: minigalaxy/ui/gametile.py:550
+msgid "In queue…"
+msgstr "I kö…"
+
+#: minigalaxy/ui/gametile.py:538
+msgid "Install"
+msgstr "Installera"
+
+#: minigalaxy/ui/gametile.py:570
+msgid "Installing…"
+msgstr "Installerar…"
+
+#: minigalaxy/ui/gametile.py:585 minigalaxy/ui/gametile.py:617
+msgid "Play"
+msgstr "Spela"
+
+#: minigalaxy/ui/gametile.py:602
+msgid "Uninstalling…"
+msgstr "Avinstallerar…"
+
+#: minigalaxy/ui/gametile.py:626
+msgid "Updating…"
+msgstr "Uppdaterar…"

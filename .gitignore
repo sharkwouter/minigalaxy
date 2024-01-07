@@ -13,6 +13,7 @@ data/po/*.mo
 .project
 .pydevproject
 release.md
+.coverage
 
 # Files generated when building the deb package
 .pybuild/

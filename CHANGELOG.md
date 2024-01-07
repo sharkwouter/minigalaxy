@@ -1,3 +1,45 @@
+**1.2.6**
+- Fix changing the install path causing an exception
+- Fix error detection & reporting on wineprefix creation failure (thanks to LeXofLeviafan)
+
+**1.2.5**
+- Fix filtering for installed games
+
+**1.2.4**
+- Fix packages missing a script
+
+**1.2.3**
+- Fix short freeze on startup (thanks to LeXofLeviafan)
+- Fix game information not showing in list view (thanks to TotalCaesar659)
+- Hide A Plague Tale Digital Goodies Pack (thanks to TotalCaesar659)
+- Remove round corners from top of the "play" button (thanks to lmeunier)
+- Move the Gametile menu button alongside the Play button (thanks to lmeunier)
+- Update Spanish translation (thanks to manurtinez)
+- Capitalize first letter of the "play/download/..." button (thanks to lmeunier)
+- Update Traditional Chinese translation (thanks to s8321414)
+- Added additional tooltips to buttons, labels, menu items and radio buttons (thanks to orende)
+- Hide CDPR Goodie Pack Content
+- Add notifications on successful download and installation of games (thanks to orende)
+- Add category filtering dialog for game library (thanks to orende)
+- Parallelize api.can_connect function with threads, futures (thanks to orende)
+- Fix available disk space being checked in parent directory (thanks to Unrud)
+- Create new config if reading it fails
+
+**1.2.2**
+- Fix progress bar not showing up for downloads
+- Fix downloads not being cancellable
+- Fix incompatibility with python 3.6
+- Fix connection error texts (thanks to TotalCaesar659)
+- Show DLC titles in English (thanks to TotalCaesar659)
+- Fix version not being updated during a release
+- Update Norwegian Bokmål translation (thanks to kimmalmo)
+- Update Czech translation (thanks to jakbuz23)
+
+**1.2.1**
+- Fix downloads failing when content length is not returned by the server
+- Allow different types of downloads to happen at the same time (thanks to jgerrish)
+- Fix metadata file having releases in wrong order
+
 **1.2.0**
 - Split game information and properties into different windows (thanks to TotalCaesar659)
 - Add list view (thanks to TotalCaesar659)

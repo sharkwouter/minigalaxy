@@ -1,7 +1,4 @@
-import requests
-import platform
 from minigalaxy.translation import _
-from minigalaxy.version import VERSION
 
 SUPPORTED_DOWNLOAD_LANGUAGES = [
     ["br", _("Brazilian Portuguese")],
@@ -62,6 +59,8 @@ IGNORE_GAME_IDS = [
     1980301910,  # The Witcher Goodies Collection
     2005648906,  # Spring Sale Goodies Collection #1
     1486144755,  # Cyberpunk 2077 Goodies Collection
+    1581684020,  # A Plague Tale Digital Goodies Pack
+    1185685769,  # CDPR Goodie Pack Content
 ]
 
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
@@ -69,5 +68,7 @@ DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 # This is the file size needed for the download manager to consider resuming worthwhile
 MINIMUM_RESUME_SIZE = 50 * 1024**2  # 50 MB
 
-SESSION = requests.Session()
-SESSION.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {})'.format(VERSION, platform.machine())})
+# UI download threads are for UI assets like thumbnails or icons
+UI_DOWNLOAD_THREADS = 4
+# Game download threads are for long-running downloads like games, DLC or updates
+GAME_DOWNLOAD_THREADS = 4

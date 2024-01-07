@@ -13,6 +13,7 @@ CACHE_DIR = os.path.join(os.getenv('XDG_CACHE_HOME', os.path.expanduser('~/.cach
 THUMBNAIL_DIR = os.path.join(CACHE_DIR, "thumbnails")
 COVER_DIR = os.path.join(CACHE_DIR, "covers")
 ICON_DIR = os.path.join(CACHE_DIR, "icons")
+CATEGORIES_FILE_PATH = os.path.join(CACHE_DIR, "categories.json")
 APPLICATIONS_DIR = os.path.expanduser("~/.local/share/applications")
 DEFAULT_INSTALL_DIR = os.path.expanduser("~/GOG Games")
 
@@ -33,3 +34,7 @@ if not os.path.exists(ICON_WINE_PATH):
 LOCALE_DIR = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/mo"))
 if not os.path.exists(LOCALE_DIR):
     LOCALE_DIR = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/translations"))
+
+CSS_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/style.css"))
+if not os.path.exists(CSS_PATH):
+    CSS_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/style.css"))

@@ -5,18 +5,20 @@ import threading
 import re
 import time
 import urllib.parse
-from enum import Enum
+
+from minigalaxy.config import Config
+from minigalaxy.entity.state import State
+from minigalaxy.game import Game
+from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
-from minigalaxy.config import Config
-from minigalaxy.download import Download
+from minigalaxy.download import Download, DownloadType
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
-from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.paths import ICON_WINE_PATH
-from minigalaxy.api import NoDownloadLinkFound
-from minigalaxy.ui.gtk import Gtk, GLib
+from minigalaxy.api import NoDownloadLinkFound, Api
+from minigalaxy.ui.gtk import Gtk, GLib, Notify
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 
@@ -37,13 +39,11 @@ class GameTile(Gtk.Box):
     dlc_horizontal_box = Gtk.Template.Child()
     menu_button_information = Gtk.Template.Child()
     menu_button_properties = Gtk.Template.Child()
+    progress_bar = Gtk.Template.Child()
 
-    state = Enum('state',
-                 'DOWNLOADABLE INSTALLABLE UPDATABLE QUEUED DOWNLOADING INSTALLING INSTALLED NOTLAUNCHABLE UNINSTALLING'
-                 ' UPDATING UPDATE_INSTALLABLE')
-
-    def __init__(self, parent, game):
-        current_locale = Config.get("locale")
+    def __init__(self, parent, game: Game, config: Config, api: Api, download_manager: DownloadManager):
+        self.config = config
+        current_locale = self.config.locale
         default_locale = locale.getdefaultlocale()[0]
         if current_locale == '':
             locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
@@ -53,18 +53,16 @@ class GameTile(Gtk.Box):
             except NameError:
                 locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
         Gtk.Frame.__init__(self)
-        Gtk.StyleContext.add_provider(self.button.get_style_context(),
-                                      CSS_PROVIDER,
-                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
         self.parent = parent
         self.game = game
-        self.api = parent.api
+        self.api = api
+        self.download_manager = download_manager
         self.offline = parent.offline
-        self.progress_bar = None
         self.thumbnail_set = False
         self.download_list = []
         self.dlc_dict = {}
-        self.current_state = self.state.DOWNLOADABLE
+        self.current_state = State.DOWNLOADABLE
 
         self.image.set_tooltip_text(self.game.name)
 
@@ -72,7 +70,7 @@ class GameTile(Gtk.Box):
         self.download_dir = os.path.join(CACHE_DIR, "download", self.game.get_install_directory_name())
 
         # Set folder if user wants to keep installer (disabled by default)
-        self.keep_dir = os.path.join(Config.get("install_dir"), "installer")
+        self.keep_dir = os.path.join(self.config.install_dir, "installer")
         self.keep_path = os.path.join(self.keep_dir, self.game.get_install_directory_name())
         if not os.path.exists(CACHE_DIR):
             os.makedirs(CACHE_DIR, mode=0o755)
@@ -92,32 +90,39 @@ class GameTile(Gtk.Box):
 
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):
-        download_id = Config.get("current_download")
-        if download_id and download_id == self.game.id and self.current_state == self.state.DOWNLOADABLE:
-            download_thread = threading.Thread(target=self.__download_game)
-            download_thread.start()
+        download_ids = self.config.current_downloads
+        if download_ids:
+            for download_id in download_ids:
+                if download_id and download_id == self.game.id and self.current_state == State.DOWNLOADABLE:
+                    download_thread = threading.Thread(target=self.__download_game)
+                    download_thread.start()
 
     # Do not restart the download if Minigalaxy is restarted
     def prevent_resume_on_startup(self):
-        download_id = Config.get("current_download")
-        if download_id and download_id == self.game.id:
-            Config.unset("current_download")
+        download_ids = self.config.current_downloads
+        if download_ids:
+            new_download_ids = set()
+            for download_id in download_ids:
+                if not (download_id and download_id == self.game.id):
+                    new_download_ids.add(download_id)
+
+            self.config.current_downloads = list(new_download_ids)
 
     def __str__(self):
         return self.game.name
 
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget) -> None:
-        dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING]
+        dont_act_in_states = [State.QUEUED, State.DOWNLOADING, State.INSTALLING, State.UNINSTALLING]
         err_msg = ""
         if self.current_state in dont_act_in_states:
             pass
-        elif self.current_state in [self.state.INSTALLED, self.state.UPDATABLE]:
+        elif self.current_state in [State.INSTALLED, State.UPDATABLE]:
             err_msg = start_game(self.game)
-        elif self.current_state == self.state.INSTALLABLE:
+        elif self.current_state == State.INSTALLABLE:
             install_thread = threading.Thread(target=self.__install_game, args=(self.get_keep_executable_path(),))
             install_thread.start()
-        elif self.current_state == self.state.DOWNLOADABLE:
+        elif self.current_state == State.DOWNLOADABLE:
             download_thread = threading.Thread(target=self.__download_game)
             download_thread.start()
         if err_msg:
@@ -125,7 +130,7 @@ class GameTile(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_information_clicked")
     def show_information(self, button):
-        information_window = Information(self, self.game, self.api)
+        information_window = Information(self, self.game, self.config, self.api, self.download_manager)
         information_window.run()
         information_window.destroy()
 
@@ -140,7 +145,7 @@ class GameTile(Gtk.Box):
         question = _("Are you sure you want to cancel downloading {}?").format(self.game.name)
         if self.parent.parent.show_question(question):
             self.prevent_resume_on_startup()
-            DownloadManager.cancel_download(self.download_list)
+            self.download_manager.cancel_download(self.download_list)
             try:
                 for filename in os.listdir(self.download_dir):
                     if self.game.get_install_directory_name() in filename:
@@ -170,9 +175,9 @@ class GameTile(Gtk.Box):
                     # Download the thumbnail
                     image_url = "https:{}_196.jpg".format(self.game.image_url)
                     thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
-
-                    download = Download(image_url, thumbnail, finish_func=self.__set_image)
-                    DownloadManager.download_now(download)
+                    download = Download(image_url, thumbnail, DownloadType.THUMBNAIL,
+                                        finish_func=self.__set_image)
+                    self.download_manager.download_now(download)
                     set_result = True
                     break
                 performed_try += 1
@@ -181,7 +186,7 @@ class GameTile(Gtk.Box):
 
     def __set_image(self, save_location):
         set_result = False
-        self.game.set_install_dir()
+        self.game.set_install_dir(self.config.install_dir)
         thumbnail_install_dir = os.path.join(self.game.install_dir, "thumbnail.jpg")
         if os.path.isfile(thumbnail_install_dir):
             GLib.idle_add(self.image.set_from_file, thumbnail_install_dir)
@@ -213,9 +218,14 @@ class GameTile(Gtk.Box):
             download_info = self.api.get_download_info(self.game, self.api.get_download_version(self.game))
             result = True
         except NoDownloadLinkFound as e:
-            print(e)
-            if Config.get("current_download") == self.game.id:
-                Config.unset("current_download")
+            logger.error("No download link found", exc_info=1)
+            current_download_ids = self.config.current_downloads
+            if current_download_ids:
+                new_current_download_ids = set()
+                for current_download_id in current_download_ids:
+                    if current_download_id != self.game.id:
+                        new_current_download_ids.add(current_download_id)
+                self.config.current_downloads = list(new_current_download_ids)
             GLib.idle_add(self.parent.parent.show_error, _("Download error"),
                           _("There was an error when trying to fetch the download link!\n{}".format(e)))
             download_info = False
@@ -224,17 +234,27 @@ class GameTile(Gtk.Box):
 
     def __download_game(self) -> None:
         finish_func = self.__install_game
-        cancel_to_state = self.state.DOWNLOADABLE
+        cancel_to_state = State.DOWNLOADABLE
         result, download_info = self.get_download_info()
         if result:
-            result = self.__download(download_info, finish_func, cancel_to_state)
+            result = self.__download(download_info, DownloadType.GAME, finish_func,
+                                     cancel_to_state)
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
-    def __download(self, download_info, finish_func, cancel_to_state):
+    def __download(self, download_info, download_type, finish_func, cancel_to_state):  # noqa: C901
         download_success = True
-        GLib.idle_add(self.update_to_state, self.state.QUEUED)
-        Config.set("current_download", self.game.id)
+        self.game.set_install_dir(self.config.install_dir)
+        GLib.idle_add(self.update_to_state, State.QUEUED)
+
+        # Need to update the config with DownloadType metadata
+        current_download_ids = self.config.current_downloads
+        if current_download_ids is None:
+            current_download_ids = set()
+        else:
+            current_download_ids = set(current_download_ids)
+        current_download_ids.add(self.game.id)
+        self.config.current_downloads = list(current_download_ids)
         # Start the download for all files
         self.download_list = []
         number_of_files = len(download_info['files'])
@@ -245,7 +265,7 @@ class GameTile(Gtk.Box):
             try:
                 download_url = self.api.get_real_download_link(file_info["downlink"])
             except ValueError as e:
-                print(e)
+                logger.error("Error getting download URL from file_info downlink: %s", file_info["downlink"], exc_info=1)
                 GLib.idle_add(self.parent.parent.show_error, _("Download error"), _(str(e)))
                 download_success = False
                 break
@@ -265,6 +285,7 @@ class GameTile(Gtk.Box):
             download = Download(
                 url=download_url,
                 save_location=download_path,
+                download_type=DownloadType.GAME,
                 finish_func=finish_func if download_path == executable_path else None,
                 progress_func=self.set_progress,
                 cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
@@ -275,8 +296,8 @@ class GameTile(Gtk.Box):
             download_files.insert(0, download)
         self.download_list.extend(download_files)
 
-        if check_diskspace(total_file_size, Config.get("install_dir")):
-            DownloadManager.download(download_files)
+        if check_diskspace(total_file_size, self.game.install_dir):
+            self.download_manager.download(download_files)
             ds_msg_title = ""
             ds_msg_text = ""
         else:
@@ -288,22 +309,31 @@ class GameTile(Gtk.Box):
         return download_success
 
     def __install_game(self, save_location):
+        if self.game.id in self.config.current_downloads:
+            self.config.current_downloads.remove(self.game.id)
         self.download_list = []
-        self.game.set_install_dir()
+        self.game.set_install_dir(self.config.install_dir)
         install_success = self.__install(save_location)
         if install_success:
             self.__check_for_dlc(self.api.get_info(self.game))
 
     def __install(self, save_location, update=False, dlc_title=""):
         if update:
-            processing_state = self.state.UPDATING
-            failed_state = self.state.INSTALLED
+            processing_state = State.UPDATING
+            failed_state = State.INSTALLED
         else:
-            processing_state = self.state.INSTALLING
-            failed_state = self.state.DOWNLOADABLE
-        success_state = self.state.INSTALLED
+            processing_state = State.INSTALLING
+            failed_state = State.DOWNLOADABLE
+        success_state = State.INSTALLED
         GLib.idle_add(self.update_to_state, processing_state)
-        err_msg = install_game(self.game, save_location)
+        err_msg = install_game(
+            self.game,
+            save_location,
+            self.config.lang,
+            self.config.install_dir,
+            self.config.keep_installers,
+            self.config.create_applications_file
+        )
         if not err_msg:
             GLib.idle_add(self.update_to_state, success_state)
             install_success = True
@@ -311,6 +341,9 @@ class GameTile(Gtk.Box):
                 self.game.set_dlc_info("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title)
             else:
                 self.game.set_info("version", self.api.get_version(self.game))
+            popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
+                                            .format(self.game.name), "dialog-information")
+            popup.show()
         else:
             GLib.idle_add(self.parent.parent.show_error, _("Failed to install {}").format(self.game.name), err_msg)
             GLib.idle_add(self.update_to_state, failed_state)
@@ -324,10 +357,11 @@ class GameTile(Gtk.Box):
 
     def __download_update(self) -> None:
         finish_func = self.__update
-        cancel_to_state = self.state.UPDATABLE
-        result, download_info = self.get_download_info(self.api.get_download_version(self.game))
+        cancel_to_state = State.UPDATABLE
+        result, download_info = self.get_download_info()
         if result:
-            result = self.__download(download_info, finish_func, cancel_to_state)
+            result = self.__download(download_info, DownloadType.GAME_UPDATE, finish_func,
+                                     cancel_to_state)
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
@@ -340,7 +374,7 @@ class GameTile(Gtk.Box):
                 game_version = self.api.get_version(self.game, gameinfo=game_info)
                 update_available = self.game.is_update_available(game_version)
                 if update_available:
-                    GLib.idle_add(self.update_to_state, self.state.UPDATABLE)
+                    GLib.idle_add(self.update_to_state, State.UPDATABLE)
             self.__check_for_dlc(game_info)
         if self.offline:
             GLib.idle_add(self.menu_button_dlc.hide)
@@ -368,15 +402,16 @@ class GameTile(Gtk.Box):
         for dlc in self.game.dlcs:
             if dlc["downloads"]["installers"] == dlc_installers:
                 dlc_title = dlc["title"]
-        cancel_to_state = self.state.INSTALLED
-        result = self.__download(download_info, finish_func, cancel_to_state)
+        cancel_to_state = State.INSTALLED
+        result = self.__download(download_info, DownloadType.GAME_DLC, finish_func,
+                                 cancel_to_state)
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
     def __install_dlc(self, save_location, dlc_title):
         install_success = self.__install(save_location, dlc_title=dlc_title)
         if not install_success:
-            GLib.idle_add(self.update_to_state, self.state.INSTALLED)
+            GLib.idle_add(self.update_to_state, State.INSTALLED)
         self.__check_for_update_dlc()
 
     def __check_for_dlc(self, game_info):
@@ -438,145 +473,129 @@ class GameTile(Gtk.Box):
                 url = "http:{}".format(icon)
                 dlc_icon = os.path.join(ICON_DIR, "{}.jpg".format(dlc_id))
                 download = Download(url, dlc_icon)
-                DownloadManager.download_now(download)
+                self.download_manager.download_now(download)
                 GLib.idle_add(image.set_from_file, dlc_icon_path)
 
     def set_progress(self, percentage: int):
-        if self.current_state in [self.state.QUEUED, self.state.INSTALLED]:
-            GLib.idle_add(self.update_to_state, self.state.DOWNLOADING)
-            self.__create_progress_bar()
+        if self.current_state in [State.QUEUED, State.INSTALLED]:
+            GLib.idle_add(self.update_to_state, State.DOWNLOADING)
         if self.progress_bar:
             GLib.idle_add(self.progress_bar.set_fraction, percentage / 100)
             GLib.idle_add(self.progress_bar.set_tooltip_text, "{}%".format(percentage))
 
     def __uninstall_game(self):
-        GLib.idle_add(self.update_to_state, self.state.UNINSTALLING)
+        GLib.idle_add(self.update_to_state, State.UNINSTALLING)
         uninstall_game(self.game)
-        GLib.idle_add(self.update_to_state, self.state.DOWNLOADABLE)
+        GLib.idle_add(self.update_to_state, State.DOWNLOADABLE)
         GLib.idle_add(self.reload_state)
 
-    def __create_progress_bar(self) -> None:
-        self.progress_bar = Gtk.ProgressBar()
-        self.progress_bar.set_halign(Gtk.Align.CENTER)
-        self.progress_bar.set_size_request(196, -1)
-        self.progress_bar.set_hexpand(False)
-        self.progress_bar.set_vexpand(False)
-        self.set_center_widget(self.progress_bar)
-        self.progress_bar.set_fraction(0.0)
-
     def reload_state(self):
-        self.game.set_install_dir()
-        dont_act_in_states = [self.state.QUEUED, self.state.DOWNLOADING, self.state.INSTALLING, self.state.UNINSTALLING,
-                              self.state.UPDATING, self.state.DOWNLOADING]
+        self.game.set_install_dir(self.config.install_dir)
+        dont_act_in_states = [State.QUEUED, State.DOWNLOADING, State.INSTALLING, State.UNINSTALLING,
+                              State.UPDATING, State.DOWNLOADING]
         if self.current_state in dont_act_in_states:
             return
         if self.game.is_installed():
-            self.update_to_state(self.state.INSTALLED)
+            self.update_to_state(State.INSTALLED)
             check_update_thread = threading.Thread(target=self.__check_for_update_dlc)
             check_update_thread.start()
         elif self.get_keep_executable_path():
-            self.update_to_state(self.state.INSTALLABLE)
+            self.update_to_state(State.INSTALLABLE)
         else:
-            self.update_to_state(self.state.DOWNLOADABLE)
+            self.update_to_state(State.DOWNLOADABLE)
 
     def __state_downloadable(self):
-        self.button.set_label(_("download"))
+        self.button.set_label(_("Download"))
+        self.button.set_tooltip_text(_("Download and install the game"))
         self.button.set_sensitive(True)
         self.image.set_sensitive(False)
 
-        # The user must have the possibilty to access
+        # The user must have the possibility to access
         # to the store button even if the game is not installed
         self.menu_button.show()
+        self.menu_button.set_tooltip_text(_("Show game options menu"))
         self.menu_button_update.hide()
         self.menu_button_dlc.hide()
         self.menu_button_uninstall.hide()
-
         self.button_cancel.hide()
+        self.progress_bar.hide()
 
         self.game.install_dir = ""
 
-        if self.progress_bar:
-            self.progress_bar.destroy()
-
     def __state_installable(self):
-        self.button.set_label(_("install"))
+        self.button.set_label(_("Install"))
+        self.button.set_tooltip_text(_("Install the game"))
         self.button.set_sensitive(True)
         self.image.set_sensitive(False)
         self.menu_button.hide()
         self.button_cancel.hide()
+        self.progress_bar.hide()
 
         self.game.install_dir = ""
 
-        if self.progress_bar:
-            self.progress_bar.destroy()
-
     def __state_queued(self):
-        self.button.set_label(_("in queue…"))
+        self.button.set_label(_("In queue…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(False)
         self.menu_button_uninstall.hide()
         self.menu_button_update.hide()
         self.button_cancel.show()
-        self.__create_progress_bar()
+        self.progress_bar.show()
 
     def __state_downloading(self):
-        self.button.set_label(_("downloading…"))
+        self.button.set_label(_("Downloading…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(False)
         self.menu_button_uninstall.hide()
         self.menu_button_update.hide()
         self.button_cancel.show()
-        if not self.progress_bar:
-            self.__create_progress_bar()
-        self.progress_bar.show_all()
+        self.progress_bar.show()
 
     def __state_installing(self):
-        self.button.set_label(_("installing…"))
+        self.button.set_label(_("Installing…"))
         self.button.set_sensitive(False)
         self.image.set_sensitive(True)
         self.menu_button_uninstall.hide()
         self.menu_button_update.hide()
         self.button_cancel.hide()
+        self.progress_bar.hide()
 
-        self.game.set_install_dir()
-
-        if self.progress_bar:
-            self.progress_bar.destroy()
-
+        self.game.set_install_dir(self.config.install_dir)
         self.parent.filter_library()
 
     def __state_installed(self):
-        self.button.set_label(_("play"))
+        self.button.set_label(_("Play"))
+        self.button.set_tooltip_text(_("Launch the game"))
         self.button.get_style_context().add_class("suggested-action")
+        self.menu_button.get_style_context().add_class("suggested-action")
         self.button.set_sensitive(True)
         self.image.set_sensitive(True)
+        self.menu_button.set_tooltip_text(_("Show game options menu"))
         self.menu_button.show()
         self.menu_button_uninstall.show()
         self.button_cancel.hide()
-        self.game.set_install_dir()
-
-        if self.progress_bar:
-            self.progress_bar.destroy()
-
+        self.progress_bar.hide()
         self.menu_button_update.hide()
         self.update_icon.hide()
 
+        self.game.set_install_dir(self.config.install_dir)
+
     def __state_uninstalling(self):
-        self.button.set_label(_("uninstalling…"))
+        self.button.set_label(_("Uninstalling…"))
         self.button.get_style_context().remove_class("suggested-action")
+        self.menu_button.get_style_context().remove_class("suggested-action")
         self.button.set_sensitive(False)
         self.image.set_sensitive(False)
         self.menu_button.hide()
         self.button_cancel.hide()
 
         self.game.install_dir = ""
-
         self.parent.filter_library()
 
     def __state_updatable(self):
         self.update_icon.show()
         self.update_icon.set_from_icon_name("emblem-synchronizing", Gtk.IconSize.LARGE_TOOLBAR)
-        self.button.set_label(_("play"))
+        self.button.set_label(_("Play"))
         self.menu_button.show()
         tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")
         self.image.set_tooltip_text(tooltip_text)
@@ -585,18 +604,18 @@ class GameTile(Gtk.Box):
             self.wine_icon.set_margin_left(22)
 
     def __state_updating(self):
-        self.button.set_label(_("updating…"))
+        self.button.set_label(_("Updating…"))
 
     STATE_UPDATE_HANDLERS = {
-        state.DOWNLOADABLE: __state_downloadable,
-        state.INSTALLABLE: __state_installable,
-        state.QUEUED: __state_queued,
-        state.DOWNLOADING: __state_downloading,
-        state.INSTALLING: __state_installing,
-        state.INSTALLED: __state_installed,
-        state.UNINSTALLING: __state_uninstalling,
-        state.UPDATABLE: __state_updatable,
-        state.UPDATING: __state_updating,
+        State.DOWNLOADABLE: __state_downloadable,
+        State.INSTALLABLE: __state_installable,
+        State.QUEUED: __state_queued,
+        State.DOWNLOADING: __state_downloading,
+        State.INSTALLING: __state_installing,
+        State.INSTALLED: __state_installed,
+        State.UNINSTALLING: __state_uninstalling,
+        State.UPDATABLE: __state_updatable,
+        State.UPDATING: __state_updating,
     }
 
     def update_to_state(self, state):

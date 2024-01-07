@@ -3,13 +3,18 @@ import re
 import json
 import threading
 from typing import List
-from minigalaxy.paths import UI_DIR
+
+from minigalaxy.download_manager import DownloadManager
+from minigalaxy.entity.state import State
+from minigalaxy.logger import logger
+from minigalaxy.paths import UI_DIR, CATEGORIES_FILE_PATH
 from minigalaxy.api import Api
-from minigalaxy.config import Config
 from minigalaxy.game import Game
+from minigalaxy.ui.categoryfilters import CategoryFilters
 from minigalaxy.ui.gametile import GameTile
 from minigalaxy.ui.gametilelist import GameTileList
 from minigalaxy.ui.gtk import Gtk, GLib
+from minigalaxy.config import Config
 from minigalaxy.translation import _
 
 
@@ -19,15 +24,29 @@ class Library(Gtk.Viewport):
 
     flowbox = Gtk.Template.Child()
 
-    def __init__(self, parent, api: Api):
+    def __init__(self, parent, config: Config, api: Api, download_manager: DownloadManager):
         Gtk.Viewport.__init__(self)
         self.parent = parent
+        self.config = config
         self.api = api
-        self.show_installed_only = Config.get("installed_filter")
+        self.download_manager = download_manager
+        self.show_installed_only = self.config.installed_filter
         self.search_string = ""
         self.offline = False
         self.games = []
         self.owned_products_ids = []
+        self._queue = []
+        self.category_filters = []
+
+    def _debounce(self, thunk):
+        if thunk not in self._queue:
+            self._queue.append(thunk)
+            GLib.idle_add(self._run_queue)
+
+    def _run_queue(self):
+        queue, self._queue = self._queue, []
+        for thunk in queue:
+            GLib.idle_add(thunk)
 
     def reset(self):
         self.games = []
@@ -63,6 +82,9 @@ class Library(Gtk.Viewport):
             self.show_installed_only = widget.get_active()
         elif isinstance(widget, Gtk.SearchEntry):
             self.search_string = widget.get_text()
+        elif isinstance(widget, Gtk.Dialog) and isinstance(widget, CategoryFilters):
+            # filter all true category-bool pairs and then extract category names
+            self.category_filters = [j[0] for j in filter(lambda i: i[1], widget.filter_dict.items())]
         self.flowbox.set_filter_func(self.__filter_library_func)
 
     def __filter_library_func(self, child):
@@ -71,11 +93,15 @@ class Library(Gtk.Viewport):
             return False
 
         if self.show_installed_only:
-            if tile.current_state in [tile.state.DOWNLOADABLE, tile.state.INSTALLABLE]:
+            if tile.current_state in [State.DOWNLOADABLE, State.INSTALLABLE]:
                 return False
 
-        if not Config.get("show_hidden_games") and tile.game.get_info("hide_game"):
+        if not self.config.show_hidden_games and tile.game.get_info("hide_game"):
             return False
+
+        if len(self.category_filters) > 0:
+            if tile.game.category not in self.category_filters:
+                return False
 
         return True
 
@@ -99,23 +125,24 @@ class Library(Gtk.Viewport):
                 self.__add_gametile(game)
 
     def __add_gametile(self, game):
-        view = Config.get("view")
+        view = self.config.view
         if view == "grid":
-            self.flowbox.add(GameTile(self, game))
+            self.flowbox.add(GameTile(self, game, self.config, self.api, self.download_manager))
         elif view == "list":
-            self.flowbox.add(GameTileList(self, game))
-        self.sort_library()
-        self.flowbox.show_all()
+            self.flowbox.add(GameTileList(self, game, self.config, self.api, self.download_manager))
+        self._debounce(self.sort_library)
+        self._debounce(self.flowbox.show_all)
 
     def __get_installed_games(self) -> List[Game]:
         # Make sure the install directory exists
-        library_dir = Config.get("install_dir")
+        library_dir = self.config.install_dir
         if not os.path.exists(library_dir):
             os.makedirs(library_dir, mode=0o755)
         directories = os.listdir(library_dir)
         games = []
+        game_categories_dict = read_game_categories_file(CATEGORIES_FILE_PATH)
         for directory in directories:
-            full_path = os.path.join(Config.get("install_dir"), directory)
+            full_path = os.path.join(self.config.install_dir, directory)
             # Only scan directories
             if not os.path.isdir(full_path):
                 continue
@@ -132,9 +159,10 @@ class Library(Gtk.Viewport):
                         game_id = 0
                     else:
                         game_id = int(game_id)
-                games.append(Game(name=name, game_id=game_id, install_dir=full_path))
+                category = game_categories_dict.get(name, "")
+                games.append(Game(name=name, game_id=game_id, install_dir=full_path, category=category))
             else:
-                games.extend(get_installed_windows_games(full_path))
+                games.extend(get_installed_windows_games(full_path, game_categories_dict))
         return games
 
     def __add_games_from_api(self):
@@ -143,7 +171,9 @@ class Library(Gtk.Viewport):
             self.offline = False
         else:
             self.offline = True
+            logger.info("Client is offline, showing installed games only")
             GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _(err_msg))
+        game_category_dict = {}
         for game in retrieved_games:
             if game not in self.games:
                 self.games.append(game)
@@ -152,9 +182,13 @@ class Library(Gtk.Viewport):
                 self.games[self.games.index(game)].name = game.name
             self.games[self.games.index(game)].image_url = game.image_url
             self.games[self.games.index(game)].url = game.url
+            self.games[self.games.index(game)].category = game.category
+            if len(game.category) > 0:  # exclude games without set category
+                game_category_dict[game.name] = game.category
+        update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
 
 
-def get_installed_windows_games(full_path):
+def get_installed_windows_games(full_path, game_categories_dict=None):
     games = []
     game_files = os.listdir(full_path)
     for file in game_files:
@@ -165,7 +199,31 @@ def get_installed_windows_games(full_path):
                     name=info["name"],
                     game_id=int(info["gameId"]),
                     install_dir=full_path,
-                    platform="windows"
+                    platform="windows",
+                    category=(game_categories_dict or {}).get(info["name"], "")
                 )
                 games.append(game)
     return games
+
+
+def update_game_categories_file(game_category_dict, categories_file_path):
+    if len(game_category_dict) == 0:
+        return
+    if not os.path.exists(categories_file_path):  # if file does not exist, create it and write dict
+        with open(categories_file_path, 'wt') as fd:
+            json.dump(game_category_dict, fd)
+    else:
+        with open(categories_file_path, 'r+t') as fd:  # if file exists, write dict only if not equal to file data
+            cached_game_category_dict = json.load(fd)
+            if game_category_dict != cached_game_category_dict:
+                fd.seek(os.SEEK_SET)
+                fd.truncate(0)
+                json.dump(game_category_dict, fd)
+
+
+def read_game_categories_file(categories_file_path):
+    cached_game_category_dict = {}
+    if os.path.exists(categories_file_path):
+        with open(categories_file_path, 'rt') as fd:
+            cached_game_category_dict = json.load(fd)
+    return cached_game_category_dict
