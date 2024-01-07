@@ -63,7 +63,7 @@ class Test(TestCase):
         mock_subprocess().returncode = 0
         mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
         mock_listdir.return_value = ["object1", "object2"]
-        game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
+        game = Game("Beneath A Steel Sky", platform="linux", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1207658695"
         exp = ""
@@ -79,7 +79,7 @@ class Test(TestCase):
         mock_subprocess().returncode = 2
         mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
         mock_listdir.return_value = ["object1", "object2"]
-        game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
+        game = Game("Beneath A Steel Sky", platform="linux", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1207658695"
         exp = "The installation of /home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh failed. Please try again."
@@ -206,7 +206,7 @@ class Test(TestCase):
         mock_path_isfile.return_value = True
         mock_subprocess().returncode = 0
         mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
-        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
+        game = Game("Absolute Drift", platform="linux", install_dir="/home/makson/GOG Games/Absolute Drift")
         exp = ""
         obs = installer.postinstaller(game)
         self.assertEqual(exp, obs)
@@ -218,7 +218,7 @@ class Test(TestCase):
         mock_path_isfile.return_value = True
         mock_subprocess().returncode = 1
         mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
-        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
+        game = Game("Absolute Drift", platform="linux", install_dir="/home/makson/GOG Games/Absolute Drift")
         exp = "Postinstallation script failed: /home/makson/GOG Games/Absolute Drift/support/postinst.sh"
         obs = installer.postinstaller(game)
         self.assertEqual(exp, obs)
