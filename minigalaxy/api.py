@@ -235,6 +235,8 @@ class Api:
             platform_version = game.platform
         else:
             platform_version = game.get_info("platform")
+        if not platform_version:
+            platform_version = "linux"
         return platform_version
 
     def get_version(self, game: Game, gameinfo=None, dlc_name="") -> str:
