@@ -1,3 +1,11 @@
+minigalaxy (1.2.6) jammy; urgency=medium
+
+  * Fix changing the install path causing an exception
+  * Fix error detection & reporting on wineprefix creation failure
+    (thanks to LeXofLeviafan)
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Fri, 19 Jan 2024 16:50:38 +0000
+
 minigalaxy (1.2.5) jammy; urgency=medium
 
   * Fix filtering for installed games
