@@ -98,7 +98,7 @@ def verify_installer_integrity(game, installer):
                     error_message = _("{} was corrupted. Please download it again.").format(installer_file_name)
                     break
             else:
-                logger.warn("Warning. No info about correct %s MD5 checksum", installer_file_name)
+                logger.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
     return error_message
 
 

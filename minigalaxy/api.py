@@ -105,7 +105,7 @@ class Api:
                         else:
                             continue
                         if not product["url"]:
-                            logger.warn("{} ({}) has no store page url".format(product["title"], product['id']))
+                            logger.warning("{} ({}) has no store page url".format(product["title"], product['id']))
                         game = Game(name=product["title"], url=product["url"], game_id=product["id"],
                                     image_url=product["image"], platform=platform, category=product["category"])
                         games.append(game)
@@ -194,10 +194,10 @@ class Api:
             logger.error("Couldn't retrieve file info. Encountered HTTP exception: {}", exc_info=1)
 
         if not file_info.md5:
-            logger.warn("Couldn't find md5 in xml checksum data")
+            logger.warning("Couldn't find md5 in xml checksum data")
 
         if not file_info.size:
-            logger.warn("Couldn't find file size in xml checksum data")
+            logger.warning("Couldn't find file size in xml checksum data")
 
         return file_info
 

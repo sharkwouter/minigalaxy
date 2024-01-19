@@ -84,7 +84,7 @@ class Window(Gtk.ApplicationWindow):
                 logger.debug("Authenticated as: %s", self.api.get_user_info())
                 self.HeaderBar.set_subtitle(self.api.get_user_info())
             except Exception:
-                logger.warn("Starting in offline mode after receiving exception", exc_info=1)
+                logger.warning("Starting in offline mode after receiving exception", exc_info=1)
                 self.offline = True
         self.sync_library()
 

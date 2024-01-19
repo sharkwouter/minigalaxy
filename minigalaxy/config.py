@@ -22,7 +22,7 @@ class Config:
                 try:
                     self.__config = json.loads(file.read())
                 except (json.decoder.JSONDecodeError, UnicodeDecodeError):
-                    logger.warn("Reading config.json failed, creating new config file.")
+                    logger.warning("Reading config.json failed, creating new config file.")
                     os.remove(self.__config_file)
 
     def __write(self) -> None:
