@@ -54,7 +54,7 @@ init_metadata() {
 add_metadata_entry() {
   xmlstarlet ed -L \
   -s /component/releases/release[@version="'$VERSION'"]/description/ul \
-  -t elem -n li -v "$(echo $@|sed 's/^- //')" \
+  -t elem -n li -v "$(echo $@|sed 's/^- //'|sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g')" \
   "${METADATA_FILE}"
 }
 
