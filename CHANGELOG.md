@@ -1,5 +1,6 @@
 **1.2.6**
 - Fix changing the install path causing an exception
+- Allow Windows versions of games with Linux versions to be installed (thanks to makson96 and Kzimir)
 - Fix error detection & reporting on wineprefix creation failure (thanks to LeXofLeviafan)
 
 **1.2.5**
