@@ -11,7 +11,7 @@ from minigalaxy.entity.state import State
 from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR
+from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR, DOWNLOAD_DIR
 from minigalaxy.download import Download, DownloadType
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.launcher import start_game
@@ -67,7 +67,7 @@ class GameTile(Gtk.Box):
         self.image.set_tooltip_text(self.game.name)
 
         # Set folder for download installer
-        self.download_dir = os.path.join(CACHE_DIR, "download", self.game.get_install_directory_name())
+        self.download_dir = os.path.join(DOWNLOAD_DIR, self.game.get_install_directory_name())
 
         # Set folder if user wants to keep installer (disabled by default)
         self.keep_dir = os.path.join(self.config.install_dir, "installer")
