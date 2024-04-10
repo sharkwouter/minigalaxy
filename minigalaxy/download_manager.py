@@ -294,10 +294,9 @@ class DownloadManager:
                 download_attempt += 1
         # Successful downloads
         if result:
-            if download.number == download.out_of_amount:
-                self.logger.debug("Download finished, thread {}".format(threading.get_ident()))
-                finish_thread = threading.Thread(target=download.finish)
-                finish_thread.start()
+            self.logger.debug("Download finished, thread {}".format(threading.get_ident()))
+            finish_thread = threading.Thread(target=download.finish)
+            finish_thread.start()
             self.__remove_download_from_active_downloads(download)
         # Unsuccessful downloads and cancels
         else:

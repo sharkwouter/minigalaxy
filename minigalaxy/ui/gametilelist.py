@@ -265,8 +265,22 @@ class GameTileList(Gtk.Box):
         self.download_list = []
         number_of_files = len(download_info['files'])
         total_file_size = 0
-        executable_path = None
         download_files = []
+        self.download_finished = 0
+
+        def finish_func_wrapper(func):
+            def wrapper(*args):
+                self.download_finished += 1
+                if self.download_finished == number_of_files:
+                    # Assume the first item in download_info['files] is the executable
+                    # This item ends up last in self.download_list because it's reversed
+                    finish_func(self.download_list[-1].save_location)
+
+            if func is not None:
+                return wrapper
+            else:
+                return None
+
         for key, file_info in enumerate(download_info['files']):
             try:
                 download_url = self.api.get_real_download_link(file_info["downlink"])
@@ -283,16 +297,13 @@ class GameTileList(Gtk.Box):
             except AttributeError:
                 filename = "{}-{}.bin".format(self.game.get_stripped_name(), key)
             download_path = os.path.join(self.download_dir, filename)
-            if key == 0:
-                # If key = 0, denote the file as the executable's path
-                executable_path = download_path
             if info.md5:
                 self.game.md5sum[os.path.basename(download_path)] = info.md5
             download = Download(
                 url=download_url,
                 save_location=download_path,
                 download_type=DownloadType.GAME,
-                finish_func=finish_func if download_path == executable_path else None,
+                finish_func=finish_func_wrapper(finish_func),
                 progress_func=self.set_progress,
                 cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
                 number=number_of_files - key,
