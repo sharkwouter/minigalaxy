@@ -317,8 +317,7 @@ class DownloadManager:
         """
         # Make sure the directory exists
         save_directory = os.path.dirname(save_location)
-        if not os.path.isdir(save_directory):
-            os.makedirs(save_directory, mode=0o755)
+        os.makedirs(save_directory, mode=0o755, exist_ok=True)
 
         # Fail if the file already exists
         if os.path.isdir(save_location):
