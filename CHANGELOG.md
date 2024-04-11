@@ -1,3 +1,9 @@
+**1.3.0**
+- Fix race when preparing download location (thanks to viacheslavka)
+- Fix multithreaded downloads of Windows games (thanks to viacheslavka)
+- Fix DLC installation for Windows games (thanks to viacheslavka)
+- Allow users to specify the download directory (thanks to viacheslavka)
+
 **1.2.6**
 - Fix changing the install path causing an exception
 - Fix error detection & reporting on wineprefix creation failure (thanks to LeXofLeviafan)
