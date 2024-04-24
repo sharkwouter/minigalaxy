@@ -148,6 +148,14 @@ sudo xbps-install -S minigalaxy
 </pre>
 </details>
 
+<details><summary>Flatpak</summary>
+
+Available on <a href="https://flathub.org/apps/io.github.sharkwouter.Minigalaxy">Flathub</a>. You can install it with:
+<pre>
+flatpak install flathub io.github.sharkwouter.Minigalaxy
+</pre>
+</details>
+
 <details><summary>Other distributions</summary>
 
 On other distributions, Minigalaxy can be downloaded and started with the following commands:
