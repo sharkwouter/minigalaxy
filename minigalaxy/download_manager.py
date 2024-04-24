@@ -294,10 +294,9 @@ class DownloadManager:
                 download_attempt += 1
         # Successful downloads
         if result:
-            if download.number == download.out_of_amount:
-                self.logger.debug("Download finished, thread {}".format(threading.get_ident()))
-                finish_thread = threading.Thread(target=download.finish)
-                finish_thread.start()
+            self.logger.debug("Download finished, thread {}".format(threading.get_ident()))
+            finish_thread = threading.Thread(target=download.finish)
+            finish_thread.start()
             self.__remove_download_from_active_downloads(download)
         # Unsuccessful downloads and cancels
         else:
@@ -318,8 +317,7 @@ class DownloadManager:
         """
         # Make sure the directory exists
         save_directory = os.path.dirname(save_location)
-        if not os.path.isdir(save_directory):
-            os.makedirs(save_directory, mode=0o755)
+        os.makedirs(save_directory, mode=0o755, exist_ok=True)
 
         # Fail if the file already exists
         if os.path.isdir(save_location):
