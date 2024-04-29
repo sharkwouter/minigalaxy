@@ -245,7 +245,7 @@ def get_exec_line(game):
 
 def create_applications_file(game):
     error_message = ""
-    path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))
+    path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.get_stripped_name(to_path=True)))
     exe_cmd = get_exec_line(game)
     # Create desktop file definition
     desktop_context = {
@@ -336,8 +336,9 @@ def uninstall_game(game):
     shutil.rmtree(game.install_dir, ignore_errors=True)
     if os.path.isfile(game.status_file_path):
         os.remove(game.status_file_path)
-    if os.path.isfile(os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name))):
-        os.remove(os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.name)))
+    path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.get_stripped_name(to_path=True)))
+    if os.path.isfile(path_to_shortcut):
+        os.remove(path_to_shortcut)
 
 
 def _exe_cmd(cmd):

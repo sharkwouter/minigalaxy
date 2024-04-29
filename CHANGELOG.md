@@ -1,4 +1,5 @@
 **1.3.0**
+- Fix Remove forward slash from desktop filename for Shenzhen I/O (thanks to slowsage)
 - Fix race when preparing download location (thanks to viacheslavka)
 - Fix multithreaded downloads of Windows games (thanks to viacheslavka)
 - Fix DLC installation for Windows games (thanks to viacheslavka)

@@ -19,11 +19,11 @@ class Game:
         self.category = category
         self.status_file_path = self.get_status_file_path()
 
-    def get_stripped_name(self):
-        return self.__strip_string(self.name)
+    def get_stripped_name(self, to_path=False):
+        return self.__strip_string(self.name, to_path)
 
     def get_install_directory_name(self):
-        return re.sub('[^A-Za-z0-9 ]+', '', self.name)
+        return self.__strip_string(self.name, to_path=True)
 
     def get_status_file_path(self):
         if self.install_dir:
@@ -47,8 +47,8 @@ class Game:
             json.dump(json_dict, status_file)
 
     @staticmethod
-    def __strip_string(string):
-        return re.sub('[^A-Za-z0-9]+', '', string)
+    def __strip_string(string, to_path=False):
+        return re.sub('[^A-Za-z0-9]+', '', string) if not to_path else re.sub('[^A-Za-z0-9 ]+', '', string)
 
     def is_installed(self, dlc_title="") -> bool:
         installed = False
