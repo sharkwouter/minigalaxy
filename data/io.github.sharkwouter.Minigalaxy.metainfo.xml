@@ -33,7 +33,18 @@
   <provides>
     <binary>minigalaxy</binary>
   </provides>
-  <releases><release version="1.2.6" date="2024-01-19">
+  <releases><release version="1.3.0" date="2024-06-10">
+      <description>
+        <p>Implements the following changes:</p>
+        <ul>
+          <li>Fix Remove forward slash from desktop filename for Shenzhen I/O (thanks to slowsage)</li>
+          <li>Fix race when preparing download location (thanks to viacheslavka)</li>
+          <li>Fix multithreaded downloads of Windows games (thanks to viacheslavka)</li>
+          <li>Fix DLC installation for Windows games (thanks to viacheslavka)</li>
+          <li>Allow users to specify the download directory (thanks to viacheslavka)</li>
+        </ul>
+      </description>
+    </release><release version="1.2.6" date="2024-01-19">
       <description>
         <p>Implements the following changes:</p>
         <ul>
