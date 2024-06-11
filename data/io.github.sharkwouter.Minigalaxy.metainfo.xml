@@ -328,7 +328,6 @@
     <content_attribute id="language-humor">intense</content_attribute>
     <content_attribute id="language-profanity">intense</content_attribute>
     <content_attribute id="money-gambling">none</content_attribute>
-    <content_attribute id="money-purchasing">moderate</content_attribute>
     <content_attribute id="sex-adultery">moderate</content_attribute>
     <content_attribute id="sex-appearance">moderate</content_attribute>
     <content_attribute id="sex-homosexuality">moderate</content_attribute>
@@ -345,7 +344,6 @@
     <content_attribute id="violence-desecration">intense</content_attribute>
     <content_attribute id="violence-fantasy">intense</content_attribute>
     <content_attribute id="violence-realistic">intense</content_attribute>
-    <content_attribute id="violence-sexual">moderate</content_attribute>
     <content_attribute id="violence-slavery">intense</content_attribute>
     <content_attribute id="violence-worship">intense</content_attribute>
   </content_rating>

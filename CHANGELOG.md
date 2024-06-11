@@ -1,3 +1,6 @@
+**1.3.1**
+- Minor AppData fixes (thanks to tim77)
+
 **1.3.0**
 - Fix Remove forward slash from desktop filename for Shenzhen I/O (thanks to slowsage)
 - Fix race when preparing download location (thanks to viacheslavka)
