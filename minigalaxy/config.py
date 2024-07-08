@@ -135,7 +135,7 @@ class Config:
 
     @property
     def keep_window_maximized(self) -> bool:
-        return self.__config.get("keep_window_maximized", False)
+        return self.__config.get("keep_window_maximized", True)
 
     @keep_window_maximized.setter
     def keep_window_maximized(self, new_value: bool) -> None:
