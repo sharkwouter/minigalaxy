@@ -36,6 +36,7 @@ SUPPORTED_LOCALES = [
     ["nb_NO", _("Norwegian Bokmål")],
     ["nn_NO", _("Norwegian Nynorsk")],
     ["pl", _("Polish")],
+    ["pt_PT", _("Portuguese")],
     ["ru_RU", _("Russian")],
     ["zh_CN", _("Simplified Chinese")],
     ["es", _("Spanish")],
