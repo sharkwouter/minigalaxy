@@ -1,0 +1,746 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-08-28 11:42+0100\n"
+"PO-Revision-Date: 2024-08-28 12:44+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt_PT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#. A short description of what Minigalaxy is
+#: data/ui/about.ui:10
+msgctxt "short_description"
+msgid "A simple GOG client for Linux"
+msgstr "Um simples cliente GOG para Linux"
+
+#: minigalaxy/ui/about.py:13
+msgid "About"
+msgstr "Sobre"
+
+#. Opens about dialog
+#: data/ui/application.ui:58
+msgctxt "about"
+msgid "About"
+msgstr "Sobre"
+
+#: data/ui/properties.ui:269 data/ui/properties.ui:281
+msgid "Added at the end of the command used to launch the game"
+msgstr ""
+
+#: data/ui/properties.ui:243 data/ui/properties.ui:255
+msgid "Added in front of the command used to launch the game"
+msgstr ""
+
+#: data/ui/categoryfilters.ui:72
+msgid "Apply"
+msgstr "Aplicar"
+
+#: minigalaxy/ui/gametilelist.py:151 minigalaxy/ui/gametile.py:145
+msgid "Are you sure you want to cancel downloading {}?"
+msgstr "Pretende cancelar o descarregamento {}?"
+
+#: minigalaxy/ui/window.py:117
+msgid "Are you sure you want to log out of GOG?"
+msgstr "Pretende desligar-se do GOG?"
+
+#: minigalaxy/ui/gametilelist.py:164 minigalaxy/ui/gametile.py:158
+#, python-format
+msgid "Are you sure you want to uninstall %s?"
+msgstr "Pretende desinstalar %s?"
+
+#: minigalaxy/constants.py:4 minigalaxy/constants.py:28
+msgid "Brazilian Portuguese"
+msgstr "Português do Brasil"
+
+#: data/ui/categoryfilters.ui:58 data/ui/properties.ui:355
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: data/ui/preferences.ui:20
+msgctxt "cancel"
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: minigalaxy/ui/categoryfilters.py:28
+msgid "Category Filters"
+msgstr "Filtros de Categoria"
+
+#. Tooltip for category filter button
+#: data/ui/application.ui:149
+msgctxt "category_filter"
+msgid "Category filters"
+msgstr "Filtros de Categoria"
+
+#: data/ui/properties.ui:108 data/ui/properties.ui:120
+msgid "Check for game updates in the background"
+msgstr "Procurar por atualizações de jogos em segundo plano"
+
+#: data/ui/properties.ui:107
+msgid "Check for updates:"
+msgstr "Procurar por atualizações:"
+
+#: minigalaxy/constants.py:5
+msgid "Chinese"
+msgstr "Chinês"
+
+#: data/ui/properties.ui:268
+msgid "Command flags:"
+msgstr ""
+
+#: minigalaxy/ui/information.py:85
+msgid "Couldn't open GOG Database page"
+msgstr "Não foi possível abrir a Base de Dados GOG"
+
+#: minigalaxy/ui/information.py:95
+msgid "Couldn't open PCGamingWiki page"
+msgstr "Não foi possível abrir a página PCGamingWiki"
+
+#: minigalaxy/ui/information.py:75
+msgid "Couldn't open forum page"
+msgstr "Não foi possível abrir a página do fórum"
+
+#: minigalaxy/ui/information.py:65
+msgid "Couldn't open store page"
+msgstr "Não foi possível abrir a página da loja"
+
+#: minigalaxy/ui/information.py:55
+msgid "Couldn't open support page"
+msgstr "Não foi possível abrir a página de suporte"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:313
+msgctxt "create_menu_shortcuts"
+msgid "Create menu shortcuts: "
+msgstr "Criar menu de atalhos:"
+
+#: minigalaxy/constants.py:29
+msgid "Czech"
+msgstr "Checo"
+
+#: data/ui/gametilelist.ui:194 data/ui/gametile.ui:203
+msgid "DLC"
+msgstr "DLC (Conteúdo Descarregável)"
+
+#: minigalaxy/constants.py:6
+msgid "Danish"
+msgstr "Dinamarquês"
+
+#: minigalaxy/ui/gametile.py:516
+msgid "Download"
+msgstr "Descarregar"
+
+#: minigalaxy/ui/gametilelist.py:532 minigalaxy/ui/gametile.py:517
+msgid "Download and install the game"
+msgstr "Descarregar e instalar o jogo"
+
+#: minigalaxy/ui/gametilelist.py:235 minigalaxy/ui/gametilelist.py:289
+#: minigalaxy/ui/gametile.py:229 minigalaxy/ui/gametile.py:283
+msgid "Download error"
+msgstr "Erro ao descarregar"
+
+#: minigalaxy/ui/gametile.py:554
+msgid "Downloading…"
+msgstr "A descarregar…"
+
+#: minigalaxy/constants.py:7 minigalaxy/constants.py:30
+msgid "Dutch"
+msgstr "Holandês"
+
+#: data/ui/properties.ui:189 data/ui/properties.ui:201
+msgid ""
+"Enables GameMode, a daemon and library combo that allows games to request a "
+"set of optimisations be temporarily applied to the host OS"
+msgstr ""
+
+#: data/ui/properties.ui:216 data/ui/properties.ui:228
+msgid ""
+"Enables MangoHud, an overlay for performance monitoring and benchmarking "
+"using Vulcan and OpenGL"
+msgstr ""
+
+#: minigalaxy/constants.py:8 minigalaxy/constants.py:31
+msgid "English"
+msgstr "Inglês"
+
+#: minigalaxy/ui/login.py:45
+msgid "Facebook Login"
+msgstr "Entrar no Facebook"
+
+#: minigalaxy/ui/preferences.py:124
+msgid ""
+"Failed to change program language. Make sure locale is generated on your "
+"system."
+msgstr "Falha ao alterar o idioma do programa."
+
+#: minigalaxy/ui/gametilelist.py:365 minigalaxy/ui/gametile.py:359
+msgid "Failed to install {}"
+msgstr "Falha ao instalar {}"
+
+#: minigalaxy/ui/library.py:175
+msgid "Failed to retrieve library"
+msgstr "Falha ao descarregar biblioteca"
+
+#: minigalaxy/launcher.py:54 minigalaxy/ui/gametilelist.py:135
+#: minigalaxy/ui/gametile.py:129
+msgid "Failed to start {}:"
+msgstr "Falha ao iniciar {}:"
+
+#: minigalaxy/ui/gametilelist.py:336 minigalaxy/ui/gametile.py:355
+msgid "Finished downloading and installing {}"
+msgstr "Terminou o descarregamento e instalação de {}"
+
+#: minigalaxy/constants.py:9 minigalaxy/constants.py:32
+msgid "Finnish"
+msgstr "Finlandês"
+
+#: data/ui/information.ui:89
+msgid "Forum"
+msgstr "Fórum"
+
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:33
+msgid "French"
+msgstr "Francês"
+
+#: minigalaxy/ui/properties.py:82
+msgid "GameMode wasn't found. Using GameMode cannot be enabled."
+msgstr "GameMode não foi encontrado."
+
+#: minigalaxy/ui/information.py:141
+msgid "Genre"
+msgstr "Género"
+
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:34
+msgid "German"
+msgstr "Alemão"
+
+#. A link to the GitHub page
+#: data/ui/about.ui:12
+msgctxt "github_page_link"
+msgid "GitHub page"
+msgstr "Página do GitHub"
+
+#: minigalaxy/constants.py:47
+msgid "Greek"
+msgstr "Grego"
+
+#: minigalaxy/constants.py:52
+msgid "Grid"
+msgstr "Grelha"
+
+#: data/ui/properties.ui:161
+msgid "Hide game:"
+msgstr "Ocultar jogo:"
+
+#: data/ui/properties.ui:162 data/ui/properties.ui:174
+msgid "Hides the game from the games list"
+msgstr "Oculta o jogo da lista"
+
+#: minigalaxy/constants.py:12
+msgid "Hungarian"
+msgstr "Húngaro"
+
+#: minigalaxy/ui/gametile.py:545
+msgid "In queue…"
+msgstr "Na fila…"
+
+#: data/ui/gametilelist.ui:239 data/ui/gametile.ui:233
+msgid "Information"
+msgstr "Informação"
+
+#: minigalaxy/ui/information.py:29
+msgid "Information about {}"
+msgstr "Informação sobre {}"
+
+#: minigalaxy/installer.py:161
+msgid "Innoextract extraction failed."
+msgstr "Falha na extração de Innoextract."
+
+#: minigalaxy/installer.py:178
+msgid "Innoextract not installed."
+msgstr "Innoextract não se encontra instalado."
+
+#: minigalaxy/ui/gametile.py:534
+msgid "Install"
+msgstr "Instalar"
+
+#: minigalaxy/ui/gametilelist.py:553 minigalaxy/ui/gametile.py:535
+msgid "Install the game"
+msgstr "Instalar o jogo"
+
+#. The place directory in which games are installed. Has to end with ": "
+#: data/ui/preferences.ui:143
+msgctxt "install_path"
+msgid "Installation path: "
+msgstr "Caminho da instalação:"
+
+#. Used next to a checkbox which switches between showing all games and only installed ones
+#: data/ui/application.ui:116
+msgctxt "installed"
+msgid "Installed"
+msgstr "Instalado"
+
+#: minigalaxy/ui/gametile.py:563
+msgid "Installing…"
+msgstr "A instalar…"
+
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:35
+msgid "Italian"
+msgstr "Italiano"
+
+#: minigalaxy/constants.py:14
+msgid "Japanese"
+msgstr "Japonês"
+
+#: minigalaxy/ui/preferences.py:50
+msgid ""
+"Keep installers after downloading a game.\n"
+"Installers are stored in: {}"
+msgstr ""
+"Manter os instaladores após descarregar um jogo.\n"
+"Instaladores guardados em: {}"
+
+#. Whether installer files are kept after download. Has to end with ": "
+#: data/ui/preferences.ui:170
+msgctxt "keep_installer"
+msgid "Keep installers: "
+msgstr "Manter os instaladores:"
+
+#: minigalaxy/constants.py:15
+msgid "Korean"
+msgstr "Coreano"
+
+#. The preferred language on Minigalaxy start. Has to end with ": "
+#: data/ui/preferences.ui:68
+msgctxt "language"
+msgid "Language: "
+msgstr "Idioma:"
+
+#: minigalaxy/ui/gametilelist.py:601 minigalaxy/ui/gametile.py:576
+msgid "Launch the game"
+msgstr "Abrir o jogo"
+
+#: minigalaxy/constants.py:53
+msgid "List"
+msgstr "Lista"
+
+#: minigalaxy/ui/login.py:20
+msgid "Login"
+msgstr "Entrar"
+
+#. Logs the users gog account out and returns to login page
+#: data/ui/application.ui:17
+msgctxt "logout"
+msgid "Logout"
+msgstr "Sair"
+
+#: minigalaxy/ui/properties.py:87
+msgid "MangoHud wasn't found. Using MangoHud cannot be enabled."
+msgstr "MangoHud não foi encontrado."
+
+#: minigalaxy/launcher.py:214
+msgid "No executable was found in {}"
+msgstr "Nenhum executável foi encontrado em {}"
+
+#: minigalaxy/constants.py:16
+msgid "Norwegian"
+msgstr "Norueguês"
+
+#: minigalaxy/constants.py:36
+msgid "Norwegian Bokmål"
+msgstr "Norueguês Bokmål"
+
+#: minigalaxy/constants.py:37
+msgid "Norwegian Nynorsk"
+msgstr "Norueguês Nynorsk"
+
+#: minigalaxy/installer.py:110
+msgid "Not enough space to extract game. Required: {} Available: {}"
+msgstr ""
+"Não existe espaço suficiente para extrair o jogo. Necessário: {} Disponível: "
+"{}"
+
+#: data/ui/information.ui:165 data/ui/properties.ui:369
+msgid "OK"
+msgstr ""
+
+#: data/ui/properties.ui:51
+msgid "Open Regedit for this game"
+msgstr "Abrir Regedit para este jogo"
+
+#: data/ui/properties.ui:65
+msgid "Open Winecfg for this game"
+msgstr "Abrir Winecfg para este jogo"
+
+#: data/ui/properties.ui:93
+msgid "Open Winetricks for this game"
+msgstr "Abrir Winetricks para este jogo"
+
+#: data/ui/properties.ui:76
+msgid "Open files"
+msgstr "Abrir ficheiros"
+
+#: data/ui/properties.ui:79
+msgid "Open game install folder"
+msgstr "Abrir pasta de instalação do jogo"
+
+#. Tooltip for header menu button
+#: data/ui/application.ui:130
+msgctxt "menu"
+msgid "Options menu"
+msgstr "Menu de Opções"
+
+#: minigalaxy/ui/gametile.py:575 minigalaxy/ui/gametile.py:606
+msgid "Play"
+msgstr "Jogar"
+
+#: minigalaxy/ui/information.py:56 minigalaxy/ui/information.py:66
+#: minigalaxy/ui/information.py:76 minigalaxy/ui/information.py:86
+#: minigalaxy/ui/information.py:96
+msgid "Please check your internet connection"
+msgstr "Por favor, verifique a sua ligação de internet"
+
+#: minigalaxy/constants.py:17 minigalaxy/constants.py:38
+msgid "Polish"
+msgstr "Polaco"
+
+#: minigalaxy/constants.py:18
+msgid "Portuguese"
+msgstr "Português"
+
+#: minigalaxy/ui/preferences.py:31
+msgid "Preferences"
+msgstr "Preferências"
+
+#. Opens preferences dialog
+#: data/ui/application.ui:32
+msgctxt "preferences"
+msgid "Preferences"
+msgstr "Preferências"
+
+#. Preferred language for downloading games in. Has to end with ": "
+#: data/ui/preferences.ui:93
+msgctxt "preferred_game_language"
+msgid "Preferred game language: "
+msgstr "Idioma de jogo preferido: "
+
+#: data/ui/gametilelist.ui:254 data/ui/gametile.ui:248
+msgid "Properties"
+msgstr "Propriedades"
+
+#: minigalaxy/ui/properties.py:34
+msgid "Properties of {}"
+msgstr "Propriedades de {}"
+
+#. Tooltip for refresh button
+#: data/ui/application.ui:89
+msgctxt "refresh"
+msgid "Refresh game list"
+msgstr "Atualizar lista de jogos"
+
+#: data/ui/properties.ui:48
+msgid "Regedit"
+msgstr ""
+
+#: data/ui/categoryfilters.ui:44
+msgid "Reset"
+msgstr "Reiniciar"
+
+#: data/ui/properties.ui:294
+msgid "Reset the wine executable for this game"
+msgstr "Reiniciar o executável Wine deste jogo"
+
+#: data/ui/properties.ui:291
+msgid "Reset wine executable"
+msgstr "Reiniciar o executável Wine"
+
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:48
+msgid "Romanian"
+msgstr "Romeno"
+
+#: minigalaxy/constants.py:19 minigalaxy/constants.py:39
+msgid "Russian"
+msgstr "Russo"
+
+#. Saves the preferences
+#: data/ui/preferences.ui:34
+msgctxt "save"
+msgid "Save"
+msgstr "Guardar"
+
+#. Tooltip for search field
+#: data/ui/application.ui:172
+msgctxt "search"
+msgid "Search games list"
+msgstr "Procurar na lista de jogos"
+
+#: data/ui/properties.ui:309 data/ui/properties.ui:322
+msgid "Set Wine executable"
+msgstr "Definir executável Wine"
+
+#: data/ui/properties.ui:134
+msgid "Show FPS in game:"
+msgstr "Mostrar FPS no jogo:"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:275
+msgctxt "show_windows_games"
+msgid "Show Windows games: "
+msgstr "Mostrar jogos Windows:"
+
+#: data/ui/properties.ui:135 data/ui/properties.ui:147
+msgid "Show an FPS (frames per second) counter overlaid in the game"
+msgstr "Mostrar contador de FPS (frames por segundo) no jogo"
+
+#: minigalaxy/ui/gametilelist.py:539 minigalaxy/ui/gametilelist.py:606
+#: minigalaxy/ui/gametile.py:524 minigalaxy/ui/gametile.py:581
+msgid "Show game options menu"
+msgstr "Mostrar menu de opções do jogo"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:249
+msgctxt "show_hidden_games"
+msgid "Show hidden games: "
+msgstr "Mostrar jogos ocultos: "
+
+#. Tooltip for the switch which allows only showing installed games or all games
+#: data/ui/application.ui:105
+msgctxt "tooltip_installed"
+msgid "Show only installed games"
+msgstr "Mostrar apenas jogos instalados"
+
+#: minigalaxy/constants.py:40
+msgid "Simplified Chinese"
+msgstr "Chinês Simplificado"
+
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:41
+msgid "Spanish"
+msgstr "Espanhol"
+
+#: minigalaxy/constants.py:42
+msgid "Spanish (Spain)"
+msgstr "Espanhol (Espanha)"
+
+#. Whether the user will stay logged in after closing Minigalaxy. Has to end with ": "
+#: data/ui/preferences.ui:196
+msgctxt "stay_logged_in"
+msgid "Stay logged in:"
+msgstr "Manter-se ligado:"
+
+#: data/ui/information.ui:76
+msgid "Store"
+msgstr "Loja"
+
+#: data/ui/information.ui:63
+msgid "Support"
+msgstr "Suporte"
+
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:43
+msgid "Swedish"
+msgstr "Sueco"
+
+#: minigalaxy/constants.py:27
+msgid "System default"
+msgstr "Sistema predefinido"
+
+#: minigalaxy/installer.py:141
+msgid "The installation of {} failed. Please try again."
+msgstr "A instalação de {} falhou. Por favor, tente novamente."
+
+#: data/ui/preferences.ui:90
+msgctxt "preferred_game_language_tooltip"
+msgid "The preferred language for downloading games in"
+msgstr "O idioma preferido para descarregar jogos"
+
+#: data/ui/preferences.ui:65
+msgctxt "language_tooltip"
+msgid "The preferred language on Minigalaxy start"
+msgstr "O idioma preferido para iniciar o Minigalaxy"
+
+#: data/ui/preferences.ui:115
+msgctxt "view_tooltip"
+msgid "The preferred view of game library"
+msgstr "A vista preferida da biblioteca de jogos"
+
+#: minigalaxy/ui/gametilelist.py:236 minigalaxy/ui/gametile.py:230
+msgid ""
+"There was an error when trying to fetch the download link!\n"
+"{}"
+msgstr ""
+"Ocorreu um erro ao tentar procurar o link para descarregar!\n"
+"{}"
+
+#: data/ui/preferences.ui:140
+msgctxt "install_path_tooltip"
+msgid "This is where games will be installed"
+msgstr "Local onde os jogos serão instalados"
+
+#: minigalaxy/constants.py:44
+msgid "Traditional Chinese"
+msgstr "Chinês Tradicional"
+
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:45
+msgid "Turkish"
+msgstr "Turco"
+
+#: minigalaxy/constants.py:46
+msgid "Ukrainian"
+msgstr "Ucraniano"
+
+#: minigalaxy/installer.py:75
+msgid "Unhandled error."
+msgstr ""
+
+#: data/ui/gametilelist.ui:224 data/ui/gametile.ui:218
+msgid "Uninstall"
+msgstr "Desinstalar"
+
+#: minigalaxy/ui/gametile.py:592
+msgid "Uninstalling…"
+msgstr "A desinstalar…"
+
+#: data/ui/gametilelist.ui:209 data/ui/gametile.ui:182
+msgid "Update"
+msgstr "Atualização"
+
+#: minigalaxy/ui/gametile.py:615
+msgid "Updating…"
+msgstr "A atualizar…"
+
+#: data/ui/properties.ui:188
+msgid "Use GameMode:"
+msgstr "Usar GameMode:"
+
+#: data/ui/properties.ui:215
+msgid "Use MangoHud:"
+msgstr "Usar MangoHud:"
+
+#. Has to end with ": "
+#: data/ui/preferences.ui:223
+msgctxt "use_dark_theme"
+msgid "Use dark theme: "
+msgstr "Usar tema escuro: "
+
+#: data/ui/properties.ui:242
+msgid "Variable flags:"
+msgstr ""
+
+#: minigalaxy/ui/information.py:143
+msgid "Version"
+msgstr "Versão"
+
+#. The preferred view of game library. Has to end with ": "
+#: data/ui/preferences.ui:118
+msgctxt "view"
+msgid "View: "
+msgstr "Vista:"
+
+#: data/ui/preferences.ui:193
+msgctxt "stay_logged_in_tooltip"
+msgid "When disabled you'll be asked to log in each time Minigalaxy is started"
+msgstr ""
+"Se desativado, será pedido para entrar sempre que o Minigalaxy for iniciado"
+
+#: data/ui/preferences.ui:220
+msgctxt "use_dark_theme_tooltip"
+msgid "Whether Minigalaxy should use dark theme or not"
+msgstr "Se o Minigalaxy deve usar ou não o tema escuro"
+
+#: data/ui/preferences.ui:272
+msgctxt "show_windows_games_tooltip"
+msgid "Whether Windows games are shown in the library or not"
+msgstr "Se os jogos Windows serão mostrados na biblioteca ou não"
+
+#: data/ui/preferences.ui:246
+msgctxt "show_hidden_games_tooltip"
+msgid "Whether hidden games are shown in the library or not"
+msgstr "Se os jogos ocultos serão mostrados na biblioteca ou não"
+
+#: data/ui/preferences.ui:310
+msgctxt "create_menu_shortcuts_tooltip"
+msgid "Whether shortcuts are created for newly installed games or not"
+msgstr "Se serão criados atalos para jogos recentemente instalados ou não"
+
+#: data/ui/properties.ui:308
+msgid "Wine executable:"
+msgstr "Executável Wine:"
+
+#: minigalaxy/installer.py:203
+msgid "Wine extraction failed."
+msgstr "Extração de Wine falhou."
+
+#: minigalaxy/ui/preferences.py:194
+msgid "Wine wasn't found. Showing Windows games cannot be enabled."
+msgstr "Wine não foi encontrado. Não é possível mostrar jogos Windows."
+
+#: data/ui/properties.ui:62
+msgid "Winecfg"
+msgstr ""
+
+#: minigalaxy/installer.py:194
+msgid "Wineprefix creation failed."
+msgstr "Criação de Wineprefix falhou."
+
+#: data/ui/properties.ui:90
+msgid "Winetricks"
+msgstr ""
+
+#: minigalaxy/ui/properties.py:113
+msgid "Winetricks wasn't found and cannot be used."
+msgstr "Winetricks não foi encontrado e não pode ser usado."
+
+#: minigalaxy/ui/gametilelist.py:531
+msgid "download"
+msgstr "descarregamento"
+
+#: minigalaxy/ui/gametilelist.py:574
+msgid "downloading…"
+msgstr "a descarregar…"
+
+#: minigalaxy/ui/gametilelist.py:565
+msgid "in queue…"
+msgstr "na fila…"
+
+#: minigalaxy/ui/gametilelist.py:552
+msgid "install"
+msgstr "instalação"
+
+#: minigalaxy/ui/gametilelist.py:585
+msgid "installing…"
+msgstr "a instalar…"
+
+#: minigalaxy/ui/gametilelist.py:600 minigalaxy/ui/gametilelist.py:632
+msgid "play"
+msgstr "jogar"
+
+#: minigalaxy/ui/gametilelist.py:618
+msgid "uninstalling…"
+msgstr "a desinstalar…"
+
+#: minigalaxy/ui/information.py:137
+msgid "unknown"
+msgstr "desconhecido"
+
+#: minigalaxy/ui/gametilelist.py:641
+msgid "updating…"
+msgstr "a atualizar…"
+
+#: minigalaxy/installer.py:143
+msgid "{} could not be unzipped."
+msgstr "{} não foi possível descomprimir"
+
+#: minigalaxy/installer.py:86
+msgid "{} failed to download."
+msgstr "{} falhou a descarregar."
+
+#: minigalaxy/ui/preferences.py:206
+msgid "{} isn't a usable path"
+msgstr "{} não é um caminho válido"
+
+#: minigalaxy/installer.py:98
+msgid "{} was corrupted. Please download it again."
+msgstr "{} foi corrompido. Por favor, volte a descarregar."
