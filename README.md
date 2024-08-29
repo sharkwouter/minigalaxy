@@ -40,6 +40,7 @@ Currently, Minigalaxy can be displayed in the following languages:
 - Norwegian Bokmål
 - Norwegian Nynorsk
 - Polish
+- Portuguese
 - Russian
 - Simplified Chinese
 - Spanish
@@ -233,6 +234,7 @@ Special thanks goes out to all contributors:
 - Pyrofanis for translating to Greek
 - mbarrio for translating to Spanish
 - manurtinez for translating to Spanish
+- GLSWV for translating to Portuguese
 - jubalh for packaging Minigalaxy for openSUSE
 - gasinvein for packaging Minigalaxy for flathub
 - metafarion for packaging Minigalaxy for Gentoo early on
