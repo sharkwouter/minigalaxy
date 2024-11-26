@@ -2,7 +2,6 @@ import shutil
 import locale
 import os
 import threading
-import re
 import time
 import urllib.parse
 
@@ -285,7 +284,7 @@ class GameTile(Gtk.Box):
                 break
             info = self.api.get_download_file_info(file_info["downlink"])
             total_file_size += info.size
-            # Extract the filename from the download url (filename is between %2F and &token)
+            # Extract the filename from the download url
             filename = urllib.parse.unquote(urllib.parse.urlsplit(download_url).path)
             filename = filename.split("/")[-1]
             download_path = os.path.join(self.download_dir, filename)
