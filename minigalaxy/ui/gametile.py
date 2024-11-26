@@ -285,11 +285,9 @@ class GameTile(Gtk.Box):
                 break
             info = self.api.get_download_file_info(file_info["downlink"])
             total_file_size += info.size
-            try:
-                # Extract the filename from the download url (filename is between %2F and &token)
-                filename = urllib.parse.unquote(re.search('%2F(((?!%2F).)*)&t', download_url).group(1))
-            except AttributeError:
-                filename = "{}-{}.bin".format(self.game.get_stripped_name(), key)
+            # Extract the filename from the download url (filename is between %2F and &token)
+            filename = urllib.parse.unquote(urllib.parse.urlsplit(download_url).path)
+            filename = filename.split("/")[-1]
             download_path = os.path.join(self.download_dir, filename)
             if info.md5:
                 self.game.md5sum[os.path.basename(download_path)] = info.md5
