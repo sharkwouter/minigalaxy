@@ -1,4 +1,5 @@
 **1.3.1**
+- Fix Windows games with multiple parts not installing with wine
 - Minor AppData fixes (thanks to tim77)
 - Added Portuguese translation (thanks to GLSWV)
 
