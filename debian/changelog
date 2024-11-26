@@ -1,3 +1,11 @@
+minigalaxy (1.3.1) jammy; urgency=medium
+
+  * Fix Windows games with multiple parts not installing with wine
+  * Minor AppData fixes (thanks to tim77)
+  * Added Portuguese translation (thanks to GLSWV)
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Tue, 26 Nov 2024 22:31:06 +0000
+
 minigalaxy (1.3.0) jammy; urgency=medium
 
   * Fix Remove forward slash from desktop filename for Shenzhen I/O
