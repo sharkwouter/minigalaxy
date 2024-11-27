@@ -183,15 +183,13 @@ def extract_by_wine(game, installer, temp_dir):
     err_msg = ""
     # Set the prefix for Windows games
     prefix_dir = os.path.join(game.install_dir, "prefix")
-    """
-    pick a letter that is unlikely to create collisions with the actual mount/hw setup:
+    """pick a letter that is unlikely to create collisions with the actual mount/hw setup:
     wine creates links for mounted media and optical drives
-    this might lead to errors because wine knows 2 names for these - d: and d:: 
+    this might lead to errors because wine knows 2 names for these - d: and d::
     (difference: : exposes directory, :: exposes the block device itself)
-    But they can't exist at the same time within a prefix
-    Changing this letter is a temporary fix, the entire install method requires an overhaul in the long run
-    """
-    drive = os.path.join(prefix_dir, "dosdevices", "x:")
+    But they can't exist at the same time within a prefix.
+    Changing this letter is a temporary fix, the entire install method requires an overhaul in the long run"""
+    drive = os.path.join(prefix_dir, "dosdevices", "t:")
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
         # Creating the prefix before modifying dosdevices
@@ -210,7 +208,8 @@ def extract_by_wine(game, installer, temp_dir):
     if exitcode not in [0]:
         err_msg = _("Wine extraction failed.")
     elif os.path.exists(drive):
-        #check for existence as a pure safety-measure in case some power-user has pre-configured the letter we picked with double colon
+        """check for existence as a pure safety-measure in case
+        some power-user has pre-configured the letter we picked with double colon"""
         os.unlink(drive)
         os.symlink("../../..", drive)
     return err_msg
