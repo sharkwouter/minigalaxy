@@ -1,3 +1,6 @@
+**1.3.2**
+- Fix issue with windows install via wine on systems with optical drives (thanks to GB609)
+
 **1.3.1**
 - Fix Windows games with multiple parts not installing with wine
 - Minor AppData fixes (thanks to tim77)
