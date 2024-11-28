@@ -11,7 +11,7 @@ from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
-from minigalaxy.wine_utils import is_wine_installed, get_wine_env, get_wine_path
+from minigalaxy.wine_utils import get_wine_env, get_wine_path
 
 
 def get_available_disk_space(location):
@@ -208,7 +208,7 @@ def extract_by_wine(game: Game, installer: str, temp_dir: str, config: Config):
         os.unlink(drive)
     os.symlink(temp_dir, drive)
     _dir = f'{drive_letter}:\\\"{os.path.basename(game.install_dir)}\"'
-    '''It's possible to set install dir as argument before installation, 
+    '''It's possible to set install dir as argument before installation,
     but the argument must be a double-quoted windows-style path: '/DIR="path"'
     Reason: blanks in game.install_dir are processed twice: via POpen and on the WIN cmd in wine again'''
     command = ["env", *wine_env, wine_bin, installer, "\'/DIR={}\'".format(_dir), "/VERYSILENT"]

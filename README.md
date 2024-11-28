@@ -79,6 +79,20 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 - Python Requests
 - gettext
 
+To run windows games, the following optional dependencies are required:
+
+- wine or umu-launcher (as an alternative to standard wine)
+- innoextract: for installations with native linux tools
+
+**Note:**
+
+Some 'native' Linux games available on GOG are Windows applications prepackaged with Wine in reality.
+Running them with UMU-Launcher can not be guaranteed to work in all situations. 
+Depending on the game directory structure, Minigalaxy might not be able to detect that it is a windows game
+and thus won't be able to configure or change the actual wine invocation.
+
+Also, Minigalaxy expects all dependencies of Wine to be setup correctly, it can't install missing drivers, plugins or packages.
+
 ## Installation
 
 <a href="https://repology.org/project/minigalaxy/versions">

@@ -87,7 +87,6 @@ class Preferences(Gtk.Dialog):
             setattr(self.config, prop_name, value)
         return value != current_config
 
-
     def __save_locale_choice(self) -> None:
         current_locale = self.config.locale
         if self.__save_combo_value(self.combobox_program_language, 'locale'):
@@ -101,7 +100,6 @@ class Preferences(Gtk.Dialog):
                 self.config.locale = current_locale
                 self.parent.show_error(_("Failed to change program language. Make sure locale is generated on "
                                          "your system."))
-
 
     def __save_theme_choice(self) -> None:
         settings = Gtk.Settings.get_default()
