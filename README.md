@@ -82,14 +82,15 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 To run windows games, the following optional dependencies are required:
 
 - wine or umu-launcher (as an alternative to standard wine)
-- innoextract: for installations with native linux tools
+- innoextract: For installations with native linux tools
+- zenity: Used by UMU-Launcher to show progress dialogs when updating the proton framework. Not required to use UMU.
 
 **Note:**
 
 Some 'native' Linux games available on GOG are Windows applications prepackaged with Wine in reality.
-Running them with UMU-Launcher can not be guaranteed to work in all situations. 
+Using UMU-Launcher as runner can not be guaranteed to work in all situations.
 Depending on the game directory structure, Minigalaxy might not be able to detect that it is a windows game
-and thus won't be able to configure or change the actual wine invocation.
+and thus won't be able to change the actual wine invocation of the game itself.
 
 Also, Minigalaxy expects all dependencies of Wine to be setup correctly, it can't install missing drivers, plugins or packages.
 

@@ -128,7 +128,7 @@ def extract_installer(game: Game, installer: str, temp_dir: str, config: Config,
     if game.platform in ["linux"]:
         err_msg = extract_linux(installer, temp_dir)
     else:
-        err_msg = extract_windows(game, installer, temp_dir, config, use_innoextract)
+        err_msg = extract_windows(game, installer, temp_dir, config)
     return err_msg
 
 
@@ -145,7 +145,8 @@ def extract_linux(installer, temp_dir):
 
 
 def extract_windows(game: Game, installer: str, temp_dir: str, config: Config):
-    use_innoextract = config.windows_installer == 'innoextract' and shutil.which("innoextract")
+    use_innoextract = False
+    #config.windows_installer == 'innoextract' and shutil.which("innoextract")
     err_msg = extract_by_innoextract(installer, temp_dir, config.lang, use_innoextract)
     if err_msg:
         err_msg = extract_by_wine(game, installer, temp_dir, config)
@@ -182,20 +183,12 @@ def extract_by_innoextract(installer: str, temp_dir: str, language: str, use_inn
 
 
 def extract_by_wine(game: Game, installer: str, temp_dir: str, config: Config):
-    """pick a letter that is unlikely to create collisions with the actual mount/hw setup:
-    wine creates links for mounted media and optical drives
-    this might lead to errors because wine knows 2 names for these - d: and d::
-    (difference: : exposes directory, :: exposes the block device itself)
-    But they can't exist at the same time within a prefix.
-    Changing this letter is a temporary fix, the entire install method requires an overhaul in the long run"""
-    drive_letter = 't:'
-    err_msg = ""
-
     # Set the prefix for Windows games
     prefix_dir = os.path.join(game.install_dir, "prefix")
-    drive = os.path.join(prefix_dir, "dosdevices", drive_letter)
+    game_dir = os.path.join(prefix_dir, "dosdevices", 'c:', 'game')
     wine_env = get_wine_env(game, config)
     wine_bin = get_wine_path(game, config)
+
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
         # Creating the prefix before modifying dosdevices
@@ -204,23 +197,34 @@ def extract_by_wine(game: Game, installer: str, temp_dir: str, config: Config):
         if exitcode not in [0]:
             print(stderr, file=sys.stderr)
             return _("Wineprefix creation failed.")
-    if os.path.exists(drive):
-        os.unlink(drive)
-    os.symlink(temp_dir, drive)
-    _dir = f'{drive_letter}:\\\"{os.path.basename(game.install_dir)}\"'
-    '''It's possible to set install dir as argument before installation,
-    but the argument must be a double-quoted windows-style path: '/DIR="path"'
-    Reason: blanks in game.install_dir are processed twice: via POpen and on the WIN cmd in wine again'''
-    command = ["env", *wine_env, wine_bin, installer, "\'/DIR={}\'".format(_dir), "/VERYSILENT"]
+        else:
+            print(stdout, file=sys.stdout)
+
+    # calculate relative link from prefix-internal folder to game.install_dir
+    # keeping it relative makes sure that the game can be moved around without stuff breaking
+    if not os.path.exists(game_dir):
+        # 'game' directory itself does not count
+        canonical_prefix = os.path.realpath(os.path.join(game_dir, '..'))
+        relative = os.path.relpath(game.install_dir, canonical_prefix)
+        os.symlink(relative, game_dir)
+
+    installer_args = [
+        # use hard-coded directory name within wine, its just a backlink to game.install_dir
+        # this avoids issues with varying path and spaces
+        "/DIR=c:\\game",
+        f"/LANG={config.lang}",
+        # capture information for debugging during install
+        "/LOG=c:\\install.log",
+        "/SAVEINF=c:\\setup.inf",
+        '/SILENT'  # installers can run very long, give at least a bit of visual feedback
+    ]
+    command = ["env", *wine_env, wine_bin, installer, *installer_args]
     stdout, stderr, exitcode = _exe_cmd(command)
+
     if exitcode not in [0]:
-        err_msg = _("Wine extraction failed.")
-    elif os.path.exists(drive):
-        """check for existence as a pure safety-measure in case
-        some power-user has pre-configured the letter we picked with double colon"""
-        os.unlink(drive)
-        os.symlink("../../..", drive)
-    return err_msg
+        return _("Wine extraction failed.")
+
+    return ""
 
 
 def move_and_overwrite(game, temp_dir, use_innoextract):
@@ -358,6 +362,7 @@ def uninstall_game(game):
 
 
 def _exe_cmd(cmd):
+    logger.error(' '.join(cmd))
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
     stdout = stdout.decode("utf-8")

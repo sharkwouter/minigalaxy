@@ -6,30 +6,22 @@ import json
 import glob
 import threading
 
+from minigalaxy.config import Config
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
-from minigalaxy.wine_utils import is_wine_installed, get_wine_path
+from minigalaxy.wine_utils import is_wine_installed, get_wine_env, get_wine_path
 
 
-def config_game(game):
-    prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen([get_wine_path(game), 'winecfg'])
+def config_game(game, config: Config = Config()):
+    subprocess.Popen(['env', *get_wine_env(game, config), get_wine_path(game, config), 'winecfg'])
 
 
-def regedit_game(game):
-    prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen([get_wine_path(game), 'regedit'])
+def regedit_game(game, config: Config = Config()):
+    subprocess.Popen(['env', *get_wine_env(game, config), get_wine_path(game, config), 'regedit'])
 
 
-def winetricks_game(game):
-    prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen(['winetricks'])
+def winetricks_game(game, config: Config = Config()):
+    subprocess.Popen(['env', *get_wine_env(game, config), 'winetricks'])
 
 
 def start_game(game):
@@ -51,11 +43,13 @@ def start_game(game):
 
 def get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
+    is_wine_cmd = False
     launcher_type = determine_launcher_type(files)
     if launcher_type in ["start_script", "wine"]:
         exe_cmd = get_start_script_exe_cmd()
     elif launcher_type == "windows":
         exe_cmd = get_windows_exe_cmd(game, files)
+        is_wine_cmd = True
     elif launcher_type == "dosbox":
         exe_cmd = get_dosbox_exe_cmd(game, files)
     elif launcher_type == "scummvm":
@@ -70,7 +64,7 @@ def get_execute_command(game) -> list:
     if game.get_info("use_mangohud") is True:
         exe_cmd.insert(0, "mangohud")
         exe_cmd.insert(1, "--dlsym")
-    exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
+    exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd, is_wine_cmd)
     logger.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
     return exe_cmd
 
@@ -92,10 +86,14 @@ def determine_launcher_type(files):
     return launcher_type
 
 
-def get_exe_cmd_with_var_command(game, exe_cmd):
-    var_list = game.get_info("variable").split()
+def get_exe_cmd_with_var_command(game, exe_cmd, is_wine_cmd):
     command_list = game.get_info("command").split()
 
+    if is_wine_cmd:
+        # wine handles all envs on its own
+        return exe_cmd + command_list
+
+    var_list = game.get_info("variable").split()
     if var_list:
         if var_list[0] not in ["env"]:
             var_list.insert(0, "env")
@@ -135,7 +133,7 @@ def get_windows_exe_cmd(game, files):
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
         exe_cmd = [get_wine_path(game), filename]
 
-    return exe_cmd
+    return ['env', *get_wine_env(game)] + exe_cmd
 
 
 def get_dosbox_exe_cmd(game, files):

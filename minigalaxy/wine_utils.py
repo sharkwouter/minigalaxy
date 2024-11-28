@@ -31,18 +31,23 @@ def get_wine_path(game: Game, config: Config = Config()) -> str:
     return newDefault
 
 
-def get_wine_env(game: Game, config: Config = Config()) -> []:
-    environment = ['WINEDLLOVERRIDES="winemenubuilder.exe=d"']
-    environment.append(f'WINEPREFIX="{game.install_dir}/prefix"')
+def get_wine_env(game: Game, config: Config = Config(), quoted=False) -> []:
+    if quoted:
+        envPattern = '{key}="{value}"'
+    else:
+        envPattern = '{key}={value}'
+
+    environment = [ envPattern.format(key='WINEDLLOVERRIDES', value="winemenubuilder.exe=d") ]
+    environment.append(envPattern.format(key='WINEPREFIX', value=f"{game.install_dir}/prefix"))
 
     if 'umu-run' in get_wine_path(game, config):
-        environment.append(f'GAMEID="{get_umu_id(game)}"')
+        environment.append(envPattern.format(key='GAMEID', value=f"{get_umu_id(game)}"))
         if shutil.which('zenity'):
             environment.append('UMU_ZENITY=1')
 
     for var in game.get_info("variable").split():
         kvp = var.split('=', 1)
-        environment.append(f'{[kvp[0]]}="{kvp[1]}"')
+        environment.append(envPattern.format(key=kvp[0], value=kvp[1]))
 
     return environment
 
@@ -65,7 +70,7 @@ def get_umu_id(game: Game) -> str:
     id = game.get_info(GAMEINFO_UMUID)
     if id:
         return id
-    
+
     lookup_strategies = [
         f'store=gog&codename={game.id}',
         f'store=steam&title={game.name}',
@@ -84,7 +89,7 @@ def get_umu_id(game: Game) -> str:
             continue
         else:
             api_reachable = True
-        
+
         if lookup_result[0] and lookup_result[0]['umu_id']:
             id = lookup_result[0]['umu_id']
             break
@@ -94,7 +99,7 @@ def get_umu_id(game: Game) -> str:
         # just to satisfy umu-run. UMUID is only used to search for protonfixes, if any are needed
         # most games should run fine without any fixes
         id = f'umu-gog:{game.id}'
-    
+
     if api_reachable:
         # only save the id when none of the requested APIs threw an error
         # which that we can temporary try to run the game without protonfixes,
@@ -104,4 +109,3 @@ def get_umu_id(game: Game) -> str:
         logger.warning("UMU-DB not reachable - retry again on next game start")
 
     return id
-    
