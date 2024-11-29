@@ -4,6 +4,7 @@ import shutil
 import re
 import json
 import glob
+import shlex
 import threading
 
 from minigalaxy.config import Config
@@ -87,13 +88,13 @@ def determine_launcher_type(files):
 
 
 def get_exe_cmd_with_var_command(game, exe_cmd, is_wine_cmd):
-    command_list = game.get_info("command").split()
+    command_list = shlex.split(game.get_info("command"))
 
     if is_wine_cmd:
         # wine handles all envs on its own
         return exe_cmd + command_list
 
-    var_list = game.get_info("variable").split()
+    var_list = shlex.split(game.get_info("variable"))
     if var_list:
         if var_list[0] not in ["env"]:
             var_list.insert(0, "env")

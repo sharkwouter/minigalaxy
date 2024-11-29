@@ -1,5 +1,6 @@
 """Some helpers to handle selection, configuration and start of wine commands"""
 import json
+import shlex
 import shutil
 
 from urllib import request, parse
@@ -31,7 +32,7 @@ def get_wine_path(game: Game, config: Config = Config()) -> str:
     return newDefault
 
 
-def get_wine_env(game: Game, config: Config = Config(), quoted=False) -> []:
+def get_wine_env(game: Game, config: Config = Config(), quoted=False):
     if quoted:
         envPattern = '{key}="{value}"'
     else:
@@ -45,9 +46,14 @@ def get_wine_env(game: Game, config: Config = Config(), quoted=False) -> []:
         if shutil.which('zenity'):
             environment.append('UMU_ZENITY=1')
 
-    for var in game.get_info("variable").split():
+    variables = game.get_info('variable')
+    if not variables:
+        return environment
+    
+    for var in shlex.split(variables):
         kvp = var.split('=', 1)
-        environment.append(envPattern.format(key=kvp[0], value=kvp[1]))
+        if len(kvp) == 2:
+            environment.append(envPattern.format(key=kvp[0], value=kvp[1]))
 
     return environment
 

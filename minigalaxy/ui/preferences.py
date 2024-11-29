@@ -54,7 +54,7 @@ class Preferences(Gtk.Dialog):
             _("Keep installers after downloading a game.\nInstallers are stored in: {}").format(installer_dir)
         )
 
-    def __init_combobox(self, combobox, data_feed: [], active_option) -> None:
+    def __init_combobox(self, combobox, data_feed, active_option) -> None:
         """expects 2-dimensional array with 2 columns for data
         first entry per row is the config key, second one the string to display in the UI
         """
