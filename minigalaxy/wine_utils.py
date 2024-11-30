@@ -4,6 +4,7 @@ import shlex
 import shutil
 
 from urllib import request, parse
+from urllib.error import URLError
 from minigalaxy.config import Config
 from minigalaxy.constants import WINE_VARIANTS
 from minigalaxy.game import Game
@@ -38,7 +39,7 @@ def get_wine_env(game: Game, config: Config = Config(), quoted=False):
     else:
         envPattern = '{key}={value}'
 
-    environment = [ envPattern.format(key='WINEDLLOVERRIDES', value="winemenubuilder.exe=d") ]
+    environment = [envPattern.format(key='WINEDLLOVERRIDES', value="winemenubuilder.exe=d")]
     environment.append(envPattern.format(key='WINEPREFIX', value=f"{game.install_dir}/prefix"))
 
     if 'umu-run' in get_wine_path(game, config):
@@ -49,7 +50,7 @@ def get_wine_env(game: Game, config: Config = Config(), quoted=False):
     variables = game.get_info('variable')
     if not variables:
         return environment
-    
+
     for var in shlex.split(variables):
         kvp = var.split('=', 1)
         if len(kvp) == 2:
@@ -59,9 +60,9 @@ def get_wine_env(game: Game, config: Config = Config(), quoted=False):
 
 
 def get_default_wine(config: Config = Config()) -> str:
-    runner = shutil.which(config.default_wine_runner)
-    if runner:
-        return runner
+    runner = config.default_wine_runner
+    if isinstance(runner, str) and runner:
+        return shutil.which(runner)
 
     # fallback: iterate through all known variants in declaration order
     for option in WINE_VARIANTS:
@@ -71,6 +72,7 @@ def get_default_wine(config: Config = Config()) -> str:
 
     # should never happen when get_default_wine is used after is_wine_installed returns true
     return ""
+
 
 def get_umu_id(game: Game) -> str:
     id = game.get_info(GAMEINFO_UMUID)
@@ -90,7 +92,7 @@ def get_umu_id(game: Game) -> str:
             queryUrl = f'{UMUDB_URL}/umu_api.php?{parse.quote_plus(strategy)}'
             with request.urlopen(queryUrl) as request_result:
                 lookup_result = json.loads(request_result.read())
-        except:
+        except URLError:
             api_reachable = api_reachable or False
             continue
         else:

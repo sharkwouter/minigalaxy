@@ -1,4 +1,3 @@
-import sys
 import os
 import shutil
 import subprocess
@@ -123,12 +122,12 @@ def make_tmp_dir(game):
     return error_message, temp_dir
 
 
-def extract_installer(game: Game, installer: str, temp_dir: str, config: Config, use_innoextract: bool):
+def extract_installer(game: Game, installer: str, temp_dir: str, config: Config, use_innoextract=False):
     # Extract the installer
     if game.platform in ["linux"]:
         err_msg = extract_linux(installer, temp_dir)
     else:
-        err_msg = extract_windows(game, installer, temp_dir, config)
+        err_msg = extract_windows(game, installer, temp_dir, config, use_innoextract)
     return err_msg
 
 
@@ -144,9 +143,8 @@ def extract_linux(installer, temp_dir):
     return err_msg
 
 
-def extract_windows(game: Game, installer: str, temp_dir: str, config: Config):
-    use_innoextract = False
-    #config.windows_installer == 'innoextract' and shutil.which("innoextract")
+def extract_windows(game: Game, installer: str, temp_dir: str, config: Config, use_innoextract=False):
+    # config.windows_installer == 'innoextract' and shutil.which("innoextract")
     err_msg = extract_by_innoextract(installer, temp_dir, config.lang, use_innoextract)
     if err_msg:
         err_msg = extract_by_wine(game, installer, temp_dir, config)
@@ -159,7 +157,7 @@ def extract_by_innoextract(installer: str, temp_dir: str, language: str, use_inn
     if use_innoextract:
         lang = lang_install(installer, language)
         cmd = ["innoextract", installer, "-d", temp_dir, "--gog", lang]
-        stdout, stderr, exitcode = _exe_cmd(cmd)
+        stdout, stderr, exitcode = _exe_cmd(cmd, False, True)
         if exitcode not in [0]:
             err_msg = _("Innoextract extraction failed.")
         else:
@@ -192,13 +190,10 @@ def extract_by_wine(game: Game, installer: str, temp_dir: str, config: Config):
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
         # Creating the prefix before modifying dosdevices
-        command = ["env", *wine_env, wine_bin, "wineboot", "-u"]
-        stdout, stderr, exitcode = _exe_cmd(command)
+        command = ["env", *wine_env, wine_bin, "wineboot", "-i"]
+        stdout, stderr, exitcode = _exe_cmd(command, False, True)
         if exitcode not in [0]:
-            print(stderr, file=sys.stderr)
             return _("Wineprefix creation failed.")
-        else:
-            print(stdout, file=sys.stdout)
 
     # calculate relative link from prefix-internal folder to game.install_dir
     # keeping it relative makes sure that the game can be moved around without stuff breaking
@@ -219,8 +214,7 @@ def extract_by_wine(game: Game, installer: str, temp_dir: str, config: Config):
         '/SILENT'  # installers can run very long, give at least a bit of visual feedback
     ]
     command = ["env", *wine_env, wine_bin, installer, *installer_args]
-    stdout, stderr, exitcode = _exe_cmd(command)
-
+    stdout, stderr, exitcode = _exe_cmd(command, False, True)
     if exitcode not in [0]:
         return _("Wine extraction failed.")
 
@@ -361,13 +355,30 @@ def uninstall_game(game):
         os.remove(path_to_shortcut)
 
 
-def _exe_cmd(cmd):
-    logger.error(' '.join(cmd))
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    stdout = stdout.decode("utf-8")
-    stderr = stderr.decode("utf-8")
-    return stdout, stderr, process.returncode
+def _exe_cmd(cmd, capture_output=True, print_output=False):
+    print(f'executing command: {" ".join(cmd)}')
+    std_out = []
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    rc = process.poll()
+    out_line = ''
+    while rc is None or out_line != '':
+        out_line = process.stdout.readline().decode("utf-8")
+        if capture_output and out_line is not None:
+            std_out.append(out_line)
+
+        if print_output:
+            print(out_line, end='')
+
+        rc = process.poll()
+
+    print('command finished, read remaining output (if any)')
+    for line in process.stdout.readlines():
+        std_out.append(line.decode("utf-8"))
+
+    process.stdout.close()
+    output = ''.join(std_out)
+
+    return output, output, rc
 
 
 def _mv(source_dir, target_dir):
@@ -389,11 +400,9 @@ def _mv(source_dir, target_dir):
 def lang_install(installer: str, language: str):
     languages = []
     arg = ""
-    process = subprocess.Popen(["innoextract", installer, "--list-languages"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    output = stdout.decode("utf-8")
+    stdout, stderr, ret_code = _exe_cmd(["innoextract", installer, "--list-languages"])
 
-    for line in output.split('\n'):
+    for line in stdout.split('\n'):
         if not line.startswith(' -'):
             continue
         languages.append(line[3:])
