@@ -221,10 +221,11 @@ def extract_by_wine(game, installer, temp_dir, config=Config()):
         '/SILENT'
     ]
 
-    #first try full, unattended install
+    # first, try full unattended install
     success = try_wine_command(installer_cmd_basic + installer_args_full)
     if not success:
-        #some games will reject the /SILENT flag. Open normal installer as fallback and hope for the best
+        # some games will reject the /SILENT flag.
+        # Open normal installer as fallback and hope for the best
         print('Unattended install failed. Try install with wizard dialog.', file=sys.stderr)
         success = try_wine_command(installer_cmd_basic)
 
@@ -422,11 +423,9 @@ def _mv(source_dir, target_dir):
 def lang_install(installer: str, language: str):
     languages = []
     arg = ""
-    process = subprocess.Popen(["innoextract", installer, "--list-languages"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    output = stdout.decode("utf-8")
+    stdout, stderr, ret_code = _exe_cmd(["innoextract", installer, "--list-languages"])
 
-    for line in output.split('\n'):
+    for line in stdout.split('\n'):
         if not line.startswith(' -'):
             continue
         languages.append(line[3:])

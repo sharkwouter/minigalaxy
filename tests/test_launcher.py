@@ -192,7 +192,7 @@ class Test(TestCase):
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ['env', 'WINEPREFIX=/test/install/dir/prefix',
                'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\DOSBOX', 'c:\\game\\DOSBOX\\dosbox.exe', '-conf', '..\\dosboxRayman.conf',
-               '-conf', '"..\\dosboxRayman_single.conf"', '-noconsole', '-c', 'exit']
+               '-conf', '..\\dosboxRayman_single.conf', '-noconsole', '-c', 'exit']
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
