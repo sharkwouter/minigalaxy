@@ -10,7 +10,7 @@ rm -f ${IMAGE}
 bin/minigalaxy &
 
 # Wait for Minigalaxy
-sleep 5s
+sleep 15s
 
 # Get the window id
 WID="$(xwininfo -tree -root|grep Minigalaxy|tail -1|awk '{print $1}')"
