@@ -80,6 +80,7 @@ def get_execute_command(game) -> list:
         exe_cmd.insert(1, "--dlsym")
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
     logger.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
+    print("Launch command for {}: {}".format(game.name, " ".join(exe_cmd)))
     return exe_cmd
 
 
@@ -115,7 +116,6 @@ def get_exe_cmd_with_var_command(game, exe_cmd):
 def get_windows_exe_cmd(game, files):
     exe_cmd = [""]
     prefix = os.path.join(game.install_dir, "prefix")
-    os.environ["WINEPREFIX"] = prefix
 
     # Find game executable file
     for file in files:
@@ -152,7 +152,7 @@ def get_windows_exe_cmd(game, files):
         os.makedirs(os.path.join(prefix, 'dosdevices', 'c:'))
         os.symlink('../..', gamelink)
 
-    return exe_cmd
+    return ['env', f'WINEPREFIX={prefix}'] + exe_cmd
 
 
 def get_dosbox_exe_cmd(game, files):

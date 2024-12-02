@@ -186,7 +186,7 @@ def extract_by_wine(game, installer, temp_dir, config=Config()):
     prefix_dir = os.path.join(game.install_dir, "prefix")
     game_dir = os.path.join(prefix_dir, "dosdevices", 'c:', 'game')
     wine_env = [
-        "WINEPREFIX={}".format(prefix_dir),
+        f"WINEPREFIX={prefix_dir}",
         "WINEDLLOVERRIDES=winemenubuilder.exe=d"
     ]
     wine_bin = shutil.which('wine')
@@ -224,7 +224,8 @@ def extract_by_wine(game, installer, temp_dir, config=Config()):
     success = try_wine_command(installer_cmd_basic + installer_args_full)
     if not success:
         print('Unattended install failed. Try install with wizard dialog.', file=sys.stderr)
-        try_wine_command(installer_cmd_basic)
+        success = try_wine_command(installer_cmd_basic)
+
     if not success:
         return _("Wine extraction failed.")
 
@@ -233,7 +234,7 @@ def extract_by_wine(game, installer, temp_dir, config=Config()):
 
 def try_wine_command(command_arr):
     print('trying to run wine command:', shlex.join(command_arr))
-    stdout, stderr, exitcode = _exe_cmd(command_arr)
+    stdout, stderr, exitcode = _exe_cmd(command_arr, False, True)
     print(stdout)
     if exitcode not in [0]:
         print(stderr, file=sys.stderr)
@@ -376,12 +377,32 @@ def uninstall_game(game):
         os.remove(path_to_shortcut)
 
 
-def _exe_cmd(cmd):
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    stdout = stdout.decode("utf-8")
-    stderr = stderr.decode("utf-8")
-    return stdout, stderr, process.returncode
+def _exe_cmd(cmd, capture_output=True, print_output=False):
+    print(f'executing command: {shlex.join(cmd)}')
+    std_out = []
+    process = subprocess.Popen(cmd,
+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                               bufsize=1, universal_newlines=True, encoding="utf-8")
+    rc = process.poll()
+    while rc is None:
+        out_line = process.stdout.readline()
+        if capture_output and out_line != '':
+            std_out.append(out_line)
+
+        if print_output:
+            print(out_line, end='')
+
+        rc = process.poll()
+
+    print('command finished, read remaining output (if any)')
+    for line in process.stdout.readlines():
+        std_out.append(line)
+    print('done')
+
+    process.stdout.close()
+
+    output = ''.join(std_out)
+    return output, output, rc
 
 
 def _mv(source_dir, target_dir):
