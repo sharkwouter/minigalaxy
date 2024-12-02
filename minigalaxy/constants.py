@@ -54,6 +54,11 @@ VIEWS = [
     ["list", _("List")],
 ]
 
+WINE_VARIANTS = [
+    ["wine", _("Wine")],
+    ["umu-run", _("UMU-Launcher")]
+]
+
 # Game IDs to ignore when received by the API
 IGNORE_GAME_IDS = [
     1424856371,  # Hotline Miami 2: Wrong Number - Digital Comics

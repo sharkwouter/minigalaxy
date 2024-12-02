@@ -134,6 +134,15 @@ class Config:
         self.__write()
 
     @property
+    def default_wine_runner(self) -> str:
+        return self.__config.get("default_wine_runner", "wine")
+
+    @default_wine_runner.setter
+    def default_wine_runner(self, new_value: str) -> None:
+        self.__config["default_wine_runner"] = new_value
+        self.__write()
+
+    @property
     def keep_window_maximized(self) -> bool:
         return self.__config.get("keep_window_maximized", False)
 
