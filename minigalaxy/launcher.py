@@ -178,7 +178,7 @@ def get_final_resort_exe_cmd(game, files):
         if re.match(r'^goggame-[0-9]*\.info$', file):
             os.chdir(os.path.join(game.install_dir, game_dir))
             with open(file, 'r') as info_file:
-                info = json.loads(info_file.read())                
+                info = json.loads(info_file.read())
                 exe_cmd = [os.path.join(game.install_dir, info["playTasks"][0]["path"])]
     return exe_cmd
 

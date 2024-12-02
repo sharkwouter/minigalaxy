@@ -191,7 +191,7 @@ def extract_by_wine(game: Game, installer: str, temp_dir: str, config: Config):
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
         # Creating the prefix before modifying dosdevices
-        command = ["env", *wine_env, wine_bin, "wineboot", "-i"]
+        command = ["env", *wine_env, wine_bin, "wineboot", "-u"]
         stdout, stderr, exitcode = _exe_cmd(command, False, True)
         if exitcode not in [0]:
             return _("Wineprefix creation failed.")
@@ -249,6 +249,7 @@ def copy_thumbnail(game):
         except Exception as e:
             error_message = e
     return error_message
+
 
 def create_applications_file(game):
     error_message = ""
@@ -351,12 +352,13 @@ def uninstall_game(game):
 def _exe_cmd(cmd, capture_output=True, print_output=False):
     print(f'executing command: {" ".join(cmd)}')
     std_out = []
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    process = subprocess.Popen(cmd,
+                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                               bufsize=1, universal_newlines=True, encoding="utf-8")
     rc = process.poll()
-    out_line = ''
-    while rc is None or out_line != '':
-        out_line = process.stdout.readline().decode("utf-8")
-        if capture_output and out_line is not None:
+    while rc is None:
+        out_line = process.stdout.readline()
+        if capture_output and out_line != '':
             std_out.append(out_line)
 
         if print_output:
@@ -366,11 +368,11 @@ def _exe_cmd(cmd, capture_output=True, print_output=False):
 
     print('command finished, read remaining output (if any)')
     for line in process.stdout.readlines():
-        std_out.append(line.decode("utf-8"))
+        std_out.append(line)
 
     process.stdout.close()
-    output = ''.join(std_out)
 
+    output = ''.join(std_out)
     return output, output, rc
 
 
