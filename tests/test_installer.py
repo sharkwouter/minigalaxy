@@ -203,9 +203,11 @@ class Test(TestCase):
     @mock.patch("os.path.exists")
     @mock.patch("os.unlink")
     @mock.patch("os.symlink")
+    #FIMXE: Make run again: problem is diagnostic install script written on failure
     def test2_extract_by_wine(self, mock_symlink, mock_unlink, mock_path_exists, mock_subprocess, mock_config):
         """[scenario: install failed]"""
         mock_path_exists.return_value = True
+        #side_effect = (True, True, False)
         mock_subprocess().poll.return_value = 1
         mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")

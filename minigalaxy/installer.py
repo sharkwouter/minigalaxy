@@ -217,6 +217,15 @@ def extract_by_wine(game: Game, installer: str, temp_dir: str, config: Config):
     command = ["env", *wine_env, wine_bin, installer, *installer_args]
     stdout, stderr, exitcode = _exe_cmd(command, False, True)
     if exitcode not in [0]:
+        linesToWrite = [
+            "#!/bin/sh",
+            '',
+            shlex.join(command)
+        ]
+        if os.path.exists(game.install_dir):
+            #FIXME fix with test somehow, also do the same for prefix creation
+            with open(os.path.join(game.install_dir, 'minigalaxy_install_wine_game.sh'), 'w') as f:
+                f.writelines(linesToWrite)
         return _("Wine extraction failed.")
 
     return ""
