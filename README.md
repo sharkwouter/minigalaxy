@@ -26,15 +26,17 @@ In addition to that, Minigalaxy also allows you to:
 - Install Windows games using Wine
 
 ### Backwards compatibility
-Minigalaxy version 1.3.2 or higher changes some aspects of windows game installations through wine.
+Minigalaxy version 1.3.2 and higher change some aspects of windows game installations through wine.
 It will try to adapt already installed games to the new concept when launched through Minigalaxy.
+
 However, this will *likely break games* that save some directory paths in the *windows registry*.
 In that case, only a reinstallation will repair the game. 
+
 **Please make sure to backup any save games you might have within the game folder**
 
 The windows installer in wine uses a 2-step attempt to install games. 
 1. An unattended installer.
-2. In case this fails, the regular installation wizard will open. It is mandatory not to change the 
+2. In case this fails, the regular installation wizard will open. **Please do not change** the  
 install directory 'c:\game' given in the wizard as this an elementary part of the wine fix!
 
 ## Supported languages
