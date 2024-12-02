@@ -41,18 +41,21 @@ class Test(TestCase):
         obs = launcher.determine_launcher_type(files)
         self.assertEqual(exp, obs)
 
+    @mock.patch('os.path.exists')
     @mock.patch('glob.glob')
-    def test1_get_windows_exe_cmd(self, mock_glob):
+    def test1_get_windows_exe_cmd(self, mock_glob, mock_exists):
         mock_glob.return_value = ["/test/install/dir/start.exe", "/test/install/dir/unins000.exe"]
+        mock_exists.return_value = True
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'start.exe', 'unins000.exe']
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ["wine", "start.exe"]
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
+    @mock.patch('os.path.exists')
     @mock.patch('builtins.open', new_callable=mock_open, read_data="")
     @mock.patch('os.chdir')
-    def test2_get_windows_exe_cmd(self, mock_os_chdir, mo):
+    def test2_get_windows_exe_cmd(self, mock_os_chdir, mo, mock_exists):
         goggame_1414471894_info_content = """{
         "buildId": "53350324452482937",
         "clientId": "53185732904249211",
@@ -101,16 +104,18 @@ class Test(TestCase):
         }"""
         handlers = (mock_open(read_data=goggame_1414471894_info_content).return_value, mock_open(read_data=goggame_1407287452_info_content).return_value)
         mo.side_effect = handlers
+        mock_exists.return_value = True
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'MetroExodus.exe', 'unins000.exe',
                  'goggame-1407287452.info', 'goggame-1414471894.info']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['wine', 'start', '/b', '/wait', '/d', '.', 'MetroExodus.exe']
+        exp = ['wine', 'start', '/b', '/wait', '/d', 'c:\\game\\.', 'c:\\game\\MetroExodus.exe']
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
+    @mock.patch('os.path.exists')
     @mock.patch('builtins.open', new_callable=mock_open, read_data="")
     @mock.patch('os.chdir')
-    def test3_get_windows_exe_cmd(self, mock_os_chdir, mo):
+    def test3_get_windows_exe_cmd(self, mock_os_chdir, mo, mock_exists):
         goggame_1207658919_info_content = """{
         "buildId": "52095557858882770",
         "clientId": "49843178982252086",
@@ -177,6 +182,7 @@ class Test(TestCase):
         "version": 1
         }"""
         mo.side_effect = (mock_open(read_data=goggame_1207658919_info_content).return_value,)
+        mock_exists.return_value = True
         files = ['goggame-1207658919.script', 'DOSBOX', 'thumbnail.jpg', 'game.gog', 'unins000.dat', 'webcache.zip',
                  'EULA.txt', 'Music', 'dosboxRayman_single.conf', 'Rayman', 'unins000.exe', 'support.ico', 'prefix',
                  'goggame-1207658919.info', 'Manual.pdf', 'gog.ico', 'unins000.msg', 'goggame-1207658919.hashdb',
@@ -184,7 +190,7 @@ class Test(TestCase):
                  'goggame-1207658919.ico', 'goglog.ini', 'Launch Rayman Forever.lnk', 'cloud_saves',
                  'thumbnail_196.jpg']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['wine', 'start', '/b', '/wait', '/d', 'DOSBOX', 'DOSBOX\\dosbox.exe', '-conf', '"..\\dosboxRayman.conf"',
+        exp = ['wine', 'start', '/b', '/wait', '/d', 'c:\\game\\DOSBOX', 'c:\\game\\DOSBOX\\dosbox.exe', '-conf', '"..\\dosboxRayman.conf"',
                '-conf', '"..\\dosboxRayman_single.conf"', '-noconsole', '-c', '"exit"']
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)

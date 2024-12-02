@@ -4,6 +4,7 @@ import shutil
 import re
 import json
 import glob
+import shlex
 import threading
 
 from minigalaxy.logger import logger
@@ -100,8 +101,8 @@ def determine_launcher_type(files):
 
 
 def get_exe_cmd_with_var_command(game, exe_cmd):
-    var_list = game.get_info("variable").split()
-    command_list = game.get_info("command").split()
+    var_list = shlex.split(game.get_info("variable"))
+    command_list = shlex.split(game.get_info("command"))
 
     if var_list:
         if var_list[0] not in ["env"]:
@@ -130,10 +131,11 @@ def get_windows_exe_cmd(game, files):
                         if "category" in task and task["category"] == "game" and "path" in task:
                             working_dir = task["workingDir"] if "workingDir" in task else "."
                             path = task["path"]
-                            exe_cmd = [get_wine_path(game), "start", "/b", "/wait", "/d", working_dir,
-                                       path]
+                            exe_cmd = [get_wine_path(game), "start", "/b", "/wait",
+                                       "/d", f'c:\\game\\{working_dir}',
+                                       f'c:\\game\\{path}']
                             if "arguments" in task:
-                                exe_cmd += task["arguments"].split(" ")
+                                exe_cmd += shlex.split(task["arguments"])
                             break
     if exe_cmd == [""]:
         # in case no goggame info file was found
@@ -141,6 +143,14 @@ def get_windows_exe_cmd(game, files):
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
         exe_cmd = [get_wine_path(game), filename]
+
+    # Backwards compatibility with windows games installed before installer fixes.
+    # Will not fix games requiring registry keys, since the paths will already
+    # be borked through the old installer.
+    gamelink = os.path.join(prefix, 'dosdevices', 'c:', 'game')
+    if not os.path.exists(gamelink):
+        os.makedirs(os.path.join(prefix, 'dosdevices', 'c:'))
+        os.symlink('../..', gamelink)
 
     return exe_cmd
 
