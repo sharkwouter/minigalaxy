@@ -221,8 +221,10 @@ def extract_by_wine(game, installer, temp_dir, config=Config()):
         '/SILENT'
     ]
 
+    #first try full, unattended install
     success = try_wine_command(installer_cmd_basic + installer_args_full)
     if not success:
+        #some games will reject the /SILENT flag. Open normal installer as fallback and hope for the best
         print('Unattended install failed. Try install with wizard dialog.', file=sys.stderr)
         success = try_wine_command(installer_cmd_basic)
 
@@ -272,20 +274,13 @@ def copy_thumbnail(game):
     return error_message
 
 
-def get_exec_line(game):
-    exe_cmd_list = get_execute_command(game)
-    for i in range(len(exe_cmd_list)):
-        exe_cmd_list[i] = exe_cmd_list[i].replace(" ", "\\ ")
-    return " ".join(exe_cmd_list)
-
-
 def create_applications_file(game):
     error_message = ""
     path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.get_stripped_name(to_path=True)))
-    exe_cmd = get_exec_line(game)
+    exe_cmd = shlex.join(get_execute_command(game))
     # Create desktop file definition
     desktop_context = {
-        "game_bin_path": os.path.join('"{}"'.format(game.install_dir.replace('"', '\\"')), exe_cmd),
+        "game_bin_path": exe_cmd,
         "game_name": game.name,
         "game_install_dir": game.install_dir,
         "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
@@ -298,7 +293,8 @@ def create_applications_file(game):
         Exec={game_bin_path}
         Path={game_install_dir}
         Name={game_name}
-        Icon={game_icon_path}""".format(**desktop_context)
+        Icon={game_icon_path}
+        Category=Game""".format(**desktop_context)
     if not os.path.isfile(path_to_shortcut):
         try:
             with open(path_to_shortcut, 'w+') as desktop_file:
@@ -378,7 +374,9 @@ def uninstall_game(game):
 
 
 def _exe_cmd(cmd, capture_output=True, print_output=False):
-    print(f'executing command: {shlex.join(cmd)}')
+    """Wine commands are very verbose.
+    We should consume the output in regularly to prevent buffers (and minigalaxy memory) from filling up"""
+    print(f'executing wine command: {shlex.join(cmd)}')
     std_out = []
     process = subprocess.Popen(cmd,
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,

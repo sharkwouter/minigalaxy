@@ -48,7 +48,7 @@ class Test(TestCase):
         mock_exists.return_value = True
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'start.exe', 'unins000.exe']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ["wine", "start.exe"]
+        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', "wine", "start.exe"]
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
@@ -108,7 +108,7 @@ class Test(TestCase):
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'MetroExodus.exe', 'unins000.exe',
                  'goggame-1407287452.info', 'goggame-1414471894.info']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['wine', 'start', '/b', '/wait', '/d', 'c:\\game\\.', 'c:\\game\\MetroExodus.exe']
+        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', 'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\.', 'c:\\game\\MetroExodus.exe']
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
@@ -190,8 +190,9 @@ class Test(TestCase):
                  'goggame-1207658919.ico', 'goglog.ini', 'Launch Rayman Forever.lnk', 'cloud_saves',
                  'thumbnail_196.jpg']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['wine', 'start', '/b', '/wait', '/d', 'c:\\game\\DOSBOX', 'c:\\game\\DOSBOX\\dosbox.exe', '-conf', '"..\\dosboxRayman.conf"',
-               '-conf', '"..\\dosboxRayman_single.conf"', '-noconsole', '-c', '"exit"']
+        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix',
+               'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\DOSBOX', 'c:\\game\\DOSBOX\\dosbox.exe', '-conf', '..\\dosboxRayman.conf',
+               '-conf', '"..\\dosboxRayman_single.conf"', '-noconsole', '-c', 'exit']
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
@@ -210,8 +211,9 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
     def test_get_start_script_exe_cmd(self):
-        exp = ["./start.sh"]
-        obs = launcher.get_start_script_exe_cmd()
+        game = Game("Test Game", install_dir="/test/install/dir")
+        exp = ["/test/install/dir/start.sh"]
+        obs = launcher.get_start_script_exe_cmd(game)
         self.assertEqual(exp, obs)
 
     @mock.patch('os.getcwd')

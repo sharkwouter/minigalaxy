@@ -21,23 +21,17 @@ def get_wine_path(game):
 
 def config_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen([get_wine_path(game), 'winecfg'])
+    subprocess.Popen(['env', f'WINEPREFIX={prefix}', get_wine_path(game), 'winecfg'])
 
 
 def regedit_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen([get_wine_path(game), 'regedit'])
+    subprocess.Popen(['env', f'WINEPREFIX={prefix}', get_wine_path(game), 'regedit'])
 
 
 def winetricks_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen(['winetricks'])
+    subprocess.Popen(['env', f'WINEPREFIX={prefix}', 'winetricks'])
 
 
 def start_game(game):
@@ -61,7 +55,7 @@ def get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
     if launcher_type in ["start_script", "wine"]:
-        exe_cmd = get_start_script_exe_cmd()
+        exe_cmd = get_start_script_exe_cmd(game)
     elif launcher_type == "windows":
         exe_cmd = get_windows_exe_cmd(game, files)
     elif launcher_type == "dosbox":
@@ -80,7 +74,6 @@ def get_execute_command(game) -> list:
         exe_cmd.insert(1, "--dlsym")
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
     logger.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
-    print("Launch command for {}: {}".format(game.name, " ".join(exe_cmd)))
     return exe_cmd
 
 
@@ -108,6 +101,8 @@ def get_exe_cmd_with_var_command(game, exe_cmd):
     if var_list:
         if var_list[0] not in ["env"]:
             var_list.insert(0, "env")
+        if 'env' == exe_cmd[0]:
+            exe_cmd = exe_cmd[1:]
 
     exe_cmd = var_list + exe_cmd + command_list
     return exe_cmd
@@ -177,8 +172,8 @@ def get_scummvm_exe_cmd(game, files):
     return ["scummvm", "-c", scummvm_config]
 
 
-def get_start_script_exe_cmd():
-    return ["./start.sh"]
+def get_start_script_exe_cmd(game):
+    return [os.path.join(game.install_dir, "start.sh")]
 
 
 def get_final_resort_exe_cmd(game, files):
