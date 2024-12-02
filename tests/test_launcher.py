@@ -61,11 +61,11 @@ class Test(TestCase):
     @mock.patch('glob.glob')
     def test1_get_windows_exe_cmd(self, mock_glob, mock_which, mock_exists):
         mock_glob.return_value = ["/test/install/dir/start.exe", "/test/install/dir/unins000.exe"]
-        mock_which.return_value = '/bin/wine'
+        mock_which.side_effect = ('/bin/wine', '/bin/env', '/bin/wine')
         mock_exists.return_value = True
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'start.exe', 'unins000.exe']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['env', 'WINEDLLOVERRIDES=winemenubuilder.exe=d', 'WINEPREFIX=/test/install/dir/prefix', "/bin/wine", "start.exe"]
+        exp = ['/bin/env', 'WINEDLLOVERRIDES=winemenubuilder.exe=d', 'WINEPREFIX=/test/install/dir/prefix', "/bin/wine", "start.exe"]
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
@@ -128,11 +128,11 @@ class Test(TestCase):
             mock_open(read_data=goggame_1407287452_info_content).return_value)
         mo.side_effect = handlers
         mock_exists.return_value = True
-        mock_which.return_value = 'wine'
+        mock_which.side_effect = ('/bin/wine', '/bin/env', '/bin/wine')
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'MetroExodus.exe', 'unins000.exe',
                  'goggame-1407287452.info', 'goggame-1414471894.info']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['env', 'WINEDLLOVERRIDES=winemenubuilder.exe=d', 'WINEPREFIX=/test/install/dir/prefix', 'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\.', 'c:\\game\\MetroExodus.exe']
+        exp = ['/bin/env', 'WINEDLLOVERRIDES=winemenubuilder.exe=d', 'WINEPREFIX=/test/install/dir/prefix', '/bin/wine', 'start', '/b', '/wait', '/d', 'c:\\game\\.', 'c:\\game\\MetroExodus.exe']
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
@@ -212,7 +212,7 @@ class Test(TestCase):
             mock_open(read_data=goggame_1207658919_info_content).return_value)
         mo.side_effect = handlers
         mock_exists.return_value = True
-        mock_which.return_value = 'wine'
+        mock_which.side_effect = ('/bin/wine', '/bin/env', '/bin/wine')
         files = ['goggame-1207658919.script', 'DOSBOX', 'thumbnail.jpg', 'game.gog', 'unins000.dat', 'webcache.zip',
                  'EULA.txt', 'Music', 'dosboxRayman_single.conf', 'Rayman', 'unins000.exe', 'support.ico', 'prefix',
                  'goggame-1207658919.info', 'Manual.pdf', 'gog.ico', 'unins000.msg', 'goggame-1207658919.hashdb',
@@ -220,20 +220,24 @@ class Test(TestCase):
                  'goggame-1207658919.ico', 'goglog.ini', 'Launch Rayman Forever.lnk', 'cloud_saves',
                  'thumbnail_196.jpg']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['env', 'WINEDLLOVERRIDES=winemenubuilder.exe=d', 'WINEPREFIX=/test/install/dir/prefix',
-               'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\DOSBOX', 'c:\\game\\DOSBOX\\dosbox.exe', '-conf', '"..\\dosboxRayman.conf"',
+        exp = ['/bin/env', 'WINEDLLOVERRIDES=winemenubuilder.exe=d', 'WINEPREFIX=/test/install/dir/prefix',
+               '/bin/wine', 'start', '/b', '/wait', '/d', 'c:\\game\\DOSBOX', 'c:\\game\\DOSBOX\\dosbox.exe', '-conf', '"..\\dosboxRayman.conf"',
                '-conf', '"..\\dosboxRayman_single.conf"', '-noconsole', '-c', '"exit"']
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
-    def test_get_dosbox_exe_cmd(self):
+    @mock.patch('shutil.which')
+    def test_get_dosbox_exe_cmd(self, mock_which):
+        mock_which.return_value = 'dosbox'
         files = ['thumbnail.jpg', 'docs', 'support', 'dosbox_bbb_single.conf', 'dosbox_aaa.conf', 'dosbox']
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ["dosbox", "-conf", "dosbox_aaa.conf", "-conf", "dosbox_bbb_single.conf", "-no-console", "-c", "exit"]
         obs = launcher.get_dosbox_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
-    def test_get_scummvm_exe_cmd(self):
+    @mock.patch('shutil.which')
+    def test_get_scummvm_exe_cmd(self, mock_which):
+        mock_which.return_value = "scummvm"
         files = ['thumbnail.jpg', 'data', 'docs', 'support', 'beneath.ini', 'scummvm', 'start.sh', 'gameinfo']
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ["scummvm", "-c", "beneath.ini"]
@@ -241,8 +245,9 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
     def test_get_start_script_exe_cmd(self):
-        exp = ["./start.sh"]
-        obs = launcher.get_start_script_exe_cmd()
+        game = Game("Test Game", install_dir="/test/install/dir")
+        exp = ["/test/install/dir/start.sh"]
+        obs = launcher.get_start_script_exe_cmd(game)
         self.assertEqual(exp, obs)
 
     @mock.patch('os.getcwd')

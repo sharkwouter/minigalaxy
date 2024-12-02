@@ -47,7 +47,7 @@ def get_execute_command(game) -> list:
     is_wine_cmd = False
     launcher_type = determine_launcher_type(files)
     if launcher_type in ["start_script", "wine"]:
-        exe_cmd = get_start_script_exe_cmd()
+        exe_cmd = get_start_script_exe_cmd(game)
     elif launcher_type == "windows":
         exe_cmd = get_windows_exe_cmd(game, files)
         is_wine_cmd = True
@@ -106,7 +106,6 @@ def get_exe_cmd_with_var_command(game, exe_cmd, is_wine_cmd):
 def get_windows_exe_cmd(game, files):
     exe_cmd = []
     prefix = os.path.join(game.install_dir, "prefix")
-    os.environ["WINEPREFIX"] = prefix
 
     # Find game executable file
     for file in files:
@@ -141,7 +140,7 @@ def get_windows_exe_cmd(game, files):
     if not os.path.exists(gamelink):
         os.symlink('../..', gamelink)
 
-    return ['env', *get_wine_env(game)] + exe_cmd
+    return [shutil.which('env'), *get_wine_env(game)] + exe_cmd
 
 
 def get_dosbox_exe_cmd(game, files):
@@ -153,7 +152,7 @@ def get_dosbox_exe_cmd(game, files):
         if re.match(r'^dosbox_?([a-z]|[A-Z]|\d)+_single\.conf$', file):
             dosbox_config_single = file
     logger.info("Using system's dosbox to launch %s", game.name)
-    return ["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
+    return [shutil.which("dosbox"), "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
 
 
 def get_scummvm_exe_cmd(game, files):
@@ -163,11 +162,11 @@ def get_scummvm_exe_cmd(game, files):
             scummvm_config = file
             break
     logger.info("Using system's scrummvm to launch %s", game.name)
-    return ["scummvm", "-c", scummvm_config]
+    return [shutil.which("scummvm"), "-c", scummvm_config]
 
 
-def get_start_script_exe_cmd():
-    return ["./start.sh"]
+def get_start_script_exe_cmd(game):
+    return [os.path.join(game.install_dir, "start.sh")]
 
 
 def get_final_resort_exe_cmd(game, files):
@@ -179,8 +178,8 @@ def get_final_resort_exe_cmd(game, files):
         if re.match(r'^goggame-[0-9]*\.info$', file):
             os.chdir(os.path.join(game.install_dir, game_dir))
             with open(file, 'r') as info_file:
-                info = json.loads(info_file.read())
-                exe_cmd = ["./{}".format(info["playTasks"][0]["path"])]
+                info = json.loads(info_file.read())                
+                exe_cmd = [os.path.join(game.install_dir, info["playTasks"][0]["path"])]
     return exe_cmd
 
 

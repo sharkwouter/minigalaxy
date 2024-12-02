@@ -1,5 +1,6 @@
 import os
 import shutil
+import shlex
 import subprocess
 import hashlib
 import textwrap
@@ -249,21 +250,13 @@ def copy_thumbnail(game):
             error_message = e
     return error_message
 
-
-def get_exec_line(game):
-    exe_cmd_list = get_execute_command(game)
-    for i in range(len(exe_cmd_list)):
-        exe_cmd_list[i] = exe_cmd_list[i].replace(" ", "\\ ")
-    return " ".join(exe_cmd_list)
-
-
 def create_applications_file(game):
     error_message = ""
     path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.get_stripped_name(to_path=True)))
-    exe_cmd = get_exec_line(game)
+    exe_cmd = shlex.join(get_execute_command(game))
     # Create desktop file definition
     desktop_context = {
-        "game_bin_path": os.path.join('"{}"'.format(game.install_dir.replace('"', '\\"')), exe_cmd),
+        "game_bin_path": exe_cmd,
         "game_name": game.name,
         "game_install_dir": game.install_dir,
         "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
