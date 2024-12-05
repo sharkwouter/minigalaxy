@@ -93,6 +93,9 @@ class Api:
                     'page': current_page,
                 }
                 response = self.__request(url, params=params)
+                if "totalPages" not in response:
+                    err_msg = "Couldn't load game library"
+                    return games, err_msg
                 total_pages = response["totalPages"]
 
                 for product in response["products"]:
@@ -121,7 +124,11 @@ class Api:
             return
         url2 = "https://embed.gog.com/user/data/games"
         response2 = self.__request(url2)
-        return response2["owned"]
+        if "owned" in response2:
+            return response2["owned"]
+
+        logger.error("Could not load owned games")
+        return []
 
     # Generate the URL for the login page for GOG
     def get_login_url(self) -> str:
