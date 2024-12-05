@@ -5,6 +5,7 @@ import shlex
 import subprocess
 import hashlib
 import textwrap
+import time
 
 from minigalaxy.config import Config
 from minigalaxy.game import Game
@@ -375,33 +376,30 @@ def uninstall_game(game):
 
 
 def _exe_cmd(cmd, capture_output=True, print_output=False):
-    """Wine commands are very verbose.
-    We should consume the output in regularly to prevent buffers (and minigalaxy memory) from filling up"""
-    print(f'executing wine command: {shlex.join(cmd)}')
-    std_out = []
-    process = subprocess.Popen(cmd,
-                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                               bufsize=1, universal_newlines=True, encoding="utf-8")
-    rc = process.poll()
-    while rc is None:
-        out_line = process.stdout.readline()
-        if capture_output and out_line != '':
-            std_out.append(out_line)
-
-        if print_output:
-            print(out_line, end='')
-
-        rc = process.poll()
-
-    print('command finished, read remaining output (if any)')
-    for line in process.stdout.readlines():
-        std_out.append(line)
-    print('done')
+    std_out = ""
+    std_err = ""
+    done = False
+    return_code = None
+    process = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        universal_newlines=True, encoding="utf-8"
+    )
+    while not done:
+        if (return_code := process.poll()) is not None:
+            done = True
+        if data := process.stdout.read():
+            std_out += data
+            print(data, end='')
+        if data := process.stderr.read():
+            std_err += data
+            print(data, end='')
+        time.sleep(0.01)
 
     process.stdout.close()
+    process.stderr.close()
 
-    output = ''.join(std_out)
-    return output, output, rc
+    return std_out, std_err, return_code
 
 
 def _mv(source_dir, target_dir):
