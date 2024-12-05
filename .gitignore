@@ -27,3 +27,4 @@ debian/minigalaxy.substvars
 debian/minigalaxy.debhelper.log
 debian/minigalaxy.postinst.debhelper
 debian/minigalaxy.prerm.debhelper
+.vscode/settings.json
