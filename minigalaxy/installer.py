@@ -11,7 +11,7 @@ from minigalaxy.config import Config
 from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
-from minigalaxy.launcher import get_execute_command
+from minigalaxy.launcher import get_execute_command, get_wine_path, wine_restore_game_link
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
 
 
@@ -58,7 +58,6 @@ def install_game(  # noqa: C901
     tmp_dir = ""
     logger.info("Installing {}".format(game.name))
     try:
-        _use_innoextract = use_innoextract and bool(shutil.which('innoextract'))  # single decision point
         if not error_message:
             error_message = verify_installer_integrity(game, installer)
         if not error_message:
@@ -66,9 +65,9 @@ def install_game(  # noqa: C901
         if not error_message:
             error_message, tmp_dir = make_tmp_dir(game)
         if not error_message:
-            error_message = extract_installer(game, installer, tmp_dir, language, _use_innoextract)
+            error_message, installed_to_tmp = extract_installer(game, installer, tmp_dir, language)
         if not error_message:
-            error_message = move_and_overwrite(game, tmp_dir, _use_innoextract)
+            error_message = move_and_overwrite(game, tmp_dir, installed_to_tmp)
         if not error_message:
             error_message = copy_thumbnail(game)
         if not error_message and create_desktop_file:
@@ -126,13 +125,12 @@ def make_tmp_dir(game):
     return error_message, temp_dir
 
 
-def extract_installer(game: Game, installer: str, temp_dir: str, language: str, use_innoextract: bool):
+def extract_installer(game: Game, installer: str, temp_dir: str, language: str):
     # Extract the installer
     if game.platform in ["linux"]:
-        err_msg = extract_linux(installer, temp_dir)
+        return extract_linux(installer, temp_dir)
     else:
-        err_msg = extract_windows(game, installer, temp_dir, language, use_innoextract)
-    return err_msg
+        return extract_windows(game, installer, language)
 
 
 def extract_linux(installer, temp_dir):
@@ -144,14 +142,19 @@ def extract_linux(installer, temp_dir):
         err_msg = _("The installation of {} failed. Please try again.").format(installer)
     elif len(os.listdir(temp_dir)) == 0:
         err_msg = _("{} could not be unzipped.".format(installer))
-    return err_msg
+    return err_msg, True
 
 
-def extract_windows(game: Game, installer: str, temp_dir: str, language: str, use_innoextract: bool):
-    err_msg = extract_by_innoextract(installer, temp_dir, language, use_innoextract)
-    if err_msg:
-        err_msg = extract_by_wine(game, installer, temp_dir)
-    return err_msg
+def extract_windows(game: Game, installer: str, language: str):
+    if shutil.which("innoextract"):
+        game_lang = lang_install(installer, language)
+        game_lang = game_lang.split('=')[1]  # lang_install returns '--language=localeCode'
+    else:
+        game_lang = 'en-US'
+
+    logger.info(f'use {game_lang} for installer')
+
+    return extract_by_wine(game, installer, game_lang), False
 
 
 def extract_by_innoextract(installer: str, temp_dir: str, language: str, use_innoextract: bool):
@@ -182,15 +185,14 @@ def extract_by_innoextract(installer: str, temp_dir: str, language: str, use_inn
     return err_msg
 
 
-def extract_by_wine(game, installer, temp_dir, config=Config()):
+def extract_by_wine(game, installer, game_lang, config=Config()):
     # Set the prefix for Windows games
     prefix_dir = os.path.join(game.install_dir, "prefix")
-    game_dir = os.path.join(prefix_dir, "dosdevices", 'c:', 'game')
     wine_env = [
         f"WINEPREFIX={prefix_dir}",
         "WINEDLLOVERRIDES=winemenubuilder.exe=d"
     ]
-    wine_bin = shutil.which('wine')
+    wine_bin = get_wine_path(game)
 
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
@@ -199,13 +201,9 @@ def extract_by_wine(game, installer, temp_dir, config=Config()):
         if not try_wine_command(command):
             return _("Wineprefix creation failed.")
 
-    # calculate relative link from prefix-internal folder to game.install_dir
+    # calculate relative link prefix/c/game to game.install_dir
     # keeping it relative makes sure that the game can be moved around without stuff breaking
-    if not os.path.exists(game_dir):
-        # 'game' directory itself does not count
-        canonical_prefix = os.path.realpath(os.path.join(game_dir, '..'))
-        relative = os.path.relpath(game.install_dir, canonical_prefix)
-        os.symlink(relative, game_dir)
+    wine_restore_game_link(game)
     # It's possible to set install dir as argument before installation
     installer_cmd_basic = [
         'env', *wine_env, wine_bin, installer,
@@ -219,13 +217,15 @@ def extract_by_wine(game, installer, temp_dir, config=Config()):
         f"/LANG={config.lang}",
         "/SAVEINF=c:\\setup.inf",
         # installers can run very long, give at least a bit of visual feedback
-        '/SILENT'
+        # by using /SILENT instead of /VERYSILENT
+        '/SP-', '/SILENT', '/NORESTART', '/SUPPRESSMSGBOXES'
     ]
 
-    # first, try full unattended install
+    # first, try full unattended install.
     success = try_wine_command(installer_cmd_basic + installer_args_full)
     if not success:
-        # some games will reject the /SILENT flag.
+        # some games will reject the /SILENT flag
+        # because they require the user to accept EULA at the beginning
         # Open normal installer as fallback and hope for the best
         print('Unattended install failed. Try install with wizard dialog.', file=sys.stderr)
         success = try_wine_command(installer_cmd_basic)
@@ -239,7 +239,6 @@ def extract_by_wine(game, installer, temp_dir, config=Config()):
 def try_wine_command(command_arr):
     print('trying to run wine command:', shlex.join(command_arr))
     stdout, stderr, exitcode = _exe_cmd(command_arr, True)
-    print(stdout)
     if exitcode not in [0]:
         print(stderr, file=sys.stderr)
         return False
@@ -247,14 +246,17 @@ def try_wine_command(command_arr):
     return True
 
 
-def move_and_overwrite(game, temp_dir, use_innoextract):
+def move_and_overwrite(game, temp_dir, installed_to_tmp):
     # Copy the game files into the correct directory
     error_message = ""
     source_dir = (os.path.join(temp_dir, "data", "noarch") if game.platform == 'linux' else
-                  temp_dir if use_innoextract else
-                  os.path.join(temp_dir, os.path.basename(game.install_dir)))
+                  temp_dir)
     target_dir = game.install_dir
-    _mv(source_dir, target_dir)
+
+    if installed_to_tmp:
+        _mv(source_dir, target_dir)
+    else:
+        logger.info(f'installation of {game.name} did not use temporary directory - nothing to move')
 
     # Remove the temporary directory
     shutil.rmtree(temp_dir, ignore_errors=True)
@@ -296,7 +298,7 @@ def create_applications_file(game):
         Path={game_install_dir}
         Name={game_name}
         Icon={game_icon_path}
-        Category=Game""".format(**desktop_context)
+        Categories=Game""".format(**desktop_context)
     if not os.path.isfile(path_to_shortcut):
         try:
             with open(path_to_shortcut, 'w+') as desktop_file:
