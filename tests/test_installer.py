@@ -132,7 +132,6 @@ class Test(TestCase):
         mock_cmd.side_effect = [True, True]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = ""
         obs, uses_tmp = installer.extract_windows(game, installer_path, "en")
         self.assertEqual(exp, obs)
