@@ -4,39 +4,25 @@ import shutil
 import re
 import json
 import glob
+import shlex
 import threading
 
+from minigalaxy.config import Config
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
+from minigalaxy.wine_utils import is_wine_installed, get_wine_env, get_wine_path
 
 
-def get_wine_path(game):
-    binary_name = "wine"
-    custom_wine_path = game.get_info("custom_wine")
-    if custom_wine_path and custom_wine_path != shutil.which(binary_name):
-        binary_name = custom_wine_path
-    return binary_name
+def config_game(game, config: Config = Config()):
+    subprocess.Popen(['env', *get_wine_env(game, config), get_wine_path(game, config), 'winecfg'])
 
 
-def config_game(game):
-    prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen([get_wine_path(game), 'winecfg'])
+def regedit_game(game, config: Config = Config()):
+    subprocess.Popen(['env', *get_wine_env(game, config), get_wine_path(game, config), 'regedit'])
 
 
-def regedit_game(game):
-    prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen([get_wine_path(game), 'regedit'])
-
-
-def winetricks_game(game):
-    prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen(['winetricks'])
+def winetricks_game(game, config: Config = Config()):
+    subprocess.Popen(['env', *get_wine_env(game, config), 'winetricks'])
 
 
 def start_game(game):
@@ -58,11 +44,13 @@ def start_game(game):
 
 def get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
+    is_wine_cmd = False
     launcher_type = determine_launcher_type(files)
     if launcher_type in ["start_script", "wine"]:
-        exe_cmd = get_start_script_exe_cmd()
+        exe_cmd = get_start_script_exe_cmd(game)
     elif launcher_type == "windows":
         exe_cmd = get_windows_exe_cmd(game, files)
+        is_wine_cmd = True
     elif launcher_type == "dosbox":
         exe_cmd = get_dosbox_exe_cmd(game, files)
     elif launcher_type == "scummvm":
@@ -77,7 +65,7 @@ def get_execute_command(game) -> list:
     if game.get_info("use_mangohud") is True:
         exe_cmd.insert(0, "mangohud")
         exe_cmd.insert(1, "--dlsym")
-    exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
+    exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd, is_wine_cmd)
     logger.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
     return exe_cmd
 
@@ -92,17 +80,21 @@ def determine_launcher_type(files):
         launcher_type = "scummvm"
     elif "start.sh" in files:
         launcher_type = "start_script"
-    elif "prefix" in files and shutil.which("wine"):
+    elif "prefix" in files and is_wine_installed():
         launcher_type = "wine"
     elif "game" in files:
         launcher_type = "final_resort"
     return launcher_type
 
 
-def get_exe_cmd_with_var_command(game, exe_cmd):
-    var_list = game.get_info("variable").split()
-    command_list = game.get_info("command").split()
+def get_exe_cmd_with_var_command(game, exe_cmd, is_wine_cmd):
+    command_list = shlex.split(game.get_info("command"))
 
+    if is_wine_cmd:
+        # wine handles all envs on its own
+        return exe_cmd + command_list
+
+    var_list = shlex.split(game.get_info("variable"))
     if var_list:
         if var_list[0] not in ["env"]:
             var_list.insert(0, "env")
@@ -112,9 +104,8 @@ def get_exe_cmd_with_var_command(game, exe_cmd):
 
 
 def get_windows_exe_cmd(game, files):
-    exe_cmd = [""]
+    exe_cmd = []
     prefix = os.path.join(game.install_dir, "prefix")
-    os.environ["WINEPREFIX"] = prefix
 
     # Find game executable file
     for file in files:
@@ -130,19 +121,26 @@ def get_windows_exe_cmd(game, files):
                         if "category" in task and task["category"] == "game" and "path" in task:
                             working_dir = task["workingDir"] if "workingDir" in task else "."
                             path = task["path"]
-                            exe_cmd = [get_wine_path(game), "start", "/b", "/wait", "/d", working_dir,
-                                       path]
+                            exe_cmd = [get_wine_path(game), "start", "/b", "/wait", "/d", f'c:\\game\\{working_dir}',
+                                       f'c:\\game\\{path}']
                             if "arguments" in task:
                                 exe_cmd += task["arguments"].split(" ")
                             break
-    if exe_cmd == [""]:
+    if len(exe_cmd) == 0:
         # in case no goggame info file was found
         executables = glob.glob(game.install_dir + '/*.exe')
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
         exe_cmd = [get_wine_path(game), filename]
 
-    return exe_cmd
+    # Backwards compatibility with windows games installed before installer fixes.
+    # Will not fix games requiring registry keys, since the paths will already
+    # e borked through the old installer.
+    gamelink = os.path.join(prefix, 'dosdevices', 'c:', 'game')
+    if not os.path.exists(gamelink):
+        os.symlink('../..', gamelink)
+
+    return [shutil.which('env'), *get_wine_env(game)] + exe_cmd
 
 
 def get_dosbox_exe_cmd(game, files):
@@ -154,7 +152,7 @@ def get_dosbox_exe_cmd(game, files):
         if re.match(r'^dosbox_?([a-z]|[A-Z]|\d)+_single\.conf$', file):
             dosbox_config_single = file
     logger.info("Using system's dosbox to launch %s", game.name)
-    return ["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
+    return [shutil.which("dosbox"), "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
 
 
 def get_scummvm_exe_cmd(game, files):
@@ -164,11 +162,11 @@ def get_scummvm_exe_cmd(game, files):
             scummvm_config = file
             break
     logger.info("Using system's scrummvm to launch %s", game.name)
-    return ["scummvm", "-c", scummvm_config]
+    return [shutil.which("scummvm"), "-c", scummvm_config]
 
 
-def get_start_script_exe_cmd():
-    return ["./start.sh"]
+def get_start_script_exe_cmd(game):
+    return [os.path.join(game.install_dir, "start.sh")]
 
 
 def get_final_resort_exe_cmd(game, files):
@@ -181,7 +179,7 @@ def get_final_resort_exe_cmd(game, files):
             os.chdir(os.path.join(game.install_dir, game_dir))
             with open(file, 'r') as info_file:
                 info = json.loads(info_file.read())
-                exe_cmd = ["./{}".format(info["playTasks"][0]["path"])]
+                exe_cmd = [os.path.join(game.install_dir, info["playTasks"][0]["path"])]
     return exe_cmd
 
 
