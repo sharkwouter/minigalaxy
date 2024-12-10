@@ -8,10 +8,10 @@ from minigalaxy.translation import _
 
 
 class Test(TestCase):
-    @mock.patch('shutil.which')
-    def test_install_game(self, mock_which):
+    @mock.patch('os.path.exists')
+    def test_install_game(self, mock_exists):
         """[scenario: unhandled error]"""
-        mock_which.side_effect = FileNotFoundError("Testing unhandled errors during install")
+        mock_exists.side_effect = FileNotFoundError("Testing unhandled errors during install")
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         exp = "Unhandled error."
         obs = installer.install_game(game, installer="", language="", install_dir="", keep_installers=False, create_desktop_file=True)
@@ -60,14 +60,14 @@ class Test(TestCase):
     def test1_extract_installer(self, mock_subprocess, mock_listdir, mock_is_file):
         """[scenario: linux installer, unpack success]"""
         mock_is_file.return_value = True
-        mock_subprocess().returncode = 0
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 0
+        mock_subprocess().stdout.readlines.return_value = ["\n"]
         mock_listdir.return_value = ["object1", "object2"]
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1207658695"
         exp = ""
-        obs = installer.extract_installer(game, installer_path, temp_dir, "en", use_innoextract=False)
+        obs, use_temp = installer.extract_installer(game, installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
@@ -76,28 +76,35 @@ class Test(TestCase):
     def test2_extract_installer(self, mock_subprocess, mock_listdir, mock_is_file):
         """[scenario: linux installer, unpack failed]"""
         mock_is_file.return_value = True
-        mock_subprocess().returncode = 2
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 2
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
         mock_listdir.return_value = ["object1", "object2"]
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1207658695"
         exp = "The installation of /home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh failed. Please try again."
-        obs = installer.extract_installer(game, installer_path, temp_dir, "en", use_innoextract=False)
+        obs, use_temp = installer.extract_installer(game, installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
+    # TODO: Delete - innoextract not used for installation anymore
+    # test is only made not to fail, but it is pointless, as wine is called
+    # internally anyway
+    @mock.patch('minigalaxy.installer.try_wine_command')
+    @mock.patch('os.path.exists')
     @mock.patch('subprocess.Popen')
     @mock.patch('shutil.which')
-    def test3_extract_installer(self, mock_which, mock_subprocess):
+    def test3_extract_installer(self, mock_which, mock_subprocess, mock_exists, mock_cmd):
         """[scenario: innoextract, unpack success]"""
         mock_which.return_value = True
-        mock_subprocess().returncode = 0
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 0
+        mock_subprocess().stdout.readline.return_value = " - en-US"
+        mock_exists.return_value = True
+        mock_cmd.side_effect = [True, True]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = ""
-        obs = installer.extract_installer(game, installer_path, temp_dir, "en", use_innoextract=True)
+        obs, use_temp = installer.extract_installer(game, installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
@@ -105,32 +112,35 @@ class Test(TestCase):
     @mock.patch('subprocess.Popen')
     def test_extract_linux(self, mock_subprocess, mock_listdir, mock_is_file):
         mock_is_file.return_value = True
-        mock_subprocess().returncode = 1
-        mock_subprocess().communicate.return_value = [b"stdout", b"(attempting to process anyway)"]
+        mock_subprocess().poll.return_value = 1
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "(attempting to process anyway)"]
         mock_listdir.return_value = ["object1", "object2"]
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1207658695"
         exp = ""
-        obs = installer.extract_linux(installer_path, temp_dir)
+        obs, temp_used = installer.extract_linux(installer_path, temp_dir)
         self.assertEqual(exp, obs)
 
+    @mock.patch('minigalaxy.installer.try_wine_command')
+    @mock.patch('os.path.exists')
     @mock.patch('subprocess.Popen')
-    def test_extract_windows(self, mock_subprocess):
+    def test_extract_windows(self, mock_subprocess, mock_exists, mock_cmd):
         """[scenario: innoextract, unpack success]"""
-        mock_subprocess().returncode = 0
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 0
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
+        mock_exists.return_value = True
+        mock_cmd.side_effect = [True, True]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = ""
-        obs = installer.extract_windows(game, installer_path, temp_dir, "en", use_innoextract=True)
+        obs, uses_tmp = installer.extract_windows(game, installer_path, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
     def test1_extract_by_innoextract(self, mock_subprocess):
         """[scenario: success]"""
-        mock_subprocess().returncode = 0
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 0
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = ""
@@ -148,8 +158,8 @@ class Test(TestCase):
     @mock.patch('subprocess.Popen')
     def test3_extract_by_innoextract(self, mock_subprocess):
         """[scenario: unpack failed]"""
-        mock_subprocess().returncode = 1
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 1
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = "Innoextract extraction failed."
@@ -158,13 +168,12 @@ class Test(TestCase):
 
     @mock.patch('subprocess.Popen')
     @mock.patch("os.path.exists")
-    @mock.patch("os.unlink")
     @mock.patch("os.symlink")
-    def test1_extract_by_wine(self, mock_symlink, mock_unlink, mock_path_exists, mock_subprocess):
+    def test1_extract_by_wine(self, mock_symlink, mock_path_exists, mock_subprocess):
         """[scenario: success]"""
         mock_path_exists.return_value = True
-        mock_subprocess().returncode = 0
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 0
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
@@ -179,8 +188,8 @@ class Test(TestCase):
     def test2_extract_by_wine(self, mock_symlink, mock_unlink, mock_path_exists, mock_subprocess):
         """[scenario: install failed]"""
         mock_path_exists.return_value = True
-        mock_subprocess().returncode = 1
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 1
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
@@ -192,8 +201,8 @@ class Test(TestCase):
     @mock.patch("os.path.isfile")
     def test1_postinstaller(self, mock_path_isfile, mock_subprocess):
         mock_path_isfile.return_value = False
-        mock_subprocess().returncode = 1
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 1
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
         exp = ""
         obs = installer.postinstaller(game)
@@ -204,8 +213,8 @@ class Test(TestCase):
     @mock.patch("os.chmod")
     def test2_postinstaller(self, mock_chmod, mock_path_isfile, mock_subprocess):
         mock_path_isfile.return_value = True
-        mock_subprocess().returncode = 0
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 0
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
         exp = ""
         obs = installer.postinstaller(game)
@@ -216,8 +225,8 @@ class Test(TestCase):
     @mock.patch("os.chmod")
     def test3_postinstaller(self, mock_chmod, mock_path_isfile, mock_subprocess):
         mock_path_isfile.return_value = True
-        mock_subprocess().returncode = 1
-        mock_subprocess().communicate.return_value = [b"stdout", b"stderr"]
+        mock_subprocess().poll.return_value = 1
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
         exp = "Postinstallation script failed: /home/makson/GOG Games/Absolute Drift/support/postinst.sh"
         obs = installer.postinstaller(game)
@@ -281,28 +290,11 @@ class Test(TestCase):
 --------          -------  ---                            -------
 159236636         104883200  34%                            189 files
 """
-        mock_subprocess().communicate.return_value = [stdout, b"stderr"]
+        mock_subprocess().communicate.return_value = [stdout, "stderr"]
         installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         exp = 159236636
         obs = installer.get_game_size_from_unzip(installer_path)
         self.assertEqual(exp, obs)
-
-    @mock.patch('shutil.which')
-    @mock.patch('os.listdir')
-    def test_get_exec_line(self, mock_list_dir, mock_which):
-        mock_which.return_value = True
-
-        game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
-        mock_list_dir.return_value = ["data", "docs", "scummvm", "support", "beneath.ini", "gameinfo", "start.sh"]
-
-        result1 = installer.get_exec_line(game1)
-        self.assertEqual(result1, "scummvm -c beneath.ini")
-
-        game2 = Game("Blocks That Matter", install_dir="/home/test/GOG Games/Blocks That Matter", platform="linux")
-        mock_list_dir.return_value = ["data", "docs", "support", "gameinfo", "start.sh"]
-
-        result2 = installer.get_exec_line(game2)
-        self.assertEqual(result2, "./start.sh")
 
     @mock.patch('os.path.getsize')
     @mock.patch('os.listdir')

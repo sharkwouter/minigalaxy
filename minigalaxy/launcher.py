@@ -4,6 +4,7 @@ import shutil
 import re
 import json
 import glob
+import shlex
 import threading
 
 from minigalaxy.logger import logger
@@ -18,25 +19,30 @@ def get_wine_path(game):
     return binary_name
 
 
+# should go into a separate file or into installer, but not possible ATM because
+# it's a circular import otherwise
+def wine_restore_game_link(game):
+    game_dir = os.path.join(game.install_dir, 'prefix', 'dosdevices', 'c:', 'game')
+    if not os.path.exists(game_dir):
+        # 'game' directory itself does not count
+        canonical_prefix = os.path.realpath(os.path.join(game_dir, '..'))
+        relative = os.path.relpath(game.install_dir, canonical_prefix)
+        os.symlink(relative, game_dir)
+
+
 def config_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen([get_wine_path(game), 'winecfg'])
+    subprocess.Popen(['env', f'WINEPREFIX={prefix}', get_wine_path(game), 'winecfg'])
 
 
 def regedit_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen([get_wine_path(game), 'regedit'])
+    subprocess.Popen(['env', f'WINEPREFIX={prefix}', get_wine_path(game), 'regedit'])
 
 
 def winetricks_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
-
-    os.environ["WINEPREFIX"] = prefix
-    subprocess.Popen(['winetricks'])
+    subprocess.Popen(['env', f'WINEPREFIX={prefix}', 'winetricks'])
 
 
 def start_game(game):
@@ -60,7 +66,7 @@ def get_execute_command(game) -> list:
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
     if launcher_type in ["start_script", "wine"]:
-        exe_cmd = get_start_script_exe_cmd()
+        exe_cmd = get_start_script_exe_cmd(game)
     elif launcher_type == "windows":
         exe_cmd = get_windows_exe_cmd(game, files)
     elif launcher_type == "dosbox":
@@ -100,12 +106,14 @@ def determine_launcher_type(files):
 
 
 def get_exe_cmd_with_var_command(game, exe_cmd):
-    var_list = game.get_info("variable").split()
-    command_list = game.get_info("command").split()
+    var_list = shlex.split(game.get_info("variable"))
+    command_list = shlex.split(game.get_info("command"))
 
     if var_list:
         if var_list[0] not in ["env"]:
             var_list.insert(0, "env")
+        if 'env' == exe_cmd[0]:
+            exe_cmd = exe_cmd[1:]
 
     exe_cmd = var_list + exe_cmd + command_list
     return exe_cmd
@@ -114,7 +122,6 @@ def get_exe_cmd_with_var_command(game, exe_cmd):
 def get_windows_exe_cmd(game, files):
     exe_cmd = [""]
     prefix = os.path.join(game.install_dir, "prefix")
-    os.environ["WINEPREFIX"] = prefix
 
     # Find game executable file
     for file in files:
@@ -130,10 +137,11 @@ def get_windows_exe_cmd(game, files):
                         if "category" in task and task["category"] == "game" and "path" in task:
                             working_dir = task["workingDir"] if "workingDir" in task else "."
                             path = task["path"]
-                            exe_cmd = [get_wine_path(game), "start", "/b", "/wait", "/d", working_dir,
-                                       path]
+                            exe_cmd = [get_wine_path(game), "start", "/b", "/wait",
+                                       "/d", f'c:\\game\\{working_dir}',
+                                       f'c:\\game\\{path}']
                             if "arguments" in task:
-                                exe_cmd += task["arguments"].split(" ")
+                                exe_cmd += shlex.split(task["arguments"])
                             break
     if exe_cmd == [""]:
         # in case no goggame info file was found
@@ -142,7 +150,12 @@ def get_windows_exe_cmd(game, files):
         filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
         exe_cmd = [get_wine_path(game), filename]
 
-    return exe_cmd
+    # Backwards compatibility with windows games installed before installer fixes.
+    # Will not fix games requiring registry keys, since the paths will already
+    # be borked through the old installer.
+    wine_restore_game_link(game)
+
+    return ['env', f'WINEPREFIX={prefix}'] + exe_cmd
 
 
 def get_dosbox_exe_cmd(game, files):
@@ -167,8 +180,8 @@ def get_scummvm_exe_cmd(game, files):
     return ["scummvm", "-c", scummvm_config]
 
 
-def get_start_script_exe_cmd():
-    return ["./start.sh"]
+def get_start_script_exe_cmd(game):
+    return [os.path.join(game.install_dir, "start.sh")]
 
 
 def get_final_resort_exe_cmd(game, files):

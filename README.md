@@ -25,6 +25,15 @@ In addition to that, Minigalaxy also allows you to:
 - Use the system's ScummVM or DOSBox installation
 - Install Windows games using Wine
 
+### Backwards compatibility
+Minigalaxy version 1.3.2 and higher change some aspects of windows game installations through wine.
+It will try to adapt already installed games to the new concept when launched through Minigalaxy.
+
+The windows installer in wine now uses a 2-step attempt to install games. 
+1. An unattended installer.
+2. In case this fails, the regular installation wizard will open. **Please do not change** the  
+install directory 'c:\game' given in the wizard as this an elementary part of the wine fix.
+
 ## Supported languages
 
 Currently, Minigalaxy can be displayed in the following languages:
