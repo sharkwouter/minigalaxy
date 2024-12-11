@@ -402,6 +402,17 @@ def _exe_cmd(cmd, print_output=False):
                 print(data, end='')
         time.sleep(0.01)
 
+    # there might some lines left in the buffer, get them all
+    data = process.stdout.readlines()
+    std_out += ''.join(data)
+    if print_output:
+        print(data, end='')
+
+    data = process.stderr.readlines()
+    std_err += ''.join(data)
+    if print_output:
+        print(data, end='')
+
     process.stdout.close()
     process.stderr.close()
 
@@ -425,20 +436,17 @@ def _mv(source_dir, target_dir):
 # "--list-languages" option returns "en-US", "fr-FR" etc... for these games.
 # Others installers return "French : Français" but disallow to choose game's language before installation
 def lang_install(installer: str, language: str):
-    languages = []
-    arg = ""
+    arg = "--language=en-US"
     stdout, stderr, ret_code = _exe_cmd(["innoextract", installer, "--list-languages"])
 
     for line in stdout.split('\n'):
         if not line.startswith(' -'):
             continue
-        languages.append(line[3:])
-    for lang in languages:
+
+        lang = line[3:]
         if "-" in lang:  # lang must be like "en-US" only.
             if language == lang[0:2]:
                 arg = "--language={}".format(lang)
                 break
-            else:
-                arg = "--language=en-US"
-                break
+
     return arg
