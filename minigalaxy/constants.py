@@ -23,6 +23,31 @@ SUPPORTED_DOWNLOAD_LANGUAGES = [
     ["ro", _("Romanian")],
 ]
 
+# match locale ids to special language names used by some installers
+# mapping supports 1:n so we can add more than one per language if needed later
+GAME_LANGUAGE_IDS = {
+    "br": ["brazilian"],
+    "cn": ["chinese"],
+    "da": ["danish"],
+    "nl": ["dutch"],
+    "en": ["english"],
+    "fi": ["finnish"],
+    "fr": ["french"],
+    "de": ["german"],
+    "hu": ["hungarian"],
+    "it": ["italian"],
+    "jp": ["japanese"],
+    "ko": ["korean"],
+    "no": ["norwegian"],
+    "pl": ["polish"],
+    "pt": ["portuguese"],
+    "ru": ["russian"],
+    "es": ["spanish"],
+    "sv": ["swedish"],
+    "tr": ["turkish"],
+    "ro": ["romanian"]
+}
+
 SUPPORTED_LOCALES = [
     ["", _("System default")],
     ["pt_BR", _("Brazilian Portuguese")],

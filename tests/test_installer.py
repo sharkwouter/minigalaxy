@@ -87,19 +87,13 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
     # TODO: Delete - innoextract not used for installation anymore
-    # test is only made not to fail, but it is pointless, as wine is called
-    # internally anyway
-    @mock.patch('minigalaxy.installer.try_wine_command')
-    @mock.patch('os.path.exists')
     @mock.patch('subprocess.Popen')
     @mock.patch('shutil.which')
-    def test3_extract_installer(self, mock_which, mock_subprocess, mock_exists, mock_cmd):
+    def test3_extract_installer(self, mock_which, mock_subprocess):
         """[scenario: innoextract, unpack success]"""
         mock_which.return_value = True
         mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readline.return_value = " - en-US"
-        mock_exists.return_value = True
-        mock_cmd.side_effect = [True, True]
+        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
@@ -121,49 +115,47 @@ class Test(TestCase):
         obs, temp_used = installer.extract_linux(installer_path, temp_dir)
         self.assertEqual(exp, obs)
 
-    @mock.patch('minigalaxy.installer.try_wine_command')
-    @mock.patch('os.path.exists')
-    @mock.patch('subprocess.Popen')
-    def test_extract_windows(self, mock_subprocess, mock_exists, mock_cmd):
-        """[scenario: innoextract, unpack success]"""
-        mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
-        mock_exists.return_value = True
-        mock_cmd.side_effect = [True, True]
+
+    @mock.patch('minigalaxy.installer.extract_by_wine')
+    @mock.patch('shutil.which')
+    def test1_get_lang_with_innoextract(self, mock_which, mock_wine_extract):
+        """[scenario: no innoextract - default en-US used]"""
+        mock_which.return_value = False
+        mock_wine_extract.side_effect = lambda game, installer, lang: lang
+        installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
-        installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        exp = ""
-        obs, uses_tmp = installer.extract_windows(game, installer_path, "en")
+        exp = "en-US"
+        obs, uses_temp = installer.extract_windows(game, installer_path, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
-    def test1_extract_by_innoextract(self, mock_subprocess):
-        """[scenario: success]"""
+    def test2_get_lang_with_innoextract(self, mock_subprocess):
+        """[scenario: innoextract --list-languages returns locale ids]"""
         mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
+        mock_subprocess().stdout.readline.return_value = " - fr-FR\n - jp-JP\n - en-US\n - ru-RU"
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
-        exp = ""
-        obs = installer.extract_by_innoextract(installer_path, temp_dir, "en", use_innoextract=True)
-        self.assertEqual(exp, obs)
-
-    def test2_extract_by_innoextract(self):
-        """[scenario: not installed/disabled]"""
-        installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
-        exp = "Innoextract not installed."
-        obs = installer.extract_by_innoextract(installer_path, temp_dir, "en", use_innoextract=False)
+        exp = "jp-JP"
+        obs = installer.match_game_lang_to_installer(installer_path, "jp")
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
-    def test3_extract_by_innoextract(self, mock_subprocess):
-        """[scenario: unpack failed]"""
-        mock_subprocess().poll.return_value = 1
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
+    def test3_get_lang_with_innoextract(self, mock_subprocess):
+        """[scenario: innoextract --list-languages returns language names]"""
+        mock_subprocess().poll.return_value = 0
+        mock_subprocess().stdout.readline.return_value = " - english: English\n - german: Deutsch\n - french: Français"
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
-        exp = "Innoextract extraction failed."
-        obs = installer.extract_by_innoextract(installer_path, temp_dir, "en", use_innoextract=True)
+        exp = "french"
+        obs = installer.match_game_lang_to_installer(installer_path, "fr")
+        self.assertEqual(exp, obs)
+    
+    @mock.patch('subprocess.Popen')
+    def test4_get_lang_with_innoextract(self, mock_subprocess):
+        """[scenario: innoextract --list-languages can't be matched - default en-US is used]"""
+        mock_subprocess().poll.return_value = 0
+        mock_subprocess().stdout.readline.return_value = " - fr-FR\n - jp-JP\n - en-US\n - ru-RU"
+        installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
+        exp = "en-US"
+        obs = installer.match_game_lang_to_installer(installer_path, "")
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
