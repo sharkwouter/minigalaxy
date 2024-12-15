@@ -9,6 +9,7 @@ import time
 import re
 
 from minigalaxy.config import Config
+from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, GAME_LANGUAGE_IDS
 from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
@@ -147,43 +148,13 @@ def extract_linux(installer, temp_dir):
 
 
 def extract_windows(game: Game, installer: str, language: str):
-    if shutil.which("innoextract"):
-        game_lang = lang_install(installer, language)
-        game_lang = game_lang.split('=')[1]  # lang_install returns '--language=localeCode'
-    else:
-        game_lang = 'en-US'
-
+    languageLog = os.path.join(game.install_dir, 'minigalaxy_setup_languages.log')
+    if not os.path.exists(game.install_dir):
+        os.makedirs(game.install_dir)
+    game_lang = match_game_lang_to_installer(installer, language, languageLog)
     logger.info(f'use {game_lang} for installer')
 
     return extract_by_wine(game, installer, game_lang), False
-
-
-def extract_by_innoextract(installer: str, temp_dir: str, language: str, use_innoextract: bool):
-    err_msg = ""
-    if use_innoextract:
-        lang = lang_install(installer, language)
-        cmd = ["innoextract", installer, "-d", temp_dir, "--gog", lang]
-        stdout, stderr, exitcode = _exe_cmd(cmd)
-        if exitcode not in [0]:
-            err_msg = _("Innoextract extraction failed.")
-        else:
-            # In the case the game is installed in "temp_dir/app" like Zeus + Poseidon (Acropolis)
-            inno_app_dir = os.path.join(temp_dir, "app")
-            if os.path.isdir(inno_app_dir):
-                _mv(inno_app_dir, temp_dir)
-            # In the case the game is installed in "temp_dir/game" like Dragon Age™: Origins - Ultimate Edition
-            inno_game_dir = os.path.join(temp_dir, "game")
-            if os.path.isdir(inno_game_dir):
-                _mv(inno_game_dir, temp_dir)
-            innoextract_unneeded_dirs = ["__redist", "tmp", "commonappdata", "app", "DirectXpackage", "dotNet35"]
-            innoextract_unneeded_dirs += ["MSVC2005", "MSVC2005_x64", "support", "__unpacker", "userdocs", "game"]
-            for unneeded_dir in innoextract_unneeded_dirs:
-                unneeded_dir_full_path = os.path.join(temp_dir, unneeded_dir)
-                if os.path.isdir(unneeded_dir_full_path):
-                    shutil.rmtree(unneeded_dir_full_path)
-    else:
-        err_msg = _("Innoextract not installed.")
-    return err_msg
 
 
 def extract_by_wine(game, installer, game_lang, config=Config()):
@@ -212,10 +183,10 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
         # this avoids issues with varying path and spaces
         "/DIR=c:\\game",
         # capture information for debugging during install
+        f"/LANG={game_lang}",
         "/LOG=c:\\install.log",
     ]
     installer_args_full = [
-        f"/LANG={config.lang}",
         "/SAVEINF=c:\\setup.inf",
         # installers can run very long, give at least a bit of visual feedback
         # by using /SILENT instead of /VERYSILENT
@@ -414,28 +385,24 @@ def _exe_cmd(cmd, print_output=False):
     os.set_blocking(process.stdout.fileno(), False)
     os.set_blocking(process.stderr.fileno(), False)
     while not done:
-        if (return_code := process.poll()) is not None:
-            done = True
-        if data := process.stdout.readline():
-            std_out += data
+        if std_line := process.stdout.readline():
+            std_out += std_line
             if print_output:
-                print(data, end='')
-        if data := process.stderr.readline():
-            std_err += data
+                print(std_line, end='')
+
+        if err_line := process.stderr.readline():
+            std_err += err_line
             if print_output:
-                print(data, end='')
-        time.sleep(0.01)
+                print(err_line, end='')
 
-    # there might some lines left in the buffer, get them all
-    data = process.stdout.readlines()
-    std_out += ''.join(data)
-    if print_output:
-        print(data, end='')
-
-    data = process.stderr.readlines()
-    std_err += ''.join(data)
-    if print_output:
-        print(data, end='')
+        # continue the loop until there is
+        # 1. a return code and
+        # 2. nothing more to consume
+        # this makes sure everything was read
+        return_code = process.poll()
+        line_read = len(std_line) + len(err_line)
+        done = return_code is not None and line_read == 0
+        time.sleep(0.02)
 
     process.stdout.close()
     process.stderr.close()
@@ -459,9 +426,24 @@ def _mv(source_dir, target_dir):
 # Some installers allow to choose game's language before installation (Divinity Original Sin or XCom EE / XCom 2)
 # "--list-languages" option returns "en-US", "fr-FR" etc... for these games.
 # Others installers return "French : Français" but disallow to choose game's language before installation
-def lang_install(installer: str, language: str):
-    arg = "--language=en-US"
+# When outputLogFile is given, the output of --list-languages is also saved in this file to have a bit of
+# additional debug information in GH tickets in case the wrong language is picked during installation
+def match_game_lang_to_installer(installer: str, language: str, outputLogFile=None):
+    if not shutil.which('innoextract'):
+        return 'en-US'
+
     stdout, stderr, ret_code = _exe_cmd(["innoextract", installer, "--list-languages"])
+    if ret_code not in [0]:
+        logger.error(stderr)
+        return "en-US"
+
+    lang_keys = GAME_LANGUAGE_IDS.get(language, [])
+    lang_name_regex = re.compile(f'(\\w+)\\s*:\\s*.*')
+
+    if outputLogFile is not None:
+        logger.info('write setup language data: ', outputLogFile)
+        with open(outputLogFile, "w") as text_file:
+            text_file.write(stdout)
 
     for line in stdout.split('\n'):
         if not line.startswith(' -'):
@@ -470,7 +452,11 @@ def lang_install(installer: str, language: str):
         lang = line[3:]
         if "-" in lang:  # lang must be like "en-US" only.
             if language == lang[0:2]:
-                arg = "--language={}".format(lang)
-                break
+                return lang
 
-    return arg
+        elif match := lang_name_regex.match(lang):
+            lang_id = match.group(1)
+            if lang_id in lang_keys:
+                return lang_id
+
+    return "en-US"
