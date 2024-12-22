@@ -9,7 +9,7 @@ import time
 import re
 
 from minigalaxy.config import Config
-from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, GAME_LANGUAGE_IDS
+from minigalaxy.constants import GAME_LANGUAGE_IDS
 from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
@@ -53,8 +53,7 @@ def install_game(  # noqa: C901
         language: str,
         install_dir: str,
         keep_installers: bool,
-        create_desktop_file: bool,
-        use_innoextract: bool = True,  # not set externally as of yet
+        create_desktop_file: bool
 ):
     error_message = ""
     tmp_dir = ""
@@ -438,7 +437,9 @@ def match_game_lang_to_installer(installer: str, language: str, outputLogFile=No
         return "en-US"
 
     lang_keys = GAME_LANGUAGE_IDS.get(language, [])
-    lang_name_regex = re.compile(f'(\\w+)\\s*:\\s*.*')
+    # match lines like ' - french : French'
+    # gets the first lowercase word which is the key
+    lang_name_regex = re.compile('(\\w+)\\s*:\\s*.*')
 
     if outputLogFile is not None:
         logger.info('write setup language data: ', outputLogFile)
