@@ -86,21 +86,6 @@ class Test(TestCase):
         obs, use_temp = installer.extract_installer(game, installer_path, temp_dir, "en")
         self.assertEqual(exp, obs)
 
-    # TODO: Delete - innoextract not used for installation anymore
-    @mock.patch('subprocess.Popen')
-    @mock.patch('shutil.which')
-    def test3_extract_installer(self, mock_which, mock_subprocess):
-        """[scenario: innoextract, unpack success]"""
-        mock_which.return_value = True
-        mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
-        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
-        installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
-        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
-        exp = ""
-        obs, use_temp = installer.extract_installer(game, installer_path, temp_dir, "en")
-        self.assertEqual(exp, obs)
-
     @mock.patch('os.path.exists')
     @mock.patch('os.listdir')
     @mock.patch('subprocess.Popen')
@@ -115,47 +100,57 @@ class Test(TestCase):
         obs, temp_used = installer.extract_linux(installer_path, temp_dir)
         self.assertEqual(exp, obs)
 
-
+    @mock.patch('os.path.exists')
     @mock.patch('minigalaxy.installer.extract_by_wine')
     @mock.patch('shutil.which')
-    def test1_get_lang_with_innoextract(self, mock_which, mock_wine_extract):
+    def test1_get_lang_with_innoextract(self, mock_which, mock_wine_extract, mock_exists):
         """[scenario: no innoextract - default en-US used]"""
         mock_which.return_value = False
-        mock_wine_extract.side_effect = lambda game, installer, lang: lang
+        mock_exists.return_value = True
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         exp = "en-US"
-        obs, uses_temp = installer.extract_windows(game, installer_path, "en")
-        self.assertEqual(exp, obs)
+        # check that lang passed to the wine installer is set up correctly
+        mock_wine_extract.side_effect = lambda game, installer, lang: self.assertEqual(exp, lang)
+        installer.extract_windows(game, installer_path, "en")
 
+    @mock.patch('shutil.which')
     @mock.patch('subprocess.Popen')
-    def test2_get_lang_with_innoextract(self, mock_subprocess):
+    def test2_get_lang_with_innoextract(self, mock_subprocess, mock_which):
         """[scenario: innoextract --list-languages returns locale ids]"""
+        lines = [" - fr-FR\n", " - jp-JP\n", " - en-US\n", " - ru-RU\n", ""]  # last is 'EOF'
+
         mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readline.return_value = " - fr-FR\n - jp-JP\n - en-US\n - ru-RU"
+        mock_subprocess().stdout.readline.side_effect = lambda: lines.pop(0)
+        mock_which.return_value = '/bin/innoextract'
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         exp = "jp-JP"
         obs = installer.match_game_lang_to_installer(installer_path, "jp")
         self.assertEqual(exp, obs)
 
+    @mock.patch('shutil.which')
     @mock.patch('subprocess.Popen')
-    def test3_get_lang_with_innoextract(self, mock_subprocess):
+    def test3_get_lang_with_innoextract(self, mock_subprocess, mock_which):
         """[scenario: innoextract --list-languages returns language names]"""
+        lines = [" - english: English\n", " - german: Deutsch\n", " - french: Français\n", ""]  # last is 'EOF'
         mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readline.return_value = " - english: English\n - german: Deutsch\n - french: Français"
+        mock_subprocess().stdout.readline.side_effect = lambda: lines.pop(0)
+        mock_which.return_value = '/bin/innoextract'
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         exp = "french"
         obs = installer.match_game_lang_to_installer(installer_path, "fr")
         self.assertEqual(exp, obs)
-    
+
+    @mock.patch('shutil.which')
     @mock.patch('subprocess.Popen')
-    def test4_get_lang_with_innoextract(self, mock_subprocess):
+    def test4_get_lang_with_innoextract(self, mock_subprocess, mock_which):
         """[scenario: innoextract --list-languages can't be matched - default en-US is used]"""
         mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readline.return_value = " - fr-FR\n - jp-JP\n - en-US\n - ru-RU"
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_which.return_value = '/bin/innoextract'
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         exp = "en-US"
-        obs = installer.match_game_lang_to_installer(installer_path, "")
+        obs = installer.match_game_lang_to_installer(installer_path, "en")
         self.assertEqual(exp, obs)
 
     @mock.patch('subprocess.Popen')
