@@ -296,6 +296,23 @@ class Test(TestCase):
         obs = installer.get_game_size_from_unzip(installer_path)
         self.assertEqual(exp, obs)
 
+    @mock.patch('shutil.which')
+    @mock.patch('os.listdir')
+    def test_get_exec_line(self, mock_list_dir, mock_which):
+        mock_which.return_value = True
+
+        game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
+        mock_list_dir.return_value = ["data", "docs", "scummvm", "support", "beneath.ini", "gameinfo", "start.sh"]
+
+        result1 = installer.get_exec_line(game1)
+        self.assertEqual("scummvm -c beneath.ini", result1)
+
+        game2 = Game("Blocks That Matter", install_dir="/home/test/GOG Games/Blocks That Matter", platform="linux")
+        mock_list_dir.return_value = ["data", "docs", "support", "gameinfo", "start.sh"]
+
+        result2 = installer.get_exec_line(game2)
+        self.assertEqual('"/home/test/GOG Games/Blocks That Matter/start.sh"', result2)
+
     @mock.patch('os.path.getsize')
     @mock.patch('os.listdir')
     @mock.patch('os.path.isdir')
