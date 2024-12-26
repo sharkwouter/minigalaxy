@@ -6,6 +6,7 @@ import subprocess
 import hashlib
 import textwrap
 import time
+import re
 
 from minigalaxy.config import Config
 from minigalaxy.game import Game
@@ -278,13 +279,36 @@ def copy_thumbnail(game):
     return error_message
 
 
+def get_exec_line(game):
+    """Handles quoting of Exec key which is stricter than regular shell quoting
+    See https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html for details"""
+    chars_to_quote = re.compile(r'(["$`\\])', re.ASCII)  # double-qoute, dollar and backtick
+    replace_pattern = r'\\\1'
+    exe_cmd_list = get_execute_command(game)
+    for i in range(len(exe_cmd_list)):
+        entry = exe_cmd_list[i]
+        if chars_to_quote.search(entry) is not None:
+            entry = f'"{chars_to_quote.sub(replace_pattern, entry)}"'
+            """backslashes in quotes nightmare: double backslash is one literal
+            but it must be escaped again because it is processed twice:
+            once as string before unquoting, then the unquoting itself
+            From Exec doc:
+            > [...] to unambiguously represent a literal backslash character in a quoted argument [...]
+            > requires [...] four successive backslash characters ("\\\\")."""
+            entry = entry.replace('\\\\', '\\\\\\\\')
+        elif ' ' in entry:  # only need to treat blanks by quoting if not quoted because of special characters anyway
+            entry = f'"{entry}"'
+
+        exe_cmd_list[i] = entry
+    return " ".join(exe_cmd_list)
+
+
 def create_applications_file(game):
     error_message = ""
     path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.get_stripped_name(to_path=True)))
-    exe_cmd = shlex.join(get_execute_command(game))
     # Create desktop file definition
     desktop_context = {
-        "game_bin_path": exe_cmd,
+        "game_bin_path": get_exec_line(game),
         "game_name": game.name,
         "game_install_dir": game.install_dir,
         "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
