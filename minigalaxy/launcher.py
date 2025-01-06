@@ -147,7 +147,10 @@ def get_windows_exe_cmd(game, files):
         # in case no goggame info file was found
         executables = glob.glob(game.install_dir + '/*.exe')
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
-        filename = os.path.splitext(os.path.basename(executables[0]))[0] + '.exe'
+        if not executables:
+            # Look one directory level deeper
+            executables = glob.glob(game.install_dir + '/*/*.exe')
+        filename = os.path.relpath(executables[0], game.install_dir)
         exe_cmd = [get_wine_path(game), filename]
 
     # Backwards compatibility with windows games installed before installer fixes.

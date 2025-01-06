@@ -2,6 +2,7 @@
 - Completely reworked windows wine installation. This should solve a lot of problems with failing game installs. Innoextract (if installed) is only used to detect and configure the installation language. (thanks to GB609)
 - Variables and arguments in game settings can now contain blanks when quoted shell-style (thanks to GB609)
 - Minigalaxy will now create working Desktop Shortcuts for wine games (thanks to GB609)
+- Make games Unreal Gold able to launch
 
 **1.3.1**
 - Fix Windows games with multiple parts not installing with wine
