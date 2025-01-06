@@ -149,7 +149,7 @@ def get_windows_exe_cmd(game, files):
         executables.remove(os.path.join(game.install_dir, "unins000.exe"))
         if not executables:
             # Look one directory level deeper
-            executables = glob.glob(game.install_dir + '/**/*.exe')
+            executables = glob.glob(game.install_dir + '/*/*.exe')
         filename = os.path.relpath(executables[0], game.install_dir)
         exe_cmd = [get_wine_path(game), filename]
 
