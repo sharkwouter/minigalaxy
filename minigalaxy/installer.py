@@ -398,10 +398,10 @@ def _exe_cmd(cmd, print_output=False):
         # 1. a return code and
         # 2. nothing more to consume
         # this makes sure everything was read
+        time.sleep(0.02)
         return_code = process.poll()
         line_read = len(std_line) + len(err_line)
         done = return_code is not None and line_read == 0
-        time.sleep(0.02)
 
     process.stdout.close()
     process.stderr.close()

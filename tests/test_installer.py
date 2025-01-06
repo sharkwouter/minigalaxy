@@ -115,13 +115,11 @@ class Test(TestCase):
         installer.extract_windows(game, installer_path, "en")
 
     @mock.patch('shutil.which')
-    @mock.patch('subprocess.Popen')
-    def test2_get_lang_with_innoextract(self, mock_subprocess, mock_which):
+    @mock.patch('minigalaxy.installer._exe_cmd')
+    def test2_get_lang_with_innoextract(self, mock_exe, mock_which):
         """[scenario: innoextract --list-languages returns locale ids]"""
-        lines = [" - fr-FR\n", " - jp-JP\n", " - en-US\n", " - ru-RU\n", ""]  # last is 'EOF'
-
-        mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readline.side_effect = lambda: lines.pop(0)
+        lines = [" - fr-FR\n", " - jp-JP\n", " - en-US\n", " - ru-RU"]
+        mock_exe.return_value = ''.join(lines), '', 0
         mock_which.return_value = '/bin/innoextract'
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         exp = "jp-JP"
@@ -129,12 +127,11 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
     @mock.patch('shutil.which')
-    @mock.patch('subprocess.Popen')
-    def test3_get_lang_with_innoextract(self, mock_subprocess, mock_which):
+    @mock.patch('minigalaxy.installer._exe_cmd')
+    def test3_get_lang_with_innoextract(self, mock_exe, mock_which):
         """[scenario: innoextract --list-languages returns language names]"""
-        lines = [" - english: English\n", " - german: Deutsch\n", " - french: Français\n", ""]  # last is 'EOF'
-        mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readline.side_effect = lambda: lines.pop(0)
+        lines = [" - english: English\n", " - german: Deutsch\n", " - french: Français"]
+        mock_exe.return_value = ''.join(lines), '', 0
         mock_which.return_value = '/bin/innoextract'
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         exp = "french"
@@ -142,11 +139,10 @@ class Test(TestCase):
         self.assertEqual(exp, obs)
 
     @mock.patch('shutil.which')
-    @mock.patch('subprocess.Popen')
-    def test4_get_lang_with_innoextract(self, mock_subprocess, mock_which):
+    @mock.patch('minigalaxy.installer._exe_cmd')
+    def test4_get_lang_with_innoextract(self, mock_exe, mock_which):
         """[scenario: innoextract --list-languages can't be matched - default en-US is used]"""
-        mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readline.return_value = ""
+        mock_exe.return_value = '', '', 0
         mock_which.return_value = '/bin/innoextract'
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         exp = "en-US"
