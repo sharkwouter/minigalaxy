@@ -42,8 +42,9 @@ class Login(Gtk.Dialog):
 
     # Create any pop-up windows during authentication
     def on_create(self, widget, action):
-        popup = Gtk.Dialog(title=_("Facebook Login"), parent=self, flags=0, buttons=())
+        popup = Gtk.Dialog(title=_("Login"), parent=self, flags=0, buttons=())
         webview = WebKit2.WebView.new_with_related_view(widget)
+        webview.connect('notify::title', self.on_title_change)
         webview.load_uri(action.get_request().get_uri())
         webview.__dict__['popup'] = popup
         webview.connect('close', self.on_close_popup)
@@ -52,6 +53,10 @@ class Login(Gtk.Dialog):
         popup.set_modal(True)
         popup.show_all()
         return webview
+
+    def on_title_change(self, widget, property):
+        if 'popup' in widget.__dict__:
+            widget.__dict__['popup'].set_title(widget.get_title())
 
     # When a pop up is closed (by Javascript), close the Gtk window too
     def on_close_popup(self, widget):

@@ -3,6 +3,7 @@
 - Variables and arguments in game settings can now contain blanks when quoted shell-style (thanks to GB609)
 - Minigalaxy will now create working Desktop Shortcuts for wine games (thanks to GB609)
 - Make games Unreal Gold able to launch
+- Minor UI change in the dialog for third-party logins (thanks to GB609)
 
 **1.3.1**
 - Fix Windows games with multiple parts not installing with wine
