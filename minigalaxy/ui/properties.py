@@ -2,6 +2,8 @@ import os
 import shutil
 import subprocess
 
+from minigalaxy.config import Config
+from minigalaxy.installer import create_applications_file
 from minigalaxy.paths import UI_DIR
 from minigalaxy.translation import _
 from minigalaxy.launcher import config_game, regedit_game, winetricks_game
@@ -30,11 +32,12 @@ class Properties(Gtk.Dialog):
     button_properties_ok = Gtk.Template.Child()
     label_wine_custom = Gtk.Template.Child()
 
-    def __init__(self, parent, game, api):
+    def __init__(self, parent, game, config: Config, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
                             modal=True)
         self.parent = parent
         self.game = game
+        self.config = config
         self.api = api
         self.gamesdb_info = self.api.get_gamesdb_info(self.game)
 
@@ -75,7 +78,8 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_ok_clicked")
     def ok_pressed(self, button):
-        if self.game.is_installed():
+        game_installed = self.game.is_installed()
+        if game_installed:
             self.game.set_info("check_for_updates", self.switch_properties_check_for_updates.get_active())
             self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
             if self.switch_properties_use_gamemode.get_active() and not shutil.which("gamemoderun"):
@@ -93,6 +97,10 @@ class Properties(Gtk.Dialog):
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
         self.game.set_info("custom_wine", str(self.button_properties_wine.get_filename()))
         self.parent.parent.filter_library()
+
+        if game_installed and self.config.create_applications_file:
+            create_applications_file(self.game, True)
+
         self.destroy()
 
     @Gtk.Template.Callback("on_button_properties_regedit_clicked")

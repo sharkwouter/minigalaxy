@@ -273,7 +273,7 @@ def get_exec_line(game):
     return " ".join(exe_cmd_list)
 
 
-def create_applications_file(game):
+def create_applications_file(game, override=False):
     error_message = ""
     path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.get_stripped_name(to_path=True)))
     # Create desktop file definition
@@ -293,13 +293,19 @@ def create_applications_file(game):
         Name={game_name}
         Icon={game_icon_path}
         Categories=Game""".format(**desktop_context)
-    if not os.path.isfile(path_to_shortcut):
-        try:
-            with open(path_to_shortcut, 'w+') as desktop_file:
-                desktop_file.writelines(textwrap.dedent(desktop_definition))
-        except Exception as e:
+
+    file_exists = os.path.isfile(path_to_shortcut)
+    try:
+        if file_exists and override:
             os.remove(path_to_shortcut)
-            error_message = e
+        elif file_exists:
+            return error_message
+
+        with open(path_to_shortcut, 'w+') as desktop_file:
+            desktop_file.writelines(textwrap.dedent(desktop_definition))
+    except Exception as e:
+        os.remove(path_to_shortcut)
+        error_message = e
     return error_message
 
 

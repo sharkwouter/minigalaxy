@@ -141,7 +141,7 @@ class GameTileList(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_properties_clicked")
     def show_properties(self, button):
-        properties_window = Properties(self, self.game, self.api)
+        properties_window = Properties(self, self.game, self.config, self.api)
         properties_window.run()
         properties_window.destroy()
 
