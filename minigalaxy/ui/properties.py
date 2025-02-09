@@ -99,7 +99,7 @@ class Properties(Gtk.Dialog):
         self.parent.parent.filter_library()
 
         if game_installed and self.config.create_applications_file:
-            create_applications_file(self.game, True)
+            create_applications_file(game=self.game, override=True)
 
         self.destroy()
 
