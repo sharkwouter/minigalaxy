@@ -1,23 +1,21 @@
-import shutil
-import locale
 import os
+import shutil
 import threading
 import time
 import urllib.parse
 
+from minigalaxy.api import NoDownloadLinkFound, Api
 from minigalaxy.config import Config
-from minigalaxy.entity.state import State
-from minigalaxy.game import Game
-from minigalaxy.logger import logger
-from minigalaxy.translation import _
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR, DOWNLOAD_DIR
+from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.download import Download, DownloadType
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.launcher import start_game
+from minigalaxy.entity.state import State
+from minigalaxy.game import Game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
-from minigalaxy.css import CSS_PROVIDER
-from minigalaxy.paths import ICON_WINE_PATH
-from minigalaxy.api import NoDownloadLinkFound, Api
+from minigalaxy.launcher import start_game
+from minigalaxy.logger import logger
+from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR, DOWNLOAD_DIR, ICON_WINE_PATH
+from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, GLib, Notify
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
@@ -41,26 +39,18 @@ class GameTileList(Gtk.Box):
     menu_button_properties = Gtk.Template.Child()
     game_label = Gtk.Template.Child()
 
-    def __init__(self, parent, game: Game, config: Config, api: Api, download_manager: DownloadManager):
+    def __init__(self, parent_library, game: Game, config: Config, api: Api, download_manager: DownloadManager):
         self.config = config
-        current_locale = self.config.locale
-        default_locale = locale.getdefaultlocale()[0]
-        if current_locale == '':
-            locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
-        else:
-            try:
-                locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
-            except NameError:
-                locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
+
         Gtk.Frame.__init__(self)
         Gtk.StyleContext.add_provider(self.button.get_style_context(),
                                       CSS_PROVIDER,
                                       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-        self.parent = parent
+        self.parent = parent_library
         self.game = game
         self.api = api
         self.download_manager = download_manager
-        self.offline = parent.offline
+        self.offline = parent_library.offline
         self.progress_bar = None
         self.thumbnail_set = False
         self.download_list = []
