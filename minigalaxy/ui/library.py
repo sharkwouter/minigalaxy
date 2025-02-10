@@ -1,21 +1,23 @@
+import json
+import locale
 import os
 import re
-import json
 import threading
-from typing import List
 
+from minigalaxy.api import Api
+from minigalaxy.config import Config
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.entity.state import State
+from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.paths import UI_DIR, CATEGORIES_FILE_PATH
-from minigalaxy.api import Api
-from minigalaxy.game import Game
+from minigalaxy.translation import _
 from minigalaxy.ui.categoryfilters import CategoryFilters
 from minigalaxy.ui.gametile import GameTile
 from minigalaxy.ui.gametilelist import GameTileList
 from minigalaxy.ui.gtk import Gtk, GLib
-from minigalaxy.config import Config
-from minigalaxy.translation import _
+
+from typing import List
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "library.ui"))
@@ -24,10 +26,22 @@ class Library(Gtk.Viewport):
 
     flowbox = Gtk.Template.Child()
 
-    def __init__(self, parent, config: Config, api: Api, download_manager: DownloadManager):
+    def __init__(self, parent_window, config: Config, api: Api, download_manager: DownloadManager):
         Gtk.Viewport.__init__(self)
-        self.parent = parent
+
+        self.parent = parent_window
         self.config = config
+
+        current_locale = self.config.locale
+        default_locale = locale.getdefaultlocale()[0]
+        if current_locale == '':
+            locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
+        else:
+            try:
+                locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
+            except NameError:
+                locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
+
         self.api = api
         self.download_manager = download_manager
         self.show_installed_only = self.config.installed_filter

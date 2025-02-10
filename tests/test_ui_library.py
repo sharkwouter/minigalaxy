@@ -79,6 +79,10 @@ API_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath a St
 
 
 class TestLibrary(TestCase):
+
+    mock_config = MagicMock()
+    mock_config.locale = "en"
+
     def test1_add_games_from_api(self):
         self_games = []
         for game in SELF_GAMES:
@@ -87,10 +91,9 @@ class TestLibrary(TestCase):
         for game in API_GAMES:
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
         err_msg = ""
-        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = len(API_GAMES)
@@ -105,10 +108,9 @@ class TestLibrary(TestCase):
         for game in API_GAMES:
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
         err_msg = ""
-        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = True
@@ -126,10 +128,9 @@ class TestLibrary(TestCase):
         api_gmae_with_id = Game(name="Game without ID", game_id=1234567890)
         api_games.append(api_gmae_with_id)
         err_msg = ""
-        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = True
@@ -149,10 +150,9 @@ class TestLibrary(TestCase):
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]), url="http://test_url{}".format(str(url_nr))))
             url_nr += 1
         err_msg = ""
-        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = "http://test_url1"
@@ -167,10 +167,9 @@ class TestLibrary(TestCase):
         for game in API_GAMES:
             api_games.append(Game(name=game, game_id=int(API_GAMES[game])))
         err_msg = ""
-        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = "Neverwinter Nights: Enhanced Edition"
@@ -181,10 +180,9 @@ class TestLibrary(TestCase):
         self_games = [Game(name="Torchlight 2", game_id=0, install_dir="/home/user/GoG Games/Torchlight II")]
         api_games = [Game(name="Torchlight II", game_id=1958228073)]
         err_msg = ""
-        config = MagicMock()
         api_mock = MagicMock()
         api_mock.get_library.return_value = api_games, err_msg
-        test_library = Library(MagicMock(), config, api_mock, MagicMock())
+        test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
         exp = 1
