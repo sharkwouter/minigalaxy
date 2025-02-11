@@ -29,7 +29,7 @@ class Library(Gtk.Viewport):
     def __init__(self, parent_window, config: Config, api: Api, download_manager: DownloadManager):
         Gtk.Viewport.__init__(self)
 
-        self.parent = parent_window
+        self.parent_window = parent_window
         self.config = config
 
         current_locale = self.config.locale
@@ -134,18 +134,26 @@ class Library(Gtk.Viewport):
             if tile.game in self.games:
                 games_with_tiles.append(tile.game)
 
+        new_tiles_added = False
         for game in self.games:
             if game not in games_with_tiles:
                 self.__add_gametile(game)
+                new_tiles_added = True
+
+        if new_tiles_added:
+            self._debounce(self.sort_library)
+            self._debounce(self.flowbox.show_all)
 
     def __add_gametile(self, game):
         view = self.config.view
         if view == "grid":
-            self.flowbox.add(GameTile(self, game, self.config, self.api, self.download_manager))
+            game_tile = GameTile(self, game, self.config, self.api, self.download_manager)
         elif view == "list":
-            self.flowbox.add(GameTileList(self, game, self.config, self.api, self.download_manager))
-        self._debounce(self.sort_library)
-        self._debounce(self.flowbox.show_all)
+            game_tile = GameTileList(self, game, self.config, self.api, self.download_manager)
+
+        # Start download if Minigalaxy was closed while downloading this game
+        game_tile.resume_download_if_expected()
+        self.flowbox.add(game_tile)
 
     def __get_installed_games(self) -> List[Game]:
         # Make sure the install directory exists
@@ -186,7 +194,7 @@ class Library(Gtk.Viewport):
         else:
             self.offline = True
             logger.info("Client is offline, showing installed games only")
-            GLib.idle_add(self.parent.show_error, _("Failed to retrieve library"), _(err_msg))
+            GLib.idle_add(self.parent_window.show_error, _("Failed to retrieve library"), _(err_msg))
         game_category_dict = {}
         for game in retrieved_games:
             if game not in self.games:
