@@ -43,7 +43,8 @@ class GameTile(Gtk.Box):
 
         Gtk.Frame.__init__(self)
 
-        self.parent = parent_library
+        self.parent_library = parent_library
+        self.parent_window = parent_library.parent_window
         self.game = game
         self.api = api
         self.download_manager = download_manager
@@ -67,9 +68,6 @@ class GameTile(Gtk.Box):
         self.reload_state()
         load_thumbnail_thread = threading.Thread(target=self.load_thumbnail)
         load_thumbnail_thread.start()
-
-        # Start download if Minigalaxy was closed while downloading this game
-        self.resume_download_if_expected()
 
         # Icon for Windows games
         if self.game.platform == "windows":
@@ -115,24 +113,24 @@ class GameTile(Gtk.Box):
             download_thread = threading.Thread(target=self.__download_game)
             download_thread.start()
         if err_msg:
-            self.parent.parent.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
+            self.parent_window.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
 
     @Gtk.Template.Callback("on_menu_button_information_clicked")
     def show_information(self, button):
-        information_window = Information(self, self.game, self.config, self.api, self.download_manager)
+        information_window = Information(self.parent_window, self.game, self.config, self.api, self.download_manager)
         information_window.run()
         information_window.destroy()
 
     @Gtk.Template.Callback("on_menu_button_properties_clicked")
     def show_properties(self, button):
-        properties_window = Properties(self, self.game, self.config, self.api)
+        properties_window = Properties(self.parent_library, self.game, self.config, self.api)
         properties_window.run()
         properties_window.destroy()
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def on_button_cancel(self, widget):
         question = _("Are you sure you want to cancel downloading {}?").format(self.game.name)
-        if self.parent.parent.show_question(question):
+        if self.parent_window.show_question(question):
             self.prevent_resume_on_startup()
             self.download_manager.cancel_download(self.download_list)
             try:
@@ -145,7 +143,7 @@ class GameTile(Gtk.Box):
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
         question = _("Are you sure you want to uninstall %s?" % self.game.name)
-        if self.parent.parent.show_question(question):
+        if self.parent_window.show_question(question):
             uninstall_thread = threading.Thread(target=self.__uninstall_game)
             uninstall_thread.start()
 
@@ -215,7 +213,7 @@ class GameTile(Gtk.Box):
                     if current_download_id != self.game.id:
                         new_current_download_ids.add(current_download_id)
                 self.config.current_downloads = list(new_current_download_ids)
-            GLib.idle_add(self.parent.parent.show_error, _("Download error"),
+            GLib.idle_add(self.parent_window.show_error, _("Download error"),
                           _("There was an error when trying to fetch the download link!\n{}".format(e)))
             download_info = False
             result = False
@@ -269,7 +267,7 @@ class GameTile(Gtk.Box):
                 download_url = self.api.get_real_download_link(file_info["downlink"])
             except ValueError as e:
                 logger.error("Error getting download URL from file_info downlink: %s", file_info["downlink"], exc_info=1)
-                GLib.idle_add(self.parent.parent.show_error, _("Download error"), _(str(e)))
+                GLib.idle_add(self.parent_window.show_error, _("Download error"), _(str(e)))
                 download_success = False
                 break
             info = self.api.get_download_file_info(file_info["downlink"])
@@ -303,7 +301,7 @@ class GameTile(Gtk.Box):
             ds_msg_text = "Not enough disk space to install game."
             download_success = False
         if ds_msg_title:
-            GLib.idle_add(self.parent.parent.show_error, _(ds_msg_title), _(ds_msg_text))
+            GLib.idle_add(self.parent_window.show_error, _(ds_msg_title), _(ds_msg_text))
         return download_success
 
     def __install_game(self, save_location):
@@ -343,7 +341,7 @@ class GameTile(Gtk.Box):
                                             .format(self.game.name), "dialog-information")
             popup.show()
         else:
-            GLib.idle_add(self.parent.parent.show_error, _("Failed to install {}").format(self.game.name), err_msg)
+            GLib.idle_add(self.parent_window.show_error, _("Failed to install {}").format(self.game.name), err_msg)
             GLib.idle_add(self.update_to_state, failed_state)
             install_success = False
         return install_success
@@ -413,7 +411,7 @@ class GameTile(Gtk.Box):
     def __check_for_dlc(self, game_info):
         dlcs = game_info["expanded_dlcs"]
         for dlc in dlcs:
-            if dlc["is_installable"] and dlc["id"] in self.parent.owned_products_ids:
+            if dlc["is_installable"] and dlc["id"] in self.parent_library.owned_products_ids:
                 d_id = dlc["id"]
                 d_installer = dlc["downloads"]["installers"]
                 d_icon = dlc["images"]["sidebarIcon"]
@@ -556,7 +554,7 @@ class GameTile(Gtk.Box):
         self.progress_bar.hide()
 
         self.game.set_install_dir(self.config.install_dir)
-        self.parent.filter_library()
+        self.parent_library.filter_library()
 
     def __state_installed(self):
         self.button.set_label(_("Play"))
@@ -585,7 +583,7 @@ class GameTile(Gtk.Box):
         self.button_cancel.hide()
 
         self.game.install_dir = ""
-        self.parent.filter_library()
+        self.parent_library.filter_library()
 
     def __state_updatable(self):
         self.update_icon.show()

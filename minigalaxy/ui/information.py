@@ -1,13 +1,13 @@
-import urllib
 import os
+import urllib
 import webbrowser
 
 from minigalaxy.api import Api
-from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR, COVER_DIR
-from minigalaxy.translation import _
 from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
+from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR, COVER_DIR
+from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
 
 
@@ -25,10 +25,10 @@ class Information(Gtk.Dialog):
     button_information_pcgamingwiki = Gtk.Template.Child()
     label_game_description = Gtk.Template.Child()
 
-    def __init__(self, parent, game, config: Config, api: Api, download_manager: DownloadManager):
-        Gtk.Dialog.__init__(self, title=_("Information about {}").format(game.name), parent=parent.parent.parent,
+    def __init__(self, parent_window, game, config: Config, api: Api, download_manager: DownloadManager):
+        Gtk.Dialog.__init__(self, title=_("Information about {}").format(game.name), parent=parent_window,
                             modal=True)
-        self.parent = parent
+        self.parent_window = parent_window
         self.game = game
         self.config = config
         self.api = api
@@ -51,7 +51,7 @@ class Information(Gtk.Dialog):
         try:
             webbrowser.open(self.api.get_info(self.game)['links']['support'], new=2)
         except webbrowser.Error:
-            self.parent.parent.show_error(
+            self.parent_window.show_error(
                 _("Couldn't open support page"),
                 _("Please check your internet connection")
             )
@@ -61,7 +61,7 @@ class Information(Gtk.Dialog):
         try:
             webbrowser.open(self.gogBaseUrl + self.game.url)
         except webbrowser.Error:
-            self.parent.parent.show_error(
+            self.parent_window.show_error(
                 _("Couldn't open store page"),
                 _("Please check your internet connection")
             )
@@ -71,7 +71,7 @@ class Information(Gtk.Dialog):
         try:
             webbrowser.open(self.api.get_info(self.game)['links']['forum'], new=2)
         except webbrowser.Error:
-            self.parent.parent.show_error(
+            self.parent_window.show_error(
                 _("Couldn't open forum page"),
                 _("Please check your internet connection")
             )
@@ -81,7 +81,7 @@ class Information(Gtk.Dialog):
         try:
             webbrowser.open("https://www.gogdb.org/product/{}".format(self.game.id))
         except webbrowser.Error:
-            self.parent.parent.show_error(
+            self.parent_window.show_error(
                 _("Couldn't open GOG Database page"),
                 _("Please check your internet connection")
             )
@@ -91,7 +91,7 @@ class Information(Gtk.Dialog):
         try:
             webbrowser.open("https://pcgamingwiki.com/api/gog.php?page={}".format(self.game.id))
         except webbrowser.Error:
-            self.parent.parent.show_error(
+            self.parent_window.show_error(
                 _("Couldn't open PCGamingWiki page"),
                 _("Please check your internet connection")
             )

@@ -32,10 +32,11 @@ class Properties(Gtk.Dialog):
     button_properties_ok = Gtk.Template.Child()
     label_wine_custom = Gtk.Template.Child()
 
-    def __init__(self, parent, game, config: Config, api):
-        Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent.parent.parent,
+    def __init__(self, parent_library, game, config: Config, api):
+        Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent_library.parent_window,
                             modal=True)
-        self.parent = parent
+        self.parent_library = parent_library
+        self.parent_window = parent_library.parent_window
         self.game = game
         self.config = config
         self.api = api
@@ -83,12 +84,12 @@ class Properties(Gtk.Dialog):
             self.game.set_info("check_for_updates", self.switch_properties_check_for_updates.get_active())
             self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
             if self.switch_properties_use_gamemode.get_active() and not shutil.which("gamemoderun"):
-                self.parent.parent.parent.show_error(_("GameMode wasn't found. Using GameMode cannot be enabled."))
+                self.parent_window.show_error(_("GameMode wasn't found. Using GameMode cannot be enabled."))
                 self.game.set_info("use_gamemode", False)
             else:
                 self.game.set_info("use_gamemode", self.switch_properties_use_gamemode.get_active())
             if self.switch_properties_use_mangohud.get_active() and not shutil.which("mangohud"):
-                self.parent.parent.parent.show_error(_("MangoHud wasn't found. Using MangoHud cannot be enabled."))
+                self.parent_window.show_error(_("MangoHud wasn't found. Using MangoHud cannot be enabled."))
                 self.game.set_info("use_mangohud", False)
             else:
                 self.game.set_info("use_mangohud", self.switch_properties_use_mangohud.get_active())
@@ -96,7 +97,7 @@ class Properties(Gtk.Dialog):
             self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
         self.game.set_info("custom_wine", str(self.button_properties_wine.get_filename()))
-        self.parent.parent.filter_library()
+        self.parent_library.filter_library()
 
         if game_installed and self.config.create_applications_file:
             create_applications_file(game=self.game, override=True)
@@ -118,7 +119,7 @@ class Properties(Gtk.Dialog):
     @Gtk.Template.Callback("on_button_properties_winetricks_clicked")
     def on_menu_button_winetricks(self, widget):
         if not shutil.which("winetricks"):
-            self.parent.parent.parent.show_error(_("Winetricks wasn't found and cannot be used."))
+            self.parent_window.show_error(_("Winetricks wasn't found and cannot be used."))
         else:
             winetricks_game(self.game)
 
