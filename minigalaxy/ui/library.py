@@ -51,6 +51,7 @@ class Library(Gtk.Viewport):
         self.owned_products_ids = []
         self._queue = []
         self.category_filters = []
+        self.configure_library_sort()
 
     def _debounce(self, thunk):
         if thunk not in self._queue:
@@ -119,7 +120,7 @@ class Library(Gtk.Viewport):
 
         return True
 
-    def sort_library(self):
+    def configure_library_sort(self):
         self.flowbox.set_sort_func(self.__sort_library_func)
 
     def __sort_library_func(self, child1, child2):
@@ -141,15 +142,14 @@ class Library(Gtk.Viewport):
                 new_tiles_added = True
 
         if new_tiles_added:
-            self._debounce(self.sort_library)
             self._debounce(self.flowbox.show_all)
 
     def __add_gametile(self, game):
         view = self.config.view
         if view == "grid":
-            game_tile = GameTile(self, game, self.config, self.api, self.download_manager)
+            game_tile = GameTile(self, game)
         elif view == "list":
-            game_tile = GameTileList(self, game, self.config, self.api, self.download_manager)
+            game_tile = GameTileList(self, game)
 
         # Start download if Minigalaxy was closed while downloading this game
         game_tile.resume_download_if_expected()

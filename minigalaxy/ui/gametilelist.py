@@ -4,11 +4,9 @@ import threading
 import time
 import urllib.parse
 
-from minigalaxy.api import NoDownloadLinkFound, Api
-from minigalaxy.config import Config
+from minigalaxy.api import NoDownloadLinkFound
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.download import Download, DownloadType
-from minigalaxy.download_manager import DownloadManager
 from minigalaxy.entity.state import State
 from minigalaxy.game import Game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
@@ -17,12 +15,11 @@ from minigalaxy.logger import logger
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR, DOWNLOAD_DIR, ICON_WINE_PATH
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, GLib, Notify
-from minigalaxy.ui.information import Information
-from minigalaxy.ui.properties import Properties
+from minigalaxy.ui.library_entry import LibraryEntry
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "gametilelist.ui"))
-class GameTileList(Gtk.Box):
+class GameTileList(LibraryEntry, Gtk.Box):
     __gtype_name__ = "GameTileList"
 
     image = Gtk.Template.Child()
@@ -39,18 +36,14 @@ class GameTileList(Gtk.Box):
     menu_button_properties = Gtk.Template.Child()
     game_label = Gtk.Template.Child()
 
-    def __init__(self, parent_library, game: Game, config: Config, api: Api, download_manager: DownloadManager):
-        self.config = config
+    def __init__(self, parent_library, game: Game):
+        super().__init__(parent_library, game)
 
         Gtk.Frame.__init__(self)
         Gtk.StyleContext.add_provider(self.button.get_style_context(),
                                       CSS_PROVIDER,
                                       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
-        self.parent_library = parent_library
-        self.parent_window = parent_library.parent_window
-        self.game = game
-        self.api = api
-        self.download_manager = download_manager
+
         self.offline = parent_library.offline
         self.progress_bar = None
         self.thumbnail_set = False
@@ -123,15 +116,11 @@ class GameTileList(Gtk.Box):
 
     @Gtk.Template.Callback("on_menu_button_information_clicked")
     def show_information(self, button):
-        information_window = Information(self.parent_window, self.game, self.config, self.api, self.download_manager)
-        information_window.run()
-        information_window.destroy()
+        super().show_information(button)
 
     @Gtk.Template.Callback("on_menu_button_properties_clicked")
     def show_properties(self, button):
-        properties_window = Properties(self.parent_library, self.game, self.config, self.api)
-        properties_window.run()
-        properties_window.destroy()
+        super().show_properties(button)
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def on_button_cancel(self, widget):
