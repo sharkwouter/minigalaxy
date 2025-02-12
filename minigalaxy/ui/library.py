@@ -135,14 +135,9 @@ class Library(Gtk.Viewport):
             if tile.game in self.games:
                 games_with_tiles.append(tile.game)
 
-        new_tiles_added = False
         for game in self.games:
             if game not in games_with_tiles:
                 self.__add_gametile(game)
-                new_tiles_added = True
-
-        if new_tiles_added:
-            self._debounce(self.flowbox.show_all)
 
     def __add_gametile(self, game):
         view = self.config.view
@@ -154,6 +149,11 @@ class Library(Gtk.Viewport):
         # Start download if Minigalaxy was closed while downloading this game
         game_tile.resume_download_if_expected()
         self.flowbox.add(game_tile)
+        '''
+        using flowbox.show_all at this point would overrule any state-based
+        hide() statements in game_tile (progress_bar in GameTileList)
+        '''
+        game_tile.show()
 
     def __get_installed_games(self) -> List[Game]:
         # Make sure the install directory exists
