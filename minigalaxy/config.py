@@ -168,3 +168,17 @@ class Config:
     def current_downloads(self, new_value: List[int]) -> None:
         self.__config["current_downloads"] = new_value
         self.__write()
+
+    def add_ongoing_download(self, download_id):
+        '''Adds the given id to the list of active downloads if not contained already. Does nothing otherwise.'''
+        current = self.current_downloads
+        if download_id not in current:
+            current.append(download_id)
+            self.current_downloads = current
+
+    def remove_ongoing_download(self, download_id):
+        '''Removes the given id from the list of active downloads, if contained. Does nothing otherwise.'''
+        current = self.current_downloads
+        if download_id in current:
+            current.remove(download_id)
+            self.current_downloads = current

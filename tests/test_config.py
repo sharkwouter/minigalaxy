@@ -185,3 +185,37 @@ class TestConfig(TestCase):
         self.assertEqual("lang", config.lang)
         mock_makedirs.assert_called_once_with("/path", mode=0o700, exist_ok=True)
         mock_rename.assert_called_once_with("/path/config.json.tmp", "/path/config.json")
+
+    @patch('os.path.isfile')
+    def test_add_ongoing_download(self, mock_isfile: MagicMock):
+        mock_isfile.return_value = True
+        config_data = "{}"
+        with patch("builtins.open", mock_open(read_data=config_data)):
+            config = Config("/pseudo/test/name")
+            config._Config__write = MagicMock()
+
+        self.assertEqual(0, len(config.current_downloads))
+
+        config.add_ongoing_download("TESTID")
+        self.assertEqual(["TESTID"], config.current_downloads)
+
+        # not added a second time
+        config.add_ongoing_download("TESTID")
+        self.assertEqual(1, len(config.current_downloads))
+
+    @patch('os.path.isfile')
+    def test_remove_ongoing_download(self, mock_isfile: MagicMock):
+        mock_isfile.return_value = True
+        config_data = "{}"
+        with patch("builtins.open", mock_open(read_data=config_data)):
+            config = Config("/pseudo/test/name")
+            config._Config__write = MagicMock()
+
+        self.assertEqual(0, len(config.current_downloads))
+
+        # removing something that is not contained should just be silently ignored
+        config.remove_ongoing_download("UNKNOWN-ID")
+
+        config.add_ongoing_download("TESTID")
+        config.remove_ongoing_download("TESTID")
+        self.assertEqual(0, len(config.current_downloads))
