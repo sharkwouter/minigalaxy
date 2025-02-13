@@ -4,7 +4,6 @@ import threading
 import time
 import urllib.parse
 
-from minigalaxy.api import NoDownloadLinkFound
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.download import Download, DownloadType
 from minigalaxy.entity.state import State
@@ -12,7 +11,7 @@ from minigalaxy.game import Game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.launcher import start_game
 from minigalaxy.logger import logger
-from minigalaxy.paths import THUMBNAIL_DIR, ICON_DIR, UI_DIR, ICON_WINE_PATH
+from minigalaxy.paths import THUMBNAIL_DIR, UI_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, GLib, Notify
 from minigalaxy.ui.library_entry import LibraryEntry
@@ -49,16 +48,7 @@ class GameTileList(LibraryEntry, Gtk.Box):
                                       CSS_PROVIDER,
                                       Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-        self.image.set_tooltip_text(self.game.name)
-        self.reload_state()
-        load_thumbnail_thread = threading.Thread(target=self.load_thumbnail)
-        load_thumbnail_thread.start()
-
-        # Icon for Windows games
-        if self.game.platform == "windows":
-            self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
-            self.wine_icon.set_from_file(ICON_WINE_PATH)
-            self.wine_icon.show()
+        super().init_ui_elements()
 
     def __create_progress_bar(self) -> None:
         self.progress_bar = Gtk.ProgressBar()
@@ -73,22 +63,9 @@ class GameTileList(LibraryEntry, Gtk.Box):
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):
         download_ids = self.config.current_downloads
-        if download_ids:
-            for download_id in download_ids:
-                if download_id and download_id == self.game.id and self.current_state == State.DOWNLOADABLE:
-                    download_thread = threading.Thread(target=self.__download_game)
-                    download_thread.start()
-
-    # Do not restart the download if Minigalaxy is restarted
-    def prevent_resume_on_startup(self):
-        download_ids = self.config.current_downloads
-        if download_ids:
-            new_download_ids = set()
-            for download_id in download_ids:
-                if not (download_id and download_id == self.game.id):
-                    new_download_ids.add(download_id)
-
-            self.config.current_downloads = list(new_download_ids)
+        if self.game.id in download_ids and self.current_state == State.DOWNLOADABLE:
+            download_thread = threading.Thread(target=self.__download_game)
+            download_thread.start()
 
     def __str__(self):
         return self.game.name
@@ -180,35 +157,6 @@ class GameTileList(LibraryEntry, Gtk.Box):
             GLib.idle_add(self.image.set_from_file, thumbnail_path)
             set_result = True
         return set_result
-
-    def get_keep_executable_path(self):
-        keep_path = ""
-        if os.path.isdir(self.keep_path):
-            for dir_content in os.listdir(self.keep_path):
-                kept_file = os.path.join(self.keep_path, dir_content)
-                if os.access(kept_file, os.X_OK) or os.path.splitext(kept_file)[-1] in [".exe", ".sh"]:
-                    keep_path = kept_file
-                    break
-        return keep_path
-
-    def get_download_info(self, platform="linux"):
-        try:
-            download_info = self.api.get_download_info(self.game, platform)
-            result = True
-        except NoDownloadLinkFound as e:
-            logger.error("No download link found", exc_info=1)
-            current_download_ids = self.config.current_downloads
-            if current_download_ids:
-                new_current_download_ids = set()
-                for current_download_id in current_download_ids:
-                    if current_download_id != self.game.id:
-                        new_current_download_ids.add(current_download_id)
-                self.config.current_downloads = list(new_current_download_ids)
-            GLib.idle_add(self.parent_window.show_error, _("Download error"),
-                          _("There was an error when trying to fetch the download link!\n{}".format(e)))
-            download_info = False
-            result = False
-        return result, download_info
 
     def __download_game(self) -> None:
         finish_func = self.__install_game
@@ -447,25 +395,6 @@ class GameTileList(LibraryEntry, Gtk.Box):
     def __dlc_button_clicked(self, button, installer):
         button.set_sensitive(False)
         threading.Thread(target=self.__download_dlc, args=(installer,)).start()
-
-    def get_async_image_dlc_icon(self, dlc_id, image, icon, title):
-        dlc_icon_path = os.path.join(ICON_DIR, "{}.jpg".format(dlc_id))
-        if icon:
-            if os.path.isfile(dlc_icon_path):
-                GLib.idle_add(image.set_from_file, dlc_icon_path)
-            else:
-                url = "http:{}".format(icon)
-                dlc_icon = os.path.join(ICON_DIR, "{}.jpg".format(dlc_id))
-                download = Download(url, dlc_icon)
-                self.download_manager.download_now(download)
-                GLib.idle_add(image.set_from_file, dlc_icon_path)
-
-    def set_progress(self, percentage: int):
-        if self.current_state in [State.QUEUED, State.INSTALLED]:
-            GLib.idle_add(self.update_to_state, State.DOWNLOADING)
-        if self.progress_bar:
-            GLib.idle_add(self.progress_bar.set_fraction, percentage / 100)
-            GLib.idle_add(self.progress_bar.set_tooltip_text, "{}%".format(percentage))
 
     def __uninstall_game(self):
         GLib.idle_add(self.update_to_state, State.UNINSTALLING)
