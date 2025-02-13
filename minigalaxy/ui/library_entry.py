@@ -1,4 +1,8 @@
+import os
+
+from minigalaxy.entity.state import State
 from minigalaxy.game import Game
+from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 
@@ -14,6 +18,21 @@ class LibraryEntry:
         self.config = parent_library.config
         self.download_manager = parent_library.download_manager
         self.game = game
+
+        self.offline = parent_library.offline
+        self.thumbnail_set = False
+        self.download_list = []
+        self.dlc_dict = {}
+        self.current_state = State.DOWNLOADABLE
+
+        # Set folder for download installer
+        self.download_dir = os.path.join(DOWNLOAD_DIR, self.game.get_install_directory_name())
+
+        # Set folder if user wants to keep installer (disabled by default)
+        self.keep_dir = os.path.join(self.config.install_dir, "installer")
+        self.keep_path = os.path.join(self.keep_dir, self.game.get_install_directory_name())
+        if not os.path.exists(CACHE_DIR):
+            os.makedirs(CACHE_DIR, mode=0o755)
 
     def show_information(self, button):
         information_window = Information(self.parent_window, self.game, self.config, self.api, self.download_manager)

@@ -11,7 +11,7 @@ from minigalaxy.game import Game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.launcher import start_game
 from minigalaxy.logger import logger
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, ICON_DIR, UI_DIR, DOWNLOAD_DIR, ICON_WINE_PATH
+from minigalaxy.paths import THUMBNAIL_DIR, ICON_DIR, UI_DIR, ICON_WINE_PATH
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, GLib, Notify
 from minigalaxy.ui.library_entry import LibraryEntry
@@ -39,23 +39,10 @@ class GameTile(LibraryEntry, Gtk.Box):
         super().__init__(parent_library, game)
         Gtk.Frame.__init__(self)
 
-        self.offline = parent_library.offline
-        self.thumbnail_set = False
-        self.download_list = []
-        self.dlc_dict = {}
-        self.current_state = State.DOWNLOADABLE
+        self.init_ui_elements()
 
+    def init_ui_elements(self):
         self.image.set_tooltip_text(self.game.name)
-
-        # Set folder for download installer
-        self.download_dir = os.path.join(DOWNLOAD_DIR, self.game.get_install_directory_name())
-
-        # Set folder if user wants to keep installer (disabled by default)
-        self.keep_dir = os.path.join(self.config.install_dir, "installer")
-        self.keep_path = os.path.join(self.keep_dir, self.game.get_install_directory_name())
-        if not os.path.exists(CACHE_DIR):
-            os.makedirs(CACHE_DIR, mode=0o755)
-
         self.reload_state()
         load_thumbnail_thread = threading.Thread(target=self.load_thumbnail)
         load_thumbnail_thread.start()
@@ -298,6 +285,9 @@ class GameTile(LibraryEntry, Gtk.Box):
         self.game.set_install_dir(self.config.install_dir)
         install_success = self.__install(save_location)
         if install_success:
+            popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
+                                            .format(self.game.name), "dialog-information")
+            popup.show()
             self.__check_for_dlc(self.api.get_info(self.game))
 
     def __install(self, save_location, update=False, dlc_title=""):
@@ -324,9 +314,6 @@ class GameTile(LibraryEntry, Gtk.Box):
                 self.game.set_dlc_info("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title)
             else:
                 self.game.set_info("version", self.api.get_version(self.game))
-            popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
-                                            .format(self.game.name), "dialog-information")
-            popup.show()
         else:
             GLib.idle_add(self.parent_window.show_error, _("Failed to install {}").format(self.game.name), err_msg)
             GLib.idle_add(self.update_to_state, failed_state)
