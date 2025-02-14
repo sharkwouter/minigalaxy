@@ -233,7 +233,7 @@ class GameTile(LibraryEntry, Gtk.Box):
             popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
                                             .format(self.game.name), "dialog-information")
             popup.show()
-            self.__check_for_dlc(self.api.get_info(self.game))
+            self._check_for_dlc(self.api.get_info(self.game))
 
     def __install(self, save_location, update=False, dlc_title=""):
         if update:
@@ -280,20 +280,6 @@ class GameTile(LibraryEntry, Gtk.Box):
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
-    def __check_for_update_dlc(self):
-        if self.game.is_installed() and self.game.id and not self.offline:
-            game_info = self.api.get_info(self.game)
-            if self.game.get_info("check_for_updates") == "":
-                self.game.set_info("check_for_updates", True)
-            if self.game.get_info("check_for_updates"):
-                game_version = self.api.get_version(self.game, gameinfo=game_info)
-                update_available = self.game.is_update_available(game_version)
-                if update_available:
-                    GLib.idle_add(self.update_to_state, State.UPDATABLE)
-            self.__check_for_dlc(game_info)
-        if self.offline:
-            GLib.idle_add(self.menu_button_dlc.hide)
-
     def __update(self, save_location):
         install_success = self.__install(save_location, update=True)
         if install_success:
@@ -325,21 +311,7 @@ class GameTile(LibraryEntry, Gtk.Box):
         install_success = self.__install(save_location, dlc_title=dlc_title)
         if not install_success:
             GLib.idle_add(self.update_to_state, State.INSTALLED)
-        self.__check_for_update_dlc()
-
-    def __check_for_dlc(self, game_info):
-        dlcs = game_info["expanded_dlcs"]
-        for dlc in dlcs:
-            if dlc["is_installable"] and dlc["id"] in self.parent_library.owned_products_ids:
-                d_id = dlc["id"]
-                d_installer = dlc["downloads"]["installers"]
-                d_icon = dlc["images"]["sidebarIcon"]
-                d_name = dlc["title"]
-                GLib.idle_add(self.update_gtk_box_for_dlc, d_id, d_icon, d_name, d_installer)
-                if dlc not in self.game.dlcs:
-                    self.game.dlcs.append(dlc)
-        if self.game.dlcs:
-            GLib.idle_add(self.menu_button_dlc.show)
+        self._check_for_update_dlc()
 
     def update_gtk_box_for_dlc(self, dlc_id, icon, title, installer):
         if title not in self.dlc_dict:
@@ -382,136 +354,10 @@ class GameTile(LibraryEntry, Gtk.Box):
         GLib.idle_add(self.update_to_state, State.DOWNLOADABLE)
         GLib.idle_add(self.reload_state)
 
-    def reload_state(self):
-        self.game.set_install_dir(self.config.install_dir)
-        dont_act_in_states = [State.QUEUED, State.DOWNLOADING, State.INSTALLING, State.UNINSTALLING,
-                              State.UPDATING, State.DOWNLOADING]
-        if self.current_state in dont_act_in_states:
-            return
-        if self.game.is_installed():
-            self.update_to_state(State.INSTALLED)
-            check_update_thread = threading.Thread(target=self.__check_for_update_dlc)
-            check_update_thread.start()
-        elif self.get_keep_executable_path():
-            self.update_to_state(State.INSTALLABLE)
-        else:
-            self.update_to_state(State.DOWNLOADABLE)
-
-    def __state_downloadable(self):
-        self.button.set_label(_("Download"))
-        self.button.set_tooltip_text(_("Download and install the game"))
-        self.button.set_sensitive(True)
-        self.image.set_sensitive(False)
-
-        # The user must have the possibility to access
-        # to the store button even if the game is not installed
-        self.menu_button.show()
-        self.menu_button.set_tooltip_text(_("Show game options menu"))
-        self.menu_button_update.hide()
-        self.menu_button_dlc.hide()
-        self.menu_button_uninstall.hide()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
-
-        self.game.install_dir = ""
-
-    def __state_installable(self):
-        self.button.set_label(_("Install"))
-        self.button.set_tooltip_text(_("Install the game"))
-        self.button.set_sensitive(True)
-        self.image.set_sensitive(False)
-        self.menu_button.hide()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
-
-        self.game.install_dir = ""
-
-    def __state_queued(self):
-        self.button.set_label(_("In queue…"))
-        self.button.set_sensitive(False)
-        self.image.set_sensitive(False)
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.show()
-        self.progress_bar.show()
-
-    def __state_downloading(self):
-        self.button.set_label(_("Downloading…"))
-        self.button.set_sensitive(False)
-        self.image.set_sensitive(False)
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.show()
-        self.progress_bar.show()
-
-    def __state_installing(self):
-        self.button.set_label(_("Installing…"))
-        self.button.set_sensitive(False)
-        self.image.set_sensitive(True)
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
-
-        self.game.set_install_dir(self.config.install_dir)
-        self.parent_library.filter_library()
-
-    def __state_installed(self):
-        self.button.set_label(_("Play"))
-        self.button.set_tooltip_text(_("Launch the game"))
-        self.button.get_style_context().add_class("suggested-action")
+    def state_installed(self):
         self.menu_button.get_style_context().add_class("suggested-action")
-        self.button.set_sensitive(True)
-        self.image.set_sensitive(True)
-        self.menu_button.set_tooltip_text(_("Show game options menu"))
-        self.menu_button.show()
-        self.menu_button_uninstall.show()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
-        self.menu_button_update.hide()
-        self.update_icon.hide()
+        super().state_installed()
 
-        self.game.set_install_dir(self.config.install_dir)
-
-    def __state_uninstalling(self):
-        self.button.set_label(_("Uninstalling…"))
-        self.button.get_style_context().remove_class("suggested-action")
+    def state_uninstalling(self):
         self.menu_button.get_style_context().remove_class("suggested-action")
-        self.button.set_sensitive(False)
-        self.image.set_sensitive(False)
-        self.menu_button.hide()
-        self.button_cancel.hide()
-
-        self.game.install_dir = ""
-        self.parent_library.filter_library()
-
-    def __state_updatable(self):
-        self.update_icon.show()
-        self.update_icon.set_from_icon_name("emblem-synchronizing", Gtk.IconSize.LARGE_TOOLBAR)
-        self.button.set_label(_("Play"))
-        self.menu_button.show()
-        tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")
-        self.image.set_tooltip_text(tooltip_text)
-        self.menu_button_update.show()
-        if self.game.platform == "windows":
-            self.wine_icon.set_margin_left(22)
-
-    def __state_updating(self):
-        self.button.set_label(_("Updating…"))
-
-    STATE_UPDATE_HANDLERS = {
-        State.DOWNLOADABLE: __state_downloadable,
-        State.INSTALLABLE: __state_installable,
-        State.QUEUED: __state_queued,
-        State.DOWNLOADING: __state_downloading,
-        State.INSTALLING: __state_installing,
-        State.INSTALLED: __state_installed,
-        State.UNINSTALLING: __state_uninstalling,
-        State.UPDATABLE: __state_updatable,
-        State.UPDATING: __state_updating,
-    }
-
-    def update_to_state(self, state):
-        self.current_state = state
-        if state in self.STATE_UPDATE_HANDLERS:
-            self.STATE_UPDATE_HANDLERS[state](self)
+        super().state_uninstalling()
