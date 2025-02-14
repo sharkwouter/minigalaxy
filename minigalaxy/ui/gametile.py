@@ -280,20 +280,6 @@ class GameTile(LibraryEntry, Gtk.Box):
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
-    def __check_for_update_dlc(self):
-        if self.game.is_installed() and self.game.id and not self.offline:
-            game_info = self.api.get_info(self.game)
-            if self.game.get_info("check_for_updates") == "":
-                self.game.set_info("check_for_updates", True)
-            if self.game.get_info("check_for_updates"):
-                game_version = self.api.get_version(self.game, gameinfo=game_info)
-                update_available = self.game.is_update_available(game_version)
-                if update_available:
-                    GLib.idle_add(self.update_to_state, State.UPDATABLE)
-            self.__check_for_dlc(game_info)
-        if self.offline:
-            GLib.idle_add(self.menu_button_dlc.hide)
-
     def __update(self, save_location):
         install_success = self.__install(save_location, update=True)
         if install_success:
@@ -326,20 +312,6 @@ class GameTile(LibraryEntry, Gtk.Box):
         if not install_success:
             GLib.idle_add(self.update_to_state, State.INSTALLED)
         self.__check_for_update_dlc()
-
-    def __check_for_dlc(self, game_info):
-        dlcs = game_info["expanded_dlcs"]
-        for dlc in dlcs:
-            if dlc["is_installable"] and dlc["id"] in self.parent_library.owned_products_ids:
-                d_id = dlc["id"]
-                d_installer = dlc["downloads"]["installers"]
-                d_icon = dlc["images"]["sidebarIcon"]
-                d_name = dlc["title"]
-                GLib.idle_add(self.update_gtk_box_for_dlc, d_id, d_icon, d_name, d_installer)
-                if dlc not in self.game.dlcs:
-                    self.game.dlcs.append(dlc)
-        if self.game.dlcs:
-            GLib.idle_add(self.menu_button_dlc.show)
 
     def update_gtk_box_for_dlc(self, dlc_id, icon, title, installer):
         if title not in self.dlc_dict:
