@@ -233,7 +233,7 @@ class GameTile(LibraryEntry, Gtk.Box):
             popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
                                             .format(self.game.name), "dialog-information")
             popup.show()
-            self.__check_for_dlc(self.api.get_info(self.game))
+            self._check_for_dlc(self.api.get_info(self.game))
 
     def __install(self, save_location, update=False, dlc_title=""):
         if update:
@@ -311,7 +311,7 @@ class GameTile(LibraryEntry, Gtk.Box):
         install_success = self.__install(save_location, dlc_title=dlc_title)
         if not install_success:
             GLib.idle_add(self.update_to_state, State.INSTALLED)
-        self.__check_for_update_dlc()
+        self._check_for_update_dlc()
 
     def update_gtk_box_for_dlc(self, dlc_id, icon, title, installer):
         if title not in self.dlc_dict:

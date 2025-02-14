@@ -101,7 +101,7 @@ class LibraryEntry:
             result = False
         return result, download_info
 
-    def __check_for_update_dlc(self):
+    def _check_for_update_dlc(self):
         if self.game.is_installed() and self.game.id and not self.offline:
             game_info = self.api.get_info(self.game)
             if self.game.get_info("check_for_updates") == "":
@@ -111,11 +111,11 @@ class LibraryEntry:
                 update_available = self.game.is_update_available(game_version)
                 if update_available:
                     GLib.idle_add(self.update_to_state, State.UPDATABLE)
-            self.__check_for_dlc(game_info)
+            self._check_for_dlc(game_info)
         if self.offline:
             GLib.idle_add(self.menu_button_dlc.hide)
 
-    def __check_for_dlc(self, game_info):
+    def _check_for_dlc(self, game_info):
         dlcs = game_info["expanded_dlcs"]
         for dlc in dlcs:
             if dlc["is_installable"] and dlc["id"] in self.parent_library.owned_products_ids:
@@ -156,7 +156,7 @@ class LibraryEntry:
             return
         if self.game.is_installed():
             self.update_to_state(State.INSTALLED)
-            check_update_thread = threading.Thread(target=self.__check_for_update_dlc)
+            check_update_thread = threading.Thread(target=self._check_for_update_dlc)
             check_update_thread.start()
         elif self.get_keep_executable_path():
             self.update_to_state(State.INSTALLABLE)
