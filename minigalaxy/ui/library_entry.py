@@ -90,7 +90,8 @@ class LibraryEntry:
         properties_window.run()
         properties_window.destroy()
 
-    def on_button_primary(self, widget) -> None:
+    def run_primary_action(self, widget) -> None:
+        '''Depending on current_state, this will (download and) install OR start the game'''
         dont_act_in_states = [State.QUEUED, State.DOWNLOADING, State.INSTALLING, State.UNINSTALLING]
         err_msg = ""
         if self.current_state in dont_act_in_states:
@@ -106,7 +107,7 @@ class LibraryEntry:
         if err_msg:
             self.parent_window.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
 
-    def on_button_cancel(self, widget):
+    def confirm_and_cancel_download(self, widget):
         question = _("Are you sure you want to cancel downloading {}?").format(self.game.name)
         if self.parent_window.show_question(question):
             self.prevent_resume_on_startup()
@@ -118,13 +119,13 @@ class LibraryEntry:
             except FileNotFoundError:
                 pass
 
-    def on_button_uninstall(self, widget):
+    def confirm_and_uninstall(self, widget):
         question = _("Are you sure you want to uninstall %s?" % self.game.name)
         if self.parent_window.show_question(question):
             uninstall_thread = threading.Thread(target=self.__uninstall_game)
             uninstall_thread.start()
 
-    def on_button_update(self, widget):
+    def run_update(self, widget):
         download_thread = threading.Thread(target=self.__download_update)
         download_thread.start()
 

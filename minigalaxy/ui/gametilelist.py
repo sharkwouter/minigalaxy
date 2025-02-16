@@ -55,7 +55,7 @@ class GameTileList(LibraryEntry, Gtk.Box):
 
     @Gtk.Template.Callback("on_button_clicked")
     def on_button_click(self, widget) -> None:
-        super().on_button_primary(widget)
+        super().run_primary_action(widget)
 
     @Gtk.Template.Callback("on_menu_button_information_clicked")
     def show_information(self, button):
@@ -67,12 +67,12 @@ class GameTileList(LibraryEntry, Gtk.Box):
 
     @Gtk.Template.Callback("on_button_cancel_clicked")
     def on_button_cancel(self, widget):
-        super().on_button_cancel(widget)
+        super().confirm_and_cancel_download(widget)
 
     @Gtk.Template.Callback("on_menu_button_uninstall_clicked")
     def on_menu_button_uninstall(self, widget):
-        super().on_button_uninstall(widget)
+        super().confirm_and_uninstall(widget)
 
     @Gtk.Template.Callback("on_menu_button_update_clicked")
     def on_menu_button_update(self, widget):
-        super().on_button_update(widget)
+        super().run_update(widget)
