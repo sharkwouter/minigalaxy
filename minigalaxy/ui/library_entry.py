@@ -484,7 +484,11 @@ class LibraryEntry:
         self.button.set_tooltip_text(_("Install the game"))
         self.button.set_sensitive(True)
         self.image.set_sensitive(False)
-        self.menu_button.hide()
+        # The user must have the possibility to access
+        # to the store button even if the game is not installed
+        self.menu_button.show()
+        self.menu_button_uninstall.hide()
+        self.menu_button_update.hide()
         self.button_cancel.hide()
         self.progress_bar.hide()
 
