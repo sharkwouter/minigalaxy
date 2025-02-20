@@ -390,9 +390,6 @@ class LibraryEntry:
         dlc_box = self.dlc_dict[title]
         dlc_box.refresh_state()
 
-        if len(self.dlc_dict):
-            self.dlc_horizontal_box.show_all()
-
     def set_progress(self, percentage: int):
         if self.current_state in [State.QUEUED, State.INSTALLED]:
             GLib.idle_add(self.update_to_state, State.DOWNLOADING)
