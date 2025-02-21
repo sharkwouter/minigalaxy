@@ -329,6 +329,9 @@ class LibraryEntry:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
     def __download_icon(self, force=False, game_info=None):
+        if not self.config.create_applications_file:
+            return
+
         if self.offline or not self.game.is_installed():
             return
 
