@@ -14,8 +14,13 @@ from minigalaxy.ui.gtk import GLib, Gtk
 class DownloadManagerList(Gtk.Viewport):
     __gtype_name__ = "DownloadList"
 
+    label_active = Gtk.Template.Child()
     flowbox_active = Gtk.Template.Child()
+
+    label_queued = Gtk.Template.Child()
     flowbox_queued = Gtk.Template.Child()
+
+    label_done = Gtk.Template.Child()
     flowbox_done = Gtk.Template.Child()
 
     listener_download_types = [DownloadType.GAME, DownloadType.GAME_UPDATE, DownloadType.GAME_DLC]
@@ -37,8 +42,14 @@ class DownloadManagerList(Gtk.Viewport):
          #   DownloadState.PAUSED : self.download_paused
         }
 
+        self.flowbow_labels = {
+            self.flowbox_active: self.label_active,
+            self.flowbox_queued: self.label_queued,
+            self.flowbox_done: self.label_done
+        }
+
         self.download_manager.add_active_downloads_listener(self.download_manager_listener)
-        self.show_all()
+        self.show()
 
     def download_manager_listener(self, change: DownloadState, download: Download):
         self.logger.debug('Received %s for Download[save_location=%s, progress=%d]',
@@ -76,16 +87,28 @@ class DownloadManagerList(Gtk.Viewport):
 
     def __move_to_section(self, flowbox, entry, new_state: DownloadState):
         if entry.flowbox:
+            old_flowbox = entry.flowbox
             '''the entry needs to be removed from its parent FlowBoxChild
             or there will be a memory access error hard crashing the application'''
             box_child = entry.get_parent()
             box_child.remove(entry)
-            entry.flowbox.remove(box_child)
+            old_flowbox.remove(box_child)
             box_child.destroy()
+            self.__change_group_visibility(old_flowbox)
+
         flowbox.add(entry)
         entry.flowbox = flowbox
         entry.show()
+        self.__change_group_visibility(flowbox)
         entry.update_buttons(new_state)
+
+    def __change_group_visibility(self, group_flowbox):
+        if group_flowbox.get_children():
+            self.flowbow_labels[group_flowbox].show()
+            group_flowbox.show()
+        else:
+            group_flowbox.hide()
+            self.flowbow_labels[group_flowbox].hide()
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "download_list_entry.ui"))
