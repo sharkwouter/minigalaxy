@@ -215,7 +215,7 @@ class OngoingDownloadListEntry(Gtk.Box):
     button_actions = {
         ChangeType.DOWNLOAD_STARTED: [pause_download, stop_download],
         ChangeType.DOWNLOAD_COMPLETED: [NOOP, remove_from_current_box],
-        ChangeType.DOWNLOAD_QUEUED: [pause_download, stop_download],  #  Maybe instead use priority up/down or allow dragging
+        ChangeType.DOWNLOAD_QUEUED: [pause_download, stop_download],  # Maybe instead use priority up/down or allow dragging
         # ChangeType.DOWNLOAD_PROGRESS: [None, None],
         ChangeType.DOWNLOAD_FAILED: [restart, remove_from_current_box],
         ChangeType.DOWNLOAD_CANCELLED: [restart, remove_from_current_box],
