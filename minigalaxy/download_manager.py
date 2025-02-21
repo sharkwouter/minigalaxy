@@ -20,13 +20,16 @@ import os
 import shutil
 import time
 import threading
+import traceback
 import queue
 
+from enum import Enum
 from requests import Session
 from requests.exceptions import RequestException
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
 from minigalaxy.download import Download, DownloadType
-import minigalaxy.logger    # noqa: F401
+import minigalaxy.logger  # noqa: F401
+from concurrent.futures.thread import ThreadPoolExecutor
 
 module_logger = logging.getLogger("minigalaxy.download_manager")
 
@@ -35,6 +38,7 @@ class QueuedDownloadItem:
     """
     Wrap downloads in a simple class so we can manage when to download them
     """
+
     def __init__(self, download, priority=1):
         """
         Create a QueuedDownloadItem with a given download and priority level
@@ -56,6 +60,16 @@ class QueuedDownloadItem:
             return self.queue_time < other.queue_time
 
 
+class ChangeType(Enum):
+    DOWNLOAD_STARTED = 1
+    DOWNLOAD_COMPLETED = 2
+    DOWNLOAD_QUEUED = 3
+    DOWNLOAD_PROGRESS = 4
+    DOWNLOAD_FAILED = 5
+    DOWNLOAD_CANCELLED = 6
+    DOWNLOAD_PAUSED = 7
+
+
 class DownloadManager:
     """
     A DownloadManager that provides an interface to manage and retry downloads.
@@ -63,6 +77,7 @@ class DownloadManager:
     First, you need to create a Download object, then pass the Download object to the
     DownloadManager download or download_now method to download it.
     """
+
     def __init__(self, session: Session):
         """
         Create a new DownloadManager Object
@@ -88,6 +103,8 @@ class DownloadManager:
         # These are items not in the queue, but currently being downloaded
         self.active_downloads = {}
         self.active_downloads_lock = threading.Lock()
+        self.download_list_change_listener = []
+        self.listener_thread = ThreadPoolExecutor(max_workers=1, thread_name_prefix="download_listener")
 
         self.logger = logging.getLogger("minigalaxy.download_manager.DownloadManager")
 
@@ -97,6 +114,43 @@ class DownloadManager:
                 download_thread.daemon = True
                 download_thread.start()
                 self.workers.append(download_thread)
+
+    def add_active_downloads_listener(self, listener):
+        if listener not in self.download_list_change_listener:
+            self.download_list_change_listener.append(listener)
+            self.listener_thread.submit(self.__init_new_listener, listener)
+
+    def remove_active_downloads_listener(self, listener):
+        if listener in self.download_list_change_listener:
+            self.download_list_change_listener.remove(listener)
+
+    def __init_new_listener(self, listener):
+        with self.active_downloads_lock:
+            for download in self.active_downloads:
+                listener(ChangeType.DOWNLOAD_STARTED, download)
+
+            for download_queue, limit in self.queues:
+                while not download_queue.empty():
+                    queued_download = download_queue.get()
+                    listener(ChangeType.DOWNLOAD_QUEUED, queued_download.item)
+
+    def __notify_listeners(self, change: ChangeType, download, forked=False):
+        '''helper function to notify listeners of changes to the active download list
+        Will be used for each atomic add/remove action in the list of active downloads'''
+        if not change or not self.download_list_change_listener:
+            return
+
+        if forked:
+            for listener in self.download_list_change_listener:
+                listener(change, download)
+        else:
+            self.listener_thread.submit(self.__notify_listeners, change, download, True)
+
+    def __call_listener_failsafe(self, listener, *parameters):
+        try:
+            listener(*parameters)
+        except BaseException as exception:
+            self.logger.error(f"Error while trying to notify listener: {traceback.format_exception(exception)}")
 
     def download(self, download):
         """
@@ -113,8 +167,21 @@ class DownloadManager:
             for d in download:
                 self.put_in_proper_queue(d)
 
+    def undo_download(self, download):
+        '''The reverse of DownloadManager.download.
+        Put as additional method because download manager might decide to keep some meta information.
+        Just deleting the download.save_location manually will corrupt these then.'''
+        print("undo download")
+        self.cancel_download(download)  # just to be sure
+        # it is just a delete for now, but this will change
+        if os.path.isfile(download.save_location):
+            # cancelling the download did not delete the file - the download was not active
+            os.remove(download.save_location)
+
     def put_in_proper_queue(self, download):
         "Put the download in the proper queue"
+
+        self.__notify_listeners(ChangeType.DOWNLOAD_QUEUED, download)
         # Add game type downloads to the game queue
         if download.download_type == DownloadType.GAME:
             self.__game_queue.put(QueuedDownloadItem(download, 1))
@@ -159,13 +226,13 @@ class DownloadManager:
         # We use this to test for downloads more efficiently
         download_dict = dict(zip(downloads, [True] * len(downloads)))
 
-        # This follows the previous logic
-        # First cancel all the active downloads
-        self.cancel_active_downloads(download_dict)
-
         # Next, loop through the downloads queued for download, comparing them to the
         # cancel list
         self.cancel_queued_downloads(download_dict)
+
+        # This follows the previous logic
+        # First cancel all the active downloads
+        self.cancel_active_downloads(download_dict)
 
     def cancel_active_downloads(self, download_dict):
         """
@@ -199,16 +266,19 @@ class DownloadManager:
 
                 while not download_queue.empty():
                     queued_download = download_queue.get()
+
                     # Test a Download against a QueuedDownloadItem
-                    if download == queued_download.item:
-                        download.cancel()
+                    should_cancel = download == queued_download.item
                     # test for games
-                    elif (download.game is not None) and \
-                         (download.game == queued_download.item.game):
-                        download.cancel()
+                    if not should_cancel:
+                        should_cancel = (download.game is not None) and (download.game == queued_download.item.game)
                     # test for other assets
-                    elif download.save_location == queued_download.item.save_location:
+                    if not should_cancel:
+                        should_cancel = download.save_location == queued_download.item.save_location
+
+                    if should_cancel:
                         download.cancel()
+                        self.__notify_listeners(ChangeType.DOWNLOAD_CANCELLED, download)
                     else:
                         new_queue.put(queued_download)
                     # Mark the task as "done" to keep counts correct so
@@ -244,12 +314,13 @@ class DownloadManager:
 
         self.cancel_current_downloads()
 
-    def __remove_download_from_active_downloads(self, download):
+    def __remove_download_from_active_downloads(self, download, reason: ChangeType):
         "Remove a download from the list of active downloads"
         with self.active_downloads_lock:
             if download in self.active_downloads:
                 self.logger.debug("Removing download from active downloads list")
                 del self.active_downloads[download]
+                self.__notify_listeners(reason, download)
             else:
                 self.logger.debug("Didn't find download in active downloads list")
 
@@ -265,6 +336,7 @@ class DownloadManager:
                 with self.active_downloads_lock:
                     download = download_queue.get().item
                     self.active_downloads[download] = download
+                    self.__notify_listeners(ChangeType.DOWNLOAD_STARTED, download)
                 self.__download_file(download, download_queue)
                 # Mark the task as done to keep counts correct so
                 # we can use join() or other functions later
@@ -283,7 +355,7 @@ class DownloadManager:
         self.__prepare_location(download.save_location)
         download_max_attempts = 5
         download_attempt = 0
-        result = False
+        result = None
         while download_attempt < download_max_attempts:
             try:
                 start_point, download_mode = self.__get_start_point_and_download_mode(download)
@@ -291,19 +363,23 @@ class DownloadManager:
                 break
             except RequestException as e:
                 self.logger.error("Error downloading file {}, received error {}".format(download.url, e))
+                result = None
                 download_attempt += 1
         # Successful downloads
-        if result:
+        if result is ChangeType.DOWNLOAD_COMPLETED:
             self.logger.debug("Download finished, thread {}".format(threading.get_ident()))
             finish_thread = threading.Thread(target=download.finish)
             finish_thread.start()
-            self.__remove_download_from_active_downloads(download)
+            self.__remove_download_from_active_downloads(download, ChangeType.DOWNLOAD_COMPLETED)
         # Unsuccessful downloads and cancels
         else:
             if download in self.__cancel:
                 del self.__cancel[download]
+                result = ChangeType.DOWNLOAD_CANCELLED
+            elif not result and download_attempt >= download_max_attempts:
+                result = ChangeType.DOWNLOAD_FAILED
             download.cancel()
-            self.__remove_download_from_active_downloads(download)
+            self.__remove_download_from_active_downloads(download, result)
             os.remove(download.save_location)
             # We may want to unset current_downloads here
             # For example, if a download was added that is impossible to complete
@@ -363,7 +439,7 @@ class DownloadManager:
             file_size = int(download_request.headers.get('content-length'))
         except (ValueError, TypeError):
             self.logger.error(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
-        result = True
+        result = ChangeType.DOWNLOAD_COMPLETED
         if file_size is None or downloaded_size < file_size:
             with open(download.save_location, download_mode) as save_file:
                 for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
@@ -371,13 +447,15 @@ class DownloadManager:
                     downloaded_size += len(chunk)
                     if download in self.__cancel:
                         self.logger.debug("Canceling download: {}".format(download.save_location))
-                        result = False
+                        result = ChangeType.DOWNLOAD_CANCELLED
                         del self.__cancel[download]
                         break
                     if file_size is not None:
                         progress = int(downloaded_size / file_size * 100)
-                        download.set_progress(progress)
-        if result:
+                        if progress > download.current_progress:
+                            download.set_progress(progress)
+                            self.__notify_listeners(ChangeType.DOWNLOAD_PROGRESS, download)
+        if result is ChangeType.DOWNLOAD_COMPLETED:
             download.set_progress(100)
         self.logger.debug("Returning result from _download_operation: {}".format(result))
         return result

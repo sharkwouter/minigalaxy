@@ -6,6 +6,7 @@ from simplejson.errors import JSONDecodeError
 m_gtk = MagicMock()
 m_gi = MagicMock()
 m_library = MagicMock()
+m_download_list = MagicMock()
 m_preferences = MagicMock()
 m_login = MagicMock()
 m_about = MagicMock()
@@ -52,6 +53,7 @@ class UnitTestGiRepository:
 u_gi_repository = UnitTestGiRepository()
 sys.modules['gi.repository'] = u_gi_repository
 sys.modules['gi'] = m_gi
+sys.modules['minigalaxy.ui.download_list'] = m_download_list
 sys.modules['minigalaxy.ui.library'] = m_library
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
 sys.modules['minigalaxy.ui.login'] = m_login
