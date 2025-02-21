@@ -86,23 +86,11 @@ class DownloadManagerList(Gtk.Viewport):
         return self.downloads[download.save_location]
 
     def __move_to_section(self, flowbox, entry, new_state: DownloadState):
-        if entry.flowbox:
-            old_flowbox = entry.flowbox
-            '''the entry needs to be removed from its parent FlowBoxChild
-            or there will be a memory access error hard crashing the application'''
-            box_child = entry.get_parent()
-            box_child.remove(entry)
-            old_flowbox.remove(box_child)
-            box_child.destroy()
-            self.__change_group_visibility(old_flowbox)
-
-        flowbox.add(entry)
-        entry.flowbox = flowbox
-        entry.show()
-        self.__change_group_visibility(flowbox)
+        entry.remove_from_current_box()
+        entry.add_to_box(flowbox)
         entry.update_buttons(new_state)
 
-    def __change_group_visibility(self, group_flowbox):
+    def update_group_visibility(self, group_flowbox):
         if group_flowbox.get_children():
             self.flowbow_labels[group_flowbox].show()
             group_flowbox.show()
@@ -128,6 +116,7 @@ class OngoingDownloadListEntry(Gtk.Box):
         DownloadState.PROGRESS: [None, None],
         DownloadState.FAILED: ['view-refresh', 'list-remove'],
         DownloadState.CANCELED: ['view-refresh', 'list-remove'],
+        DownloadState.PAUSED: ['media-playback-start', 'edit-delete']
     }
 
     tooltip_texts = {
@@ -139,9 +128,13 @@ class OngoingDownloadListEntry(Gtk.Box):
         'list-remove': 'Remove from list',
     }
 
+    # button actions are defined at the end
+
     def __init__(self, parent_manager, download: Download, initial_state: DownloadState):
         Gtk.Box.__init__(self)
         self.manager = parent_manager
+        self.download = download
+        self.state = None
         self.flowbox = None
         self.game_title.set_text(f'{download.game.name}:\n{os.path.basename(download.save_location)}')
         self.update_buttons(initial_state)
@@ -151,6 +144,10 @@ class OngoingDownloadListEntry(Gtk.Box):
         self.download_progress.set_tooltip_text("{}%".format(percentage))
 
     def update_buttons(self, state: DownloadState):
+        self.state = state
+        if state not in self.action_icon_names:
+            return
+
         primary, secondary = self.action_icon_names[state]
         if primary:
             self.image_start_action.set_from_icon_name(primary, Gtk.IconSize.LARGE_TOOLBAR)
@@ -169,7 +166,63 @@ class OngoingDownloadListEntry(Gtk.Box):
     @Gtk.Template.Callback("on_primary_button")
     def primary_button_clicked(self, widget, data):
         print("primary")
+        if self.state not in self.button_actions:
+            return
+        self.button_actions[self.state][0](self)
 
     @Gtk.Template.Callback("on_secondary_button")
     def secondary_button_clicked(self, widget, data):
-        print("secondary")
+        print("secondary:" + str(self.state))
+        if self.state not in self.button_actions:
+            return
+        self.button_actions[self.state][1](self)
+
+    def restart(self):
+        self.manager.download_manager.download(self.download)
+
+    # TODO: pause and stop are still identical
+    def pause_download(self):
+        self.manager.download_manager.cancel_download(self.download)
+
+    def stop_download(self):
+        self.manager.download_manager.cancel_download(self.download)
+
+    def delete_download(self):
+        self.manager.download_manager.undo_download(self.download)
+
+    def NOOP(self):
+        '''used for states in which a button should not do anything'''
+        pass
+
+    '''----- VISIBILITY CONTROL -----'''
+
+    def add_to_box(self, flowbox):
+        flowbox.add(self)
+        self.flowbox = flowbox
+        self.show()
+        self.manager.update_group_visibility(flowbox)
+
+    def remove_from_current_box(self):
+        if not self.flowbox:
+            return
+
+        old_flowbox = self.flowbox
+        '''the entry needs to be removed from its parent FlowBoxChild
+        or there will be a memory access error hard crashing the application'''
+        box_child = self.get_parent()
+        box_child.remove(self)
+        old_flowbox.remove(box_child)
+        box_child.destroy()
+        self.manager.update_group_visibility(old_flowbox)
+
+    '''----- END VISIBILITY CONTROL -----'''
+
+    button_actions = {
+        ChangeType.DOWNLOAD_STARTED: [pause_download, stop_download],
+        ChangeType.DOWNLOAD_COMPLETED: [NOOP, remove_from_current_box],
+        ChangeType.DOWNLOAD_QUEUED: [pause_download, stop_download],  # Maybe instead use priority up/down or allow dragging
+        # ChangeType.DOWNLOAD_PROGRESS: [None, None],
+        ChangeType.DOWNLOAD_FAILED: [restart, remove_from_current_box],
+        ChangeType.DOWNLOAD_CANCELLED: [restart, remove_from_current_box],
+        ChangeType.DOWNLOAD_PAUSED: [restart, delete_download],
+    }
