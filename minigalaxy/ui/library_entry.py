@@ -347,7 +347,7 @@ class LibraryEntry:
 
         '''game_info images dict does not contain fully valid urls.
         The entries there appear to start with //'''
-        icon_url = re.sub('.*?//', 'https://', icon)
+        icon_url = re.sub('^.*?//', 'https://', icon, count=1)
         download = Download(url=icon_url, save_location=local_name)
         self.download_manager.download(download)
 
