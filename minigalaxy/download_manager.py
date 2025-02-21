@@ -67,6 +67,7 @@ class ChangeType(Enum):
     DOWNLOAD_PROGRESS = 4
     DOWNLOAD_FAILED = 5
     DOWNLOAD_CANCELLED = 6
+    DOWNLOAD_PAUSED = 7
 
 
 class DownloadManager:
@@ -165,6 +166,17 @@ class DownloadManager:
             # Assume we've received a list of downloads
             for d in download:
                 self.put_in_proper_queue(d)
+
+    def undo_download(self, download):
+        '''The reverse of DownloadManager.download.
+        Put as additional method because download manager might decide to keep some meta information.
+        Just deleting the download.save_location manually will corrupt these then.'''
+        print("undo download")
+        self.cancel_download(download)  # just to be sure
+        # it is just a delete for now, but this will change
+        if os.path.isfile(download.save_location):
+            # cancelling the download did not delete the file - the download was not active
+            os.remove(download.save_location)
 
     def put_in_proper_queue(self, download):
         "Put the download in the proper queue"
