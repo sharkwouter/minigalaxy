@@ -6,6 +6,7 @@
 - Minor UI change in the dialog for third-party logins (thanks to GB609)
 - Desktop shortcuts created by Minigalaxy will now be updated with environment and launch argument changes from the game's property dialog when OK is clicked (thanks to GB609)
 - Clean-up and fixes of the code used for grid and list style library views (thanks to GB609)
+- Desktop shortcuts for windows games can now have icons, if gog provides them in the game info api 'images' section (thanks to GB609)
 
 **1.3.1**
 - Fix Windows games with multiple parts not installing with wine
