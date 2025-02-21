@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.40.0 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <template class="DownloadList" parent="GtkViewport">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="shadow-type">none</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkLabel" id="label_active">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Active downloads:</property>
+            <property name="xalign">0.05000000074505806</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFlowBox" id="flowbox_active">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="tooltip-text" translatable="yes">active</property>
+            <property name="valign">start</property>
+            <property name="border-width">10</property>
+            <property name="homogeneous">True</property>
+            <property name="column-spacing">15</property>
+            <property name="row-spacing">10</property>
+            <property name="max-children-per-line">1</property>
+            <property name="selection-mode">none</property>
+            <property name="activate-on-single-click">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_queued">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Pending:</property>
+            <property name="xalign">0.05000000074505806</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFlowBox" id="flowbox_queued">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="tooltip-text" translatable="yes">queued</property>
+            <property name="valign">start</property>
+            <property name="border-width">10</property>
+            <property name="homogeneous">True</property>
+            <property name="column-spacing">15</property>
+            <property name="row-spacing">10</property>
+            <property name="max-children-per-line">1</property>
+            <property name="selection-mode">none</property>
+            <property name="activate-on-single-click">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_done">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Done:</property>
+            <property name="xalign">0.05000000074505806</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFlowBox" id="flowbox_done">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="tooltip-text" translatable="yes">done</property>
+            <property name="valign">start</property>
+            <property name="border-width">10</property>
+            <property name="homogeneous">True</property>
+            <property name="column-spacing">15</property>
+            <property name="row-spacing">10</property>
+            <property name="max-children-per-line">1</property>
+            <property name="selection-mode">none</property>
+            <property name="activate-on-single-click">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">5</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
