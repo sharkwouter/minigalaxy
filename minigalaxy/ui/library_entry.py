@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import threading
 import time
@@ -275,6 +276,8 @@ class LibraryEntry:
         self.game.set_install_dir(self.config.install_dir)
         install_success = self.__install(save_location)
         if install_success:
+            # try to get icon. doesn't matter if it doesn't exist, just used for shortcuts
+            self.__download_icon()
             popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
                                             .format(self.game.name), "dialog-information")
             popup.show()
@@ -325,9 +328,30 @@ class LibraryEntry:
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
 
+    def __download_icon(self, force=False, game_info=None):
+        if self.offline or not self.game.is_installed():
+            return
+
+        local_name = os.path.join(self.game.install_dir, 'support', 'icon.png')
+        if os.path.exists(local_name) and not force:
+            return
+
+        if not game_info:
+            game_info = self.api.get_info()
+        icon = game_info.get('images', {}).get('icon', None)
+        if not icon:
+            return
+
+        '''game_info images dict does not contain fully valid urls.
+        The entries there appear to start with //'''
+        icon_url = re.sub('.*?//', 'https://', icon)
+        download = Download(url=icon_url, save_location=local_name)
+        self.download_manager.download(download)
+
     def __check_for_update_dlc(self):
         if self.game.is_installed() and self.game.id and not self.offline:
             game_info = self.api.get_info(self.game)
+            self.__download_icon(False, game_info)
             if self.game.get_info("check_for_updates") == "":
                 self.game.set_info("check_for_updates", True)
             if self.game.get_info("check_for_updates"):

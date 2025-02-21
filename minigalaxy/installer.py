@@ -303,6 +303,7 @@ def create_applications_file(game, override=False):
 
         with open(path_to_shortcut, 'w+') as desktop_file:
             desktop_file.writelines(textwrap.dedent(desktop_definition))
+
     except Exception as e:
         os.remove(path_to_shortcut)
         error_message = e
