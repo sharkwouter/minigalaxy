@@ -9,6 +9,7 @@ from minigalaxy.paths import UI_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import GLib, Gtk
 
+
 @Gtk.Template.from_file(os.path.join(UI_DIR, "download_list.ui"))
 class DownloadManagerList(Gtk.Viewport):
     __gtype_name__ = "DownloadList"
@@ -31,8 +32,7 @@ class DownloadManagerList(Gtk.Viewport):
             ChangeType.DOWNLOAD_FAILED: self.download_stopped,
             ChangeType.DOWNLOAD_CANCELLED: self.download_stopped
         }
-        
-        
+
         self.download_manager.add_active_downloads_listener(self.download_manager_listener)
         self.show_all()
 
@@ -66,7 +66,7 @@ class DownloadManagerList(Gtk.Viewport):
 
     def __move_to_section(self, flowbox, entry, new_state: ChangeType):
         if entry.flowbox:
-            '''the entry needs to be removed from its parent FlowBoxChild 
+            '''the entry needs to be removed from its parent FlowBoxChild
             or there will be a memory access error hard crashing the application'''
             box_child = entry.get_parent()
             box_child.remove(entry)
@@ -96,7 +96,7 @@ class OngoingDownloadListEntry(Gtk.Box):
         ChangeType.DOWNLOAD_FAILED: ['view-refresh', 'list-remove'],
         ChangeType.DOWNLOAD_CANCELLED: ['media-playback-start', 'edit-delete']
     }
-    
+
     tooltip_texts = {
         'media-playback-start': 'Resume',
         'media-playback-pause': 'Pause',
@@ -116,14 +116,14 @@ class OngoingDownloadListEntry(Gtk.Box):
     def update_progress(self, percentage):
         self.download_progress.set_fraction(percentage / 100)
         self.download_progress.set_tooltip_text("{}%".format(percentage))
-    
+
     def update_buttons(self, state: ChangeType):
         primary, secondary = self.action_icon_names[state]
         if primary:
             self.image_start_action.set_from_icon_name(primary, Gtk.IconSize.LARGE_TOOLBAR)
             self.image_start_action.set_tooltip_text(_(self.tooltip_texts[primary]))
             self.image_start_action.show()
-        else: 
+        else:
             self.image_start_action.hide()
 
         if secondary:
@@ -132,7 +132,7 @@ class OngoingDownloadListEntry(Gtk.Box):
             self.image_cancel_action.show()
         else:
             self.image_cancel_action.hide()
-    
+
     @Gtk.Template.Callback("on_primary_button")
     def primary_button_clicked(self, widget, data):
         print("primary")

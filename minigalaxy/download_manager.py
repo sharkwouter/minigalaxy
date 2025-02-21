@@ -115,7 +115,7 @@ class DownloadManager:
                 self.workers.append(download_thread)
 
     def add_active_downloads_listener(self, listener):
-        if not listener in self.download_list_change_listener:
+        if listener not in self.download_list_change_listener:
             self.download_list_change_listener.append(listener)
             self.listener_thread.submit(self.__init_new_listener, listener)
 
@@ -132,7 +132,7 @@ class DownloadManager:
                 while not download_queue.empty():
                     queued_download = download_queue.get()
                     listener(ChangeType.DOWNLOAD_QUEUED, queued_download.item)
-    
+
     def __notify_listeners(self, change: ChangeType, download, forked=False):
         '''helper function to notify listeners of changes to the active download list
         Will be used for each atomic add/remove action in the list of active downloads'''
@@ -144,7 +144,7 @@ class DownloadManager:
                 listener(change, download)
         else:
             self.listener_thread.submit(self.__notify_listeners, change, download, True)
-    
+
     def __call_listener_failsafe(self, listener, *parameters):
         try:
             listener(*parameters)
@@ -261,7 +261,7 @@ class DownloadManager:
                     if not should_cancel:
                         should_cancel = (download.game is not None) and (download.game == queued_download.item.game)
                     # test for other assets
-                    if not should_cancel: 
+                    if not should_cancel:
                         should_cancel = download.save_location == queued_download.item.save_location
 
                     if should_cancel:
