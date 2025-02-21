@@ -3,7 +3,7 @@ import os
 
 import minigalaxy.logger  # noqa: F401
 
-from minigalaxy.download import Download
+from minigalaxy.download import Download, DownloadType
 from minigalaxy.download_manager import DownloadManager, DownloadState
 from minigalaxy.paths import UI_DIR
 from minigalaxy.translation import _
@@ -17,6 +17,8 @@ class DownloadManagerList(Gtk.Viewport):
     flowbox_active = Gtk.Template.Child()
     flowbox_queued = Gtk.Template.Child()
     flowbox_done = Gtk.Template.Child()
+
+    listener_download_types = [DownloadType.GAME, DownloadType.GAME_UPDATE, DownloadType.GAME_DLC]
 
     def __init__(self, download_manager: DownloadManager):
         Gtk.Viewport.__init__(self)
@@ -41,6 +43,9 @@ class DownloadManagerList(Gtk.Viewport):
     def download_manager_listener(self, change: DownloadState, download: Download):
         self.logger.debug('Received %s for Download[save_location=%s, progress=%d]',
                           change, download.filename(), download.current_progress)
+        if download.download_type not in self.listener_download_types:
+            return
+
         GLib.idle_add(self.change_handler[change], change, download)
 
     def download_started(self, change, download):
