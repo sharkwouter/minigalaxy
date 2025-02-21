@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.40.0 -->
 <interface domain="minigalaxy">
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkPopover" id="download_list">
+    <property name="can-focus">False</property>
+    <child>
+      <placeholder/>
+    </child>
+  </object>
   <object class="GtkPopover" id="menu">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkModelButton" id="menu_logout">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes" context="logout" comments="Logs the users gog account out and returns to login page">Logout</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="on_menu_logout_clicked" swapped="no"/>
@@ -27,8 +33,8 @@
         <child>
           <object class="GtkModelButton" id="menu_preferences">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes" context="preferences" comments="Opens preferences dialog">Preferences</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="on_menu_preferences_clicked" swapped="no"/>
@@ -42,7 +48,7 @@
         <child>
           <object class="GtkSeparator">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -53,8 +59,8 @@
         <child>
           <object class="GtkModelButton" id="menu_about">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes" context="about" comments="Opens about dialog">About</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="on_menu_about_clicked" swapped="no"/>
@@ -69,40 +75,93 @@
     </child>
   </object>
   <template class="Window" parent="GtkApplicationWindow">
-    <property name="can_focus">False</property>
-    <property name="window_position">center</property>
-    <property name="default_width">1400</property>
-    <property name="default_height">800</property>
+    <property name="can-focus">False</property>
+    <property name="window-position">center</property>
+    <property name="default-width">1400</property>
+    <property name="default-height">800</property>
     <signal name="window-state-event" handler="on_window_state_event" swapped="no"/>
+    <child>
+      <object class="GtkScrolledWindow" id="window_library">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <property name="shadow-type">in</property>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
     <child type="titlebar">
       <object class="GtkHeaderBar" id="HeaderBar">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="vexpand">False</property>
-        <property name="has_subtitle">False</property>
-        <property name="show_close_button">True</property>
+        <property name="has-subtitle">False</property>
+        <property name="show-close-button">True</property>
         <child>
           <object class="GtkButton" id="header_sync">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="tooltip_text" translatable="yes" context="refresh" comments="Tooltip for refresh button">Refresh game list</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="tooltip-text" translatable="yes" context="refresh" comments="Tooltip for refresh button">Refresh game list</property>
             <property name="valign">center</property>
             <signal name="clicked" handler="on_header_sync_clicked" swapped="no"/>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">view-refresh-symbolic</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">view-refresh-symbolic</property>
               </object>
             </child>
           </object>
         </child>
         <child>
+          <object class="GtkMenuButton" id="header_menu">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="tooltip-text" translatable="yes" context="menu" comments="Tooltip for header menu button">Options menu</property>
+            <property name="valign">center</property>
+            <property name="use-popover">False</property>
+            <property name="popover">menu</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">open-menu-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="category_filter_button">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="tooltip-text" translatable="yes" context="category_filter" comments="Tooltip for category filter button">Category filters</property>
+            <property name="valign">center</property>
+            <signal name="clicked" handler="on_menu_category_filter_clicked" swapped="no"/>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="icon-name">view-conceal-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkSwitch" id="header_installed">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="tooltip_text" translatable="yes" context="tooltip_installed" comments="Tooltip for the switch which allows only showing installed games or all games">Show only installed games</property>
+            <property name="can-focus">True</property>
+            <property name="tooltip-text" translatable="yes" context="tooltip_installed" comments="Tooltip for the switch which allows only showing installed games or all games">Show only installed games</property>
             <signal name="state-set" handler="filter_library" swapped="no"/>
           </object>
           <packing>
@@ -112,7 +171,7 @@
         <child>
           <object class="GtkLabel" id="header_installed_label">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="label" translatable="yes" context="installed" comments="Used next to a checkbox which switches between showing all games and only installed ones">Installed</property>
           </object>
           <packing>
@@ -120,72 +179,40 @@
           </packing>
         </child>
         <child>
-          <object class="GtkMenuButton" id="header_menu">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="valign">center</property>
-            <property name="use_popover">False</property>
-            <property name="popover">menu</property>
-            <property name="tooltip_text" translatable="yes" context="menu" comments="Tooltip for header menu button">Options menu</property>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">open-menu-symbolic</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="category_filter_button">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="tooltip_text" translatable="yes" context="category_filter" comments="Tooltip for category filter button">Category filters</property>
-            <property name="valign">center</property>
-            <signal name="clicked" handler="on_menu_category_filter_clicked" swapped="no"/>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="icon_name">view-conceal-symbolic</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="pack_type">end</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkSearchEntry" id="header_search">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="primary_icon_name">edit-find-symbolic</property>
-            <property name="primary_icon_activatable">False</property>
-            <property name="primary_icon_sensitive">False</property>
-            <property name="tooltip_text" translatable="yes" context="search" comments="Tooltip for search field">Search games list</property>
+            <property name="can-focus">True</property>
+            <property name="tooltip-text" translatable="yes" context="search" comments="Tooltip for search field">Search games list</property>
+            <property name="primary-icon-name">edit-find-symbolic</property>
+            <property name="primary-icon-activatable">False</property>
+            <property name="primary-icon-sensitive">False</property>
             <signal name="search-changed" handler="filter_library" swapped="no"/>
           </object>
           <packing>
-            <property name="pack_type">end</property>
+            <property name="pack-type">end</property>
             <property name="position">3</property>
           </packing>
         </child>
-      </object>
-    </child>
-    <child>
-      <object class="GtkScrolledWindow" id="window_library">
-        <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="shadow_type">in</property>
         <child>
-          <placeholder/>
+          <object class="GtkMenuButton" id="download_list_button">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="valign">center</property>
+            <property name="popover">download_list</property>
+            <child>
+              <object class="GtkImage">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Show downloads</property>
+                <property name="icon-name">folder-download-symbolic</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="pack-type">end</property>
+            <property name="position">6</property>
+          </packing>
         </child>
       </object>
     </child>

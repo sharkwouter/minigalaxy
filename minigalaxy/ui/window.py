@@ -13,6 +13,7 @@ from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
 from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf, Notify
 from minigalaxy.config import Config
+from minigalaxy.ui.download_list import DownloadManagerList
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
@@ -27,6 +28,7 @@ class Window(Gtk.ApplicationWindow):
     menu_preferences = Gtk.Template.Child()
     menu_logout = Gtk.Template.Child()
     window_library = Gtk.Template.Child()
+    download_list = Gtk.Template.Child()
 
     def __init__(self, config: Config, api: 'Api', download_manager: DownloadManager, name="Minigalaxy"):
         current_locale = config.locale
@@ -54,6 +56,7 @@ class Window(Gtk.ApplicationWindow):
 
         self.window_library.add(self.library)
         self.header_installed.set_active(self.config.installed_filter)
+        self.download_list.add(DownloadManagerList(self.download_manager))
 
         # Set the icon
         icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_IMAGE_PATH)
