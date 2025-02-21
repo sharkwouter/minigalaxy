@@ -130,44 +130,6 @@ class LibraryEntry:
         download_thread = threading.Thread(target=self.__download_update)
         download_thread.start()
 
-    def load_thumbnail(self):
-        set_result = self.__set_image("")
-        if not set_result:
-            tries = 10
-            performed_try = 0
-            while performed_try < tries:
-                if self.game.image_url and self.game.id:
-                    # Download the thumbnail
-                    image_url = "https:{}_196.jpg".format(self.game.image_url)
-                    thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
-                    download = Download(image_url, thumbnail, DownloadType.THUMBNAIL,
-                                        finish_func=self.__set_image)
-                    self.download_manager.download_now(download)
-                    set_result = True
-                    break
-                performed_try += 1
-                time.sleep(1)
-        return set_result
-
-    def __set_image(self, save_location):
-        set_result = False
-        self.game.set_install_dir(self.config.install_dir)
-        thumbnail_install_dir = os.path.join(self.game.install_dir, "thumbnail.jpg")
-        if os.path.isfile(thumbnail_install_dir):
-            GLib.idle_add(self.image.set_from_file, thumbnail_install_dir)
-            set_result = True
-        elif save_location and os.path.isfile(save_location):
-            GLib.idle_add(self.image.set_from_file, save_location)
-            # Copy image to
-            if os.path.isdir(os.path.dirname(thumbnail_install_dir)):
-                shutil.copy2(save_location, thumbnail_install_dir)
-            set_result = True
-        thumbnail_path = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
-        if os.path.isfile(thumbnail_path):
-            GLib.idle_add(self.image.set_from_file, thumbnail_path)
-            set_result = True
-        return set_result
-
     def get_keep_executable_path(self):
         keep_path = ""
         if os.path.isdir(self.keep_path):
@@ -191,6 +153,7 @@ class LibraryEntry:
             result = False
         return result, download_info
 
+    '''----- DOWNLOAD ACTIONS -----'''
     def __download_game(self) -> None:
         finish_func = self.__install_game
         cancel_to_state = State.DOWNLOADABLE
@@ -200,6 +163,54 @@ class LibraryEntry:
                                      cancel_to_state)
         if not result:
             GLib.idle_add(self.update_to_state, cancel_to_state)
+
+    def __download_update(self) -> None:
+        finish_func = self.__install_update
+        cancel_to_state = State.UPDATABLE
+        result, download_info = self.get_download_info(self.game.platform)
+        if result:
+            result = self.__download(download_info, DownloadType.GAME_UPDATE, finish_func,
+                                     cancel_to_state)
+        if not result:
+            GLib.idle_add(self.update_to_state, cancel_to_state)
+
+    def __download_dlc(self, dlc_installers) -> None:
+        def finish_func(save_location):
+            self.__install_dlc(save_location, dlc_title=dlc_title)
+
+        download_info = self.api.get_download_info(self.game, dlc_installers=dlc_installers)
+        dlc_title = self.game.name
+        for dlc in self.game.dlcs:
+            if dlc["downloads"]["installers"] == dlc_installers:
+                dlc_title = dlc["title"]
+        cancel_to_state = State.INSTALLED
+        result = self.__download(download_info, DownloadType.GAME_DLC, finish_func,
+                                 cancel_to_state)
+        if not result:
+            GLib.idle_add(self.update_to_state, cancel_to_state)
+
+    def __download_icon(self, force=False, game_info=None):
+        if not self.config.create_applications_file:
+            return
+
+        if self.offline or not self.game.is_installed():
+            return
+
+        local_name = os.path.join(self.game.install_dir, 'support', 'icon.png')
+        if os.path.exists(local_name) and not force:
+            return
+
+        if not game_info:
+            game_info = self.api.get_info()
+        icon = game_info.get('images', {}).get('icon', None)
+        if not icon:
+            return
+
+        '''game_info images dict does not contain fully valid urls.
+        The entries there appear to start with //'''
+        icon_url = re.sub('^.*?//', 'https://', icon, count=1)
+        download = Download(url=icon_url, save_location=local_name)
+        self.download_manager.download(download)
 
     def __download(self, download_info, download_type, finish_func, cancel_to_state):  # noqa: C901
         download_success = True
@@ -270,6 +281,9 @@ class LibraryEntry:
             GLib.idle_add(self.parent_window.show_error, _(ds_msg_title), _(ds_msg_text))
         return download_success
 
+    '''----- END DOWNLOAD ACTIONS -----'''
+
+    '''----- INSTALL ACTIONS -----'''
     def __install_game(self, save_location):
         self.config.remove_ongoing_download(self.game.id)
         self.download_list = []
@@ -282,6 +296,24 @@ class LibraryEntry:
                                             .format(self.game.name), "dialog-information")
             popup.show()
             self.__check_for_dlc(self.api.get_info(self.game))
+
+    def __install_update(self, save_location):
+        install_success = self.__install(save_location, update=True)
+        if install_success:
+            if self.game.platform == "windows":
+                self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
+            else:
+                self.image.set_tooltip_text(self.game.name)
+        for dlc in self.game.dlcs:
+            download_info = self.api.get_download_info(self.game, dlc_installers=dlc["downloads"]["installers"])
+            if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=dlc["title"]):
+                self.__download_dlc(dlc["downloads"]["installers"])
+
+    def __install_dlc(self, save_location, dlc_title):
+        install_success = self.__install(save_location, dlc_title=dlc_title)
+        if not install_success:
+            GLib.idle_add(self.update_to_state, State.INSTALLED)
+        self.__check_for_update_dlc()
 
     def __install(self, save_location, update=False, dlc_title=""):
         if update:
@@ -313,44 +345,20 @@ class LibraryEntry:
             install_success = False
         return install_success
 
+    def __uninstall_game(self):
+        GLib.idle_add(self.update_to_state, State.UNINSTALLING)
+        uninstall_game(self.game)
+        GLib.idle_add(self.update_to_state, State.DOWNLOADABLE)
+        GLib.idle_add(self.reload_state)
+
+    '''----- END INSTALL ACTIONS -----'''
+
     def __cancel(self, to_state):
         self.download_list = []
         GLib.idle_add(self.update_to_state, to_state)
         GLib.idle_add(self.reload_state)
 
-    def __download_update(self) -> None:
-        finish_func = self.__update
-        cancel_to_state = State.UPDATABLE
-        result, download_info = self.get_download_info(self.game.platform)
-        if result:
-            result = self.__download(download_info, DownloadType.GAME_UPDATE, finish_func,
-                                     cancel_to_state)
-        if not result:
-            GLib.idle_add(self.update_to_state, cancel_to_state)
-
-    def __download_icon(self, force=False, game_info=None):
-        if not self.config.create_applications_file:
-            return
-
-        if self.offline or not self.game.is_installed():
-            return
-
-        local_name = os.path.join(self.game.install_dir, 'support', 'icon.png')
-        if os.path.exists(local_name) and not force:
-            return
-
-        if not game_info:
-            game_info = self.api.get_info()
-        icon = game_info.get('images', {}).get('icon', None)
-        if not icon:
-            return
-
-        '''game_info images dict does not contain fully valid urls.
-        The entries there appear to start with //'''
-        icon_url = re.sub('^.*?//', 'https://', icon, count=1)
-        download = Download(url=icon_url, save_location=local_name)
-        self.download_manager.download(download)
-
+    '''----- UPDATE CHECK HELPERS -----'''
     def __check_for_update_dlc(self):
         if self.game.is_installed() and self.game.id and not self.offline:
             game_info = self.api.get_info(self.game)
@@ -366,39 +374,6 @@ class LibraryEntry:
         if self.offline:
             GLib.idle_add(self.menu_button_dlc.hide)
 
-    def __update(self, save_location):
-        install_success = self.__install(save_location, update=True)
-        if install_success:
-            if self.game.platform == "windows":
-                self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
-            else:
-                self.image.set_tooltip_text(self.game.name)
-        for dlc in self.game.dlcs:
-            download_info = self.api.get_download_info(self.game, dlc_installers=dlc["downloads"]["installers"])
-            if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=dlc["title"]):
-                self.__download_dlc(dlc["downloads"]["installers"])
-
-    def __download_dlc(self, dlc_installers) -> None:
-        def finish_func(save_location):
-            self.__install_dlc(save_location, dlc_title=dlc_title)
-
-        download_info = self.api.get_download_info(self.game, dlc_installers=dlc_installers)
-        dlc_title = self.game.name
-        for dlc in self.game.dlcs:
-            if dlc["downloads"]["installers"] == dlc_installers:
-                dlc_title = dlc["title"]
-        cancel_to_state = State.INSTALLED
-        result = self.__download(download_info, DownloadType.GAME_DLC, finish_func,
-                                 cancel_to_state)
-        if not result:
-            GLib.idle_add(self.update_to_state, cancel_to_state)
-
-    def __install_dlc(self, save_location, dlc_title):
-        install_success = self.__install(save_location, dlc_title=dlc_title)
-        if not install_success:
-            GLib.idle_add(self.update_to_state, State.INSTALLED)
-        self.__check_for_update_dlc()
-
     def __check_for_dlc(self, game_info):
         dlcs = game_info["expanded_dlcs"]
         for dlc in dlcs:
@@ -409,6 +384,9 @@ class LibraryEntry:
         if self.game.dlcs:
             GLib.idle_add(self.menu_button_dlc.show)
 
+    '''----- END UPDATE CHECK HELPERS -----'''
+
+    '''----- UI REPRESENTATION UTILITIES -----'''
     def update_gtk_box_for_dlc(self, dlc_info):
         title = dlc_info['title']
         if title not in self.dlc_dict:
@@ -417,20 +395,53 @@ class LibraryEntry:
         dlc_box = self.dlc_dict[title]
         dlc_box.refresh_state()
 
+    def load_thumbnail(self):
+        set_result = self.__set_image("")
+        if not set_result:
+            tries = 10
+            performed_try = 0
+            while performed_try < tries:
+                if self.game.image_url and self.game.id:
+                    # Download the thumbnail
+                    image_url = "https:{}_196.jpg".format(self.game.image_url)
+                    thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
+                    download = Download(image_url, thumbnail, DownloadType.THUMBNAIL,
+                                        finish_func=self.__set_image)
+                    self.download_manager.download_now(download)
+                    set_result = True
+                    break
+                performed_try += 1
+                time.sleep(1)
+        return set_result
+
+    def __set_image(self, save_location):
+        set_result = False
+        self.game.set_install_dir(self.config.install_dir)
+        thumbnail_install_dir = os.path.join(self.game.install_dir, "thumbnail.jpg")
+        if os.path.isfile(thumbnail_install_dir):
+            GLib.idle_add(self.image.set_from_file, thumbnail_install_dir)
+            set_result = True
+        elif save_location and os.path.isfile(save_location):
+            GLib.idle_add(self.image.set_from_file, save_location)
+            # Copy image to
+            if os.path.isdir(os.path.dirname(thumbnail_install_dir)):
+                shutil.copy2(save_location, thumbnail_install_dir)
+            set_result = True
+        thumbnail_path = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
+        if os.path.isfile(thumbnail_path):
+            GLib.idle_add(self.image.set_from_file, thumbnail_path)
+            set_result = True
+        return set_result
+
+    '''----- END UI REPRESENTATION UTILITIES -----'''
+
+    '''----- STATE HANDLING -----'''
     def set_progress(self, percentage: int):
         if self.current_state in [State.QUEUED, State.INSTALLED]:
             GLib.idle_add(self.update_to_state, State.DOWNLOADING)
         if self.progress_bar:
             GLib.idle_add(self.progress_bar.set_fraction, percentage / 100)
             GLib.idle_add(self.progress_bar.set_tooltip_text, "{}%".format(percentage))
-
-    def __uninstall_game(self):
-        GLib.idle_add(self.update_to_state, State.UNINSTALLING)
-        uninstall_game(self.game)
-        GLib.idle_add(self.update_to_state, State.DOWNLOADABLE)
-        GLib.idle_add(self.reload_state)
-
-    '''----- STATE HANDLING -----'''
 
     def reload_state(self):
         self.game.set_install_dir(self.config.install_dir)
