@@ -136,7 +136,7 @@ class DownloadManager:
     def __notify_listeners(self, change: ChangeType, download, forked=False):
         '''helper function to notify listeners of changes to the active download list
         Will be used for each atomic add/remove action in the list of active downloads'''
-        if not change:
+        if not change or not self.download_list_change_listener:
             return
 
         if forked:
