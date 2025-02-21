@@ -13,7 +13,6 @@
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkLabel" id="label_active">
-            <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes">Active downloads:</property>
             <property name="xalign">0.05000000074505806</property>
@@ -26,7 +25,6 @@
         </child>
         <child>
           <object class="GtkFlowBox" id="flowbox_active">
-            <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="tooltip-text" translatable="yes">active</property>
             <property name="valign">start</property>
@@ -46,7 +44,6 @@
         </child>
         <child>
           <object class="GtkLabel" id="label_queued">
-            <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes">Pending:</property>
             <property name="xalign">0.05000000074505806</property>
@@ -59,7 +56,6 @@
         </child>
         <child>
           <object class="GtkFlowBox" id="flowbox_queued">
-            <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="tooltip-text" translatable="yes">queued</property>
             <property name="valign">start</property>
@@ -79,7 +75,6 @@
         </child>
         <child>
           <object class="GtkLabel" id="label_done">
-            <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="label" translatable="yes">Done:</property>
             <property name="xalign">0.05000000074505806</property>
@@ -92,7 +87,6 @@
         </child>
         <child>
           <object class="GtkFlowBox" id="flowbox_done">
-            <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="tooltip-text" translatable="yes">done</property>
             <property name="valign">start</property>
