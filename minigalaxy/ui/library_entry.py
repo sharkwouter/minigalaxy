@@ -351,7 +351,7 @@ class LibraryEntry:
     def __check_for_update_dlc(self):
         if self.game.is_installed() and self.game.id and not self.offline:
             game_info = self.api.get_info(self.game)
-            self.__download_icon(False, game_info)
+            self.__download_icon(game_info=game_info)
             if self.game.get_info("check_for_updates") == "":
                 self.game.set_info("check_for_updates", True)
             if self.game.get_info("check_for_updates"):
