@@ -376,62 +376,19 @@ class LibraryEntry:
         dlcs = game_info["expanded_dlcs"]
         for dlc in dlcs:
             if dlc["is_installable"] and dlc["id"] in self.parent_library.owned_products_ids:
-                d_id = dlc["id"]
-                d_installer = dlc["downloads"]["installers"]
-                d_icon = dlc["images"]["sidebarIcon"]
-                d_name = dlc["title"]
-                GLib.idle_add(self.update_gtk_box_for_dlc, d_id, d_icon, d_name, d_installer)
+                GLib.idle_add(self.update_gtk_box_for_dlc, dlc)
                 if dlc not in self.game.dlcs:
                     self.game.dlcs.append(dlc)
         if self.game.dlcs:
             GLib.idle_add(self.menu_button_dlc.show)
 
-    def update_gtk_box_for_dlc(self, dlc_id, icon, title, installer):
+    def update_gtk_box_for_dlc(self, dlc_info):
+        title = dlc_info['title']
         if title not in self.dlc_dict:
-            dlc_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-            dlc_box.set_spacing(8)
-            image = Gtk.Image()
-            image.set_from_icon_name("media-optical", Gtk.IconSize.BUTTON)
-            dlc_box.pack_start(image, False, True, 0)
-            label = Gtk.Label(label=title, xalign=0)
-            dlc_box.pack_start(label, True, True, 0)
-            install_button = Gtk.Button()
-            dlc_box.pack_start(install_button, False, True, 0)
-            self.dlc_dict[title] = [install_button, image]
-            self.dlc_dict[title][0].connect("clicked", self.__dlc_button_clicked, installer)
-            self.dlc_horizontal_box.pack_start(dlc_box, False, True, 0)
-            dlc_box.show_all()
-            self.get_async_image_dlc_icon(dlc_id, image, icon, title)
-        download_info = self.api.get_download_info(self.game, dlc_installers=installer)
-        if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=title):
-            icon_name = "emblem-synchronizing"
-            self.dlc_dict[title][0].set_sensitive(True)
-        elif self.game.is_installed(dlc_title=title):
-            icon_name = "object-select"
-            self.dlc_dict[title][0].set_sensitive(False)
-        else:
-            icon_name = "document-save"
-            if not self.download_list:
-                self.dlc_dict[title][0].set_sensitive(True)
-        install_button_image = Gtk.Image()
-        install_button_image.set_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
-        self.dlc_dict[title][0].set_image(install_button_image)
+            self.dlc_dict[title] = DlcListEntry(self, dlc_info, self.__download_dlc)
 
-    def __dlc_button_clicked(self, button, installer):
-        button.set_sensitive(False)
-        threading.Thread(target=self.__download_dlc, args=(installer,)).start()
-
-    def get_async_image_dlc_icon(self, dlc_id, image, icon, title):
-        dlc_icon_path = os.path.join(ICON_DIR, "{}.jpg".format(dlc_id))
-        if icon:
-            if os.path.isfile(dlc_icon_path):
-                GLib.idle_add(image.set_from_file, dlc_icon_path)
-            else:
-                url = "http:{}".format(icon)
-                dlc_icon = os.path.join(ICON_DIR, "{}.jpg".format(dlc_id))
-                download = Download(url, dlc_icon)
-                self.download_manager.download_now(download)
-                GLib.idle_add(image.set_from_file, dlc_icon_path)
+        dlc_box = self.dlc_dict[title]
+        dlc_box.refresh_state()
 
     def set_progress(self, percentage: int):
         if self.current_state in [State.QUEUED, State.INSTALLED]:
@@ -445,6 +402,8 @@ class LibraryEntry:
         uninstall_game(self.game)
         GLib.idle_add(self.update_to_state, State.DOWNLOADABLE)
         GLib.idle_add(self.reload_state)
+
+    '''----- STATE HANDLING -----'''
 
     def reload_state(self):
         self.game.set_install_dir(self.config.install_dir)
@@ -569,3 +528,68 @@ class LibraryEntry:
         self.current_state = state
         if state in self.STATE_UPDATE_HANDLERS:
             self.STATE_UPDATE_HANDLERS[state]()
+
+    '''----- END STATE HANDLING -----'''
+
+
+class DlcListEntry(Gtk.Box):
+    def __init__(self, parent_entry, dlc_info, dlc_download_function):
+        super().__init__(orientation=Gtk.Orientation.HORIZONTAL)
+        self.parent_entry = parent_entry
+
+        self.title = dlc_info['title']
+        self.installer = dlc_info["downloads"]["installers"]
+        self.download_function = dlc_download_function
+        self.set_spacing(8)
+
+        self.icon_image = Gtk.Image()
+        self.icon_image.set_from_icon_name("media-optical", Gtk.IconSize.BUTTON)
+        self.pack_start(self.icon_image, False, True, 0)
+
+        label = Gtk.Label(label=self.title, xalign=0)
+        self.pack_start(label, True, True, 0)
+
+        self.install_button_image = Gtk.Image()
+        self.install_button = Gtk.Button()
+        self.install_button.set_image(self.install_button_image)
+        self.install_button.connect("clicked", self.__dlc_button_clicked)
+        self.pack_start(self.install_button, False, True, 0)
+
+        parent_entry.dlc_horizontal_box.pack_start(self, False, True, 0)
+        self.show_all()
+        self.get_async_image_dlc_icon(dlc_info['id'], dlc_info["images"]["sidebarIcon"])
+
+    def refresh_state(self):
+        game = self.parent_entry.game
+        download_info = self.parent_entry.api.get_download_info(game, dlc_installers=self.installer)
+        if game.is_update_available(version_from_api=download_info["version"], dlc_title=self.title):
+            icon_name = "emblem-synchronizing"
+            self.install_button.set_sensitive(True)
+        elif game.is_installed(dlc_title=self.title):
+            icon_name = "object-select"
+            self.install_button.set_sensitive(False)
+        else:
+            icon_name = "document-save"
+            if self.title not in self.parent_entry.download_list:
+                self.install_button.set_sensitive(True)
+        self.install_button_image.set_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
+
+    def get_async_image_dlc_icon(self, dlc_id, icon):
+        dlc_icon_path = os.path.join(ICON_DIR, "{}.jpg".format(dlc_id))
+        if os.path.isfile(dlc_icon_path):
+            GLib.idle_add(self.icon_image.set_from_file, dlc_icon_path)
+
+        elif icon:
+            download = Download(
+                url="http:{}".format(icon),
+                dlc_icon=os.path.join(ICON_DIR, "{}.jpg".format(dlc_id)),
+                finish_func=self.__set_downloaded_dlc_icon
+            )
+            self.download_manager.download_now(download)
+
+    def __dlc_button_clicked(self, button):
+        button.set_sensitive(False)
+        threading.Thread(target=self.download_function, args=(self.installer,)).start()
+
+    def __set_downloaded_dlc_icon(self, save_location):
+        GLib.idle_add(self.icon_image.set_from_file, save_location)
