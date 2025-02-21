@@ -38,9 +38,11 @@ class Download:
         self.game = game
         # Type of object, e.g. icon, thumbnail, game, dlc,
         self.download_type = download_type
+        self.current_progress = 0
 
     def set_progress(self, percentage: int) -> None:
         "Set the download progress of the Download"
+        self.current_progress = percentage
         if self.__progress_func:
             if self.out_of_amount > 1:
                 # Change the percentage based on which number we are
