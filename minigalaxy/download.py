@@ -25,9 +25,10 @@ class Download:
     >>>   download = Download(image_url, thumbnail, DownloadType.THUMBNAIL, finish_func=lambda x: print("Done downloading {}!".format(x))) # noqa: E501
     >>> your_function() # doctest: +SKIP
     """
-    def __init__(self, url, save_location, download_type=None, finish_func=None,
-                 progress_func=None, cancel_func=None, number=1,
-                 out_of_amount=1, game=None):
+
+    def __init__(self, url, save_location, download_type=None,
+                 finish_func=None, progress_func=None, cancel_func=None,
+                 expected_size=None, number=1, out_of_amount=1, game=None):
         self.url = url
         self.save_location = save_location
         self.__finish_func = finish_func
@@ -38,9 +39,12 @@ class Download:
         self.game = game
         # Type of object, e.g. icon, thumbnail, game, dlc,
         self.download_type = download_type
+        self.current_progress = 0
+        self.expected_size = expected_size
 
     def set_progress(self, percentage: int) -> None:
         "Set the download progress of the Download"
+        self.current_progress = percentage
         if self.__progress_func:
             if self.out_of_amount > 1:
                 # Change the percentage based on which number we are
