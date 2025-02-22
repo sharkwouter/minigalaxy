@@ -22,12 +22,14 @@ import time
 import threading
 import queue
 
+import minigalaxy.logger  # noqa: F401
+
 from enum import Enum
-from requests import Session
-from requests.exceptions import RequestException
+from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
 from minigalaxy.download import Download, DownloadType
-import minigalaxy.logger    # noqa: F401
+from requests import Session
+from requests.exceptions import RequestException
 
 module_logger = logging.getLogger("minigalaxy.download_manager")
 
@@ -64,9 +66,10 @@ class DownloadState(Enum):
     STARTED = 2  # The download url response is now actively being streamed into save_location
     PROGRESS = 3  # An active download made measurable progress
     COMPLETED = 4  # Download has completed without errors
-    STOPPED = 5  # Download was stopped. Does not prevent regular restart by calling download()
-    FAILED = 6  # Active downloaded stopped because of an error
-    CANCELLED = 7  # Download was stopped, all partial progress and state info about it deleted
+    PAUSED = 5  # Download put on hold, will not go to active downloads unless specifically forced to
+    STOPPED = 6  # Download was stopped. Does not prevent regular restart by calling download()
+    FAILED = 7  # Active downloaded stopped because of an error
+    CANCELED = 8  # Download was stopped, all partial progress and state info about it deleted
 
 
 class DownloadManager:
@@ -76,7 +79,7 @@ class DownloadManager:
     First, you need to create a Download object, then pass the Download object to the
     DownloadManager download or download_now method to download it.
     """
-    def __init__(self, session: Session):
+    def __init__(self, session: Session, config: Config):
         """
         Create a new DownloadManager Object
 
@@ -84,6 +87,7 @@ class DownloadManager:
             This initializer takes no arguments
         """
         self.session = session
+        self.config = config
 
         # A queue for UI elements
         self.__ui_queue = queue.PriorityQueue()
@@ -111,7 +115,7 @@ class DownloadManager:
                 download_thread.start()
                 self.workers.append(download_thread)
 
-    def download(self, download):
+    def download(self, download, restart_paused=False):
         """
         Add a download or list of downloads to the queue for downloading
         You can download a single Download or a list of Downloads
@@ -120,11 +124,20 @@ class DownloadManager:
             A single Download or a list of Download objects
         """
         if isinstance(download, Download):
-            self.put_in_proper_queue(download)
-        else:
-            # Assume we've received a list of downloads
-            for d in download:
-                self.put_in_proper_queue(d)
+            download = [download]
+
+        paused_downloads = self.config.paused_downloads
+        # Assume we've received a list of downloads
+        for d in download:
+            if d.save_location in paused_downloads:
+                if restart_paused:
+                    self.config.remove_paused_download(d.save_location)
+                else:
+                    # let paused downloads at least display a rough estimate of where they are
+                    download.current_progress = paused_downloads[d.save_location]
+                    continue
+
+            self.put_in_proper_queue(d)
 
     def put_in_proper_queue(self, download):
         "Put the download in the proper queue"
