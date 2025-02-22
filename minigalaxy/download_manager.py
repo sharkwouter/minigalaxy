@@ -159,13 +159,13 @@ class DownloadManager:
         # We use this to test for downloads more efficiently
         download_dict = dict(zip(downloads, [True] * len(downloads)))
 
-        # This follows the previous logic
-        # First cancel all the active downloads
-        self.cancel_active_downloads(download_dict)
-
         # Next, loop through the downloads queued for download, comparing them to the
         # cancel list
         self.cancel_queued_downloads(download_dict)
+
+        # This follows the previous logic
+        # First cancel all the active downloads
+        self.cancel_active_downloads(download_dict)
 
     def cancel_active_downloads(self, download_dict):
         """
@@ -221,7 +221,7 @@ class DownloadManager:
 
     def cancel_current_downloads(self):
         """
-        Cancel the currentl downloads
+        Cancel the current downloads
         """
         self.logger.debug("Canceling current download")
         with self.active_downloads_lock:
@@ -269,7 +269,7 @@ class DownloadManager:
                 # Mark the task as done to keep counts correct so
                 # we can use join() or other functions later
                 download_queue.task_done()
-            time.sleep(0.01)
+            time.sleep(0.02)
 
     def __download_file(self, download, download_queue):
         """
@@ -361,14 +361,23 @@ class DownloadManager:
         file_size = None
         try:
             file_size = int(download_request.headers.get('content-length'))
+            # update expected_size in download with real values
+            download.expected_size = file_size
         except (ValueError, TypeError):
-            self.logger.error(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
+            if download.expected_size:
+                self.logger.warn("Couldn't get file size for {}. Use download.expected_size={}.".format(
+                                download.save_location, download.expected_size))
+                file_size = download.expected_size
+            else:
+                self.logger.error(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
+
         if file_size and downloaded_size > 0:
             # we are resuming a partial file. file_size from content-length
             # will not include what we requested to skip over
             file_size += downloaded_size
         result = True
         if file_size is None or downloaded_size < file_size:
+            current_progress = 0
             with open(download.save_location, download_mode) as save_file:
                 for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
                     save_file.write(chunk)
@@ -380,7 +389,9 @@ class DownloadManager:
                         break
                     if file_size is not None:
                         progress = int(downloaded_size / file_size * 100)
-                        download.set_progress(progress)
+                        if progress > current_progress:
+                            current_progress = progress
+                            download.set_progress(progress)
         if result:
             download.set_progress(100)
         self.logger.debug("Returning result from _download_operation: {}".format(result))
