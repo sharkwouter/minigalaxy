@@ -309,15 +309,6 @@ class DownloadManager:
                     item = new_queue.get()
                     download_queue.put(item)
 
-    def cancel_current_downloads(self):
-        """
-        Cancel the current downloads
-        """
-        self.logger.debug("Canceling current download")
-        with self.active_downloads_lock:
-            for download in self.active_downloads:
-                self.__cancel[download] = True
-
     def cancel_all_downloads(self):
         """
         Cancel all current downloads queued
