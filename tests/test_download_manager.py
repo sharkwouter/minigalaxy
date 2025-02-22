@@ -81,7 +81,8 @@ class TestDownloadManager(TestCase):
         self.download_request.headers.get.assert_called_once()
         self.download_request.iter_content.assert_called_once()
 
-        self.assertEqual(2, progress_func.call_count)
+        # 0, 50 (hard-coded), 100 (done)
+        self.assertEqual(3, progress_func.call_count)
         self.assertEqual(0, finish_func.call_count)
         self.assertEqual(0, cancel_func.call_count)
 

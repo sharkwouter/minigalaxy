@@ -1,3 +1,5 @@
+import os
+
 from enum import Enum
 from zipfile import BadZipFile
 
@@ -41,6 +43,9 @@ class Download:
         self.download_type = download_type
         self.current_progress = 0
         self.expected_size = expected_size
+
+    def filename(self):
+        return os.path.basename(self.save_location)
 
     def set_progress(self, percentage: int) -> None:
         "Set the download progress of the Download"

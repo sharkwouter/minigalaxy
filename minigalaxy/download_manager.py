@@ -120,6 +120,9 @@ class DownloadManager:
         self.active_downloads = {}
         self.active_downloads_lock = threading.RLock()
 
+        # to keep track and prevent re-queueing, because queue.get() would empty it otherwise
+        self.queued_downloads = {}
+
         # members related to download change listener
         self.download_list_change_listener = []
         self.listener_thread = ThreadPoolExecutor(max_workers=1, thread_name_prefix="download_listener")
@@ -144,14 +147,13 @@ class DownloadManager:
             self.download_list_change_listener.remove(listener)
 
     def __init_new_listener(self, listener):
+        self.logger.debug("initialize new download listener")
         with self.active_downloads_lock:
             for download in self.active_downloads:
                 self.__call_listener_failsafe(listener, DownloadState.STARTED, download)
 
-            for download_queue, limit in self.queues:  # noqa: F401
-                while not download_queue.empty():
-                    queued_download = download_queue.get()
-                    self.__call_listener_failsafe(listener, DownloadState.QUEUED, queued_download.item)
+            for download in self.queued_downloads:
+                self.__call_listener_failsafe(listener, DownloadState.QUEUED, download)
 
     def __notify_listeners(self, change: DownloadState, download, download_params=[], forked=None):
         '''helper function to notify listeners of changes to the active download list
@@ -164,11 +166,14 @@ class DownloadManager:
             forked = not self.fork_listener
 
         if forked:
+            self.logger.debug('[%s] NOTIFY:%s - %s, params:%s',
+                              threading.currentThread().getName(), change, download.filename(), download_params)
             for listener in self.download_list_change_listener:
                 self.__call_listener_failsafe(listener, change, download)
             self.__download_callback(download, change, *download_params, forked=forked)
         else:
-            self.listener_thread.submit(self.__notify_listeners, change, download, download_params=download_params, forked=True)
+            self.listener_thread.submit(self.__notify_listeners,
+                                        change, download, download_params=download_params, forked=True)
 
     def __call_listener_failsafe(self, listener, *parameters):
         try:
@@ -190,13 +195,19 @@ class DownloadManager:
         paused_downloads = self.config.paused_downloads
         # Assume we've received a list of downloads
         for d in download:
+            file = d.save_location
+            if self.__is_pending(d):
+                # ignore if the file is already pending
+                continue
+
             if d.save_location in paused_downloads:
+                self.logger.debug("Download [%s] is paused currently", file)
                 if restart_paused:
-                    self.config.remove_paused_download(d.save_location)
+                    self.config.remove_paused_download(file)
                 else:
                     self.__notify_listeners(DownloadState.PAUSED, d)
                     # let paused downloads at least display a rough estimate of where they are
-                    download.current_progress = paused_downloads[d.save_location]
+                    download.current_progress = paused_downloads[file]
                     self.__notify_listeners(DownloadState.PROGRESS, d)
                     continue
 
@@ -206,6 +217,8 @@ class DownloadManager:
         "Put the download in the proper queue"
 
         self.__notify_listeners(DownloadState.QUEUED, download)
+        self.__add_to_queued_list(download)
+
         # Add game type downloads to the game queue
         if download.download_type == DownloadType.GAME:
             self.__game_queue.put(QueuedDownloadItem(download, 1))
@@ -302,7 +315,7 @@ class DownloadManager:
 
                     if should_cancel:
                         self.__request_download_cancel(download, cancel_state)
-                        self.__notify_listeners(DownloadState.CANCELED, download)
+                        self.__notify_listeners(cancel_state, download)
                     else:
                         new_queue.put(queued_download)
                     # Mark the task as "done" to keep counts correct so
@@ -313,7 +326,7 @@ class DownloadManager:
                     item = new_queue.get()
                     download_queue.put(item)
 
-    def cancel_all_downloads(self):
+    def cancel_all_downloads(self, cancel_state=DownloadState.CANCELED):
         """
         Cancel all current downloads queued
         """
@@ -323,11 +336,13 @@ class DownloadManager:
             while not download_queue.empty():
                 download = download_queue.get().item
                 self.logger.debug("canceling another download: {}".format(download.save_location))
+                self.__request_download_cancel(download, cancel_state)
+                self.__notify_listeners(cancel_state, download)
                 # Mark the task as "done" to keep counts correct so
                 # we can use join() or other functions later
                 download_queue.task_done()
 
-        self.cancel_current_downloads()
+        self.cancel_current_downloads(cancel_state=cancel_state)
 
     def __cancel_paused_downloads(self, downloads, cancel_state=DownloadState.CANCELED):
         paused_downloads = self.config.paused_downloads
@@ -357,6 +372,8 @@ class DownloadManager:
                 with self.active_downloads_lock:
                     download = download_queue.get().item
                     self.active_downloads[download] = download
+                    self.__remove_from_queued_list(download)
+
                 self.__notify_listeners(DownloadState.STARTED, download)
                 self.__download_file(download, download_queue)
                 # Mark the task as done to keep counts correct so
@@ -383,7 +400,7 @@ class DownloadManager:
                 result = self.__download_operation(download, start_point, download_mode)
                 break
             except RequestException as e:
-                self.logger.error("Error downloading file {}, received error {}".format(download.url, e))
+                self.logger.error("Received error downloading file [%s]: %s", download.url, e)
                 download_attempt += 1
 
         if download_attempt == download_max_attempts:
@@ -391,7 +408,7 @@ class DownloadManager:
 
         # Successful downloads
         if result is DownloadState.COMPLETED:
-            self.logger.debug("Download finished, thread {}".format(threading.get_ident()))
+            self.logger.debug("Download[%s] finished, thread %s", download.filename(), threading.get_ident())
 
         # Unsuccessful downloads and cancels
         if not result and self.__cancel_requested(download):
@@ -465,8 +482,8 @@ class DownloadManager:
             download.expected_size = file_size
         except (ValueError, TypeError):
             if download.expected_size:
-                self.logger.warn("Couldn't get file size for {}. Use download.expected_size={}.".format(
-                                download.save_location, download.expected_size))
+                self.logger.warn("Couldn't get file size for %s. Use download.expected_size=%s.",
+                                 download.save_location, download.expected_size)
                 file_size = download.expected_size
             else:
                 self.logger.error(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
@@ -475,29 +492,43 @@ class DownloadManager:
             # we are resuming a partial file. file_size from content-length
             # will not include what we requested to skip over
             file_size += downloaded_size
-        result = DownloadState.COMPLETED
-        if file_size is None or downloaded_size < file_size:
-            current_progress = 0
-            with open(download.save_location, download_mode) as save_file:
-                for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-                    save_file.write(chunk)
-                    downloaded_size += len(chunk)
-                    if self.__cancel_requested(download):
-                        return None
-                    if file_size is not None:
-                        progress = int(downloaded_size / file_size * 100)
-                        if progress > current_progress:
-                            current_progress = progress
-                            self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[progress])
+        if file_size and downloaded_size == file_size:
+            self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[100])
+            return DownloadState.COMPLETED
+
+        current_progress = 0
+        with open(download.save_location, download_mode) as save_file:
+            for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                save_file.write(chunk)
+                downloaded_size += len(chunk)
+                if self.__cancel_requested(download):
+                    return None
+
+                current_progress = self.__update_download_progress(downloaded_size, file_size, current_progress, download)
 
         if not file_size:
             self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[100])
         return DownloadState.COMPLETED
 
+    def __update_download_progress(self, current_size, total_size, last_progress_value, download):
+        if total_size is None:
+            # keep progress at 50 percent for files with unknown size.
+            # this is rough, but better than no feedback at all
+            progress = 50
+        else:
+            progress = int(current_size / total_size * 100)
+
+        if progress > last_progress_value:
+            self.logger.debug('%s: %d / %s * 100 = %s (previous=%s)',
+                              download.filename(), current_size, total_size, progress, last_progress_value)
+            self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[progress])
+            return progress
+        else:
+            return last_progress_value
+
     def __is_same_download_as_before(self, download):
         """
-        Return true if the download is the same as an item with the same save_location
-        already downloaded.
+        Return true if the download is the same as an item with the same save_location already downloaded.
 
         Args:
             The Download to check
@@ -516,7 +547,7 @@ class DownloadManager:
                 return file_content == chunk
 
     def __download_callback(self, download, state, *params, forked=False):
-        '''encapsulates invocation of callbacks on Download to assure uniform threading and 
+        '''encapsulates invocation of callbacks on Download to assure uniform threading and
         error safeguarding to not kill downloads threads by uncaught exceptions'''
         if state in DownloadManager.STATE_DOWNLOAD_CALLBACKS:
             callback = DownloadManager.STATE_DOWNLOAD_CALLBACKS[state]
@@ -525,6 +556,21 @@ class DownloadManager:
                 error_wrapper(callback, download, *params)
             else:
                 self.listener_thread.submit(error_wrapper, callback, download, *params)
+
+    def __is_pending(self, download):
+        file = download.save_location
+        with self.active_downloads_lock:
+            # ignore if the file is already pending
+            return file in self.active_downloads or file in self.queued_downloads
+
+    def __add_to_queued_list(self, download):
+        with self.active_downloads_lock:
+            self.queued_downloads[download.save_location] = download
+
+    def __remove_from_queued_list(self, download):
+        with self.active_downloads_lock:
+            if download.save_location in self.queued_downloads:
+                del self.queued_downloads[download.save_location]
 
     def __request_download_cancel(self, download, cancel_type=DownloadState.CANCELED):
         '''used to separate data structure of self.__cancel from the logic procedure of flagging a download for cancel'''
@@ -554,7 +600,7 @@ class DownloadManager:
     def __cleanup_meta(self, download, last_state):
         '''depending on the end state of a download, we might want to keep/remove a different set of state data
         about a download. That is what this method controls'''
-        self.logger.debug('Cleaning up meta data for: {}', download.save_location)
+        self.logger.debug('Cleaning up meta data for: %s', download.filename())
         if self.__is_cancel_type(last_state) and download in self.__cancel:
             del self.__cancel[download]
 
@@ -565,7 +611,7 @@ class DownloadManager:
         if self.__is_cancel_type(last_state):
             self.config.remove_paused_download(download.save_location)
 
-        print('DONE:' + download.save_location)
+        self.__remove_from_queued_list(download)
         # We may want to unset current_downloads here
         # For example, if a download was added that is impossible to complete
 
