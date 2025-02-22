@@ -11,7 +11,7 @@ class Config:
     __config_file: str
     __config: dict
 
-    def __init__(self, config_file: str=CONFIG_FILE_PATH):
+    def __init__(self, config_file: str = CONFIG_FILE_PATH):
         self.__config_file = config_file
         self.__config = {}
         self.__load()

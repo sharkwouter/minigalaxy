@@ -168,7 +168,8 @@ class DownloadManager:
                 self.__call_listener_failsafe(listener, change, download)
             self.__download_callback(download, change, *download_params, forked=forked)
         else:
-            self.listener_thread.submit(self.__notify_listeners, change, download, download_params=download_params, forked=True)
+            self.listener_thread.submit(self.__notify_listeners,
+                                        change, download, download_params=download_params, forked=True)
 
     def __call_listener_failsafe(self, listener, *parameters):
         try:
@@ -471,29 +472,41 @@ class DownloadManager:
             else:
                 self.logger.error(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
 
-        result = DownloadState.COMPLETED
-        if file_size is None or downloaded_size < file_size:
-            current_progress = 0
-            with open(download.save_location, download_mode) as save_file:
-                for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-                    save_file.write(chunk)
-                    downloaded_size += len(chunk)
-                    if self.__cancel_requested(download):
-                        return None
-                    if file_size is not None:
-                        progress = int(downloaded_size / file_size * 100)
-                        if progress > current_progress:
-                            current_progress = progress
-                            self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[progress])
+        if file_size and downloaded_size == file_size:
+            self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[100])
+            return DownloadState.COMPLETED
+
+        current_progress = 0
+        with open(download.save_location, download_mode) as save_file:
+            for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                save_file.write(chunk)
+                downloaded_size += len(chunk)
+                if self.__cancel_requested(download):
+                    return None
+
+                current_progress = self.__update_download_progress(downloaded_size, file_size, current_progress, download)
 
         if not file_size:
             self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[100])
         return DownloadState.COMPLETED
 
+    def __update_download_progress(self, current_size, total_size, last_progress_value, download):
+        if total_size is None:
+            # keep progress at 50 percent for files with unknown size.
+            # this is rough, but better than no feedback at all
+            progress = 50
+        else:
+            progress = int(current_size / total_size * 100)
+
+        if progress > last_progress_value:
+            self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[progress])
+            return progress
+        else:
+            return last_progress_value
+
     def __is_same_download_as_before(self, download):
         """
-        Return true if the download is the same as an item with the same save_location
-        already downloaded.
+        Return true if the download is the same as an item with the same save_location already downloaded.
 
         Args:
             The Download to check
@@ -512,7 +525,7 @@ class DownloadManager:
                 return file_content == chunk
 
     def __download_callback(self, download, state, *params, forked=False):
-        '''encapsulates invocation of callbacks on Download to assure uniform threading and 
+        '''encapsulates invocation of callbacks on Download to assure uniform threading and
         error safeguarding to not kill downloads threads by uncaught exceptions'''
         if state in DownloadManager.STATE_DOWNLOAD_CALLBACKS:
             callback = DownloadManager.STATE_DOWNLOAD_CALLBACKS[state]
