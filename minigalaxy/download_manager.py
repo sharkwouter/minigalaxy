@@ -20,10 +20,12 @@ import os
 import shutil
 import time
 import threading
+import traceback
 import queue
 
 import minigalaxy.logger  # noqa: F401
 
+from concurrent.futures.thread import ThreadPoolExecutor
 from enum import Enum
 from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
@@ -79,6 +81,17 @@ class DownloadManager:
     First, you need to create a Download object, then pass the Download object to the
     DownloadManager download or download_now method to download it.
     """
+
+    CANCEL_STATES = [DownloadState.PAUSED, DownloadState.STOPPED, DownloadState.FAILED, DownloadState.CANCELED]
+
+    STATE_DOWNLOAD_CALLBACKS = {
+        DownloadState.COMPLETED: lambda d, *a: d.finish(),
+        DownloadState.CANCELED: lambda d, *a: d.cancel(),
+        DownloadState.FAILED: lambda d, *a: d.cancel(),
+        DownloadState.STOPPED: lambda d, *a: d.cancel(),
+        DownloadState.PROGRESS: lambda d, percent: d.set_progress(percent)
+    }
+
     def __init__(self, session: Session, config: Config):
         """
         Create a new DownloadManager Object
@@ -104,7 +117,12 @@ class DownloadManager:
         # The list of currently active downloads
         # These are items not in the queue, but currently being downloaded
         self.active_downloads = {}
-        self.active_downloads_lock = threading.Lock()
+        self.active_downloads_lock = threading.RLock()
+
+        # members related to download change listener
+        self.download_list_change_listener = []
+        self.listener_thread = ThreadPoolExecutor(max_workers=1, thread_name_prefix="download_listener")
+        self.fork_listener = True
 
         self.logger = logging.getLogger("minigalaxy.download_manager.DownloadManager")
 
@@ -114,6 +132,48 @@ class DownloadManager:
                 download_thread.daemon = True
                 download_thread.start()
                 self.workers.append(download_thread)
+
+    def add_active_downloads_listener(self, listener):
+        if listener not in self.download_list_change_listener:
+            self.download_list_change_listener.append(listener)
+            self.listener_thread.submit(self.__init_new_listener, listener)
+
+    def remove_active_downloads_listener(self, listener):
+        if listener in self.download_list_change_listener:
+            self.download_list_change_listener.remove(listener)
+
+    def __init_new_listener(self, listener):
+        with self.active_downloads_lock:
+            for download in self.active_downloads:
+                self.__call_listener_failsafe(listener, DownloadState.STARTED, download)
+
+            for download_queue, limit in self.queues:  # noqa: F401
+                while not download_queue.empty():
+                    queued_download = download_queue.get()
+                    self.__call_listener_failsafe(listener, DownloadState.QUEUED, queued_download.item)
+
+    def __notify_listeners(self, change: DownloadState, download, download_params=[], forked=None):
+        '''helper function to notify listeners of changes to the active download list
+        Will be used for each atomic add/remove action in the list of active downloads'''
+        if not change:
+            return
+
+        # must differentiate from False to get default
+        if forked is None:
+            forked = not self.fork_listener
+
+        if forked:
+            for listener in self.download_list_change_listener:
+                self.__call_listener_failsafe(listener, change, download)
+            self.__download_callback(download, change, *download_params, forked=forked)
+        else:
+            self.listener_thread.submit(self.__notify_listeners, change, download, download_params=download_params, forked=True)
+
+    def __call_listener_failsafe(self, listener, *parameters):
+        try:
+            listener(*parameters)
+        except BaseException as exception:
+            self.logger.error(f"Error while trying to notify listener: {traceback.format_exception(exception)}")
 
     def download(self, download, restart_paused=False):
         """
@@ -454,6 +514,17 @@ class DownloadManager:
             with open(download.save_location, "rb") as file:
                 file_content = file.read(size_to_check)
                 return file_content == chunk
+
+    def __download_callback(self, download, state, *params, forked=False):
+        '''encapsulates invocation of callbacks on Download to assure uniform threading and 
+        error safeguarding to not kill downloads threads by uncaught exceptions'''
+        if state in DownloadManager.STATE_DOWNLOAD_CALLBACKS:
+            callback = DownloadManager.STATE_DOWNLOAD_CALLBACKS[state]
+            error_wrapper = self.__call_listener_failsafe
+            if forked:
+                error_wrapper(callback, download, *params)
+            else:
+                self.listener_thread.submit(error_wrapper, callback, download, *params)
 
     def __request_download_cancel(self, download, cancel_type=DownloadState.CANCELED):
         '''used to separate data structure of self.__cancel from the logic procedure of flagging a download for cancel'''
