@@ -193,14 +193,18 @@ class DownloadManager:
                 if restart_paused:
                     self.config.remove_paused_download(d.save_location)
                 else:
+                    self.__notify_listeners(DownloadState.PAUSED, d)
                     # let paused downloads at least display a rough estimate of where they are
                     download.current_progress = paused_downloads[d.save_location]
+                    self.__notify_listeners(DownloadState.PROGRESS, d)
                     continue
 
             self.put_in_proper_queue(d)
 
     def put_in_proper_queue(self, download):
         "Put the download in the proper queue"
+
+        self.__notify_listeners(DownloadState.QUEUED, download)
         # Add game type downloads to the game queue
         if download.download_type == DownloadType.GAME:
             self.__game_queue.put(QueuedDownloadItem(download, 1))
@@ -335,6 +339,7 @@ class DownloadManager:
         for d in downloads:
             if d.save_location in paused_downloads:
                 self.__request_download_cancel(d, cancel_state)
+                self.__notify_listeners(cancel_state, d)
 
     def __remove_download_from_active_downloads(self, download):
         "Remove a download from the list of active downloads"
@@ -357,6 +362,7 @@ class DownloadManager:
                 with self.active_downloads_lock:
                     download = download_queue.get().item
                     self.active_downloads[download] = download
+                self.__notify_listeners(DownloadState.STARTED, download)
                 self.__download_file(download, download_queue)
                 # Mark the task as done to keep counts correct so
                 # we can use join() or other functions later
@@ -457,7 +463,7 @@ class DownloadManager:
             return DownloadState.FAILED
 
         downloaded_size = start_point
-        download.set_progress(0)
+        self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[0])
         file_size = None
         try:
             file_size = int(download_request.headers.get('content-length'))
