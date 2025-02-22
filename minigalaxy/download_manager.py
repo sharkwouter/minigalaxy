@@ -574,7 +574,6 @@ class DownloadManager:
         if self.__is_cancel_type(last_state):
             self.config.remove_paused_download(download.save_location)
 
-        print('DONE:' + download.save_location)
         # We may want to unset current_downloads here
         # For example, if a download was added that is impossible to complete
 
