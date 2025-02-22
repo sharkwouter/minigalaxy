@@ -40,6 +40,7 @@ class QueuedDownloadItem:
     """
     Wrap downloads in a simple class so we can manage when to download them
     """
+
     def __init__(self, download, priority=1):
         """
         Create a QueuedDownloadItem with a given download and priority level
@@ -383,26 +384,25 @@ class DownloadManager:
                 break
             except RequestException as e:
                 self.logger.error("Error downloading file {}, received error {}".format(download.url, e))
-                result = None
                 download_attempt += 1
+
+        if download_attempt == download_max_attempts:
+            result = DownloadState.FAILED
+
         # Successful downloads
         if result is DownloadState.COMPLETED:
             self.logger.debug("Download finished, thread {}".format(threading.get_ident()))
-            finish_thread = threading.Thread(target=download.finish)
-            finish_thread.start()
-            self.__remove_download_from_active_downloads(download)
+
         # Unsuccessful downloads and cancels
-        else:
-            if download in self.__cancel:
-                del self.__cancel[download]
-                result = DownloadState.CANCELLED
-            elif not result and download_attempt >= download_max_attempts:
-                result = DownloadState.FAILED
-            download.cancel()
-            self.__remove_download_from_active_downloads(download)
-            os.remove(download.save_location)
-            # We may want to unset current_downloads here
-            # For example, if a download was added that is impossible to complete
+        if not result and self.__cancel_requested(download):
+            result = self.__get_cancel_state(download)
+            self.logger.debug("Download was canceled: {}, reason: {}".format(download.save_location, str(result)))
+        if not result:
+            result = DownloadState.FAILED
+
+        self.__notify_listeners(result, download)
+        self.__remove_download_from_active_downloads(download)
+        self.__cleanup_meta(download, result)
 
     def __prepare_location(self, save_location):
         """
@@ -488,11 +488,11 @@ class DownloadManager:
                         progress = int(downloaded_size / file_size * 100)
                         if progress > current_progress:
                             current_progress = progress
-                            download.set_progress(progress)
-        if result is DownloadState.COMPLETED:
-            download.set_progress(100)
-        self.logger.debug("Returning result from _download_operation: {}".format(result))
-        return result
+                            self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[progress])
+
+        if not file_size:
+            self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[100])
+        return DownloadState.COMPLETED
 
     def __is_same_download_as_before(self, download):
         """
