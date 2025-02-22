@@ -289,16 +289,19 @@ class DownloadManager:
 
                 while not download_queue.empty():
                     queued_download = download_queue.get()
+
                     # Test a Download against a QueuedDownloadItem
-                    if download == queued_download.item:
-                        download.cancel()
+                    should_cancel = download == queued_download.item
                     # test for games
-                    elif (download.game is not None) and \
-                         (download.game == queued_download.item.game):
-                        download.cancel()
+                    if not should_cancel:
+                        should_cancel = (download.game is not None) and (download.game == queued_download.item.game)
                     # test for other assets
-                    elif download.save_location == queued_download.item.save_location:
-                        download.cancel()
+                    if not should_cancel:
+                        should_cancel = download.save_location == queued_download.item.save_location
+
+                    if should_cancel:
+                        self.__request_download_cancel(download, cancel_state)
+                        self.__notify_listeners(DownloadState.CANCELED, download)
                     else:
                         new_queue.put(queued_download)
                     # Mark the task as "done" to keep counts correct so
