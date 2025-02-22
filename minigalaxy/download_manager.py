@@ -170,7 +170,7 @@ class DownloadManager:
         """
         self.__ui_queue.put(QueuedDownloadItem(download, 0))
 
-    def cancel_download(self, downloads):
+    def cancel_download(self, downloads, cancel_state=DownloadState.CANCELED):
         """
         Cancel a download or a list of downloads
 
@@ -185,32 +185,32 @@ class DownloadManager:
         # We use this to test for downloads more efficiently
         download_dict = dict(zip(downloads, [True] * len(downloads)))
 
+        self.__cancel_paused_downloads(download_dict, cancel_state)
+
         # Next, loop through the downloads queued for download, comparing them to the
         # cancel list
-        self.cancel_queued_downloads(download_dict)
+        self.cancel_queued_downloads(download_dict, cancel_state)
 
         # This follows the previous logic
         # First cancel all the active downloads
-        self.cancel_active_downloads(download_dict)
+        self.cancel_current_downloads(download_dict, cancel_state)
 
-    def cancel_active_downloads(self, download_dict):
+    def cancel_current_downloads(self, download_dict, cancel_state=DownloadState.CANCELED):
         """
-        Cancel active downloads
-        This is called by cancel_download
+        Cancel the current downloads
+        """
 
-        Args:
-          download_dict is a dictionary of downloads to cancel with values True
-        """
+        if not download_dict:
+            download_dict = self.active_downloads
+
         with self.active_downloads_lock:
             for download in self.active_downloads:
                 if download in download_dict:
-                    self.logger.debug("Found download")
+                    self.logger.debug("Canceling download: " + download.save_location)
                     # mark it for canceling
-                    self.__cancel[download] = True
-                    # Remove it from the downloads to cancel
-                    del download_dict[download]
+                    self.__request_download_cancel(download, cancel_state)
 
-    def cancel_queued_downloads(self, download_dict):
+    def cancel_queued_downloads(self, download_dict, cancel_state=DownloadState.CANCELED):
         """
         Cancel selected downloads in the queue
         This is called by cancel_download
@@ -269,6 +269,12 @@ class DownloadManager:
                 download_queue.task_done()
 
         self.cancel_current_downloads()
+
+    def __cancel_paused_downloads(self, downloads, cancel_state=DownloadState.CANCELED):
+        paused_downloads = self.config.paused_downloads
+        for d in downloads:
+            if d.save_location in paused_downloads:
+                self.__request_download_cancel(d, cancel_state)
 
     def __remove_download_from_active_downloads(self, download):
         "Remove a download from the list of active downloads"
@@ -416,11 +422,8 @@ class DownloadManager:
                 for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
                     save_file.write(chunk)
                     downloaded_size += len(chunk)
-                    if download in self.__cancel:
-                        self.logger.debug("Canceling download: {}".format(download.save_location))
-                        result = DownloadState.CANCELLED
-                        del self.__cancel[download]
-                        break
+                    if self.__cancel_requested(download):
+                        return None
                     if file_size is not None:
                         progress = int(downloaded_size / file_size * 100)
                         if progress > current_progress:
@@ -451,3 +454,49 @@ class DownloadManager:
             with open(download.save_location, "rb") as file:
                 file_content = file.read(size_to_check)
                 return file_content == chunk
+
+    def __request_download_cancel(self, download, cancel_type=DownloadState.CANCELED):
+        '''used to separate data structure of self.__cancel from the logic procedure of flagging a download for cancel'''
+        if not self.__is_cancel_type(cancel_type):
+            raise ValueError(str(cancel_type) + " is not a valid cancel reason")
+
+        is_active = False
+        with self.active_downloads_lock:
+            if download in self.active_downloads:
+                self.__cancel[download] = cancel_type
+                is_active = True
+
+        # active downloads are taken care of in __download_file
+        if not is_active and self.__is_cancel_type(cancel_type):
+            self.__cleanup_meta(download, cancel_type)
+
+        # must come after __cleanup_meta, because that might clear the pause flag
+        if cancel_type == DownloadState.PAUSED:
+            self.config.add_paused_download(download.save_location, download.current_progress)
+
+    def __cancel_requested(self, download):
+        return download in self.__cancel
+
+    def __get_cancel_state(self, download):
+        return self.__cancel.get(download, None)
+
+    def __cleanup_meta(self, download, last_state):
+        '''depending on the end state of a download, we might want to keep/remove a different set of state data
+        about a download. That is what this method controls'''
+        self.logger.debug('Cleaning up meta data for: {}', download.save_location)
+        if self.__is_cancel_type(last_state) and download in self.__cancel:
+            del self.__cancel[download]
+
+        if last_state in [DownloadState.FAILED, DownloadState.CANCELED]:
+            if os.path.isfile(download.save_location):
+                os.remove(download.save_location)
+
+        if self.__is_cancel_type(last_state):
+            self.config.remove_paused_download(download.save_location)
+
+        print('DONE:' + download.save_location)
+        # We may want to unset current_downloads here
+        # For example, if a download was added that is impossible to complete
+
+    def __is_cancel_type(self, state: DownloadState):
+        return state in DownloadManager.CANCEL_STATES
