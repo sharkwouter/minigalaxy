@@ -56,7 +56,7 @@ def main():
     session = requests.Session()
     session.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {})'.format(VERSION, platform.machine())})
     api = Api(config, session)
-    download_manager = DownloadManager(session)
+    download_manager = DownloadManager(session, config)
     window = Window(config, api, download_manager, APPLICATION_NAME)
     window.connect("destroy", Gtk.main_quit)
     Gtk.main()
