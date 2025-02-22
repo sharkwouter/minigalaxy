@@ -22,6 +22,7 @@ import time
 import threading
 import queue
 
+from enum import Enum
 from requests import Session
 from requests.exceptions import RequestException
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
@@ -54,6 +55,18 @@ class QueuedDownloadItem:
             return self.priority < other.priority
         else:
             return self.queue_time < other.queue_time
+
+
+class DownloadState(Enum):
+    '''This enum represents the various states that a Download goes through in DownloadManager'''
+
+    QUEUED = 1  # Download request is put into the queue of pending downloads
+    STARTED = 2  # The download url response is now actively being streamed into save_location
+    PROGRESS = 3  # An active download made measurable progress
+    COMPLETED = 4  # Download has completed without errors
+    STOPPED = 5  # Download was stopped. Does not prevent regular restart by calling download()
+    FAILED = 6  # Active downloaded stopped because of an error
+    CANCELLED = 7  # Download was stopped, all partial progress and state info about it deleted
 
 
 class DownloadManager:
@@ -283,7 +296,7 @@ class DownloadManager:
         self.__prepare_location(download.save_location)
         download_max_attempts = 5
         download_attempt = 0
-        result = False
+        result = None
         while download_attempt < download_max_attempts:
             try:
                 start_point, download_mode = self.__get_start_point_and_download_mode(download)
@@ -291,9 +304,10 @@ class DownloadManager:
                 break
             except RequestException as e:
                 self.logger.error("Error downloading file {}, received error {}".format(download.url, e))
+                result = None
                 download_attempt += 1
         # Successful downloads
-        if result:
+        if result is DownloadState.COMPLETED:
             self.logger.debug("Download finished, thread {}".format(threading.get_ident()))
             finish_thread = threading.Thread(target=download.finish)
             finish_thread.start()
@@ -302,6 +316,9 @@ class DownloadManager:
         else:
             if download in self.__cancel:
                 del self.__cancel[download]
+                result = DownloadState.CANCELLED
+            elif not result and download_attempt >= download_max_attempts:
+                result = DownloadState.FAILED
             download.cancel()
             self.__remove_download_from_active_downloads(download)
             os.remove(download.save_location)
@@ -356,6 +373,10 @@ class DownloadManager:
         """
         resume_header = {'Range': 'bytes={}-'.format(start_point)}
         download_request = self.session.get(download.url, headers=resume_header, stream=True, timeout=30)
+        # stop retries when 404 is received
+        if download_request.status_code == 404:
+            return DownloadState.FAILED
+
         downloaded_size = start_point
         download.set_progress(0)
         file_size = None
@@ -375,7 +396,7 @@ class DownloadManager:
             # we are resuming a partial file. file_size from content-length
             # will not include what we requested to skip over
             file_size += downloaded_size
-        result = True
+        result = DownloadState.COMPLETED
         if file_size is None or downloaded_size < file_size:
             current_progress = 0
             with open(download.save_location, download_mode) as save_file:
@@ -384,7 +405,7 @@ class DownloadManager:
                     downloaded_size += len(chunk)
                     if download in self.__cancel:
                         self.logger.debug("Canceling download: {}".format(download.save_location))
-                        result = False
+                        result = DownloadState.CANCELLED
                         del self.__cancel[download]
                         break
                     if file_size is not None:
@@ -392,7 +413,7 @@ class DownloadManager:
                         if progress > current_progress:
                             current_progress = progress
                             download.set_progress(progress)
-        if result:
+        if result is DownloadState.COMPLETED:
             download.set_progress(100)
         self.logger.debug("Returning result from _download_operation: {}".format(result))
         return result
