@@ -20,7 +20,6 @@ import os
 import shutil
 import time
 import threading
-import traceback
 import queue
 
 import minigalaxy.logger  # noqa: F401
@@ -178,8 +177,8 @@ class DownloadManager:
     def __call_listener_failsafe(self, listener, *parameters):
         try:
             listener(*parameters)
-        except BaseException as exception:
-            self.logger.error(f"Error while trying to notify listener: {traceback.format_exception(exception)}")
+        except BaseException:
+            self.logger.exception("Error while trying to notify listener:")
 
     def download(self, download, restart_paused=False):
         """
@@ -207,8 +206,8 @@ class DownloadManager:
                 else:
                     self.__notify_listeners(DownloadState.PAUSED, d)
                     # let paused downloads at least display a rough estimate of where they are
-                    download.current_progress = paused_downloads[file]
-                    self.__notify_listeners(DownloadState.PROGRESS, d)
+                    d.current_progress = paused_downloads[file]
+                    self.__notify_listeners(DownloadState.PROGRESS, d, d.current_progress)
                     continue
 
             self.put_in_proper_queue(d)
@@ -608,7 +607,7 @@ class DownloadManager:
             if os.path.isfile(download.save_location):
                 os.remove(download.save_location)
 
-        if self.__is_cancel_type(last_state):
+        if self.__is_cancel_type(last_state) and last_state is not DownloadState.PAUSED:
             self.config.remove_paused_download(download.save_location)
 
         self.__remove_from_queued_list(download)
