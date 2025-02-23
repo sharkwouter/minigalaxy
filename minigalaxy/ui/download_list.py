@@ -38,7 +38,7 @@ class DownloadManagerList(Gtk.Viewport):
             DownloadState.PROGRESS: self.download_progress,
             DownloadState.FAILED: self.download_stopped,
             DownloadState.CANCELED: self.download_stopped,
-            DownloadState.STOPPED : self.download_stopped,
+            DownloadState.STOPPED: self.download_stopped,
          #   DownloadState.PAUSED : self.download_paused
         }
 
@@ -55,6 +55,8 @@ class DownloadManagerList(Gtk.Viewport):
         self.logger.debug('Received %s for Download[save_location=%s, progress=%d]',
                           change, download.filename(), download.current_progress)
         if download.download_type not in self.listener_download_types:
+            return
+        if change not in self.change_handler:
             return
 
         GLib.idle_add(self.change_handler[change], change, download)
@@ -110,13 +112,14 @@ class OngoingDownloadListEntry(Gtk.Box):
     image_cancel_action = Gtk.Template.Child()
 
     action_icon_names = {
-        DownloadState.STARTED: ['media-playback-pause', 'dialog-cancel'],
-        DownloadState.COMPLETED: [None, 'list-remove'],
         DownloadState.QUEUED: ['media-playback-pause', 'dialog-cancel'],
+        DownloadState.STARTED: ['media-playback-pause', 'dialog-cancel'],
         DownloadState.PROGRESS: [None, None],
+        DownloadState.COMPLETED: [None, 'list-remove'],
+        DownloadState.PAUSED: ['media-playback-start', 'edit-delete'],
+        DownloadState.STOPPED: [],
         DownloadState.FAILED: ['view-refresh', 'list-remove'],
         DownloadState.CANCELED: ['view-refresh', 'list-remove'],
-        DownloadState.PAUSED: ['media-playback-start', 'edit-delete']
     }
 
     tooltip_texts = {
@@ -165,34 +168,42 @@ class OngoingDownloadListEntry(Gtk.Box):
 
     @Gtk.Template.Callback("on_primary_button")
     def primary_button_clicked(self, widget, data):
-        print("primary")
         if self.state not in self.button_actions:
             return
-        self.button_actions[self.state][0](self)
+        action = self.button_actions[self.state][0]
+        self.manager.logger.debug('[%s:%s] - Primary button clicked, execute %s', self.state, self.download.filename(), str(action))
+        action(self)
 
     @Gtk.Template.Callback("on_secondary_button")
     def secondary_button_clicked(self, widget, data):
-        print("secondary:" + str(self.state))
         if self.state not in self.button_actions:
             return
-        self.button_actions[self.state][1](self)
+        action = self.button_actions[self.state][1]
+        self.manager.logger.debug('[%s:%s] - Secondary button clicked, execute %s', self.state, self.download.filename(), str(action))
+        action(self)
+
+    '''----- DOWNLOAD STATE OPERATIONS -----'''
 
     def restart(self):
         self.manager.download_manager.download(self.download)
 
-    # TODO: pause and stop are still identical
+    def unpause(self):
+        self.manager.download_manager.download(self.download, restart_paused=True)
+
     def pause_download(self):
-        self.manager.download_manager.cancel_download(self.download)
+        self.manager.download_manager.cancel_download(self.download, cancel_state=DownloadState.PAUSED)
 
     def stop_download(self):
-        self.manager.download_manager.cancel_download(self.download)
+        self.manager.download_manager.cancel_download(self.download, cancel_state=DownloadState.STOPPED)
 
     def delete_download(self):
-        self.manager.download_manager.undo_download(self.download)
+        self.manager.download_manager.undo_download(self.download, cancel_state=DownloadState.CANCELED)
 
     def NOOP(self):
         '''used for states in which a button should not do anything'''
         pass
+
+    '''----- END DOWNLOAD STATE OPERATIONS -----'''
 
     '''----- VISIBILITY CONTROL -----'''
 
@@ -218,11 +229,12 @@ class OngoingDownloadListEntry(Gtk.Box):
     '''----- END VISIBILITY CONTROL -----'''
 
     button_actions = {
-        ChangeType.DOWNLOAD_STARTED: [pause_download, stop_download],
-        ChangeType.DOWNLOAD_COMPLETED: [NOOP, remove_from_current_box],
-        ChangeType.DOWNLOAD_QUEUED: [pause_download, stop_download],  # Maybe instead use priority up/down or allow dragging
+        DownloadState.STARTED: [pause_download, stop_download],
+        DownloadState.QUEUED: [pause_download, stop_download],
         # ChangeType.DOWNLOAD_PROGRESS: [None, None],
-        ChangeType.DOWNLOAD_FAILED: [restart, remove_from_current_box],
-        ChangeType.DOWNLOAD_CANCELLED: [restart, remove_from_current_box],
-        ChangeType.DOWNLOAD_PAUSED: [restart, delete_download],
+        DownloadState.COMPLETED: [NOOP, remove_from_current_box],
+        DownloadState.PAUSED: [unpause, delete_download],
+        DownloadState.STOPPED: [restart, delete_download],
+        DownloadState.FAILED: [restart, remove_from_current_box],
+        DownloadState.CANCELED: [restart, remove_from_current_box],
     }
