@@ -18,7 +18,8 @@
         <child>
           <object class="GtkLabel" id="label_active">
             <property name="can-focus">False</property>
-            <property name="label" translatable="yes">Active downloads:</property>
+            <property name="tooltip-text" translatable="yes">Files being actively downloaded</property>
+            <property name="label" translatable="yes" context="download_group">Active Downloads:</property>
             <property name="xalign">0.05000000074505806</property>
           </object>
           <packing>
@@ -30,7 +31,7 @@
         <child>
           <object class="GtkFlowBox" id="flowbox_active">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">active</property>
+            <property name="tooltip-text" translatable="yes">Active Downloads</property>
             <property name="valign">start</property>
             <property name="border-width">10</property>
             <property name="homogeneous">True</property>
@@ -49,7 +50,8 @@
         <child>
           <object class="GtkLabel" id="label_queued">
             <property name="can-focus">False</property>
-            <property name="label" translatable="yes">Pending:</property>
+            <property name="tooltip-text" translatable="yes">Waiting for a free download worker slot</property>
+            <property name="label" translatable="yes" context="download_group">Pending:</property>
             <property name="xalign">0.05000000074505806</property>
           </object>
           <packing>
@@ -61,7 +63,7 @@
         <child>
           <object class="GtkFlowBox" id="flowbox_queued">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">queued</property>
+            <property name="tooltip-text" translatable="yes">Queued Downloads</property>
             <property name="valign">start</property>
             <property name="border-width">10</property>
             <property name="homogeneous">True</property>
@@ -78,9 +80,10 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="label_done">
+          <object class="GtkLabel" id="label_paused">
             <property name="can-focus">False</property>
-            <property name="label" translatable="yes">Done:</property>
+            <property name="tooltip-text" translatable="yes">Will not automatically resume on restart</property>
+            <property name="label" translatable="yes" context="download_group">Paused:</property>
             <property name="xalign">0.05000000074505806</property>
           </object>
           <packing>
@@ -90,9 +93,9 @@
           </packing>
         </child>
         <child>
-          <object class="GtkFlowBox" id="flowbox_done">
+          <object class="GtkFlowBox" id="flowbox_paused">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">done</property>
+            <property name="tooltip-text" translatable="yes">Paused Downloads</property>
             <property name="valign">start</property>
             <property name="border-width">10</property>
             <property name="homogeneous">True</property>
@@ -106,6 +109,38 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">5</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="label_done">
+            <property name="can-focus">False</property>
+            <property name="tooltip-text" translatable="yes">Downloads that completed, failed or were stopped.</property>
+            <property name="label" translatable="yes" context="download_group">Done:</property>
+            <property name="xalign">0.05000000074505806</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">6</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFlowBox" id="flowbox_done">
+            <property name="can-focus">False</property>
+            <property name="tooltip-text" translatable="yes">All Terminated Downloads</property>
+            <property name="valign">start</property>
+            <property name="border-width">10</property>
+            <property name="homogeneous">True</property>
+            <property name="column-spacing">15</property>
+            <property name="row-spacing">10</property>
+            <property name="max-children-per-line">1</property>
+            <property name="selection-mode">none</property>
+            <property name="activate-on-single-click">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">7</property>
           </packing>
         </child>
       </object>

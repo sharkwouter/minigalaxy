@@ -20,6 +20,9 @@ class DownloadManagerList(Gtk.Viewport):
     label_queued = Gtk.Template.Child()
     flowbox_queued = Gtk.Template.Child()
 
+    label_paused = Gtk.Template.Child()
+    flowbox_paused = Gtk.Template.Child()
+
     label_done = Gtk.Template.Child()
     flowbox_done = Gtk.Template.Child()
 
@@ -39,12 +42,13 @@ class DownloadManagerList(Gtk.Viewport):
             DownloadState.FAILED: self.download_stopped,
             DownloadState.CANCELED: self.download_stopped,
             DownloadState.STOPPED: self.download_stopped,
-         #   DownloadState.PAUSED : self.download_paused
+            DownloadState.PAUSED : self.download_paused
         }
 
         self.flowbow_labels = {
             self.flowbox_active: self.label_active,
             self.flowbox_queued: self.label_queued,
+            self.flowbox_paused: self.label_paused,
             self.flowbox_done: self.label_done
         }
 
@@ -75,7 +79,7 @@ class DownloadManagerList(Gtk.Viewport):
 
     def download_paused(self, change, download):
         download_entry = self.__get_create_entry(change, download)
-    #    self.__move_to_section(self.flowbox_paused, download_entry, change)
+        self.__move_to_section(self.flowbox_paused, download_entry, change)
 
     def download_progress(self, change, download):
         download_entry = self.__get_create_entry(change, download)
@@ -111,23 +115,12 @@ class OngoingDownloadListEntry(Gtk.Box):
     image_start_action = Gtk.Template.Child()
     image_cancel_action = Gtk.Template.Child()
 
-    action_icon_names = {
-        DownloadState.QUEUED: ['media-playback-pause', 'dialog-cancel'],
-        DownloadState.STARTED: ['media-playback-pause', 'dialog-cancel'],
-        DownloadState.PROGRESS: [None, None],
-        DownloadState.COMPLETED: [None, 'list-remove'],
-        DownloadState.PAUSED: ['media-playback-start', 'edit-delete'],
-        DownloadState.STOPPED: [],
-        DownloadState.FAILED: ['view-refresh', 'list-remove'],
-        DownloadState.CANCELED: ['view-refresh', 'list-remove'],
-    }
-
     tooltip_texts = {
         'media-playback-start': 'Resume',
         'media-playback-pause': 'Pause',
         'view-refresh': 'Retry',
         'dialog-cancel': 'Cancel',
-        'edit-delete': 'Delete File',
+        'edit-delete': 'Delete file',
         'list-remove': 'Remove from list',
     }
 
@@ -148,10 +141,10 @@ class OngoingDownloadListEntry(Gtk.Box):
 
     def update_buttons(self, state: DownloadState):
         self.state = state
-        if state not in self.action_icon_names:
+        if state not in self.button_configs:
             return
 
-        primary, secondary = self.action_icon_names[state]
+        primary, secondary = self.button_configs[state]['icons']
         if primary:
             self.image_start_action.set_from_icon_name(primary, Gtk.IconSize.LARGE_TOOLBAR)
             self.image_start_action.set_tooltip_text(_(self.tooltip_texts[primary]))
@@ -168,18 +161,18 @@ class OngoingDownloadListEntry(Gtk.Box):
 
     @Gtk.Template.Callback("on_primary_button")
     def primary_button_clicked(self, widget, data):
-        if self.state not in self.button_actions:
-            return
-        action = self.button_actions[self.state][0]
-        self.manager.logger.debug('[%s:%s] - Primary button clicked, execute %s', self.state, self.download.filename(), str(action))
-        action(self)
+        self.__execute_button('Primary', 0)
 
     @Gtk.Template.Callback("on_secondary_button")
     def secondary_button_clicked(self, widget, data):
-        if self.state not in self.button_actions:
+        self.__execute_button('Secondary', 1)
+    
+    def __execute_button(self, button_type, action_index):
+        if self.state not in self.button_configs:
             return
-        action = self.button_actions[self.state][1]
-        self.manager.logger.debug('[%s:%s] - Secondary button clicked, execute %s', self.state, self.download.filename(), str(action))
+        action = self.button_configs[self.state]['actions'][action_index]
+        self.manager.logger.debug('[%s:%s] - %s button clicked, execute %s', 
+                                  button_type, self.state, self.download.filename(), str(action))
         action(self)
 
     '''----- DOWNLOAD STATE OPERATIONS -----'''
@@ -197,7 +190,7 @@ class OngoingDownloadListEntry(Gtk.Box):
         self.manager.download_manager.cancel_download(self.download, cancel_state=DownloadState.STOPPED)
 
     def delete_download(self):
-        self.manager.download_manager.undo_download(self.download, cancel_state=DownloadState.CANCELED)
+        self.manager.download_manager.cancel_download(self.download, cancel_state=DownloadState.CANCELED)
 
     def NOOP(self):
         '''used for states in which a button should not do anything'''
@@ -228,13 +221,33 @@ class OngoingDownloadListEntry(Gtk.Box):
 
     '''----- END VISIBILITY CONTROL -----'''
 
-    button_actions = {
-        DownloadState.STARTED: [pause_download, stop_download],
-        DownloadState.QUEUED: [pause_download, stop_download],
-        # ChangeType.DOWNLOAD_PROGRESS: [None, None],
-        DownloadState.COMPLETED: [NOOP, remove_from_current_box],
-        DownloadState.PAUSED: [unpause, delete_download],
-        DownloadState.STOPPED: [restart, delete_download],
-        DownloadState.FAILED: [restart, remove_from_current_box],
-        DownloadState.CANCELED: [restart, remove_from_current_box],
+    button_configs = {
+        DownloadState.STARTED: {
+            'actions': [pause_download, stop_download],
+            'icons':['media-playback-pause', 'dialog-cancel']
+        },
+        DownloadState.QUEUED: {
+            'actions': [pause_download, stop_download],
+            'icons':['media-playback-pause', 'dialog-cancel']
+        },
+        DownloadState.COMPLETED: {
+            'actions': [NOOP, remove_from_current_box],
+            'icons':[None, 'list-remove']
+        },
+        DownloadState.PAUSED: {
+            'actions': [unpause, delete_download],
+            'icons':['media-playback-start', 'edit-delete']
+        },
+        DownloadState.STOPPED: {
+            'actions': [restart, delete_download],
+            'icons': ['media-playback-start', 'edit-delete']
+        },
+        DownloadState.FAILED: {
+            'actions': [restart, remove_from_current_box],
+            'icons':['view-refresh', 'list-remove']
+        },
+        DownloadState.CANCELED: {
+            'actions': [restart, remove_from_current_box],
+            'icons':['view-refresh', 'list-remove']
+        }
     }
