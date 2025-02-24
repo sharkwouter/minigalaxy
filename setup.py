@@ -1,10 +1,16 @@
 from setuptools import setup, find_packages
 from glob import glob
 import subprocess
+import os
 from minigalaxy.version import VERSION
 
 # Generate the translations
 subprocess.run(['bash', 'scripts/compile-translations.sh'])
+
+translations = []
+for language_file in glob("data/mo/*/*/*.mo"):
+    install_path = os.path.join("share/minigalaxy/translations", os.path.relpath(os.path.dirname(language_file), "data/mo"))
+    translations.append((install_path, [language_file]))
 
 setup(
     name="minigalaxy",
@@ -20,21 +26,7 @@ setup(
         ('share/minigalaxy/images', glob('data/images/*')),
         ('share/minigalaxy/', ['data/style.css']),
         ('share/metainfo', ['data/io.github.sharkwouter.Minigalaxy.metainfo.xml']),
-
-        # Add translations
-        ('share/minigalaxy/translations/de/LC_MESSAGES/', ['data/mo/de/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/es/LC_MESSAGES/', ['data/mo/es/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/fr/LC_MESSAGES/', ['data/mo/fr/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/nb_NO/LC_MESSAGES/', ['data/mo/nb_NO/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/nl/LC_MESSAGES/', ['data/mo/nl/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/nn_NO/LC_MESSAGES/', ['data/mo/nn_NO/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/pl/LC_MESSAGES/', ['data/mo/pl/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/pt_BR/LC_MESSAGES/', ['data/mo/pt_BR/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/ru_RU/LC_MESSAGES/', ['data/mo/ru_RU/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/tr/LC_MESSAGES/', ['data/mo/tr/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/zh_CN/LC_MESSAGES/', ['data/mo/zh_CN/LC_MESSAGES/minigalaxy.mo']),
-        ('share/minigalaxy/translations/zh_TW/LC_MESSAGES/', ['data/mo/zh_TW/LC_MESSAGES/minigalaxy.mo']),
-    ],
+    ] + translations,
 
     # Project uses reStructuredText, so ensure that the docutils get
     # installed or upgraded on the target machine
