@@ -9,8 +9,8 @@ subprocess.run(['bash', 'scripts/compile-translations.sh'])
 
 translations = []
 for language_file in glob("data/mo/*/*/*.mo"):
-  install_path = os.path.join("share/minigalaxy/translations", os.path.relpath(os.path.dirname(language_file), "data/mo"))
-  translations.append((install_path, [language_file]))
+    install_path = os.path.join("share/minigalaxy/translations", os.path.relpath(os.path.dirname(language_file), "data/mo"))
+    translations.append((install_path, [language_file]))
 
 setup(
     name="minigalaxy",
