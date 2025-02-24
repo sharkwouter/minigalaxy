@@ -363,6 +363,10 @@ class DownloadManager:
             file_size = int(download_request.headers.get('content-length'))
         except (ValueError, TypeError):
             self.logger.error(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
+        if file_size and downloaded_size > 0:
+            # we are resuming a partial file. file_size from content-length
+            # will not include what we requested to skip over
+            file_size += downloaded_size
         result = True
         if file_size is None or downloaded_size < file_size:
             with open(download.save_location, download_mode) as save_file:
