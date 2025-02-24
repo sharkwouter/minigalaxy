@@ -28,10 +28,11 @@ class DownloadManagerList(Gtk.Viewport):
 
     listener_download_types = [DownloadType.GAME, DownloadType.GAME_UPDATE, DownloadType.GAME_DLC]
 
-    def __init__(self, download_manager: DownloadManager):
+    def __init__(self, download_manager: DownloadManager, downloads_menu_button):
         Gtk.Viewport.__init__(self)
         self.logger = logging.getLogger('minigalaxy.download_list.DownloadManagerList')
         self.download_manager = download_manager
+        self.menu_button = downloads_menu_button
         self.downloads = {}
 
         self.change_handler = {
@@ -76,6 +77,8 @@ class DownloadManagerList(Gtk.Viewport):
     def download_stopped(self, change, download):
         download_entry = self.__get_create_entry(change, download)
         self.__move_to_section(self.flowbox_done, download_entry, change)
+        if not self.downloads:
+            self.menu_button.get_style_context().remove_class("suggested-action")
 
     def download_paused(self, change, download):
         download_entry = self.__get_create_entry(change, download)
@@ -84,6 +87,7 @@ class DownloadManagerList(Gtk.Viewport):
     def download_progress(self, change, download):
         download_entry = self.__get_create_entry(change, download)
         download_entry.update_progress(download.current_progress)
+        self.menu_button.get_style_context().add_class("suggested-action")
 
     def __get_create_entry(self, change, download):
         if download.save_location not in self.downloads:

@@ -198,6 +198,7 @@
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Manage downloads</property>
             <property name="valign">center</property>
             <property name="popover">download_list</property>
             <child>
@@ -206,6 +207,9 @@
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes">Show downloads</property>
                 <property name="icon-name">folder-download-symbolic</property>
+                <style>
+                  <class name="icon-dropshadow"/>
+                </style>
               </object>
             </child>
           </object>

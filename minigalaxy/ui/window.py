@@ -28,6 +28,7 @@ class Window(Gtk.ApplicationWindow):
     menu_preferences = Gtk.Template.Child()
     menu_logout = Gtk.Template.Child()
     window_library = Gtk.Template.Child()
+    download_list_button = Gtk.Template.Child()
     download_list = Gtk.Template.Child()
 
     def __init__(self, config: Config, api: 'Api', download_manager: DownloadManager, name="Minigalaxy"):
@@ -56,7 +57,7 @@ class Window(Gtk.ApplicationWindow):
 
         self.window_library.add(self.library)
         self.header_installed.set_active(self.config.installed_filter)
-        self.download_list.add(DownloadManagerList(self.download_manager))
+        self.download_list.add(DownloadManagerList(self.download_manager, self.download_list_button))
 
         # Set the icon
         icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_IMAGE_PATH)
