@@ -448,7 +448,7 @@ def match_game_lang_to_installer(installer: str, language: str, outputLogFile=No
     lang_name_regex = re.compile('(\\w+)\\s*:\\s*.*')
 
     if outputLogFile is not None:
-        logger.info('write setup language data: ', outputLogFile)
+        logger.info('write setup language data: %s', outputLogFile)
         with open(outputLogFile, "w") as text_file:
             text_file.write(stdout)
 
