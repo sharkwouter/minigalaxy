@@ -620,10 +620,10 @@ class DlcListEntry(Gtk.Box):
         elif icon:
             download = Download(
                 url="http:{}".format(icon),
-                dlc_icon=os.path.join(ICON_DIR, "{}.jpg".format(dlc_id)),
+                save_location=dlc_icon_path,
                 finish_func=self.__set_downloaded_dlc_icon
             )
-            self.download_manager.download_now(download)
+            self.parent_entry.download_manager.download_now(download)
 
     def __dlc_button_clicked(self, button):
         button.set_sensitive(False)
