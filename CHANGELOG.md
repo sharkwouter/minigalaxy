@@ -8,6 +8,7 @@
 - Clean-up and fixes of the code used for grid and list style library views (thanks to GB609)
 - Desktop shortcuts for windows games can now have icons, if gog provides them in the game info api 'images' section (thanks to GB609)
 - Fixed a bug in download_manager that prevents correct resume of downloads with 50%+ progress after restart (thanks to GB609)
+- Make sure all translations are included in releases
 
 **1.3.1**
 - Fix Windows games with multiple parts not installing with wine
