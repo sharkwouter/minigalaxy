@@ -9,6 +9,11 @@ dependencies = [
     "PyGObject",
     "requests"
 ]
+dynamic= [
+    "keywords",
+    "classifiers",
+    "urls",
+]
 
 [build-system]
 requires = ["setuptools", "wheel"]
