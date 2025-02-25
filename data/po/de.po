@@ -8,14 +8,16 @@ msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-25 11:05+0100\n"
-"PO-Revision-Date: 2021-10-10 21:36+0200\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"PO-Revision-Date: 2025-02-26 11:02+0000\n"
+"Last-Translator: Akin Yildiz <akin.yildiz@protonmail.com>\n"
+"Language-Team: German <https://hosted.weblate.org/projects/minigalaxy/"
+"minigalaxy/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.10.2-dev\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -43,7 +45,7 @@ msgstr "Wird vor dem Befehl zum Starten des Spiels eingefügt"
 
 #: data/ui/categoryfilters.ui:72
 msgid "Apply"
-msgstr ""
+msgstr "Anwenden"
 
 #: minigalaxy/ui/library_entry.py:112
 msgid "Are you sure you want to cancel downloading {}?"
@@ -73,17 +75,17 @@ msgstr "Abbrechen"
 
 #: minigalaxy/ui/categoryfilters.py:28
 msgid "Category Filters"
-msgstr ""
+msgstr "Kategorienfilter"
 
 #. Tooltip for category filter button
 #: data/ui/application.ui:149
 msgctxt "category_filter"
 msgid "Category filters"
-msgstr ""
+msgstr "Kategorienfilter"
 
 #: data/ui/properties.ui:108 data/ui/properties.ui:120
 msgid "Check for game updates in the background"
-msgstr ""
+msgstr "Prüfen von Spielupdates im Hintergrund"
 
 #: data/ui/properties.ui:107
 msgid "Check for updates:"
@@ -98,19 +100,16 @@ msgid "Command flags:"
 msgstr "Kommandozeilenparameter:"
 
 #: minigalaxy/ui/information.py:85
-#, fuzzy
 msgid "Couldn't open GOG Database page"
-msgstr "Konnte die Store-Seite nicht öffnen"
+msgstr "Konnte die GOG-Datenbank-Seite nicht öffnen"
 
 #: minigalaxy/ui/information.py:95
-#, fuzzy
 msgid "Couldn't open PCGamingWiki page"
-msgstr "Konnte die Store-Seite nicht öffnen"
+msgstr "Konnte die PCGamingWiki-Seite nicht öffnen"
 
 #: minigalaxy/ui/information.py:75
-#, fuzzy
 msgid "Couldn't open forum page"
-msgstr "Konnte die Store-Seite nicht öffnen"
+msgstr "Konnte die Forum-Seite nicht öffnen"
 
 #: minigalaxy/ui/information.py:65
 msgid "Couldn't open store page"
@@ -128,7 +127,7 @@ msgstr "Menü-Verknüpfungen erstellen: "
 
 #: minigalaxy/constants.py:54
 msgid "Czech"
-msgstr ""
+msgstr "Tschechisch"
 
 #: data/ui/gametilelist.ui:194 data/ui/gametile.ui:203
 msgid "DLC"
@@ -143,9 +142,8 @@ msgid "Download"
 msgstr "Herunterladen"
 
 #: minigalaxy/ui/library_entry.py:463
-#, fuzzy
 msgid "Download and install the game"
-msgstr "Nur installierte Spiele anzeigen"
+msgstr "Spiel herunterladen und installieren"
 
 #: minigalaxy/ui/library_entry.py:150 minigalaxy/ui/library_entry.py:247
 msgid "Download error"
@@ -164,12 +162,17 @@ msgid ""
 "Enables GameMode, a daemon and library combo that allows games to request a "
 "set of optimisations be temporarily applied to the host OS"
 msgstr ""
+"Aktiviert den GameMode, dies ist eine Kombination aus einem Daemon und einer "
+"Bibliothek, was den Spielen erlaubt ein Set an Optimierungen zu beantragen "
+"welche dann temporär an das Host Betriebssystem angewandt werden"
 
 #: data/ui/properties.ui:216 data/ui/properties.ui:228
 msgid ""
 "Enables MangoHud, an overlay for performance monitoring and benchmarking "
 "using Vulcan and OpenGL"
 msgstr ""
+"Aktiviert MangoHud, ein Overlay für Performancemonitoring und Benchmarking "
+"durch Nutzung von Vulcan und OpenGL"
 
 #: minigalaxy/constants.py:8 minigalaxy/constants.py:56
 msgid "English"
@@ -338,11 +341,10 @@ msgid "Logout"
 msgstr "Abmelden"
 
 #: minigalaxy/ui/properties.py:92
-#, fuzzy
 msgid "MangoHud wasn't found. Using MangoHud cannot be enabled."
 msgstr ""
-"Wine wurde nicht gefunden. Das Anzeigen von Windows-Spielen kann nicht "
-"aktiviert werden."
+"MangoHud wurde nicht gefunden. Das Nutzen von MangoHud kann nicht aktiviert "
+"werden."
 
 #: minigalaxy/launcher.py:230
 msgid "No executable was found in {}"
@@ -371,15 +373,15 @@ msgstr "OK"
 
 #: data/ui/properties.ui:51
 msgid "Open Regedit for this game"
-msgstr ""
+msgstr "Regedit für dieses Spiel öffnen"
 
 #: data/ui/properties.ui:65
 msgid "Open Winecfg for this game"
-msgstr ""
+msgstr "Winecfg für dieses Spiel öffnen"
 
 #: data/ui/properties.ui:93
 msgid "Open Winetricks for this game"
-msgstr ""
+msgstr "Winetricks für dieses Spiel öffnen"
 
 #: data/ui/properties.ui:76
 msgid "Open files"
@@ -387,13 +389,13 @@ msgstr "Dateien öffnen"
 
 #: data/ui/properties.ui:79
 msgid "Open game install folder"
-msgstr ""
+msgstr "Spieleinstallationsordner öffnen"
 
 #. Tooltip for header menu button
 #: data/ui/application.ui:130
 msgctxt "menu"
 msgid "Options menu"
-msgstr ""
+msgstr "Optionsmenü"
 
 #: minigalaxy/ui/library_entry.py:525 minigalaxy/ui/library_entry.py:554
 msgid "Play"
@@ -449,11 +451,11 @@ msgstr "Regedit"
 
 #: data/ui/categoryfilters.ui:44
 msgid "Reset"
-msgstr ""
+msgstr "Zurücksetzen"
 
 #: data/ui/properties.ui:294
 msgid "Reset the wine executable for this game"
-msgstr ""
+msgstr "Wine Ausführungsdatei für dieses Spiel zurücksetzen"
 
 #: data/ui/properties.ui:291
 msgid "Reset wine executable"
