@@ -11,7 +11,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y debhelper dh-python python3-all python3-setuptools help2man devscripts gettext lsb-release xmlstarlet git build-essential
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         ref: master
     - name: Prepare release files
@@ -32,7 +32,7 @@ jobs:
         git commit -m "Add new release"
         git push
     - name: Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.tag.outputs.VERSION }}
         name: Minigalaxy version ${{ steps.tag.outputs.VERSION }}
