@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-01 03:27+0300\n"
+"POT-Creation-Date: 2025-02-25 11:05+0100\n"
 "PO-Revision-Date: 2024-04-01 03:37+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -50,7 +50,7 @@ msgstr ""
 msgid "Apply"
 msgstr "Εφαρμογή"
 
-#: minigalaxy/ui/gametile.py:145 minigalaxy/ui/gametilelist.py:151
+#: minigalaxy/ui/library_entry.py:112
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Είστε σίγουρος/η ότι θέλετε να ακυρώσετε την εγκατάσταση του {};"
 
@@ -58,12 +58,12 @@ msgstr "Είστε σίγουρος/η ότι θέλετε να ακυρώσετ
 msgid "Are you sure you want to log out of GOG?"
 msgstr "Είστε σίγουρος/η ότι θέλετε να αποσυνδεθείτε από το GOG;"
 
-#: minigalaxy/ui/gametile.py:158 minigalaxy/ui/gametilelist.py:164
+#: minigalaxy/ui/library_entry.py:124
 #, python-format
 msgid "Are you sure you want to uninstall %s?"
 msgstr "Είστε σίγουρος/η ότι θέλετε να απεγκαταστήσετε το %s ;"
 
-#: minigalaxy/constants.py:4 minigalaxy/constants.py:28
+#: minigalaxy/constants.py:4 minigalaxy/constants.py:53
 msgid "Brazilian Portuguese"
 msgstr "Πορτογαλικά (Βραζιλίας)"
 
@@ -128,11 +128,11 @@ msgctxt "create_menu_shortcuts"
 msgid "Create menu shortcuts: "
 msgstr "Δημιουργία καταχωρίσεων μενού: "
 
-#: minigalaxy/constants.py:29
+#: minigalaxy/constants.py:54
 msgid "Czech"
 msgstr "Τσέχικα"
 
-#: data/ui/gametile.ui:203 data/ui/gametilelist.ui:194
+#: data/ui/gametilelist.ui:194 data/ui/gametile.ui:203
 msgid "DLC"
 msgstr "DLC"
 
@@ -140,24 +140,23 @@ msgstr "DLC"
 msgid "Danish"
 msgstr "Δανέζικα"
 
-#: minigalaxy/ui/gametile.py:505
+#: minigalaxy/ui/library_entry.py:462
 msgid "Download"
 msgstr "Λήψη"
 
-#: minigalaxy/ui/gametile.py:506 minigalaxy/ui/gametilelist.py:521
+#: minigalaxy/ui/library_entry.py:463
 msgid "Download and install the game"
 msgstr "Λήψη και εγκατάσταση του παιχνιδιού"
 
-#: minigalaxy/ui/gametile.py:229 minigalaxy/ui/gametile.py:269
-#: minigalaxy/ui/gametilelist.py:235 minigalaxy/ui/gametilelist.py:275
+#: minigalaxy/ui/library_entry.py:150 minigalaxy/ui/library_entry.py:247
 msgid "Download error"
 msgstr "Σφάλμα κατα την διαρκεια κατεβασματος"
 
-#: minigalaxy/ui/gametile.py:543
+#: minigalaxy/ui/library_entry.py:504
 msgid "Downloading…"
 msgstr "Ενυμέρωση…"
 
-#: minigalaxy/constants.py:7 minigalaxy/constants.py:30
+#: minigalaxy/constants.py:7 minigalaxy/constants.py:55
 msgid "Dutch"
 msgstr "Ολλανδικά"
 
@@ -178,13 +177,9 @@ msgstr ""
 "Ενεργοποίηση του MangoHud, μιας επικάλυψης για παρακολούθηση επιδόσεων και "
 "σύγκρισης απόδοσης με χρήση Vulcan και OpenGL"
 
-#: minigalaxy/constants.py:8 minigalaxy/constants.py:31
+#: minigalaxy/constants.py:8 minigalaxy/constants.py:56
 msgid "English"
 msgstr "Αγγλικά"
-
-#: minigalaxy/ui/login.py:45
-msgid "Facebook Login"
-msgstr "Σύνδεση μέσο Facebook"
 
 #: minigalaxy/ui/preferences.py:124
 msgid ""
@@ -194,24 +189,23 @@ msgstr ""
 "Αδυναμία αλλαγής γλωσσάς προγράμματος.Βεβαιωθείτε ότι έχει δημιουργηθεί η "
 "καταχώρηση τοπικότητας στο σύστημα σας."
 
-#: minigalaxy/ui/gametile.py:348 minigalaxy/ui/gametilelist.py:354
+#: minigalaxy/ui/library_entry.py:343
 msgid "Failed to install {}"
 msgstr "Αδυναμία εγκατάστασης {}"
 
-#: minigalaxy/ui/library.py:175
+#: minigalaxy/ui/library.py:197
 msgid "Failed to retrieve library"
 msgstr "Αδυναμία εύρεσης βιβλιοθήκης"
 
-#: minigalaxy/launcher.py:54 minigalaxy/ui/gametile.py:129
-#: minigalaxy/ui/gametilelist.py:135
+#: minigalaxy/launcher.py:60 minigalaxy/ui/library_entry.py:109
 msgid "Failed to start {}:"
 msgstr "Αδυναμία έναρξης {}:"
 
-#: minigalaxy/ui/gametile.py:344 minigalaxy/ui/gametilelist.py:325
+#: minigalaxy/ui/library_entry.py:295
 msgid "Finished downloading and installing {}"
 msgstr "Ολοκληρώθηκε η λήψη και εγκατάσταση {}"
 
-#: minigalaxy/constants.py:9 minigalaxy/constants.py:32
+#: minigalaxy/constants.py:9 minigalaxy/constants.py:57
 msgid "Finnish"
 msgstr "Φινλανδικά"
 
@@ -219,11 +213,11 @@ msgstr "Φινλανδικά"
 msgid "Forum"
 msgstr "Φόρουμ"
 
-#: minigalaxy/constants.py:10 minigalaxy/constants.py:33
+#: minigalaxy/constants.py:10 minigalaxy/constants.py:58
 msgid "French"
 msgstr "Γαλλικά"
 
-#: minigalaxy/ui/properties.py:82
+#: minigalaxy/ui/properties.py:87
 msgid "GameMode wasn't found. Using GameMode cannot be enabled."
 msgstr ""
 "Αποτυχία εύρεσης του GameMode. Δεν είναι δυνατή η ενεργοποιήσει χρίσης "
@@ -233,7 +227,7 @@ msgstr ""
 msgid "Genre"
 msgstr "Είδος"
 
-#: minigalaxy/constants.py:11 minigalaxy/constants.py:34
+#: minigalaxy/constants.py:11 minigalaxy/constants.py:59
 msgid "German"
 msgstr "Γερμανικά"
 
@@ -243,11 +237,11 @@ msgctxt "github_page_link"
 msgid "GitHub page"
 msgstr "Σελίδα GitHub"
 
-#: minigalaxy/constants.py:47
+#: minigalaxy/constants.py:73
 msgid "Greek"
 msgstr "Ελληνικά"
 
-#: minigalaxy/constants.py:52
+#: minigalaxy/constants.py:78
 msgid "Grid"
 msgstr "Πλέγμα"
 
@@ -263,11 +257,11 @@ msgstr "Αποκρύπτει το παιχνίδι από τη λίστα παι
 msgid "Hungarian"
 msgstr "Ουγγαρέζικα"
 
-#: minigalaxy/ui/gametile.py:534
+#: minigalaxy/ui/library_entry.py:495
 msgid "In queue…"
 msgstr "Σε αναμονή…"
 
-#: data/ui/gametile.ui:233 data/ui/gametilelist.ui:239
+#: data/ui/gametilelist.ui:239 data/ui/gametile.ui:233
 msgid "Information"
 msgstr "Πληροφορίες"
 
@@ -275,19 +269,11 @@ msgstr "Πληροφορίες"
 msgid "Information about {}"
 msgstr "Πληροφορίες περί {}"
 
-#: minigalaxy/installer.py:161
-msgid "Innoextract extraction failed."
-msgstr "Αποτυχία αποσυμπίεσης Innoextract."
-
-#: minigalaxy/installer.py:178
-msgid "Innoextract not installed."
-msgstr "Δεν εγκαταστάθηκε το Innoextract."
-
-#: minigalaxy/ui/gametile.py:523
+#: minigalaxy/ui/library_entry.py:480
 msgid "Install"
 msgstr "Εγκατάστασή"
 
-#: minigalaxy/ui/gametile.py:524 minigalaxy/ui/gametilelist.py:542
+#: minigalaxy/ui/library_entry.py:481
 msgid "Install the game"
 msgstr "Εγκατάσταση του παιχνιδιού"
 
@@ -303,11 +289,11 @@ msgctxt "installed"
 msgid "Installed"
 msgstr "Εγκατεστημένα"
 
-#: minigalaxy/ui/gametile.py:552
+#: minigalaxy/ui/library_entry.py:513
 msgid "Installing…"
 msgstr "Εγκαθίσταται…"
 
-#: minigalaxy/constants.py:13 minigalaxy/constants.py:35
+#: minigalaxy/constants.py:13 minigalaxy/constants.py:60
 msgid "Italian"
 msgstr "Ιταλικά"
 
@@ -339,15 +325,15 @@ msgctxt "language"
 msgid "Language: "
 msgstr "Γλώσσα: "
 
-#: minigalaxy/ui/gametile.py:565 minigalaxy/ui/gametilelist.py:590
+#: minigalaxy/ui/library_entry.py:526
 msgid "Launch the game"
 msgstr "Εκτελέσει του παιχνιδιού"
 
-#: minigalaxy/constants.py:53
+#: minigalaxy/constants.py:79
 msgid "List"
 msgstr "Λίστα"
 
-#: minigalaxy/ui/login.py:20
+#: minigalaxy/ui/login.py:20 minigalaxy/ui/login.py:45
 msgid "Login"
 msgstr "Σύνδεση"
 
@@ -357,13 +343,13 @@ msgctxt "logout"
 msgid "Logout"
 msgstr "Αποσύνδεση"
 
-#: minigalaxy/ui/properties.py:87
+#: minigalaxy/ui/properties.py:92
 msgid "MangoHud wasn't found. Using MangoHud cannot be enabled."
 msgstr ""
 "Αποτυχία εύρεσης του MangoHud. Δεν είναι δυνατή η ενεργοποιήσει χρίσης "
 "MangoHud."
 
-#: minigalaxy/launcher.py:214
+#: minigalaxy/launcher.py:230
 msgid "No executable was found in {}"
 msgstr "Αποτυχία εύρεσης εκτελέσιμου {}"
 
@@ -371,15 +357,15 @@ msgstr "Αποτυχία εύρεσης εκτελέσιμου {}"
 msgid "Norwegian"
 msgstr "Νορβηγικά"
 
-#: minigalaxy/constants.py:36
+#: minigalaxy/constants.py:61
 msgid "Norwegian Bokmål"
 msgstr "Νορβηγικά Bokmål"
 
-#: minigalaxy/constants.py:37
+#: minigalaxy/constants.py:62
 msgid "Norwegian Nynorsk"
 msgstr "Νορβηγικά Nynorsk"
 
-#: minigalaxy/installer.py:110
+#: minigalaxy/installer.py:113
 msgid "Not enough space to extract game. Required: {} Available: {}"
 msgstr ""
 "Δεν επαρκεί χώρος για την αποσυμπίεση του παιχνιδιού.Χρειάζονται:{}Διαθέσιμα:"
@@ -415,7 +401,7 @@ msgctxt "menu"
 msgid "Options menu"
 msgstr "Μενού επιλογών"
 
-#: minigalaxy/ui/gametile.py:564 minigalaxy/ui/gametile.py:595
+#: minigalaxy/ui/library_entry.py:525 minigalaxy/ui/library_entry.py:554
 msgid "Play"
 msgstr "Παίξε"
 
@@ -425,11 +411,11 @@ msgstr "Παίξε"
 msgid "Please check your internet connection"
 msgstr "Παρακαλώ ελέγξτε την σύνδεση του δικτύου σας"
 
-#: minigalaxy/constants.py:17 minigalaxy/constants.py:38
+#: minigalaxy/constants.py:17 minigalaxy/constants.py:63
 msgid "Polish"
 msgstr "Πολωνικά"
 
-#: minigalaxy/constants.py:18
+#: minigalaxy/constants.py:18 minigalaxy/constants.py:64
 msgid "Portuguese"
 msgstr "Πορτογάλικα"
 
@@ -449,11 +435,11 @@ msgctxt "preferred_game_language"
 msgid "Preferred game language: "
 msgstr "Προεπιλεγμένη γλωσσά παιχνιδιών: "
 
-#: data/ui/gametile.ui:248 data/ui/gametilelist.ui:254
+#: data/ui/gametilelist.ui:254 data/ui/gametile.ui:248
 msgid "Properties"
 msgstr "Ιδιότητες"
 
-#: minigalaxy/ui/properties.py:34
+#: minigalaxy/ui/properties.py:36
 msgid "Properties of {}"
 msgstr "Ιδιότητες του {}"
 
@@ -479,11 +465,11 @@ msgstr "Επαναφορά του εκτελέσιμου αρχείου wine γ�
 msgid "Reset wine executable"
 msgstr "Επαναφορά εκτελέσιμου wine"
 
-#: minigalaxy/constants.py:23 minigalaxy/constants.py:48
+#: minigalaxy/constants.py:23 minigalaxy/constants.py:74
 msgid "Romanian"
 msgstr "Ρουμανικά"
 
-#: minigalaxy/constants.py:19 minigalaxy/constants.py:39
+#: minigalaxy/constants.py:19 minigalaxy/constants.py:65
 msgid "Russian"
 msgstr "Ρώσικα"
 
@@ -517,8 +503,7 @@ msgstr "Προβολή παιχνιδιών Windows: "
 msgid "Show an FPS (frames per second) counter overlaid in the game"
 msgstr "Εμφάνιση ενός μετρητή FPS (καρέ ανά δευτερόλεπτο) στο παιχνίδι"
 
-#: minigalaxy/ui/gametile.py:513 minigalaxy/ui/gametile.py:570
-#: minigalaxy/ui/gametilelist.py:528 minigalaxy/ui/gametilelist.py:595
+#: minigalaxy/ui/library_entry.py:470 minigalaxy/ui/library_entry.py:530
 msgid "Show game options menu"
 msgstr "Εμφάνιση του μενού επιλογών παιχνιδιού"
 
@@ -534,15 +519,15 @@ msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Προβολή μόνο εγκατεστημένων παιχνιδιών"
 
-#: minigalaxy/constants.py:40
+#: minigalaxy/constants.py:66
 msgid "Simplified Chinese"
 msgstr "Κινεζικά Απλοποιημένα"
 
-#: minigalaxy/constants.py:20 minigalaxy/constants.py:41
+#: minigalaxy/constants.py:20 minigalaxy/constants.py:67
 msgid "Spanish"
 msgstr "Ισπανικά"
 
-#: minigalaxy/constants.py:42
+#: minigalaxy/constants.py:68
 msgid "Spanish (Spain)"
 msgstr "Ισπανικά (Ισπανίας)"
 
@@ -560,15 +545,15 @@ msgstr "Κατάστημα"
 msgid "Support"
 msgstr "Υποστήριξη"
 
-#: minigalaxy/constants.py:21 minigalaxy/constants.py:43
+#: minigalaxy/constants.py:21 minigalaxy/constants.py:69
 msgid "Swedish"
 msgstr "Σουηδικά"
 
-#: minigalaxy/constants.py:27
+#: minigalaxy/constants.py:52
 msgid "System default"
 msgstr "Προκαθορισμένη Συστήματος"
 
-#: minigalaxy/installer.py:141
+#: minigalaxy/installer.py:143
 msgid "The installation of {} failed. Please try again."
 msgstr "Η εγκατάσταση του {} απέτυχε.Παρακαλώ προσπαθήστε ξανά."
 
@@ -587,7 +572,7 @@ msgctxt "view_tooltip"
 msgid "The preferred view of game library"
 msgstr "Επιθυμητή απεικόνιση βιβλιοθήκης παιχνιδιών"
 
-#: minigalaxy/ui/gametile.py:230 minigalaxy/ui/gametilelist.py:236
+#: minigalaxy/ui/library_entry.py:151
 msgid ""
 "There was an error when trying to fetch the download link!\n"
 "{}"
@@ -598,35 +583,35 @@ msgctxt "install_path_tooltip"
 msgid "This is where games will be installed"
 msgstr "Εδώ θα εγκαθίστανται τα παιχνίδια"
 
-#: minigalaxy/constants.py:44
+#: minigalaxy/constants.py:70
 msgid "Traditional Chinese"
 msgstr "Κινεζικά Παραδοσιακά"
 
-#: minigalaxy/constants.py:22 minigalaxy/constants.py:45
+#: minigalaxy/constants.py:22 minigalaxy/constants.py:71
 msgid "Turkish"
 msgstr "Τουρκικά"
 
-#: minigalaxy/constants.py:46
+#: minigalaxy/constants.py:72
 msgid "Ukrainian"
 msgstr "Ουκρανικά"
 
-#: minigalaxy/installer.py:75
+#: minigalaxy/installer.py:78
 msgid "Unhandled error."
 msgstr "Μη διαχειρίσιμο σφάλμα."
 
-#: data/ui/gametile.ui:218 data/ui/gametilelist.ui:224
+#: data/ui/gametilelist.ui:224 data/ui/gametile.ui:218
 msgid "Uninstall"
 msgstr "Απεγκατάσταση"
 
-#: minigalaxy/ui/gametile.py:581
+#: minigalaxy/ui/library_entry.py:541
 msgid "Uninstalling…"
 msgstr "Απ εγκαθίσταται…"
 
-#: data/ui/gametile.ui:182 data/ui/gametilelist.ui:209
+#: data/ui/gametilelist.ui:209 data/ui/gametile.ui:182
 msgid "Update"
 msgstr "Ενημέρωση"
 
-#: minigalaxy/ui/gametile.py:604
+#: minigalaxy/ui/library_entry.py:563
 msgid "Updating…"
 msgstr "Ενημερώνεται…"
 
@@ -694,7 +679,7 @@ msgstr ""
 msgid "Wine executable:"
 msgstr "Εκτελέσιμο wine:"
 
-#: minigalaxy/installer.py:203
+#: minigalaxy/installer.py:205
 msgid "Wine extraction failed."
 msgstr "Αποτυχία αποσυμπίεσης wine."
 
@@ -708,7 +693,7 @@ msgstr ""
 msgid "Winecfg"
 msgstr "Winecfg"
 
-#: minigalaxy/installer.py:194
+#: minigalaxy/installer.py:173
 msgid "Wineprefix creation failed."
 msgstr "Απέτυχε η δημιουργία wineprefix."
 
@@ -716,51 +701,19 @@ msgstr "Απέτυχε η δημιουργία wineprefix."
 msgid "Winetricks"
 msgstr "Winetricks"
 
-#: minigalaxy/ui/properties.py:113
+#: minigalaxy/ui/properties.py:122
 msgid "Winetricks wasn't found and cannot be used."
 msgstr "Αποτυχία εύρεσης winetricks.Δεν είναι δυνατή η χρήση του."
-
-#: minigalaxy/ui/gametilelist.py:520
-msgid "download"
-msgstr "λήψη"
-
-#: minigalaxy/ui/gametilelist.py:563
-msgid "downloading…"
-msgstr "ενυμέρωση…"
-
-#: minigalaxy/ui/gametilelist.py:554
-msgid "in queue…"
-msgstr "σε αναμονή…"
-
-#: minigalaxy/ui/gametilelist.py:541
-msgid "install"
-msgstr "εγκατάστασή"
-
-#: minigalaxy/ui/gametilelist.py:574
-msgid "installing…"
-msgstr "εγκαθίσταται…"
-
-#: minigalaxy/ui/gametilelist.py:589 minigalaxy/ui/gametilelist.py:621
-msgid "play"
-msgstr "παίξε"
-
-#: minigalaxy/ui/gametilelist.py:607
-msgid "uninstalling…"
-msgstr "απ εγκαθίσταται…"
 
 #: minigalaxy/ui/information.py:137
 msgid "unknown"
 msgstr "άγνωστο"
 
-#: minigalaxy/ui/gametilelist.py:630
-msgid "updating…"
-msgstr "ενημερώνεται…"
-
-#: minigalaxy/installer.py:143
+#: minigalaxy/installer.py:145
 msgid "{} could not be unzipped."
 msgstr "{} αδυναμία αποσυμπίεσης."
 
-#: minigalaxy/installer.py:86
+#: minigalaxy/installer.py:89
 msgid "{} failed to download."
 msgstr "() αποτυχία λήψης."
 
@@ -768,6 +721,39 @@ msgstr "() αποτυχία λήψης."
 msgid "{} isn't a usable path"
 msgstr "()μη εύχρηστη διαδρομη"
 
-#: minigalaxy/installer.py:98
+#: minigalaxy/installer.py:101
 msgid "{} was corrupted. Please download it again."
 msgstr "()διαφθείρει.Παρακαλώ κατεβαστε το ξανά."
+
+#~ msgid "Facebook Login"
+#~ msgstr "Σύνδεση μέσο Facebook"
+
+#~ msgid "Innoextract extraction failed."
+#~ msgstr "Αποτυχία αποσυμπίεσης Innoextract."
+
+#~ msgid "Innoextract not installed."
+#~ msgstr "Δεν εγκαταστάθηκε το Innoextract."
+
+#~ msgid "download"
+#~ msgstr "λήψη"
+
+#~ msgid "downloading…"
+#~ msgstr "ενυμέρωση…"
+
+#~ msgid "in queue…"
+#~ msgstr "σε αναμονή…"
+
+#~ msgid "install"
+#~ msgstr "εγκατάστασή"
+
+#~ msgid "installing…"
+#~ msgstr "εγκαθίσταται…"
+
+#~ msgid "play"
+#~ msgstr "παίξε"
+
+#~ msgid "uninstalling…"
+#~ msgstr "απ εγκαθίσταται…"
+
+#~ msgid "updating…"
+#~ msgstr "ενημερώνεται…"
