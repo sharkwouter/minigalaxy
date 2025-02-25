@@ -189,7 +189,7 @@ Bugs reports and feature requests can also be made [here](https://github.com/sha
 Currently, help is needed with the following:
 
 - Reporting bugs in the [issue tracker](https://github.com/sharkwouter/minigalaxy/issues).
-- Translating to different languages. Instructions [here](https://github.com/sharkwouter/minigalaxy/wiki/Translating-Minigalaxy).
+- Translating to different languages [here](https://hosted.weblate.org/projects/minigalaxy/minigalaxy/).
 - Testing issues with the ["needs testing"](https://github.com/sharkwouter/minigalaxy/issues?q=is%3Aissue+is%3Aopen+label%3A%22needs+testing%22) tag. 
 - Working on or giving input on issues with the ["help wanted"](https://github.com/sharkwouter/minigalaxy/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) or ["good first issue"](https://github.com/sharkwouter/minigalaxy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) tag. Also check out the [the wiki](https://github.com/sharkwouter/minigalaxy/wiki/Developer-information) for developer information.
 
