@@ -474,24 +474,9 @@ class DownloadManager:
 
         downloaded_size = start_point
         self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[0])
-        file_size = None
-        try:
-            file_size = int(download_request.headers.get('content-length'))
-            # update expected_size in download with real values
-            download.expected_size = file_size
-        except (ValueError, TypeError):
-            if download.expected_size:
-                self.logger.warn("Couldn't get file size for %s. Use download.expected_size=%s.",
-                                 download.save_location, download.expected_size)
-                file_size = download.expected_size
-            else:
-                self.logger.error(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
+        file_size = self.__handle_download_size(download_request, download, downloaded_size)
 
-        if file_size and downloaded_size > 0:
-            # we are resuming a partial file. file_size from content-length
-            # will not include what we requested to skip over
-            file_size += downloaded_size
-        if file_size and downloaded_size == file_size:
+        if file_size == downloaded_size:
             self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[100])
             return DownloadState.COMPLETED
 
@@ -508,6 +493,27 @@ class DownloadManager:
         if not file_size:
             self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[100])
         return DownloadState.COMPLETED
+
+    def __handle_download_size(self, request, download, downloaded_size):
+        file_size = None
+        try:
+            file_size = int(request.headers.get('content-length'))
+            if file_size and downloaded_size > 0:
+                # we are resuming a partial file. file_size from content-length
+                # will not include what we requested to skip over
+                file_size += downloaded_size
+        except (ValueError, TypeError):
+            if download.expected_size:
+                self.logger.warn("Couldn't get file size for %s. Use download.expected_size=%s.",
+                                 download.save_location, download.expected_size)
+                file_size = download.expected_size
+            else:
+                self.logger.error(f"Couldn't get file size for {download.save_location}. No progress will be shown.")
+
+        if file_size != download.expected_size:
+            # update expected_size in download with real values
+            download.expected_size = file_size
+        return file_size
 
     def __update_download_progress(self, current_size, total_size, last_progress_value, download):
         if total_size is None:
