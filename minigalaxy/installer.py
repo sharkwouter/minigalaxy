@@ -14,7 +14,7 @@ from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command, get_wine_path, wine_restore_game_link
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR
+from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, WINE_RES_PATH
 
 
 def get_available_disk_space(location):
@@ -167,8 +167,13 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
 
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
-        # Creating the prefix before modifying dosdevices
-        command = ["env", *wine_env, wine_bin, "wineboot", "-u"]
+        '''
+        Creating the prefix before modifying dosdevices
+        Use regedit import as first command and try to disable the menubuilder for good
+        So that it will also be disabled when patches, updates or dependencies like directx are installed
+        later on by the game itself from within the prefix. Happened with UE4.
+        '''
+        command = ["env", *wine_env, wine_bin, "regedit", f"{WINE_RES_PATH}/disable_menubuilder.reg"]
         if not try_wine_command(command):
             return _("Wineprefix creation failed.")
 
