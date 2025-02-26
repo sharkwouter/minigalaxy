@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-25 11:05+0100\n"
-"PO-Revision-Date: 2021-09-30 10:17+0200\n"
-"Last-Translator: \n"
-"Language-Team: Artur Wróblewski\n"
-"Language: pl_PL\n"
+"PO-Revision-Date: 2025-02-27 17:02+0000\n"
+"Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
+"Language-Team: Polish <https://hosted.weblate.org/projects/minigalaxy/"
+"minigalaxy/pl/>\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 "
-"|| n%100>14) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.10.2-dev\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -45,7 +46,7 @@ msgstr "Dodano przed komendą służącą do uruchomienia gry"
 
 #: data/ui/categoryfilters.ui:72
 msgid "Apply"
-msgstr ""
+msgstr "Zastosuj"
 
 #: minigalaxy/ui/library_entry.py:112
 msgid "Are you sure you want to cancel downloading {}?"
@@ -130,7 +131,7 @@ msgstr "Utwórz skróty w menu: "
 
 #: minigalaxy/constants.py:54
 msgid "Czech"
-msgstr ""
+msgstr "Czeski"
 
 #: data/ui/gametilelist.ui:194 data/ui/gametile.ui:203
 msgid "DLC"
@@ -205,7 +206,7 @@ msgstr "Fiński"
 
 #: data/ui/information.ui:89
 msgid "Forum"
-msgstr ""
+msgstr "Forum"
 
 #: minigalaxy/constants.py:10 minigalaxy/constants.py:58
 msgid "French"
@@ -234,11 +235,11 @@ msgstr "Strona GitHub"
 
 #: minigalaxy/constants.py:73
 msgid "Greek"
-msgstr ""
+msgstr "Grecki"
 
 #: minigalaxy/constants.py:78
 msgid "Grid"
-msgstr ""
+msgstr "Siatka"
 
 #: data/ui/properties.ui:161
 msgid "Hide game:"
@@ -258,7 +259,7 @@ msgstr "W kolejce…"
 
 #: data/ui/gametilelist.ui:239 data/ui/gametile.ui:233
 msgid "Information"
-msgstr ""
+msgstr "Informacje"
 
 #: minigalaxy/ui/information.py:29
 msgid "Information about {}"
@@ -327,7 +328,7 @@ msgstr ""
 
 #: minigalaxy/constants.py:79
 msgid "List"
-msgstr ""
+msgstr "Lista"
 
 #: minigalaxy/ui/login.py:20 minigalaxy/ui/login.py:45
 msgid "Login"
@@ -462,7 +463,7 @@ msgstr ""
 
 #: minigalaxy/constants.py:23 minigalaxy/constants.py:74
 msgid "Romanian"
-msgstr ""
+msgstr "Rumuński"
 
 #: minigalaxy/constants.py:19 minigalaxy/constants.py:65
 msgid "Russian"
@@ -524,9 +525,8 @@ msgid "Spanish"
 msgstr "Hiszpański"
 
 #: minigalaxy/constants.py:68
-#, fuzzy
 msgid "Spanish (Spain)"
-msgstr "Hiszpański"
+msgstr "Hiszpański (Hiszpania)"
 
 #. Whether the user will stay logged in after closing Minigalaxy. Has to end with ": "
 #: data/ui/preferences.ui:196
@@ -593,7 +593,7 @@ msgstr "Turecki"
 
 #: minigalaxy/constants.py:72
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukraiński"
 
 #: minigalaxy/installer.py:78
 #, fuzzy
@@ -618,11 +618,11 @@ msgstr "Aktualizowanie..."
 
 #: data/ui/properties.ui:188
 msgid "Use GameMode:"
-msgstr ""
+msgstr "Zastosuj GameMode:"
 
 #: data/ui/properties.ui:215
 msgid "Use MangoHud:"
-msgstr ""
+msgstr "Zastosuj MangoHud:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:223
@@ -642,7 +642,7 @@ msgstr "Wersja"
 #: data/ui/preferences.ui:118
 msgctxt "view"
 msgid "View: "
-msgstr ""
+msgstr "Widok: "
 
 #: data/ui/preferences.ui:193
 msgctxt "stay_logged_in_tooltip"
@@ -674,9 +674,8 @@ msgid "Whether shortcuts are created for newly installed games or not"
 msgstr "Czy skróty mają być tworzone dla nowo zainstalowanych gier, czy nie"
 
 #: data/ui/properties.ui:308
-#, fuzzy
 msgid "Wine executable:"
-msgstr "Ekstrakcja Wine nie powiodła się."
+msgstr "Plik wykonywalny Wine:"
 
 #: minigalaxy/installer.py:205
 msgid "Wine extraction failed."
@@ -699,7 +698,7 @@ msgstr "Ekstrakcja Wine nie powiodła się."
 
 #: data/ui/properties.ui:90
 msgid "Winetricks"
-msgstr ""
+msgstr "Winetrick"
 
 #: minigalaxy/ui/properties.py:122
 #, fuzzy
@@ -710,7 +709,7 @@ msgstr ""
 
 #: minigalaxy/ui/information.py:137
 msgid "unknown"
-msgstr ""
+msgstr "nieznane"
 
 #: minigalaxy/installer.py:145
 msgid "{} could not be unzipped."
