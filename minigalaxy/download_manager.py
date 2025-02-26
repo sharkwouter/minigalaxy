@@ -272,7 +272,7 @@ class DownloadManager:
         # First cancel all the active downloads
         self.cancel_current_downloads(download_dict, cancel_state)
 
-    def cancel_current_downloads(self, download_dict, cancel_state=DownloadState.CANCELED):
+    def cancel_current_downloads(self, download_dict=None, cancel_state=DownloadState.CANCELED):
         """
         Cancel the current downloads
         """
