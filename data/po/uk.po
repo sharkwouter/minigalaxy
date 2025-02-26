@@ -8,16 +8,17 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-25 11:05+0100\n"
-"PO-Revision-Date: 2021-09-29 19:02+0300\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"PO-Revision-Date: 2025-02-27 17:02+0000\n"
+"Last-Translator: Dan <jonweblin2205@protonmail.com>\n"
+"Language-Team: Ukrainian <https://hosted.weblate.org/projects/minigalaxy/"
+"minigalaxy/uk/>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.10.2-dev\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -27,13 +28,13 @@ msgstr "Простий клієнт GOG для Linux"
 
 #: minigalaxy/ui/about.py:13
 msgid "About"
-msgstr "Інформація"
+msgstr "Про MiniGalaxy"
 
 #. Opens about dialog
 #: data/ui/application.ui:58
 msgctxt "about"
 msgid "About"
-msgstr "Інформація"
+msgstr "Про MiniGalaxy"
 
 #: data/ui/properties.ui:269 data/ui/properties.ui:281
 msgid "Added at the end of the command used to launch the game"
@@ -45,7 +46,7 @@ msgstr "Додано перед командою, яка використову�
 
 #: data/ui/categoryfilters.ui:72
 msgid "Apply"
-msgstr ""
+msgstr "Застосувати"
 
 #: minigalaxy/ui/library_entry.py:112
 msgid "Are you sure you want to cancel downloading {}?"
@@ -75,21 +76,21 @@ msgstr "Скасувати"
 
 #: minigalaxy/ui/categoryfilters.py:28
 msgid "Category Filters"
-msgstr ""
+msgstr "Фільтри категорій"
 
 #. Tooltip for category filter button
 #: data/ui/application.ui:149
 msgctxt "category_filter"
 msgid "Category filters"
-msgstr ""
+msgstr "Фільтри категорій"
 
 #: data/ui/properties.ui:108 data/ui/properties.ui:120
 msgid "Check for game updates in the background"
-msgstr ""
+msgstr "Перевіряти оновлення гри у фоновому режимі"
 
 #: data/ui/properties.ui:107
 msgid "Check for updates:"
-msgstr ""
+msgstr "Перевірити оновлення:"
 
 #: minigalaxy/constants.py:5
 msgid "Chinese"
@@ -97,22 +98,19 @@ msgstr "Китайська"
 
 #: data/ui/properties.ui:268
 msgid "Command flags:"
-msgstr "Флажки для команди:"
+msgstr "Прапорці для команди:"
 
 #: minigalaxy/ui/information.py:85
-#, fuzzy
 msgid "Couldn't open GOG Database page"
-msgstr "Не вдалося відкрити сторінку магазину"
+msgstr "Не вдалося відкрити сторінку бази даних GOG"
 
 #: minigalaxy/ui/information.py:95
-#, fuzzy
 msgid "Couldn't open PCGamingWiki page"
-msgstr "Не вдалося відкрити сторінку магазину"
+msgstr "Не вдалося відкрити сторінку PCGamingWiki"
 
 #: minigalaxy/ui/information.py:75
-#, fuzzy
 msgid "Couldn't open forum page"
-msgstr "Не вдалося відкрити сторінку магазину"
+msgstr "Не вдалося відкрити сторінку форуму"
 
 #: minigalaxy/ui/information.py:65
 msgid "Couldn't open store page"
@@ -130,11 +128,11 @@ msgstr "Створити ярлики меню: "
 
 #: minigalaxy/constants.py:54
 msgid "Czech"
-msgstr ""
+msgstr "Чеська"
 
 #: data/ui/gametilelist.ui:194 data/ui/gametile.ui:203
 msgid "DLC"
-msgstr "DLC"
+msgstr "Доповнення"
 
 #: minigalaxy/constants.py:6
 msgid "Danish"
@@ -145,9 +143,8 @@ msgid "Download"
 msgstr "Завантажити"
 
 #: minigalaxy/ui/library_entry.py:463
-#, fuzzy
 msgid "Download and install the game"
-msgstr "Показати лише встановлені ігри"
+msgstr "Завантажити та встановити гру"
 
 #: minigalaxy/ui/library_entry.py:150 minigalaxy/ui/library_entry.py:247
 msgid "Download error"
@@ -166,12 +163,16 @@ msgid ""
 "Enables GameMode, a daemon and library combo that allows games to request a "
 "set of optimisations be temporarily applied to the host OS"
 msgstr ""
+"Вмикає GameMode, комбінацію фонової служби та бібліотеки, яка дозволяє іграм "
+"запитувати набір оптимізацій, які тимчасово застосовуються до хостової ОС"
 
 #: data/ui/properties.ui:216 data/ui/properties.ui:228
 msgid ""
 "Enables MangoHud, an overlay for performance monitoring and benchmarking "
 "using Vulcan and OpenGL"
 msgstr ""
+"Вмикає MangoHud, накладання для моніторингу продуктивності та тестування з "
+"використанням Vulcan та OpenGL"
 
 #: minigalaxy/constants.py:8 minigalaxy/constants.py:56
 msgid "English"
@@ -182,6 +183,8 @@ msgid ""
 "Failed to change program language. Make sure locale is generated on your "
 "system."
 msgstr ""
+"Не вдалося змінити мову застосунку. Переконайтеся, що у вашій системі є ця "
+"мова."
 
 #: minigalaxy/ui/library_entry.py:343
 msgid "Failed to install {}"
@@ -197,7 +200,7 @@ msgstr "Не вдалося запустити {}:"
 
 #: minigalaxy/ui/library_entry.py:295
 msgid "Finished downloading and installing {}"
-msgstr ""
+msgstr "Завершено завантаження та встановлення {}"
 
 #: minigalaxy/constants.py:9 minigalaxy/constants.py:57
 msgid "Finnish"
@@ -205,16 +208,15 @@ msgstr "Фінська"
 
 #: data/ui/information.ui:89
 msgid "Forum"
-msgstr ""
+msgstr "Форум"
 
 #: minigalaxy/constants.py:10 minigalaxy/constants.py:58
 msgid "French"
 msgstr "Французька"
 
 #: minigalaxy/ui/properties.py:87
-#, fuzzy
 msgid "GameMode wasn't found. Using GameMode cannot be enabled."
-msgstr "Wine не знайдено. Показ ігор Windows не може бути ввімкнено."
+msgstr "GameMode не знайдено. Його не можна ввімкнути."
 
 #: minigalaxy/ui/information.py:141
 msgid "Genre"
@@ -232,11 +234,11 @@ msgstr "Сторінка GitHub"
 
 #: minigalaxy/constants.py:73
 msgid "Greek"
-msgstr ""
+msgstr "Грецька"
 
 #: minigalaxy/constants.py:78
 msgid "Grid"
-msgstr ""
+msgstr "Сітка"
 
 #: data/ui/properties.ui:161
 msgid "Hide game:"
@@ -244,7 +246,7 @@ msgstr "Сховати гру:"
 
 #: data/ui/properties.ui:162 data/ui/properties.ui:174
 msgid "Hides the game from the games list"
-msgstr ""
+msgstr "Приховує гру зі списку ігор"
 
 #: minigalaxy/constants.py:12
 msgid "Hungarian"
@@ -256,26 +258,25 @@ msgstr "В черзі…"
 
 #: data/ui/gametilelist.ui:239 data/ui/gametile.ui:233
 msgid "Information"
-msgstr ""
+msgstr "Інформація"
 
 #: minigalaxy/ui/information.py:29
 msgid "Information about {}"
-msgstr ""
+msgstr "Інформація про {}"
 
 #: minigalaxy/ui/library_entry.py:480
 msgid "Install"
 msgstr "Встановити"
 
 #: minigalaxy/ui/library_entry.py:481
-#, fuzzy
 msgid "Install the game"
-msgstr "Встановлено"
+msgstr "Встановити гру"
 
 #. The place directory in which games are installed. Has to end with ": "
 #: data/ui/preferences.ui:143
 msgctxt "install_path"
 msgid "Installation path: "
-msgstr "Шлях установки: "
+msgstr "Шлях установлення: "
 
 #. Used next to a checkbox which switches between showing all games and only installed ones
 #: data/ui/application.ui:116
@@ -300,14 +301,14 @@ msgid ""
 "Keep installers after downloading a game.\n"
 "Installers are stored in: {}"
 msgstr ""
-"Зберегти інсталятори після завантаження гри.\n"
-"Інсталятори зберігаються в: {}"
+"Зберегти встановлювачі після завантаження гри.\n"
+"Встановлювачі зберігаються в: {}"
 
 #. Whether installer files are kept after download. Has to end with ": "
 #: data/ui/preferences.ui:170
 msgctxt "keep_installer"
 msgid "Keep installers: "
-msgstr "Зберігати інсталятори: "
+msgstr "Зберігати встановлювачі: "
 
 #: minigalaxy/constants.py:15
 msgid "Korean"
@@ -321,11 +322,11 @@ msgstr "Мова: "
 
 #: minigalaxy/ui/library_entry.py:526
 msgid "Launch the game"
-msgstr ""
+msgstr "Запустити гру"
 
 #: minigalaxy/constants.py:79
 msgid "List"
-msgstr ""
+msgstr "Список"
 
 #: minigalaxy/ui/login.py:20 minigalaxy/ui/login.py:45
 msgid "Login"
@@ -338,9 +339,8 @@ msgid "Logout"
 msgstr "Вийти"
 
 #: minigalaxy/ui/properties.py:92
-#, fuzzy
 msgid "MangoHud wasn't found. Using MangoHud cannot be enabled."
-msgstr "Wine не знайдено. Показ ігор Windows не може бути ввімкнено."
+msgstr "MangoHud не знайдено. Його не можна ввімкнути."
 
 #: minigalaxy/launcher.py:230
 msgid "No executable was found in {}"
@@ -364,33 +364,33 @@ msgstr "Не вистачає місця для розпакування гри.
 
 #: data/ui/information.ui:165 data/ui/properties.ui:369
 msgid "OK"
-msgstr "ОК"
+msgstr "Гаразд"
 
 #: data/ui/properties.ui:51
 msgid "Open Regedit for this game"
-msgstr ""
+msgstr "Відкрийте Regedit для цієї гри"
 
 #: data/ui/properties.ui:65
 msgid "Open Winecfg for this game"
-msgstr ""
+msgstr "Відкрити Winecfg для цієї гри"
 
 #: data/ui/properties.ui:93
 msgid "Open Winetricks for this game"
-msgstr ""
+msgstr "Відкрити Winetricks для цієї гри"
 
 #: data/ui/properties.ui:76
 msgid "Open files"
-msgstr "Відкрийте файли"
+msgstr "Відкрити файли"
 
 #: data/ui/properties.ui:79
 msgid "Open game install folder"
-msgstr ""
+msgstr "Відкрити теку встановлення гри"
 
 #. Tooltip for header menu button
 #: data/ui/application.ui:130
 msgctxt "menu"
 msgid "Options menu"
-msgstr ""
+msgstr "Меню налаштувань"
 
 #: minigalaxy/ui/library_entry.py:525 minigalaxy/ui/library_entry.py:554
 msgid "Play"
@@ -400,7 +400,7 @@ msgstr "Грати"
 #: minigalaxy/ui/information.py:76 minigalaxy/ui/information.py:86
 #: minigalaxy/ui/information.py:96
 msgid "Please check your internet connection"
-msgstr "Перевірте підключення до Інтернету"
+msgstr "Перевірте з'єднання з мережею"
 
 #: minigalaxy/constants.py:17 minigalaxy/constants.py:63
 msgid "Polish"
@@ -442,23 +442,23 @@ msgstr "Оновити список ігор"
 
 #: data/ui/properties.ui:48
 msgid "Regedit"
-msgstr "Regedit (регіт)"
+msgstr "Regedit"
 
 #: data/ui/categoryfilters.ui:44
 msgid "Reset"
-msgstr ""
+msgstr "Скинути"
 
 #: data/ui/properties.ui:294
 msgid "Reset the wine executable for this game"
-msgstr ""
+msgstr "Скинути виконуваний файл Wine для цієї гри"
 
 #: data/ui/properties.ui:291
 msgid "Reset wine executable"
-msgstr ""
+msgstr "Скинути виконуваний файл Wine"
 
 #: minigalaxy/constants.py:23 minigalaxy/constants.py:74
 msgid "Romanian"
-msgstr ""
+msgstr "Румунська"
 
 #: minigalaxy/constants.py:19 minigalaxy/constants.py:65
 msgid "Russian"
@@ -472,18 +472,17 @@ msgstr "Зберегти"
 
 #. Tooltip for search field
 #: data/ui/application.ui:172
-#, fuzzy
 msgctxt "search"
 msgid "Search games list"
-msgstr "Оновити список ігор"
+msgstr "Шукати в списку ігор"
 
 #: data/ui/properties.ui:309 data/ui/properties.ui:322
 msgid "Set Wine executable"
-msgstr ""
+msgstr "Встановити виконуваний файл Wine"
 
 #: data/ui/properties.ui:134
 msgid "Show FPS in game:"
-msgstr "Показати FPS у грі:"
+msgstr "Показувати к / с у грі:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:275
@@ -493,11 +492,11 @@ msgstr "Показати ігри для Windows: "
 
 #: data/ui/properties.ui:135 data/ui/properties.ui:147
 msgid "Show an FPS (frames per second) counter overlaid in the game"
-msgstr ""
+msgstr "Показувати лічильник к / с (кадрів в секунду), накладений у грі"
 
 #: minigalaxy/ui/library_entry.py:470 minigalaxy/ui/library_entry.py:530
 msgid "Show game options menu"
-msgstr ""
+msgstr "Показати меню налаштувань гри"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:249
@@ -513,16 +512,15 @@ msgstr "Показати лише встановлені ігри"
 
 #: minigalaxy/constants.py:66
 msgid "Simplified Chinese"
-msgstr "Спрощена Китайська"
+msgstr "Китайська (спрощена)"
 
 #: minigalaxy/constants.py:20 minigalaxy/constants.py:67
 msgid "Spanish"
 msgstr "Іспанська"
 
 #: minigalaxy/constants.py:68
-#, fuzzy
 msgid "Spanish (Spain)"
-msgstr "Іспанська"
+msgstr "Іспанська (Іспанія)"
 
 #. Whether the user will stay logged in after closing Minigalaxy. Has to end with ": "
 #: data/ui/preferences.ui:196
@@ -544,7 +542,7 @@ msgstr "Шведська"
 
 #: minigalaxy/constants.py:52
 msgid "System default"
-msgstr "За замовчуванням"
+msgstr "Типово"
 
 #: minigalaxy/installer.py:143
 msgid "The installation of {} failed. Please try again."
@@ -561,10 +559,9 @@ msgid "The preferred language on Minigalaxy start"
 msgstr "Бажана мова для запуску Minigalaxy"
 
 #: data/ui/preferences.ui:115
-#, fuzzy
 msgctxt "view_tooltip"
 msgid "The preferred view of game library"
-msgstr "Бажана мова для запуску Minigalaxy"
+msgstr "Бажаний вигляд бібліотеки ігор"
 
 #: minigalaxy/ui/library_entry.py:151
 msgid ""
@@ -581,7 +578,7 @@ msgstr "Тут будуть встановлені ігри"
 
 #: minigalaxy/constants.py:70
 msgid "Traditional Chinese"
-msgstr "Традиційна Китайська"
+msgstr "Китайська (традиційна)"
 
 #: minigalaxy/constants.py:22 minigalaxy/constants.py:71
 msgid "Turkish"
@@ -589,12 +586,11 @@ msgstr "Турецька"
 
 #: minigalaxy/constants.py:72
 msgid "Ukrainian"
-msgstr ""
+msgstr "Українська"
 
 #: minigalaxy/installer.py:78
-#, fuzzy
 msgid "Unhandled error."
-msgstr "Помилка при завантаженні"
+msgstr "Невиправлена помилка."
 
 #: data/ui/gametilelist.ui:224 data/ui/gametile.ui:218
 msgid "Uninstall"
@@ -614,11 +610,11 @@ msgstr "Оновлення…"
 
 #: data/ui/properties.ui:188
 msgid "Use GameMode:"
-msgstr ""
+msgstr "Використовувати GameMode:"
 
 #: data/ui/properties.ui:215
 msgid "Use MangoHud:"
-msgstr ""
+msgstr "Використовувати MangoHud:"
 
 #. Has to end with ": "
 #: data/ui/preferences.ui:223
@@ -628,7 +624,7 @@ msgstr "Використовувати темну тему: "
 
 #: data/ui/properties.ui:242
 msgid "Variable flags:"
-msgstr "Флажки для змінної:"
+msgstr "Прапорці для змінної:"
 
 #: minigalaxy/ui/information.py:143
 msgid "Version"
@@ -638,7 +634,7 @@ msgstr "Версія"
 #: data/ui/preferences.ui:118
 msgctxt "view"
 msgid "View: "
-msgstr ""
+msgstr "Вид: "
 
 #: data/ui/preferences.ui:193
 msgctxt "stay_logged_in_tooltip"
@@ -669,9 +665,8 @@ msgstr ""
 "Незалежно від того, створені ярлики для нещодавно встановлених ігор чи ні"
 
 #: data/ui/properties.ui:308
-#, fuzzy
 msgid "Wine executable:"
-msgstr "Помилка вилучення Wine."
+msgstr "Виконуваний файл Wine:"
 
 #: minigalaxy/installer.py:205
 msgid "Wine extraction failed."
@@ -686,22 +681,20 @@ msgid "Winecfg"
 msgstr "Winecfg"
 
 #: minigalaxy/installer.py:173
-#, fuzzy
 msgid "Wineprefix creation failed."
-msgstr "Помилка вилучення Wine."
+msgstr "Не вдалося створити Wineprefix."
 
 #: data/ui/properties.ui:90
 msgid "Winetricks"
-msgstr ""
+msgstr "Winetricks"
 
 #: minigalaxy/ui/properties.py:122
-#, fuzzy
 msgid "Winetricks wasn't found and cannot be used."
-msgstr "Wine не знайдено. Показ ігор Windows не може бути ввімкнено."
+msgstr "Winetricks не знайдено і не може бути використано."
 
 #: minigalaxy/ui/information.py:137
 msgid "unknown"
-msgstr ""
+msgstr "невідомо"
 
 #: minigalaxy/installer.py:145
 msgid "{} could not be unzipped."
