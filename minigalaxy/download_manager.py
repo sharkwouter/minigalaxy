@@ -283,7 +283,7 @@ class DownloadManager:
         with self.active_downloads_lock:
             for download in self.active_downloads:
                 if download in download_dict:
-                    self.logger.debug("Canceling download: " + download.save_location)
+                    self.logger.debug("Canceling download: %s", download.save_location)
                     # mark it for canceling
                     self.__request_download_cancel(download, cancel_state)
 
