@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-25 11:05+0100\n"
-"PO-Revision-Date: 2021-09-30 11:00+0200\n"
+"PO-Revision-Date: 2025-02-26 13:29+0000\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
-"Language-Team: Dutch\n"
+"Language-Team: Dutch <https://hosted.weblate.org/projects/minigalaxy/"
+"glossary/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.3\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.10.2-dev\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -46,7 +47,7 @@ msgstr ""
 
 #: data/ui/categoryfilters.ui:72
 msgid "Apply"
-msgstr ""
+msgstr "Toepassen"
 
 #: minigalaxy/ui/library_entry.py:112
 msgid "Are you sure you want to cancel downloading {}?"
@@ -76,21 +77,21 @@ msgstr "Annuleren"
 
 #: minigalaxy/ui/categoryfilters.py:28
 msgid "Category Filters"
-msgstr ""
+msgstr "Categorie Filters"
 
 #. Tooltip for category filter button
 #: data/ui/application.ui:149
 msgctxt "category_filter"
 msgid "Category filters"
-msgstr ""
+msgstr "Categorie filters"
 
 #: data/ui/properties.ui:108 data/ui/properties.ui:120
 msgid "Check for game updates in the background"
-msgstr ""
+msgstr "Controleer op game-updates in de achtergrond"
 
 #: data/ui/properties.ui:107
 msgid "Check for updates:"
-msgstr ""
+msgstr "Controleer op updates:"
 
 #: minigalaxy/constants.py:5
 msgid "Chinese"
@@ -131,7 +132,7 @@ msgstr "Maak menusnelkoppelingen: "
 
 #: minigalaxy/constants.py:54
 msgid "Czech"
-msgstr ""
+msgstr "Tsjechisch"
 
 #: data/ui/gametilelist.ui:194 data/ui/gametile.ui:203
 msgid "DLC"
