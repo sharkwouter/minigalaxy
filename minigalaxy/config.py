@@ -182,3 +182,25 @@ class Config:
         if download_id in current:
             current.remove(download_id)
             self.current_downloads = current
+
+    @property
+    def paused_downloads(self) -> List[int]:
+        return self.__config.get("paused_downloads", {})
+
+    @paused_downloads.setter
+    def paused_downloads(self, new_value: {}) -> None:
+        self.__config["paused_downloads"] = new_value
+        self.__write()
+
+    def add_paused_download(self, save_location, current_progress):
+        paused = self.paused_downloads
+        paused[save_location] = current_progress
+        self.paused_downloads = paused
+        self.__write()
+
+    def remove_paused_download(self, save_location):
+        paused = self.paused_downloads
+        if save_location in paused:
+            del paused[save_location]
+            self.paused_downloads = paused
+            self.__write()
