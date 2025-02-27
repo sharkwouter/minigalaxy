@@ -3,7 +3,7 @@
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <template class="DownloadListEntry" parent="GtkBox">
-    <property name="width-request">250</property>
+    <property name="width-request">300</property>
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="valign">start</property>
@@ -71,63 +71,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="valign">center</property>
-        <property name="margin-start">3</property>
-        <property name="margin-end">3</property>
-        <property name="margin-top">3</property>
-        <property name="margin-bottom">3</property>
-        <property name="spacing">3</property>
-        <child>
-          <object class="GtkEventBox">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <signal name="button-press-event" handler="on_primary_button" swapped="no"/>
-            <child>
-              <object class="GtkImage" id="image_start_action">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="valign">center</property>
-                <property name="icon-name">media-playback-pause</property>
-                <property name="icon_size">3</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkEventBox">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <signal name="button-press-event" handler="on_secondary_button" swapped="no"/>
-            <child>
-              <object class="GtkImage" id="image_cancel_action">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="valign">center</property>
-                <property name="icon-name">dialog-cancel</property>
-                <property name="icon_size">3</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-      <packing>
-        <property name="expand">False</property>
-        <property name="fill">False</property>
-        <property name="position">2</property>
-      </packing>
+      <placeholder/>
     </child>
   </template>
 </interface>

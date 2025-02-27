@@ -1,5 +1,7 @@
 import logging
 import os
+import shutil
+import subprocess
 
 import minigalaxy.logger  # noqa: F401
 
@@ -26,13 +28,16 @@ class DownloadManagerList(Gtk.Viewport):
     label_done = Gtk.Template.Child()
     flowbox_done = Gtk.Template.Child()
 
+    button_manage_installers = Gtk.Template.Child()
+
     listener_download_types = [DownloadType.GAME, DownloadType.GAME_UPDATE, DownloadType.GAME_DLC]
 
-    def __init__(self, download_manager: DownloadManager, downloads_menu_button):
+    def __init__(self, download_manager: DownloadManager, downloads_menu_button, config):
         Gtk.Viewport.__init__(self)
         self.logger = logging.getLogger('minigalaxy.download_list.DownloadManagerList')
         self.download_manager = download_manager
         self.menu_button = downloads_menu_button
+        self.config = config
         self.downloads = {}
 
         self.change_handler = {
@@ -43,7 +48,7 @@ class DownloadManagerList(Gtk.Viewport):
             DownloadState.FAILED: self.download_stopped,
             DownloadState.CANCELED: self.download_stopped,
             DownloadState.STOPPED: self.download_stopped,
-            DownloadState.PAUSED : self.download_paused
+            DownloadState.PAUSED: self.download_paused
         }
 
         self.flowbow_labels = {
@@ -108,6 +113,18 @@ class DownloadManagerList(Gtk.Viewport):
             group_flowbox.hide()
             self.flowbow_labels[group_flowbox].hide()
 
+    @Gtk.Template.Callback("on_manage_button")
+    def open_file_manager(self, widget, *data):
+        subprocess.Popen([f"xdg-open '{self.config.install_dir}/installer' &"],
+                         shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+
+    @Gtk.Template.Callback("manage_button_visibility")
+    def handle_manage_button(self, widget, *data):
+        if self.config.keep_installers and shutil.which("xdg-open"):
+            self.button_manage_installers.show()
+        else:
+            self.button_manage_installers.hide()
+
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "download_list_entry.ui"))
 class OngoingDownloadListEntry(Gtk.Box):
@@ -116,91 +133,26 @@ class OngoingDownloadListEntry(Gtk.Box):
     icon = Gtk.Template.Child()
     game_title = Gtk.Template.Child()
     download_progress = Gtk.Template.Child()
-    image_start_action = Gtk.Template.Child()
-    image_cancel_action = Gtk.Template.Child()
-
-    tooltip_texts = {
-        'media-playback-start': 'Resume',
-        'media-playback-pause': 'Pause',
-        'view-refresh': 'Retry',
-        'dialog-cancel': 'Cancel',
-        'edit-delete': 'Delete file',
-        'list-remove': 'Remove from list',
-    }
-
-    # button actions are defined at the end
 
     def __init__(self, parent_manager, download: Download, initial_state: DownloadState):
         Gtk.Box.__init__(self)
         self.manager = parent_manager
         self.download = download
-        self.state = None
         self.flowbox = None
         self.game_title.set_text(f'{download.game.name}:\n{os.path.basename(download.save_location)}')
+        self.buttons = DownloadActionButtons(download, initial_state,
+                                             download_manager=parent_manager.download_manager,
+                                             remove_panel_action=self.remove_from_current_box,
+                                             logger=self.manager.logger)
         self.update_buttons(initial_state)
+        self.pack_start(self.buttons, False, False, 0)
 
     def update_progress(self, percentage):
         self.download_progress.set_fraction(percentage / 100)
         self.download_progress.set_tooltip_text("{}%".format(percentage))
 
-    def update_buttons(self, state: DownloadState):
-        self.state = state
-        if state not in self.button_configs:
-            return
-
-        primary, secondary = self.button_configs[state]['icons']
-        if primary:
-            self.image_start_action.set_from_icon_name(primary, Gtk.IconSize.LARGE_TOOLBAR)
-            self.image_start_action.set_tooltip_text(_(self.tooltip_texts[primary]))
-            self.image_start_action.show()
-        else:
-            self.image_start_action.hide()
-
-        if secondary:
-            self.image_cancel_action.set_from_icon_name(secondary, Gtk.IconSize.LARGE_TOOLBAR)
-            self.image_cancel_action.set_tooltip_text(_(self.tooltip_texts[secondary]))
-            self.image_cancel_action.show()
-        else:
-            self.image_cancel_action.hide()
-
-    @Gtk.Template.Callback("on_primary_button")
-    def primary_button_clicked(self, widget, data):
-        self.__execute_button('Primary', 0)
-
-    @Gtk.Template.Callback("on_secondary_button")
-    def secondary_button_clicked(self, widget, data):
-        self.__execute_button('Secondary', 1)
-    
-    def __execute_button(self, button_type, action_index):
-        if self.state not in self.button_configs:
-            return
-        action = self.button_configs[self.state]['actions'][action_index]
-        self.manager.logger.debug('[%s:%s] - %s button clicked, execute %s', 
-                                  button_type, self.state, self.download.filename(), str(action))
-        action(self)
-
-    '''----- DOWNLOAD STATE OPERATIONS -----'''
-
-    def restart(self):
-        self.manager.download_manager.download(self.download)
-
-    def unpause(self):
-        self.manager.download_manager.download(self.download, restart_paused=True)
-
-    def pause_download(self):
-        self.manager.download_manager.cancel_download(self.download, cancel_state=DownloadState.PAUSED)
-
-    def stop_download(self):
-        self.manager.download_manager.cancel_download(self.download, cancel_state=DownloadState.STOPPED)
-
-    def delete_download(self):
-        self.manager.download_manager.cancel_download(self.download, cancel_state=DownloadState.CANCELED)
-
-    def NOOP(self):
-        '''used for states in which a button should not do anything'''
-        pass
-
-    '''----- END DOWNLOAD STATE OPERATIONS -----'''
+    def update_buttons(self, new_state):
+        self.buttons.update_buttons(new_state)
 
     '''----- VISIBILITY CONTROL -----'''
 
@@ -225,33 +177,131 @@ class OngoingDownloadListEntry(Gtk.Box):
 
     '''----- END VISIBILITY CONTROL -----'''
 
+
+@Gtk.Template.from_file(os.path.join(UI_DIR, "download_action_buttons.ui"))
+class DownloadActionButtons(Gtk.Box):
+    __gtype_name__ = "DownloadActionButtons"
+
+    image_primary_action = Gtk.Template.Child()
+    image_secondary_action = Gtk.Template.Child()
+
+    tooltip_texts = {
+        'media-playback-start': 'Resume',
+        'media-playback-pause': 'Pause',
+        'view-refresh': 'Retry',
+        'dialog-cancel': 'Cancel',
+        'edit-delete': 'Delete file',
+        'list-remove': 'Remove from list',
+    }
+
+    # button actions are defined at the end
+
+    def __init__(self, download, initial_state, download_manager, remove_panel_action, logger=None):
+        super().__init__(self)
+        self.download = download
+        self.download_manager = download_manager
+        self.remove_panel_action = remove_panel_action
+        self.state = None
+        self.logger = logger
+        self.update_buttons(initial_state)
+
+    @Gtk.Template.Callback("on_primary_button")
+    def primary_button_clicked(self, widget):
+        self.__execute_button('Primary', 0)
+
+    @Gtk.Template.Callback("on_secondary_button")
+    def secondary_button_clicked(self, widget):
+        self.__execute_button('Secondary', 1)
+
+    def __execute_button(self, button_type, action_index):
+        if self.state not in self.button_configs:
+            return
+        action = self.button_configs[self.state]['actions'][action_index]
+        if self.logger:
+            self.logger.debug('[%s:%s] - %s button clicked, execute %s',
+                              button_type, self.state, self.download.filename(), str(action))
+        action(self)
+
+    '''----- WIDGET EVENTS -----'''
+
+    def update_buttons(self, state: DownloadState):
+        if state is self.state:
+            return
+
+        self.state = state
+        if state not in self.button_configs:
+            return
+
+        primary, secondary = self.button_configs[state]['icons']
+        if primary:
+            self.image_primary_action.set_from_icon_name(primary, Gtk.IconSize.LARGE_TOOLBAR)
+            self.image_primary_action.set_tooltip_text(_(self.tooltip_texts[primary]))
+            self.image_primary_action.get_parent().show()
+        else:
+            self.image_primary_action.get_parent().hide()
+
+        if secondary:
+            self.image_secondary_action.set_from_icon_name(secondary, Gtk.IconSize.LARGE_TOOLBAR)
+            self.image_secondary_action.set_tooltip_text(_(self.tooltip_texts[secondary]))
+            self.image_secondary_action.get_parent().show()
+        else:
+            self.image_secondary_action.get_parent().hide()
+
+    '''----- END WIDGET EVENTS -----'''
+
+    '''----- DOWNLOAD STATE OPERATIONS -----'''
+
+    def restart(self):
+        self.download_manager.download(self.download)
+
+    def unpause(self):
+        self.download_manager.download(self.download, restart_paused=True)
+
+    def pause_download(self):
+        self.download_manager.cancel_download(self.download, cancel_state=DownloadState.PAUSED)
+
+    def stop_download(self):
+        self.download_manager.cancel_download(self.download, cancel_state=DownloadState.STOPPED)
+
+    def delete_download(self):
+        self.download_manager.cancel_download(self.download, cancel_state=DownloadState.CANCELED)
+
+    def trigger_remove(self):
+        self.remove_panel_action()
+
+    def NOOP(self):
+        '''used for states in which a button should not do anything'''
+        pass
+
+    '''----- END DOWNLOAD STATE OPERATIONS -----'''
+
     button_configs = {
         DownloadState.STARTED: {
             'actions': [pause_download, stop_download],
-            'icons':['media-playback-pause', 'dialog-cancel']
+            'icons': ['media-playback-pause', 'dialog-cancel']
         },
         DownloadState.QUEUED: {
             'actions': [pause_download, stop_download],
-            'icons':['media-playback-pause', 'dialog-cancel']
+            'icons': ['media-playback-pause', 'dialog-cancel']
         },
         DownloadState.COMPLETED: {
-            'actions': [NOOP, remove_from_current_box],
-            'icons':[None, 'list-remove']
+            'actions': [NOOP, trigger_remove],
+            'icons': [None, 'list-remove']
         },
         DownloadState.PAUSED: {
             'actions': [unpause, delete_download],
-            'icons':['media-playback-start', 'edit-delete']
+            'icons': ['media-playback-start', 'edit-delete']
         },
         DownloadState.STOPPED: {
             'actions': [restart, delete_download],
             'icons': ['media-playback-start', 'edit-delete']
         },
         DownloadState.FAILED: {
-            'actions': [restart, remove_from_current_box],
-            'icons':['view-refresh', 'list-remove']
+            'actions': [restart, trigger_remove],
+            'icons': ['view-refresh', 'list-remove']
         },
         DownloadState.CANCELED: {
-            'actions': [restart, remove_from_current_box],
-            'icons':['view-refresh', 'list-remove']
+            'actions': [restart, trigger_remove],
+            'icons': ['view-refresh', 'list-remove']
         }
     }

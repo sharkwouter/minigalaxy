@@ -6,6 +6,7 @@
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="shadow-type">none</property>
+    <signal name="map" handler="manage_button_visibility" swapped="no"/>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
@@ -141,6 +142,52 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">7</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="button_manage_installers">
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
+            <property name="always-show-image">True</property>
+            <signal name="clicked" handler="on_manage_button" swapped="no"/>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <child>
+                  <object class="GtkImage" id="icon-harddisk">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="icon-name">drive-harddisk</property>
+                    <property name="icon_size">3</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label_manage_installers">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes" context="game download management" comments="Klick on button should open file explorer to manage downloaded installers">Manage...</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">8</property>
           </packing>
         </child>
       </object>
