@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-25 11:05+0100\n"
-"PO-Revision-Date: 2025-02-26 11:02+0000\n"
+"PO-Revision-Date: 2025-02-27 17:02+0000\n"
 "Last-Translator: nexal <driftlock@proton.me>\n"
 "Language-Team: Italian <https://hosted.weblate.org/projects/minigalaxy/"
 "minigalaxy/it/>\n"
@@ -243,7 +243,7 @@ msgstr "Griglia"
 
 #: data/ui/properties.ui:161
 msgid "Hide game:"
-msgstr ""
+msgstr "Nascondi gioco:"
 
 #: data/ui/properties.ui:162 data/ui/properties.ui:174
 msgid "Hides the game from the games list"
@@ -323,7 +323,7 @@ msgstr "Lingua: "
 
 #: minigalaxy/ui/library_entry.py:526
 msgid "Launch the game"
-msgstr ""
+msgstr "Inizia il gioco"
 
 #: minigalaxy/constants.py:79
 msgid "List"
@@ -546,7 +546,7 @@ msgstr "Svedese"
 
 #: minigalaxy/constants.py:52
 msgid "System default"
-msgstr "Default della sistema"
+msgstr "Default del sistema"
 
 #: minigalaxy/installer.py:143
 msgid "The installation of {} failed. Please try again."
