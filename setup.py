@@ -24,6 +24,7 @@ setup(
         ('share/icons/hicolor/192x192/apps', ['data/icons/192x192/io.github.sharkwouter.Minigalaxy.png']),
         ('share/minigalaxy/ui', glob('data/ui/*.ui')),
         ('share/minigalaxy/images', glob('data/images/*')),
+        ('share/minigalaxy/wine_resources', glob('data/wine_resources/*')),
         ('share/minigalaxy/', ['data/style.css']),
         ('share/metainfo', ['data/io.github.sharkwouter.Minigalaxy.metainfo.xml']),
     ] + translations,

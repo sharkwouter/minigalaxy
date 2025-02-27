@@ -28,6 +28,10 @@ if not os.path.exists(LOGO_IMAGE_PATH):
         os.path.join(LAUNCH_DIR, "../share/icons/hicolor/192x192/apps/io.github.sharkwouter.Minigalaxy.png")
     )
 
+WINE_RES_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/wine_resources"))
+if not os.path.exists(WINE_RES_PATH):
+    WINE_RES_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/wine_resources"))
+
 ICON_WINE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../data/images/winehq_logo_glass.png"))
 if not os.path.exists(ICON_WINE_PATH):
     ICON_WINE_PATH = os.path.abspath(os.path.join(LAUNCH_DIR, "../share/minigalaxy/images/winehq_logo_glass.png"))

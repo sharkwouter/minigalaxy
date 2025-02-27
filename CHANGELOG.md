@@ -1,5 +1,7 @@
 **1.4.0**
-- various improvements to the download manager, including a pause function (not usable from the UI yet) (thanks to GB609)
+- Various improvements to the download manager, including a pause function (not usable from the UI yet) (thanks to GB609)
+- Speed up creation of wine prefixes during installations (thanks to GB609)
+- Use regedit to more permanently disable useless shortcut creation by wine from within a prefix (thanks to GB609)
 
 **1.3.2**
 - Completely reworked windows wine installation. This should solve a lot of problems with failing game installs. Innoextract (if installed) is only used to detect and configure the installation language. (thanks to GB609)
