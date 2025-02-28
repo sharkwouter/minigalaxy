@@ -115,6 +115,8 @@ class DownloadManagerList(Gtk.Viewport):
 
     @Gtk.Template.Callback("on_manage_button")
     def open_file_manager(self, widget, *data):
+        # this forks and is not watched by minigalaxy any further
+        # users need to manually reload library after changes
         subprocess.Popen([f"xdg-open '{self.config.install_dir}/installer' &"],
                          shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
 
@@ -196,7 +198,7 @@ class DownloadActionButtons(Gtk.Box):
 
     # button actions are defined at the end
 
-    def __init__(self, download, initial_state, download_manager, remove_panel_action, logger=None):
+    def __init__(self, download, initial_state, download_manager, remove_panel_action=None, logger=None, run_standalone=False):
         super().__init__(self)
         self.download = download
         self.download_manager = download_manager
@@ -204,6 +206,29 @@ class DownloadActionButtons(Gtk.Box):
         self.state = None
         self.logger = logger
         self.update_buttons(initial_state)
+        self.is_standalone = run_standalone
+        self.register_dm_listener()
+
+    def register_dm_listener(self, force_registration=False):
+        '''
+        Default behaviour: Listener will only be registered when in standalone mode (=not part of the DownloadList UI).
+        Can be overruled by passing force_registration=True.
+        Only useful as utility method when manually wiring stuff together,
+        but it's less error-prone to just pass run_standalone to the constructor
+        '''
+        if self.is_standalone or force_registration:
+            self.download_manager.add_active_downloads_listener(self.track_download_state)
+
+    def unregister_dm_listener(self):
+        # not registered listeners are silently ignored by download_manager
+        self.download_manager.remove_active_downloads_listener(self.track_download_state)
+
+    def track_download_state(self, change: DownloadState, download: Download):
+        if download != self.download:
+            return
+        GLib.idle_add(self.update_buttons, change)
+
+    '''----- WIDGET EVENTS -----'''
 
     @Gtk.Template.Callback("on_primary_button")
     def primary_button_clicked(self, widget):
@@ -221,8 +246,6 @@ class DownloadActionButtons(Gtk.Box):
             self.logger.debug('[%s:%s] - %s button clicked, execute %s',
                               button_type, self.state, self.download.filename(), str(action))
         action(self)
-
-    '''----- WIDGET EVENTS -----'''
 
     def update_buttons(self, state: DownloadState):
         if state is self.state:
@@ -249,6 +272,10 @@ class DownloadActionButtons(Gtk.Box):
 
     '''----- END WIDGET EVENTS -----'''
 
+    def destroy(self):
+        self.unregister_dm_listener()
+        super().destroy()
+
     '''----- DOWNLOAD STATE OPERATIONS -----'''
 
     def restart(self):
@@ -267,7 +294,10 @@ class DownloadActionButtons(Gtk.Box):
         self.download_manager.cancel_download(self.download, cancel_state=DownloadState.CANCELED)
 
     def trigger_remove(self):
-        self.remove_panel_action()
+        if self.remove_panel_action:
+            self.remove_panel_action()
+        else:
+            self.destroy()
 
     def NOOP(self):
         '''used for states in which a button should not do anything'''
