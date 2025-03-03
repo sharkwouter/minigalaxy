@@ -182,7 +182,7 @@ class OngoingDownloadListEntry(Gtk.Box):
         self.buttons.update_buttons(new_state)
 
         new_label_color = None
-        if new_state in [DownloadState.FAILED, DownloadState.CANCELED, DownloadState.STOPPED]:
+        if new_state in [DownloadState.FAILED, DownloadState.CANCELED]:
             new_label_color = 'red'
         elif new_state in [DownloadState.COMPLETED]:
             new_label_color = 'green'
