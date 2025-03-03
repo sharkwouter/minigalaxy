@@ -282,11 +282,13 @@ def create_applications_file(game, override=False):
     error_message = ""
     path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.get_stripped_name(to_path=True)))
     # Create desktop file definition
+    local_icon_dir = os.path.join(game.install_dir, 'support')
+    local_icon_file = os.path.join(local_icon_dir, 'icon.png')
     desktop_context = {
         "game_bin_path": get_exec_line(game),
         "game_name": game.name,
         "game_install_dir": game.install_dir,
-        "game_icon_path": os.path.join(game.install_dir, 'support/icon.png')
+        "game_icon_path": local_icon_file
         }
     desktop_definition = """\
         [Desktop Entry]
@@ -305,6 +307,10 @@ def create_applications_file(game, override=False):
             os.remove(path_to_shortcut)
         elif file_exists:
             return error_message
+
+        if os.path.exists(game.get_cached_icon_path()):
+            os.makedirs(local_icon_dir, mode=0o755, exist_ok=True)
+            shutil.copy(game.get_cached_icon_path(), local_icon_file)
 
         with open(path_to_shortcut, 'w+') as desktop_file:
             desktop_file.writelines(textwrap.dedent(desktop_definition))

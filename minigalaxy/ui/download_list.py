@@ -10,6 +10,7 @@ from minigalaxy.download_manager import DownloadManager, DownloadState
 from minigalaxy.paths import UI_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import GLib, Gtk
+from gi.overrides.GdkPixbuf import GdkPixbuf
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "download_list.ui"))
@@ -158,6 +159,11 @@ class OngoingDownloadListEntry(Gtk.Box):
                                              remove_panel_action=self.remove_from_current_box,
                                              logger=self.manager.logger)
         self.update_buttons(initial_state)
+
+        self.manager.logger.debug("trying to pull icon from: %s", download.download_icon)
+        if download.download_icon and os.path.exists(download.download_icon):
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(download.download_icon, 48, 48)
+            self.icon.set_from_pixbuf(pixbuf)
         self.pack_start(self.buttons, False, False, 0)
 
     def update_progress(self, percentage):

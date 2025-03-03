@@ -2,10 +2,11 @@ import os
 import re
 import json
 
-from minigalaxy.paths import CONFIG_GAMES_DIR
+from minigalaxy.paths import CONFIG_GAMES_DIR, ICON_DIR
 
 
 class Game:
+
     def __init__(self, name: str, url: str = "", md5sum=None, game_id: int = 0, install_dir: str = "",
                  image_url="", platform="linux", dlcs=None, category=""):
         self.name = name
@@ -24,6 +25,12 @@ class Game:
 
     def get_install_directory_name(self):
         return self.__strip_string(self.name, to_path=True)
+
+    def get_cached_icon_path(self, dlc_id=None):
+        if dlc_id:
+            return os.path.join(ICON_DIR, f"{dlc_id}.jpg")
+        else:
+            return os.path.join(ICON_DIR, f'{self.id}.png')
 
     def get_status_file_path(self):
         if self.install_dir:

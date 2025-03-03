@@ -12,7 +12,7 @@ from minigalaxy.game import Game
 from minigalaxy.installer import uninstall_game, install_game, check_diskspace
 from minigalaxy.launcher import start_game
 from minigalaxy.logger import logger
-from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, ICON_DIR, ICON_WINE_PATH, THUMBNAIL_DIR
+from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, ICON_WINE_PATH, THUMBNAIL_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, GLib, Notify
 from minigalaxy.ui.information import Information
@@ -154,6 +154,7 @@ class LibraryEntry:
         return result, download_info
 
     '''----- DOWNLOAD ACTIONS -----'''
+
     def __download_game(self) -> None:
         finish_func = self.__install_game
         cancel_to_state = State.DOWNLOADABLE
@@ -175,29 +176,31 @@ class LibraryEntry:
             self.update_to_state(cancel_to_state)
 
     def __download_dlc(self, dlc_installers) -> None:
+
         def finish_func(save_location):
             self.__install_dlc(save_location, dlc_title=dlc_title)
 
         download_info = self.api.get_download_info(self.game, dlc_installers=dlc_installers)
         dlc_title = self.game.name
+        dlc_icon = None
         for dlc in self.game.dlcs:
             if dlc["downloads"]["installers"] == dlc_installers:
+                dlc_id = dlc.get('id', None)
+                dlc_icon = self.game.get_cached_icon_path(dlc_id)
                 dlc_title = dlc["title"]
+
         cancel_to_state = State.INSTALLED
         result = self.__download(download_info, DownloadType.GAME_DLC, finish_func,
-                                 cancel_to_state)
+                                 cancel_to_state, download_icon=dlc_icon)
         if not result:
             self.update_to_state(cancel_to_state)
 
     def __download_icon(self, force=False, game_info=None):
-        if not self.config.create_applications_file:
-            return
-
-        if self.offline or not self.game.is_installed():
-            return
-
-        local_name = os.path.join(self.game.install_dir, 'support', 'icon.png')
+        local_name = self.game.get_cached_icon_path()
         if os.path.exists(local_name) and not force:
+            return local_name
+
+        if self.offline:
             return
 
         if not game_info:
@@ -210,12 +213,16 @@ class LibraryEntry:
         The entries there appear to start with //'''
         icon_url = re.sub('^.*?//', 'https://', icon, count=1)
         download = Download(url=icon_url, save_location=local_name)
-        self.download_manager.download(download)
+        self.download_manager.download_now(download)
+        return local_name
 
-    def __download(self, download_info, download_type, finish_func, cancel_to_state):  # noqa: C901
+    def __download(self, download_info, download_type, finish_func, cancel_to_state, download_icon=None):  # noqa: C901
         download_success = True
         self.game.set_install_dir(self.config.install_dir)
         self.update_to_state(State.QUEUED)
+
+        if not download_icon:
+            download_icon = self.__download_icon()
 
         # Need to update the config with DownloadType metadata
         self.config.add_ongoing_download(self.game.id)
@@ -227,6 +234,7 @@ class LibraryEntry:
         self.download_finished = 0
 
         def finish_func_wrapper(func):
+
             def wrapper(*args):
                 self.download_finished += 1
                 if self.download_finished == number_of_files:
@@ -264,7 +272,8 @@ class LibraryEntry:
                 cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
                 number=number_of_files - key,
                 out_of_amount=number_of_files,
-                game=self.game
+                game=self.game,
+                download_icon=download_icon
             )
             download_files.insert(0, download)
         self.download_list.extend(download_files)
@@ -284,14 +293,13 @@ class LibraryEntry:
     '''----- END DOWNLOAD ACTIONS -----'''
 
     '''----- INSTALL ACTIONS -----'''
+
     def __install_game(self, save_location):
         self.config.remove_ongoing_download(self.game.id)
         self.download_list = []
         self.game.set_install_dir(self.config.install_dir)
         install_success = self.__install(save_location)
         if install_success:
-            # try to get icon. doesn't matter if it doesn't exist, just used for shortcuts
-            self.__download_icon()
             popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
                                             .format(self.game.name), "dialog-information")
             popup.show()
@@ -332,6 +340,7 @@ class LibraryEntry:
             self.config.keep_installers,
             self.config.create_applications_file
         )
+
         if not err_msg:
             self.update_to_state(success_state)
             install_success = True
@@ -359,6 +368,7 @@ class LibraryEntry:
         GLib.idle_add(self.reload_state)
 
     '''----- UPDATE CHECK HELPERS -----'''
+
     def __check_for_update_dlc(self):
         if self.game.is_installed() and self.game.id and not self.offline:
             game_info = self.api.get_info(self.game)
@@ -387,6 +397,7 @@ class LibraryEntry:
     '''----- END UPDATE CHECK HELPERS -----'''
 
     '''----- UI REPRESENTATION UTILITIES -----'''
+
     def update_gtk_box_for_dlc(self, dlc_info):
         title = dlc_info['title']
         if title not in self.dlc_dict:
@@ -396,22 +407,24 @@ class LibraryEntry:
         dlc_box.refresh_state()
 
     def load_thumbnail(self):
-        set_result = self.__set_image("")
-        if not set_result:
-            tries = 10
-            performed_try = 0
-            while performed_try < tries:
-                if self.game.image_url and self.game.id:
-                    # Download the thumbnail
-                    image_url = "https:{}_196.jpg".format(self.game.image_url)
-                    thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
-                    download = Download(image_url, thumbnail, DownloadType.THUMBNAIL,
-                                        finish_func=self.__set_image)
-                    self.download_manager.download_now(download)
-                    set_result = True
-                    break
-                performed_try += 1
-                time.sleep(1)
+        if self.__set_image(""):
+            return True
+
+        tries = 10
+        performed_try = 0
+        # FIXME: this should happen async and retries shall be left to download_manager!
+        while performed_try < tries:
+            if self.game.image_url and self.game.id:
+                # Download the thumbnail
+                image_url = "https:{}_196.jpg".format(self.game.image_url)
+                thumbnail = os.path.join(THUMBNAIL_DIR, "{}.jpg".format(self.game.id))
+                download = Download(image_url, thumbnail, DownloadType.THUMBNAIL,
+                                    finish_func=self.__set_image)
+                self.download_manager.download_now(download)
+                set_result = True
+                break
+            performed_try += 1
+            time.sleep(1)
         return set_result
 
     def __set_image(self, save_location):
@@ -436,6 +449,7 @@ class LibraryEntry:
     '''----- END UI REPRESENTATION UTILITIES -----'''
 
     '''----- STATE HANDLING -----'''
+
     def set_progress(self, percentage: int):
         if self.current_state in [State.QUEUED, State.INSTALLED]:
             self.update_to_state(State.DOWNLOADING)
@@ -571,6 +585,7 @@ class LibraryEntry:
 
 
 class DlcListEntry(Gtk.Box):
+
     def __init__(self, parent_entry, dlc_info, dlc_download_function):
         super().__init__(orientation=Gtk.Orientation.HORIZONTAL)
         self.parent_entry = parent_entry
@@ -613,14 +628,14 @@ class DlcListEntry(Gtk.Box):
         self.install_button_image.set_from_icon_name(icon_name, Gtk.IconSize.BUTTON)
 
     def get_async_image_dlc_icon(self, dlc_id, icon):
-        dlc_icon_path = os.path.join(ICON_DIR, "{}.jpg".format(dlc_id))
-        if os.path.isfile(dlc_icon_path):
-            GLib.idle_add(self.icon_image.set_from_file, dlc_icon_path)
+        self.dlc_icon_path = self.parent_entry.game.get_cached_icon_path(dlc_id)
+        if os.path.isfile(self.dlc_icon_path):
+            GLib.idle_add(self.icon_image.set_from_file, self.dlc_icon_path)
 
         elif icon:
             download = Download(
                 url="http:{}".format(icon),
-                save_location=dlc_icon_path,
+                save_location=self.dlc_icon_path,
                 finish_func=self.__set_downloaded_dlc_icon
             )
             self.parent_entry.download_manager.download_now(download)

@@ -30,7 +30,8 @@ class Download:
 
     def __init__(self, url, save_location, download_type=None,
                  finish_func=None, progress_func=None, cancel_func=None,
-                 expected_size=None, number=1, out_of_amount=1, game=None):
+                 expected_size=None, number=1, out_of_amount=1, game=None,
+                 download_icon=None):
         self.url = url
         self.save_location = save_location
         self.__finish_func = finish_func
@@ -43,6 +44,7 @@ class Download:
         self.download_type = download_type
         self.current_progress = 0
         self.expected_size = expected_size
+        self.download_icon = download_icon
 
     def filename(self):
         return os.path.basename(self.save_location)
