@@ -195,8 +195,6 @@ class OngoingDownloadListEntry(Gtk.Box):
             self.game_title.get_style_context().add_class(new_label_color)
             self.label_color_change = new_label_color
             self.game_title.set_text(self.game_title.get_text())
-        #else:
-        #    self.game_title.set_text(self.game_title.get_text())
 
     def update_tooltip(self, msg):
         self.game_title.set_tooltip_text(msg)
