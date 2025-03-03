@@ -183,18 +183,20 @@ class OngoingDownloadListEntry(Gtk.Box):
 
         new_label_color = None
         if new_state in [DownloadState.FAILED, DownloadState.CANCELED]:
-            new_label_color = 'red'
+            new_label_color = 'error'
         elif new_state in [DownloadState.COMPLETED]:
-            new_label_color = 'green'
+            new_label_color = 'success'
 
         if self.label_color_change:
+            self.game_title.get_style_context().remove_class(self.label_color_change)
             self.label_color_change = None
 
         if new_label_color:
-            self.game_title.set_markup(f'<span color="{new_label_color}">{self.game_title.get_text()}</span>')
+            self.game_title.get_style_context().add_class(new_label_color)
             self.label_color_change = new_label_color
-        else:
             self.game_title.set_text(self.game_title.get_text())
+        #else:
+        #    self.game_title.set_text(self.game_title.get_text())
 
     def update_tooltip(self, msg):
         self.game_title.set_tooltip_text(msg)
