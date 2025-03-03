@@ -82,8 +82,6 @@ class DownloadManagerList(Gtk.Viewport):
     def download_stopped(self, change, download):
         download_entry = self.__get_create_entry(change, download)
         self.__move_to_section(self.flowbox_done, download_entry, change)
-        if not self.downloads:
-            self.menu_button.get_style_context().remove_class("suggested-action")
 
     def download_paused(self, change, download):
         download_entry = self.__get_create_entry(change, download)
@@ -92,7 +90,6 @@ class DownloadManagerList(Gtk.Viewport):
     def download_progress(self, change, download):
         download_entry = self.__get_create_entry(change, download)
         download_entry.update_progress(download.current_progress)
-        self.menu_button.get_style_context().add_class("suggested-action")
 
     def __get_create_entry(self, change, download):
         if download.save_location not in self.downloads:
@@ -101,7 +98,16 @@ class DownloadManagerList(Gtk.Viewport):
         return self.downloads[download.save_location]
 
     def __move_to_section(self, flowbox, entry, new_state: DownloadState):
+        in_done_section = entry.flowbox == self.flowbox_done
         entry.remove_from_current_box()
+
+        '''
+        Going from stopped -> cancel or failure -> cancel is set to delete the file.
+        No need to keep the Download in the list after that.
+        '''
+        if in_done_section and flowbox == self.flowbox_done:
+            return
+
         entry.add_to_box(flowbox)
         entry.update_buttons(new_state)
 
@@ -112,6 +118,11 @@ class DownloadManagerList(Gtk.Viewport):
         else:
             group_flowbox.hide()
             self.flowbow_labels[group_flowbox].hide()
+
+        if self.downloads:
+            self.menu_button.get_style_context().add_class("suggested-action")
+        else:
+            self.menu_button.get_style_context().remove_class("suggested-action")
 
     @Gtk.Template.Callback("on_manage_button")
     def open_file_manager(self, widget, *data):
@@ -162,6 +173,7 @@ class OngoingDownloadListEntry(Gtk.Box):
         flowbox.add(self)
         self.flowbox = flowbox
         self.show()
+        self.manager.downloads[self.download.save_location] = self
         self.manager.update_group_visibility(flowbox)
 
     def remove_from_current_box(self):
@@ -175,6 +187,7 @@ class OngoingDownloadListEntry(Gtk.Box):
         box_child.remove(self)
         old_flowbox.remove(box_child)
         box_child.destroy()
+        del self.manager.downloads[self.download.save_location]
         self.manager.update_group_visibility(old_flowbox)
 
     '''----- END VISIBILITY CONTROL -----'''

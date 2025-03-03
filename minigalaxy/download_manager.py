@@ -263,6 +263,7 @@ class DownloadManager:
         download_dict = dict(zip(downloads, [True] * len(downloads)))
 
         self.__cancel_paused_downloads(download_dict, cancel_state)
+        self.__cancel_stopped_downloads(download_dict, cancel_state)
 
         # Next, loop through the downloads queued for download, comparing them to the
         # cancel list
@@ -347,6 +348,16 @@ class DownloadManager:
         paused_downloads = self.config.paused_downloads
         for d in downloads:
             if d.save_location in paused_downloads:
+                self.__request_download_cancel(d, cancel_state)
+                self.__notify_listeners(cancel_state, d)
+
+    def __cancel_stopped_downloads(self, downloads, cancel_state=DownloadState.CANCELED):
+        # this method is pointless for other stop states
+        if cancel_state not in [DownloadState.CANCELED, DownloadState.PAUSED]:
+            return
+
+        for d in downloads:
+            if os.path.exists(d.save_location):
                 self.__request_download_cancel(d, cancel_state)
                 self.__notify_listeners(cancel_state, d)
 
