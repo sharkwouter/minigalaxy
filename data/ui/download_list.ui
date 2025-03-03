@@ -32,7 +32,6 @@
         <child>
           <object class="GtkFlowBox" id="flowbox_active">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">Active Downloads</property>
             <property name="valign">start</property>
             <property name="border-width">10</property>
             <property name="homogeneous">True</property>
@@ -64,7 +63,6 @@
         <child>
           <object class="GtkFlowBox" id="flowbox_queued">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">Queued Downloads</property>
             <property name="valign">start</property>
             <property name="border-width">10</property>
             <property name="homogeneous">True</property>
@@ -96,7 +94,6 @@
         <child>
           <object class="GtkFlowBox" id="flowbox_paused">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">Paused Downloads</property>
             <property name="valign">start</property>
             <property name="border-width">10</property>
             <property name="homogeneous">True</property>
@@ -128,7 +125,6 @@
         <child>
           <object class="GtkFlowBox" id="flowbox_done">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">All Terminated Downloads</property>
             <property name="valign">start</property>
             <property name="border-width">10</property>
             <property name="homogeneous">True</property>

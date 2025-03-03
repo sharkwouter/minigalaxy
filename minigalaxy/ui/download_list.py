@@ -46,7 +46,7 @@ class DownloadManagerList(Gtk.Viewport):
             DownloadState.COMPLETED: self.download_stopped,
             DownloadState.QUEUED: self.download_queued,
             DownloadState.PROGRESS: self.download_progress,
-            DownloadState.FAILED: self.download_stopped,
+            DownloadState.FAILED: self.download_failed,
             DownloadState.CANCELED: self.download_stopped,
             DownloadState.STOPPED: self.download_stopped,
             DownloadState.PAUSED: self.download_paused
@@ -62,7 +62,7 @@ class DownloadManagerList(Gtk.Viewport):
         self.download_manager.add_active_downloads_listener(self.download_manager_listener)
         self.show()
 
-    def download_manager_listener(self, change: DownloadState, download: Download):
+    def download_manager_listener(self, change: DownloadState, download: Download, *additional_params):
         self.logger.debug('Received %s for Download[save_location=%s, progress=%d]',
                           change, download.filename(), download.current_progress)
         if download.download_type not in self.listener_download_types:
@@ -70,7 +70,7 @@ class DownloadManagerList(Gtk.Viewport):
         if change not in self.change_handler:
             return
 
-        GLib.idle_add(self.change_handler[change], change, download)
+        GLib.idle_add(self.change_handler[change], change, download, *additional_params)
 
     def download_started(self, change, download):
         download_entry = self.__get_create_entry(change, download)
@@ -83,6 +83,11 @@ class DownloadManagerList(Gtk.Viewport):
     def download_stopped(self, change, download):
         download_entry = self.__get_create_entry(change, download)
         self.__move_to_section(self.flowbox_done, download_entry, change)
+
+    def download_failed(self, change, download, error_info="Unknown error"):
+        download_entry = self.__get_create_entry(change, download)
+        self.__move_to_section(self.flowbox_done, download_entry, change)
+        download_entry.update_tooltip(_(error_info))
 
     def download_paused(self, change, download):
         download_entry = self.__get_create_entry(change, download)
@@ -110,7 +115,8 @@ class DownloadManagerList(Gtk.Viewport):
             return
 
         entry.add_to_box(flowbox)
-        entry.update_buttons(new_state)
+        entry.update_state(new_state)
+        entry.update_tooltip(_(new_state.name))
 
     def update_group_visibility(self, group_flowbox):
         if group_flowbox.get_children():
@@ -153,25 +159,45 @@ class OngoingDownloadListEntry(Gtk.Box):
         self.manager = parent_manager
         self.download = download
         self.flowbox = None
+        self.label_color_change = None
         self.game_title.set_text(f'{download.game.name}:\n{os.path.basename(download.save_location)}')
         self.buttons = DownloadActionButtons(download, initial_state,
                                              download_manager=parent_manager.download_manager,
                                              remove_panel_action=self.remove_from_current_box,
                                              logger=self.manager.logger)
-        self.update_buttons(initial_state)
+        self.update_state(initial_state)
 
         self.manager.logger.debug("trying to pull icon from: %s", download.download_icon)
         if download.download_icon and os.path.exists(download.download_icon):
             pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(download.download_icon, 48, 48)
             self.icon.set_from_pixbuf(pixbuf)
+
         self.pack_start(self.buttons, False, False, 0)
 
     def update_progress(self, percentage):
         self.download_progress.set_fraction(percentage / 100)
         self.download_progress.set_tooltip_text("{}%".format(percentage))
 
-    def update_buttons(self, new_state):
+    def update_state(self, new_state):
         self.buttons.update_buttons(new_state)
+
+        new_label_color = None
+        if new_state in [DownloadState.FAILED, DownloadState.CANCELED, DownloadState.STOPPED]:
+            new_label_color = 'red'
+        elif new_state in [DownloadState.COMPLETED]:
+            new_label_color = 'green'
+
+        if self.label_color_change:
+            self.label_color_change = None
+
+        if new_label_color:
+            self.game_title.set_markup(f'<span color="{new_label_color}">{self.game_title.get_text()}</span>')
+            self.label_color_change = new_label_color
+        else:
+            self.game_title.set_text(self.game_title.get_text())
+
+    def update_tooltip(self, msg):
+        self.game_title.set_tooltip_text(msg)
 
     '''----- VISIBILITY CONTROL -----'''
 
