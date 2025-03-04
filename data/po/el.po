@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-25 11:05+0100\n"
+"POT-Creation-Date: 2025-03-04 20:22+0100\n"
 "PO-Revision-Date: 2024-04-01 03:37+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -29,10 +29,15 @@ msgid "About"
 msgstr "Περί"
 
 #. Opens about dialog
-#: data/ui/application.ui:58
+#: data/ui/application.ui:64
 msgctxt "about"
 msgid "About"
 msgstr "Περί"
+
+#: data/ui/download_list.ui:23
+msgctxt "download_group"
+msgid "Active Downloads:"
+msgstr ""
 
 #: data/ui/properties.ui:269 data/ui/properties.ui:281
 msgid "Added at the end of the command used to launch the game"
@@ -54,7 +59,7 @@ msgstr "Εφαρμογή"
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Είστε σίγουρος/η ότι θέλετε να ακυρώσετε την εγκατάσταση του {};"
 
-#: minigalaxy/ui/window.py:117
+#: minigalaxy/ui/window.py:121
 msgid "Are you sure you want to log out of GOG?"
 msgstr "Είστε σίγουρος/η ότι θέλετε να αποσυνδεθείτε από το GOG;"
 
@@ -81,7 +86,7 @@ msgid "Category Filters"
 msgstr "Φίλτρα Κατηγορίας"
 
 #. Tooltip for category filter button
-#: data/ui/application.ui:149
+#: data/ui/application.ui:144
 msgctxt "category_filter"
 msgid "Category filters"
 msgstr "Φίλτρα κατηγορίας"
@@ -140,21 +145,41 @@ msgstr "DLC"
 msgid "Danish"
 msgstr "Δανέζικα"
 
-#: minigalaxy/ui/library_entry.py:462
+#. Tooltip of icon button to delete a downloaded file
+#: minigalaxy/ui/download_list.py:250
+msgid "Delete file"
+msgstr ""
+
+#: data/ui/download_list.ui:116
+msgctxt "download_group"
+msgid "Done:"
+msgstr ""
+
+#: minigalaxy/ui/library_entry.py:476
 msgid "Download"
 msgstr "Λήψη"
 
-#: minigalaxy/ui/library_entry.py:463
+#: minigalaxy/ui/library_entry.py:477
 msgid "Download and install the game"
 msgstr "Λήψη και εγκατάσταση του παιχνιδιού"
 
-#: minigalaxy/ui/library_entry.py:150 minigalaxy/ui/library_entry.py:247
+#: minigalaxy/ui/library_entry.py:150 minigalaxy/ui/library_entry.py:255
 msgid "Download error"
 msgstr "Σφάλμα κατα την διαρκεια κατεβασματος"
 
-#: minigalaxy/ui/library_entry.py:504
+#: minigalaxy/ui/library_entry.py:518
 msgid "Downloading…"
 msgstr "Ενυμέρωση…"
+
+#: data/ui/download_list.ui:115
+msgctxt "download_group"
+msgid "Downloads that completed, failed or were stopped."
+msgstr ""
+
+#: data/ui/download_list.ui:53
+msgctxt "download_group"
+msgid "Downloads waiting for a free worker slot."
+msgstr ""
 
 #: minigalaxy/constants.py:7 minigalaxy/constants.py:55
 msgid "Dutch"
@@ -189,7 +214,7 @@ msgstr ""
 "Αδυναμία αλλαγής γλωσσάς προγράμματος.Βεβαιωθείτε ότι έχει δημιουργηθεί η "
 "καταχώρηση τοπικότητας στο σύστημα σας."
 
-#: minigalaxy/ui/library_entry.py:343
+#: minigalaxy/ui/library_entry.py:352
 msgid "Failed to install {}"
 msgstr "Αδυναμία εγκατάστασης {}"
 
@@ -201,7 +226,12 @@ msgstr "Αδυναμία εύρεσης βιβλιοθήκης"
 msgid "Failed to start {}:"
 msgstr "Αδυναμία έναρξης {}:"
 
-#: minigalaxy/ui/library_entry.py:295
+#: data/ui/download_list.ui:22
+msgctxt "download_group"
+msgid "Files being actively downloaded."
+msgstr ""
+
+#: minigalaxy/ui/library_entry.py:303
 msgid "Finished downloading and installing {}"
 msgstr "Ολοκληρώθηκε η λήψη και εγκατάσταση {}"
 
@@ -257,7 +287,7 @@ msgstr "Αποκρύπτει το παιχνίδι από τη λίστα παι
 msgid "Hungarian"
 msgstr "Ουγγαρέζικα"
 
-#: minigalaxy/ui/library_entry.py:495
+#: minigalaxy/ui/library_entry.py:509
 msgid "In queue…"
 msgstr "Σε αναμονή…"
 
@@ -269,11 +299,11 @@ msgstr "Πληροφορίες"
 msgid "Information about {}"
 msgstr "Πληροφορίες περί {}"
 
-#: minigalaxy/ui/library_entry.py:480
+#: minigalaxy/ui/library_entry.py:494
 msgid "Install"
 msgstr "Εγκατάστασή"
 
-#: minigalaxy/ui/library_entry.py:481
+#: minigalaxy/ui/library_entry.py:495
 msgid "Install the game"
 msgstr "Εγκατάσταση του παιχνιδιού"
 
@@ -284,12 +314,12 @@ msgid "Installation path: "
 msgstr "Προορισμός εγκατάστασης: "
 
 #. Used next to a checkbox which switches between showing all games and only installed ones
-#: data/ui/application.ui:116
+#: data/ui/application.ui:175
 msgctxt "installed"
 msgid "Installed"
 msgstr "Εγκατεστημένα"
 
-#: minigalaxy/ui/library_entry.py:513
+#: minigalaxy/ui/library_entry.py:527
 msgid "Installing…"
 msgstr "Εγκαθίσταται…"
 
@@ -325,7 +355,7 @@ msgctxt "language"
 msgid "Language: "
 msgstr "Γλώσσα: "
 
-#: minigalaxy/ui/library_entry.py:526
+#: minigalaxy/ui/library_entry.py:540
 msgid "Launch the game"
 msgstr "Εκτελέσει του παιχνιδιού"
 
@@ -338,10 +368,22 @@ msgid "Login"
 msgstr "Σύνδεση"
 
 #. Logs the users gog account out and returns to login page
-#: data/ui/application.ui:17
+#: data/ui/application.ui:23
 msgctxt "logout"
 msgid "Logout"
 msgstr "Αποσύνδεση"
+
+#. Tooltip of the 'show downloads' button in the application main window
+#: data/ui/application.ui:201
+msgctxt "game_download_management"
+msgid "Manage downloads"
+msgstr ""
+
+#. Klick on button will open file explorer to manage downloaded installers
+#: data/ui/download_list.ui:173
+msgctxt "game_download_management"
+msgid "Manage installers"
+msgstr ""
 
 #: minigalaxy/ui/properties.py:92
 msgid "MangoHud wasn't found. Using MangoHud cannot be enabled."
@@ -387,6 +429,11 @@ msgstr "Άνοιγμα του Winecfg για αυτό το παιχνίδι"
 msgid "Open Winetricks for this game"
 msgstr "Άνοιγμα Winetricks για αυτό το παιχνίδι"
 
+#: data/ui/download_list.ui:147
+msgctxt "game_download_management"
+msgid "Open file manager at location where installers are saved"
+msgstr ""
+
 #: data/ui/properties.ui:76
 msgid "Open files"
 msgstr "Άνοιγμα αρχείων"
@@ -396,12 +443,32 @@ msgid "Open game install folder"
 msgstr "Άνοιγμα του φακέλου εγκατάστασης του παιχνιδιού"
 
 #. Tooltip for header menu button
-#: data/ui/application.ui:130
+#: data/ui/application.ui:122
 msgctxt "menu"
 msgid "Options menu"
 msgstr "Μενού επιλογών"
 
-#: minigalaxy/ui/library_entry.py:525 minigalaxy/ui/library_entry.py:554
+#. Tooltip of icon button to pause a download
+#: minigalaxy/ui/download_list.py:241
+msgid "Pause"
+msgstr ""
+
+#: data/ui/download_list.ui:84
+msgctxt "download_group"
+msgid "Paused downlods will not automatically resume."
+msgstr ""
+
+#: data/ui/download_list.ui:85
+msgctxt "download_group"
+msgid "Paused:"
+msgstr ""
+
+#: data/ui/download_list.ui:54
+msgctxt "download_group"
+msgid "Pending:"
+msgstr ""
+
+#: minigalaxy/ui/library_entry.py:539 minigalaxy/ui/library_entry.py:568
 msgid "Play"
 msgstr "Παίξε"
 
@@ -424,7 +491,7 @@ msgid "Preferences"
 msgstr "Προτιμήσεις"
 
 #. Opens preferences dialog
-#: data/ui/application.ui:32
+#: data/ui/application.ui:38
 msgctxt "preferences"
 msgid "Preferences"
 msgstr "Προτιμήσεις"
@@ -444,7 +511,7 @@ msgid "Properties of {}"
 msgstr "Ιδιότητες του {}"
 
 #. Tooltip for refresh button
-#: data/ui/application.ui:89
+#: data/ui/application.ui:105
 msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Ανανέωση λίστας παιχνιδιών"
@@ -452,6 +519,11 @@ msgstr "Ανανέωση λίστας παιχνιδιών"
 #: data/ui/properties.ui:48
 msgid "Regedit"
 msgstr "Επεξεργασία μητρώου wine"
+
+#. Tooltip of icon button which removes a download from the ui list of downloads
+#: minigalaxy/ui/download_list.py:253
+msgid "Remove from list"
+msgstr ""
 
 #: data/ui/categoryfilters.ui:44
 msgid "Reset"
@@ -464,6 +536,16 @@ msgstr "Επαναφορά του εκτελέσιμου αρχείου wine γ�
 #: data/ui/properties.ui:291
 msgid "Reset wine executable"
 msgstr "Επαναφορά εκτελέσιμου wine"
+
+#. Tooltip of icon button for download (re)start
+#: minigalaxy/ui/download_list.py:238
+msgid "Resume"
+msgstr ""
+
+#. Tooltip of icon button to retry a failed or canceled download
+#: minigalaxy/ui/download_list.py:244
+msgid "Retry"
+msgstr ""
 
 #: minigalaxy/constants.py:23 minigalaxy/constants.py:74
 msgid "Romanian"
@@ -480,7 +562,7 @@ msgid "Save"
 msgstr "Αποθήκευση"
 
 #. Tooltip for search field
-#: data/ui/application.ui:172
+#: data/ui/application.ui:185
 msgctxt "search"
 msgid "Search games list"
 msgstr "Αναζήτηση λίστας παιχνιδιών"
@@ -503,7 +585,7 @@ msgstr "Προβολή παιχνιδιών Windows: "
 msgid "Show an FPS (frames per second) counter overlaid in the game"
 msgstr "Εμφάνιση ενός μετρητή FPS (καρέ ανά δευτερόλεπτο) στο παιχνίδι"
 
-#: minigalaxy/ui/library_entry.py:470 minigalaxy/ui/library_entry.py:530
+#: minigalaxy/ui/library_entry.py:484 minigalaxy/ui/library_entry.py:544
 msgid "Show game options menu"
 msgstr "Εμφάνιση του μενού επιλογών παιχνιδιού"
 
@@ -514,7 +596,7 @@ msgid "Show hidden games: "
 msgstr "Προβολή κρυφών παιχνιδιών: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
-#: data/ui/application.ui:105
+#: data/ui/application.ui:164
 msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Προβολή μόνο εγκατεστημένων παιχνιδιών"
@@ -536,6 +618,11 @@ msgstr "Ισπανικά (Ισπανίας)"
 msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Διατήρηση Σύνδεσης:"
+
+#. Tooltip of icon button to stop an active or queued download
+#: minigalaxy/ui/download_list.py:247
+msgid "Stop"
+msgstr ""
 
 #: data/ui/information.ui:76
 msgid "Store"
@@ -603,15 +690,19 @@ msgstr "Μη διαχειρίσιμο σφάλμα."
 msgid "Uninstall"
 msgstr "Απεγκατάσταση"
 
-#: minigalaxy/ui/library_entry.py:541
+#: minigalaxy/ui/library_entry.py:555
 msgid "Uninstalling…"
 msgstr "Απ εγκαθίσταται…"
+
+#: minigalaxy/ui/download_list.py:87
+msgid "Unknown error"
+msgstr ""
 
 #: data/ui/gametilelist.ui:209 data/ui/gametile.ui:182
 msgid "Update"
 msgstr "Ενημέρωση"
 
-#: minigalaxy/ui/library_entry.py:563
+#: minigalaxy/ui/library_entry.py:577
 msgid "Updating…"
 msgstr "Ενημερώνεται…"
 
@@ -679,7 +770,7 @@ msgstr ""
 msgid "Wine executable:"
 msgstr "Εκτελέσιμο wine:"
 
-#: minigalaxy/installer.py:205
+#: minigalaxy/installer.py:210
 msgid "Wine extraction failed."
 msgstr "Αποτυχία αποσυμπίεσης wine."
 
@@ -693,7 +784,7 @@ msgstr ""
 msgid "Winecfg"
 msgstr "Winecfg"
 
-#: minigalaxy/installer.py:173
+#: minigalaxy/installer.py:178
 msgid "Wineprefix creation failed."
 msgstr "Απέτυχε η δημιουργία wineprefix."
 
