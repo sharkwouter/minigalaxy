@@ -84,10 +84,10 @@ class DownloadManagerList(Gtk.Viewport):
         download_entry = self.__get_create_entry(change, download)
         self.__move_to_section(self.flowbox_done, download_entry, change)
 
-    def download_failed(self, change, download, error_info="Unknown error"):
+    def download_failed(self, change, download, error_info=_("Unknown error")):
         download_entry = self.__get_create_entry(change, download)
         self.__move_to_section(self.flowbox_done, download_entry, change)
-        download_entry.update_tooltip(_(error_info))
+        download_entry.update_tooltip(error_info)
 
     def download_paused(self, change, download):
         download_entry = self.__get_create_entry(change, download)
@@ -116,7 +116,8 @@ class DownloadManagerList(Gtk.Viewport):
 
         entry.add_to_box(flowbox)
         entry.update_state(new_state)
-        entry.update_tooltip(_(new_state.name))
+        # make sure to clear previous error messages when restarting a failed downloa
+        entry.update_tooltip("")
 
     def update_group_visibility(self, group_flowbox):
         if group_flowbox.get_children():
@@ -233,12 +234,23 @@ class DownloadActionButtons(Gtk.Box):
     image_secondary_action = Gtk.Template.Child()
 
     tooltip_texts = {
-        'media-playback-start': 'Resume',
-        'media-playback-pause': 'Pause',
-        'view-refresh': 'Retry',
-        'dialog-cancel': 'Cancel',
-        'edit-delete': 'Delete file',
-        'list-remove': 'Remove from list',
+        # Tooltip of icon button for download (re)start
+        'media-playback-start': _('Resume'),
+
+        # Tooltip of icon button to pause a download
+        'media-playback-pause': _('Pause'),
+
+        # Tooltip of icon button to retry a failed or canceled download
+        'view-refresh': _('Retry'),
+
+        # Tooltip of icon button to stop an active or queued download
+        'media-playback-stop': _('Stop'),
+
+        # Tooltip of icon button to delete a downloaded file
+        'edit-delete': _('Delete file'),
+
+        # Tooltip of icon button which removes a download from the ui list of downloads
+        'list-remove': _('Remove from list'),
     }
 
     # button actions are defined at the end
@@ -303,14 +315,14 @@ class DownloadActionButtons(Gtk.Box):
         primary, secondary = self.button_configs[state]['icons']
         if primary:
             self.image_primary_action.set_from_icon_name(primary, Gtk.IconSize.LARGE_TOOLBAR)
-            self.image_primary_action.set_tooltip_text(_(self.tooltip_texts[primary]))
+            self.image_primary_action.set_tooltip_text(self.tooltip_texts[primary])
             self.image_primary_action.get_parent().show()
         else:
             self.image_primary_action.get_parent().hide()
 
         if secondary:
             self.image_secondary_action.set_from_icon_name(secondary, Gtk.IconSize.LARGE_TOOLBAR)
-            self.image_secondary_action.set_tooltip_text(_(self.tooltip_texts[secondary]))
+            self.image_secondary_action.set_tooltip_text(self.tooltip_texts[secondary])
             self.image_secondary_action.get_parent().show()
         else:
             self.image_secondary_action.get_parent().hide()
@@ -353,11 +365,11 @@ class DownloadActionButtons(Gtk.Box):
     button_configs = {
         DownloadState.STARTED: {
             'actions': [pause_download, stop_download],
-            'icons': ['media-playback-pause', 'dialog-cancel']
+            'icons': ['media-playback-pause', 'media-playback-stop']
         },
         DownloadState.QUEUED: {
             'actions': [pause_download, stop_download],
-            'icons': ['media-playback-pause', 'dialog-cancel']
+            'icons': ['media-playback-pause', 'media-playback-stop']
         },
         DownloadState.COMPLETED: {
             'actions': [NOOP, trigger_remove],

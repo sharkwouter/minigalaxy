@@ -19,7 +19,7 @@
         <child>
           <object class="GtkLabel" id="label_active">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">Files being actively downloaded</property>
+            <property name="tooltip-text" translatable="yes" context="download_group">Files being actively downloaded.</property>
             <property name="label" translatable="yes" context="download_group">Active Downloads:</property>
             <property name="xalign">0.05000000074505806</property>
           </object>
@@ -50,7 +50,7 @@
         <child>
           <object class="GtkLabel" id="label_queued">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">Waiting for a free download worker slot</property>
+            <property name="tooltip-text" translatable="yes" context="download_group">Downloads waiting for a free worker slot.</property>
             <property name="label" translatable="yes" context="download_group">Pending:</property>
             <property name="xalign">0.05000000074505806</property>
           </object>
@@ -81,7 +81,7 @@
         <child>
           <object class="GtkLabel" id="label_paused">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">Will not automatically resume on restart</property>
+            <property name="tooltip-text" translatable="yes" context="download_group">Paused downlods will not automatically resume.</property>
             <property name="label" translatable="yes" context="download_group">Paused:</property>
             <property name="xalign">0.05000000074505806</property>
           </object>
@@ -112,7 +112,7 @@
         <child>
           <object class="GtkLabel" id="label_done">
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes">Downloads that completed, failed or were stopped.</property>
+            <property name="tooltip-text" translatable="yes" context="download_group">Downloads that completed, failed or were stopped.</property>
             <property name="label" translatable="yes" context="download_group">Done:</property>
             <property name="xalign">0.05000000074505806</property>
           </object>
@@ -144,6 +144,7 @@
           <object class="GtkButton" id="button_manage_installers">
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes" context="game_download_management">Open file manager at location where installers are saved</property>
             <property name="halign">center</property>
             <property name="valign">center</property>
             <property name="always-show-image">True</property>
@@ -169,7 +170,7 @@
                   <object class="GtkLabel" id="label_manage_installers">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="label" translatable="yes" context="game download management" comments="Klick on button should open file explorer to manage downloaded installers">Manage...</property>
+                    <property name="label" translatable="yes" context="game_download_management" comments="Klick on button will open file explorer to manage downloaded installers">Manage installers</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>

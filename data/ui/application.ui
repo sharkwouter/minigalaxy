@@ -198,14 +198,13 @@
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Manage downloads</property>
+            <property name="tooltip-text" translatable="yes" context="game_download_management" comments="Tooltip of the 'show downloads' button in the application main window">Manage downloads</property>
             <property name="valign">center</property>
             <property name="popover">download_list</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">Show downloads</property>
                 <property name="icon-name">folder-download-symbolic</property>
                 <style>
                   <class name="icon-dropshadow"/>
