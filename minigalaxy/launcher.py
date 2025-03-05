@@ -5,6 +5,7 @@ import re
 import json
 import shlex
 import threading
+from typing import List
 
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
@@ -119,7 +120,7 @@ def get_exe_cmd_with_var_command(game, exe_cmd):
     return exe_cmd
 
 
-def get_windows_exe_cmd_from_goggame_info(game, file: str) -> list[str]:
+def get_windows_exe_cmd_from_goggame_info(game, file: str) -> List[str]:
     exe_cmd = []
     os.chdir(game.install_dir)
     with open(file, 'r') as info_file:
