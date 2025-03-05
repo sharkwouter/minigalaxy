@@ -154,7 +154,7 @@ class DownloadManager:
             for download in self.queued_downloads:
                 self.__call_listener_failsafe(listener, DownloadState.QUEUED, download)
 
-    def __notify_listeners(self, change: DownloadState, download, download_params=[], forked=None):
+    def __notify_listeners(self, change: DownloadState, download, additional_params=[], download_params=[], forked=None):
         '''helper function to notify listeners of changes to the active download list
         Will be used for each atomic add/remove action in the list of active downloads'''
         if not change:
@@ -168,11 +168,14 @@ class DownloadManager:
             self.logger.debug('[%s] NOTIFY:%s - %s, params:%s',
                               threading.currentThread().getName(), change, download.filename(), download_params)
             for listener in self.download_list_change_listener:
-                self.__call_listener_failsafe(listener, change, download)
+                self.__call_listener_failsafe(listener, change, download, *additional_params)
             self.__download_callback(download, change, *download_params, forked=forked)
         else:
             self.listener_thread.submit(self.__notify_listeners,
-                                        change, download, download_params=download_params, forked=True)
+                                        change, download,
+                                        additional_params=additional_params,
+                                        download_params=download_params,
+                                        forked=True)
 
     def __call_listener_failsafe(self, listener, *parameters):
         try:
@@ -263,6 +266,7 @@ class DownloadManager:
         download_dict = dict(zip(downloads, [True] * len(downloads)))
 
         self.__cancel_paused_downloads(download_dict, cancel_state)
+        self.__cancel_stopped_downloads(download_dict, cancel_state)
 
         # Next, loop through the downloads queued for download, comparing them to the
         # cancel list
@@ -350,6 +354,16 @@ class DownloadManager:
                 self.__request_download_cancel(d, cancel_state)
                 self.__notify_listeners(cancel_state, d)
 
+    def __cancel_stopped_downloads(self, downloads, cancel_state=DownloadState.CANCELED):
+        # this method is pointless for other stop states
+        if cancel_state not in [DownloadState.CANCELED, DownloadState.PAUSED]:
+            return
+
+        for d in downloads:
+            if os.path.exists(d.save_location):
+                self.__request_download_cancel(d, cancel_state)
+                self.__notify_listeners(cancel_state, d)
+
     def __remove_download_from_active_downloads(self, download):
         "Remove a download from the list of active downloads"
         with self.active_downloads_lock:
@@ -393,6 +407,8 @@ class DownloadManager:
         download_max_attempts = 5
         download_attempt = 0
         result = None
+        additional_info = []
+        last_error = None
         while download_attempt < download_max_attempts:
             try:
                 start_point, download_mode = self.__get_start_point_and_download_mode(download)
@@ -400,10 +416,15 @@ class DownloadManager:
                 break
             except RequestException as e:
                 self.logger.error("Received error downloading file [%s]: %s", download.url, e)
+                last_error = str(e)  # FIXME: need a way to remove token from error
                 download_attempt += 1
+                # TODO: maybe add an incrementally growing sleep time instead
+                time.sleep(10)  # don't immediately use up all retries
 
         if download_attempt == download_max_attempts:
             result = DownloadState.FAILED
+            if last_error:
+                additional_info.append(last_error)
 
         # Successful downloads
         if result is DownloadState.COMPLETED:
@@ -416,7 +437,7 @@ class DownloadManager:
         if not result:
             result = DownloadState.FAILED
 
-        self.__notify_listeners(result, download)
+        self.__notify_listeners(result, download, additional_params=additional_info)
         self.__remove_download_from_active_downloads(download)
         self.__cleanup_meta(download, result)
 

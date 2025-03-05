@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-25 11:05+0100\n"
+"POT-Creation-Date: 2025-03-04 20:22+0100\n"
 "PO-Revision-Date: 2025-02-27 17:02+0000\n"
 "Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/minigalaxy/"
@@ -31,10 +31,15 @@ msgid "About"
 msgstr "O programie"
 
 #. Opens about dialog
-#: data/ui/application.ui:58
+#: data/ui/application.ui:64
 msgctxt "about"
 msgid "About"
 msgstr "O programie"
+
+#: data/ui/download_list.ui:23
+msgctxt "download_group"
+msgid "Active Downloads:"
+msgstr ""
 
 #: data/ui/properties.ui:269 data/ui/properties.ui:281
 msgid "Added at the end of the command used to launch the game"
@@ -52,7 +57,7 @@ msgstr "Zastosuj"
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Czy na pewno chcesz anulować pobieranie {}?"
 
-#: minigalaxy/ui/window.py:117
+#: minigalaxy/ui/window.py:121
 msgid "Are you sure you want to log out of GOG?"
 msgstr "Czy na pewno chcesz wylogować się z GOG?"
 
@@ -79,7 +84,7 @@ msgid "Category Filters"
 msgstr ""
 
 #. Tooltip for category filter button
-#: data/ui/application.ui:149
+#: data/ui/application.ui:144
 msgctxt "category_filter"
 msgid "Category filters"
 msgstr ""
@@ -141,22 +146,42 @@ msgstr "DLC"
 msgid "Danish"
 msgstr "Duński"
 
-#: minigalaxy/ui/library_entry.py:462
+#. Tooltip of icon button to delete a downloaded file
+#: minigalaxy/ui/download_list.py:250
+msgid "Delete file"
+msgstr ""
+
+#: data/ui/download_list.ui:116
+msgctxt "download_group"
+msgid "Done:"
+msgstr ""
+
+#: minigalaxy/ui/library_entry.py:476
 msgid "Download"
 msgstr "Pobierz"
 
-#: minigalaxy/ui/library_entry.py:463
+#: minigalaxy/ui/library_entry.py:477
 #, fuzzy
 msgid "Download and install the game"
 msgstr "Pokaż tylko zainstalowane gry"
 
-#: minigalaxy/ui/library_entry.py:150 minigalaxy/ui/library_entry.py:247
+#: minigalaxy/ui/library_entry.py:150 minigalaxy/ui/library_entry.py:255
 msgid "Download error"
 msgstr "Błąd pobierania"
 
-#: minigalaxy/ui/library_entry.py:504
+#: minigalaxy/ui/library_entry.py:518
 msgid "Downloading…"
 msgstr "Pobieranie…"
+
+#: data/ui/download_list.ui:115
+msgctxt "download_group"
+msgid "Downloads that completed, failed or were stopped."
+msgstr ""
+
+#: data/ui/download_list.ui:53
+msgctxt "download_group"
+msgid "Downloads waiting for a free worker slot."
+msgstr ""
 
 #: minigalaxy/constants.py:7 minigalaxy/constants.py:55
 msgid "Dutch"
@@ -184,7 +209,7 @@ msgid ""
 "system."
 msgstr ""
 
-#: minigalaxy/ui/library_entry.py:343
+#: minigalaxy/ui/library_entry.py:352
 msgid "Failed to install {}"
 msgstr "Instalacja {} nie powiodła się"
 
@@ -196,7 +221,12 @@ msgstr "Nie można pobrać biblioteki"
 msgid "Failed to start {}:"
 msgstr "Nie można uruchomić {}:"
 
-#: minigalaxy/ui/library_entry.py:295
+#: data/ui/download_list.ui:22
+msgctxt "download_group"
+msgid "Files being actively downloaded."
+msgstr ""
+
+#: minigalaxy/ui/library_entry.py:303
 msgid "Finished downloading and installing {}"
 msgstr ""
 
@@ -253,7 +283,7 @@ msgstr ""
 msgid "Hungarian"
 msgstr "Węgierski"
 
-#: minigalaxy/ui/library_entry.py:495
+#: minigalaxy/ui/library_entry.py:509
 msgid "In queue…"
 msgstr "W kolejce…"
 
@@ -265,11 +295,11 @@ msgstr "Informacje"
 msgid "Information about {}"
 msgstr ""
 
-#: minigalaxy/ui/library_entry.py:480
+#: minigalaxy/ui/library_entry.py:494
 msgid "Install"
 msgstr "Zainstaluj"
 
-#: minigalaxy/ui/library_entry.py:481
+#: minigalaxy/ui/library_entry.py:495
 #, fuzzy
 msgid "Install the game"
 msgstr "Zainstalowane"
@@ -281,12 +311,12 @@ msgid "Installation path: "
 msgstr "Ścieżka instalacji: "
 
 #. Used next to a checkbox which switches between showing all games and only installed ones
-#: data/ui/application.ui:116
+#: data/ui/application.ui:175
 msgctxt "installed"
 msgid "Installed"
 msgstr "Zainstalowane"
 
-#: minigalaxy/ui/library_entry.py:513
+#: minigalaxy/ui/library_entry.py:527
 msgid "Installing…"
 msgstr "Instalowanie…"
 
@@ -322,7 +352,7 @@ msgctxt "language"
 msgid "Language: "
 msgstr "Język: "
 
-#: minigalaxy/ui/library_entry.py:526
+#: minigalaxy/ui/library_entry.py:540
 msgid "Launch the game"
 msgstr ""
 
@@ -335,10 +365,22 @@ msgid "Login"
 msgstr "Zaloguj się"
 
 #. Logs the users gog account out and returns to login page
-#: data/ui/application.ui:17
+#: data/ui/application.ui:23
 msgctxt "logout"
 msgid "Logout"
 msgstr "Wyloguj"
+
+#. Tooltip of the 'show downloads' button in the application main window
+#: data/ui/application.ui:201
+msgctxt "game_download_management"
+msgid "Manage downloads"
+msgstr ""
+
+#. Klick on button will open file explorer to manage downloaded installers
+#: data/ui/download_list.ui:173
+msgctxt "game_download_management"
+msgid "Manage installers"
+msgstr ""
 
 #: minigalaxy/ui/properties.py:92
 #, fuzzy
@@ -383,6 +425,11 @@ msgstr ""
 msgid "Open Winetricks for this game"
 msgstr ""
 
+#: data/ui/download_list.ui:147
+msgctxt "game_download_management"
+msgid "Open file manager at location where installers are saved"
+msgstr ""
+
 #: data/ui/properties.ui:76
 msgid "Open files"
 msgstr "Otwórz pliki"
@@ -392,12 +439,32 @@ msgid "Open game install folder"
 msgstr ""
 
 #. Tooltip for header menu button
-#: data/ui/application.ui:130
+#: data/ui/application.ui:122
 msgctxt "menu"
 msgid "Options menu"
 msgstr ""
 
-#: minigalaxy/ui/library_entry.py:525 minigalaxy/ui/library_entry.py:554
+#. Tooltip of icon button to pause a download
+#: minigalaxy/ui/download_list.py:241
+msgid "Pause"
+msgstr ""
+
+#: data/ui/download_list.ui:84
+msgctxt "download_group"
+msgid "Paused downlods will not automatically resume."
+msgstr ""
+
+#: data/ui/download_list.ui:85
+msgctxt "download_group"
+msgid "Paused:"
+msgstr ""
+
+#: data/ui/download_list.ui:54
+msgctxt "download_group"
+msgid "Pending:"
+msgstr ""
+
+#: minigalaxy/ui/library_entry.py:539 minigalaxy/ui/library_entry.py:568
 msgid "Play"
 msgstr "Graj"
 
@@ -420,7 +487,7 @@ msgid "Preferences"
 msgstr "Ustawienia"
 
 #. Opens preferences dialog
-#: data/ui/application.ui:32
+#: data/ui/application.ui:38
 msgctxt "preferences"
 msgid "Preferences"
 msgstr "Ustawienia"
@@ -440,7 +507,7 @@ msgid "Properties of {}"
 msgstr "Właściwości {}"
 
 #. Tooltip for refresh button
-#: data/ui/application.ui:89
+#: data/ui/application.ui:105
 msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Odśwież listę gier"
@@ -448,6 +515,11 @@ msgstr "Odśwież listę gier"
 #: data/ui/properties.ui:48
 msgid "Regedit"
 msgstr "Regedit"
+
+#. Tooltip of icon button which removes a download from the ui list of downloads
+#: minigalaxy/ui/download_list.py:253
+msgid "Remove from list"
+msgstr ""
 
 #: data/ui/categoryfilters.ui:44
 msgid "Reset"
@@ -459,6 +531,16 @@ msgstr ""
 
 #: data/ui/properties.ui:291
 msgid "Reset wine executable"
+msgstr ""
+
+#. Tooltip of icon button for download (re)start
+#: minigalaxy/ui/download_list.py:238
+msgid "Resume"
+msgstr ""
+
+#. Tooltip of icon button to retry a failed or canceled download
+#: minigalaxy/ui/download_list.py:244
+msgid "Retry"
 msgstr ""
 
 #: minigalaxy/constants.py:23 minigalaxy/constants.py:74
@@ -476,7 +558,7 @@ msgid "Save"
 msgstr "Zapis"
 
 #. Tooltip for search field
-#: data/ui/application.ui:172
+#: data/ui/application.ui:185
 #, fuzzy
 msgctxt "search"
 msgid "Search games list"
@@ -500,7 +582,7 @@ msgstr "Wyświetl gry dla Systemu Windows: "
 msgid "Show an FPS (frames per second) counter overlaid in the game"
 msgstr ""
 
-#: minigalaxy/ui/library_entry.py:470 minigalaxy/ui/library_entry.py:530
+#: minigalaxy/ui/library_entry.py:484 minigalaxy/ui/library_entry.py:544
 msgid "Show game options menu"
 msgstr ""
 
@@ -511,7 +593,7 @@ msgid "Show hidden games: "
 msgstr "Pokaż ukryte gry: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
-#: data/ui/application.ui:105
+#: data/ui/application.ui:164
 msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Pokaż tylko zainstalowane gry"
@@ -533,6 +615,11 @@ msgstr "Hiszpański (Hiszpania)"
 msgctxt "stay_logged_in"
 msgid "Stay logged in:"
 msgstr "Pozostań zalogowany:"
+
+#. Tooltip of icon button to stop an active or queued download
+#: minigalaxy/ui/download_list.py:247
+msgid "Stop"
+msgstr ""
 
 #: data/ui/information.ui:76
 msgid "Store"
@@ -604,15 +691,19 @@ msgstr "Błąd pobierania"
 msgid "Uninstall"
 msgstr "Odinstaluj"
 
-#: minigalaxy/ui/library_entry.py:541
+#: minigalaxy/ui/library_entry.py:555
 msgid "Uninstalling…"
 msgstr "Odinstalowywanie…"
+
+#: minigalaxy/ui/download_list.py:87
+msgid "Unknown error"
+msgstr ""
 
 #: data/ui/gametilelist.ui:209 data/ui/gametile.ui:182
 msgid "Update"
 msgstr "Aktualizuj"
 
-#: minigalaxy/ui/library_entry.py:563
+#: minigalaxy/ui/library_entry.py:577
 msgid "Updating…"
 msgstr "Aktualizowanie..."
 
@@ -677,7 +768,7 @@ msgstr "Czy skróty mają być tworzone dla nowo zainstalowanych gier, czy nie"
 msgid "Wine executable:"
 msgstr "Plik wykonywalny Wine:"
 
-#: minigalaxy/installer.py:205
+#: minigalaxy/installer.py:210
 msgid "Wine extraction failed."
 msgstr "Ekstrakcja Wine nie powiodła się."
 
@@ -691,7 +782,7 @@ msgstr ""
 msgid "Winecfg"
 msgstr "Winecfg"
 
-#: minigalaxy/installer.py:173
+#: minigalaxy/installer.py:178
 #, fuzzy
 msgid "Wineprefix creation failed."
 msgstr "Ekstrakcja Wine nie powiodła się."
