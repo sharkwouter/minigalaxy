@@ -98,3 +98,19 @@ MINIMUM_RESUME_SIZE = 50 * 1024**2  # 50 MB
 UI_DOWNLOAD_THREADS = 4
 # Game download threads are for long-running downloads like games, DLC or updates
 GAME_DOWNLOAD_THREADS = 4
+
+# Windows executables to not consider when launching, all lower case
+BINARY_NAMES_TO_IGNORE = [
+    # Standard uninstaller
+    "unins000.exe",
+    # Common extra binaries
+    "UnityCrashHandler64.exe",
+    "nglide_config.exe",
+    # Diablo 2 specific
+    "ipxconfig.exe",
+    "BNUpdate.exe",
+    "VidSize.exe",
+    # FreeSpace 2 specific
+    "FRED2.exe",
+    "FS2.exe",
+]

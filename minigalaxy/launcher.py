@@ -3,12 +3,12 @@ import subprocess
 import shutil
 import re
 import json
-import glob
 import shlex
 import threading
 
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
+from minigalaxy.constants import BINARY_NAMES_TO_IGNORE
 
 
 def get_wine_path(game):
@@ -120,7 +120,7 @@ def get_exe_cmd_with_var_command(game, exe_cmd):
 
 
 def get_windows_exe_cmd(game, files):
-    exe_cmd = [""]
+    exe_cmd = []
     prefix = os.path.join(game.install_dir, "prefix")
 
     # Find game executable file
@@ -143,15 +143,23 @@ def get_windows_exe_cmd(game, files):
                             if "arguments" in task:
                                 exe_cmd += shlex.split(task["arguments"])
                             break
-    if exe_cmd == [""]:
+    if not exe_cmd:
         # in case no goggame info file was found
-        executables = glob.glob(game.install_dir + '/*.exe')
-        executables.remove(os.path.join(game.install_dir, "unins000.exe"))
-        if not executables:
-            # Look one directory level deeper
-            executables = glob.glob(game.install_dir + '/*/*.exe')
-        filename = os.path.relpath(executables[0], game.install_dir)
-        exe_cmd = [get_wine_path(game), filename]
+        executable = ""
+        # Try to find a "Launch my game.lnk file, which is shipped by most Windows games
+        if launch_file_list := [file for file in files if re.match(r"Launch .*\.lnk", file)]:
+            executable = launch_file_list[0]
+        if not executable:
+            # Find the first executable file that is not blacklisted
+            for file in files:
+                if file.upper().rsplit(".")[-1] not in ["EXE", "LNK"]:
+                    continue
+                if file in BINARY_NAMES_TO_IGNORE:
+                    continue
+                executable = file
+                break
+
+        exe_cmd = [get_wine_path(game), os.path.join(game.install_dir, executable)]
 
     # Backwards compatibility with windows games installed before installer fixes.
     # Will not fix games requiring registry keys, since the paths will already

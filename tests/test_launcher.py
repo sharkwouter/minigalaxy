@@ -41,14 +41,48 @@ class Test(TestCase):
         obs = launcher.determine_launcher_type(files)
         self.assertEqual(exp, obs)
 
-    @mock.patch('os.path.exists')
-    @mock.patch('glob.glob')
-    def test1_get_windows_exe_cmd(self, mock_glob, mock_exists):
-        mock_glob.return_value = ["/test/install/dir/start.exe", "/test/install/dir/unins000.exe"]
-        mock_exists.return_value = True
-        files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'start.exe', 'unins000.exe']
+    @mock.patch("minigalaxy.launcher.get_wine_path")
+    @mock.patch("minigalaxy.launcher.wine_restore_game_link", MagicMock)
+    def test1_get_windows_exe_cmd(self, mock_get_wine_path: MagicMock):
+        mock_get_wine_path.return_value = "/usr/bin/wine"
+        files = [
+            "thumbnail.jpg",
+            "docs",
+            "support",
+            "game",
+            "minigalaxy-dlc.json",
+            "unins000.exe",
+            "UnityCrashHandler64.exe",
+            "nglide_config.exe",
+            "ipxconfig.exe",
+            "BNUpdate.exe",
+            "VidSize.exe",
+            "FRED2.exe",
+            "FS2.exe",
+            "start.exe",
+        ]
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', "wine", "start.exe"]
+        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/start.exe"]
+        obs = launcher.get_windows_exe_cmd(game, files)
+        self.assertEqual(exp, obs)
+
+    @mock.patch("minigalaxy.launcher.get_wine_path")
+    @mock.patch("minigalaxy.launcher.wine_restore_game_link", MagicMock)
+    def test1_get_windows_exe_cmd_prioritize_launch_lnk(self, mock_get_wine_path: MagicMock):
+        mock_get_wine_path.return_value = "/usr/bin/wine"
+        files = [
+            "thumbnail.jpg",
+            "docs",
+            "support",
+            "game",
+            "minigalaxy-dlc.json",
+            "run.exe",
+            "DOOM.exe",
+            "start.exe",
+            "Launch DOOM.lnk"
+        ]
+        game = Game("Test Game", install_dir="/test/install/dir")
+        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/Launch DOOM.lnk"]
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
