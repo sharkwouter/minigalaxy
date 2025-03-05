@@ -112,10 +112,13 @@ class Test(TestCase):
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
+    @mock.patch("minigalaxy.launcher.get_wine_path")
     @mock.patch('os.path.exists')
     @mock.patch('builtins.open', new_callable=mock_open, read_data="")
     @mock.patch('os.chdir')
-    def test2_get_windows_exe_cmd(self, mock_os_chdir, mo, mock_exists):
+    @mock.patch("minigalaxy.launcher.wine_restore_game_link", MagicMock)
+    def test2_get_windows_exe_cmd(self, mock_os_chdir, mo, mock_exists, mock_get_wine_path):
+        mock_get_wine_path.return_value = "wine"
         goggame_1414471894_info_content = """{
         "buildId": "53350324452482937",
         "clientId": "53185732904249211",
@@ -176,10 +179,13 @@ class Test(TestCase):
         obs = launcher.get_windows_exe_cmd(game, files)
         self.assertEqual(exp, obs)
 
+    @mock.patch("minigalaxy.launcher.get_wine_path")
     @mock.patch('os.path.exists')
     @mock.patch('builtins.open', new_callable=mock_open, read_data="")
     @mock.patch('os.chdir')
-    def test3_get_windows_exe_cmd(self, mock_os_chdir, mo, mock_exists):
+    @mock.patch("minigalaxy.launcher.wine_restore_game_link", MagicMock)
+    def test3_get_windows_exe_cmd(self, mock_os_chdir, mo, mock_exists, mock_wine_path):
+        mock_wine_path.return_value = "wine"
         goggame_1207658919_info_content = """{
         "buildId": "52095557858882770",
         "clientId": "49843178982252086",
