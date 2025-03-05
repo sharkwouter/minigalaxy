@@ -119,46 +119,53 @@ def get_exe_cmd_with_var_command(game, exe_cmd):
     return exe_cmd
 
 
+def get_windows_exe_cmd_from_goggame_info(game, file: str) -> list[str]:
+    exe_cmd = []
+    os.chdir(game.install_dir)
+    with open(file, 'r') as info_file:
+        info = json.loads(info_file.read())
+        # if we have the workingDir property, start the executable at that directory
+        if "playTasks" in info:
+            for task in info["playTasks"]:
+                if "isPrimary" not in task or not task["isPrimary"]:
+                    continue
+                if "category" in task and task["category"] == "game" and "path" in task:
+                    working_dir = task["workingDir"] if "workingDir" in task else "."
+                    path = task["path"]
+                    exe_cmd = [get_wine_path(game), "start", "/b", "/wait",
+                               "/d", f'c:\\game\\{working_dir}',
+                               f'c:\\game\\{path}']
+                    if "arguments" in task:
+                        exe_cmd += shlex.split(task["arguments"])
+                    break
+
+    return exe_cmd
+
+
 def get_windows_exe_cmd(game, files):
     exe_cmd = []
     prefix = os.path.join(game.install_dir, "prefix")
 
     # Find game executable file
-    for file in files:
-        if re.match(r'^goggame-\d*\.info$', file):
-            os.chdir(game.install_dir)
-            with open(file, 'r') as info_file:
-                info = json.loads(info_file.read())
-                # if we have the workingDir property, start the executable at that directory
-                if "playTasks" in info:
-                    for task in info["playTasks"]:
-                        if "isPrimary" not in task or not task["isPrimary"]:
-                            continue
-                        if "category" in task and task["category"] == "game" and "path" in task:
-                            working_dir = task["workingDir"] if "workingDir" in task else "."
-                            path = task["path"]
-                            exe_cmd = [get_wine_path(game), "start", "/b", "/wait",
-                                       "/d", f'c:\\game\\{working_dir}',
-                                       f'c:\\game\\{path}']
-                            if "arguments" in task:
-                                exe_cmd += shlex.split(task["arguments"])
-                            break
-    if not exe_cmd:
-        # in case no goggame info file was found
-        executable = ""
-        # Try to find a "Launch my game.lnk file, which is shipped by most Windows games
-        if launch_file_list := [file for file in files if re.match(r"Launch .*\.lnk", file)]:
-            executable = launch_file_list[0]
-        if not executable:
-            # Find the first executable file that is not blacklisted
-            for file in files:
-                if file.upper().rsplit(".")[-1] not in ["EXE", "LNK"]:
-                    continue
-                if file in BINARY_NAMES_TO_IGNORE:
-                    continue
-                executable = file
+    if goggame_info_file_list := [file for file in files if re.match(r"^goggame-\d*\.info$", file)]:
+        # Get the execute command from the goggame info file
+        for file in goggame_info_file_list:
+            output = get_windows_exe_cmd_from_goggame_info(game, file)
+            if output:
+                exe_cmd = output
                 break
-
+    elif launch_file_list := [file for file in files if re.match(r"^Launch .*\.lnk$", file)]:
+        # Set Launch Game.lnk as executable
+        exe_cmd = [get_wine_path(game), os.path.join(game.install_dir, launch_file_list[0])]
+    else:
+        # Find the first executable file that is not blacklisted
+        for file in files:
+            if file.upper().rsplit(".")[-1] not in ["EXE", "LNK"]:
+                continue
+            if file in BINARY_NAMES_TO_IGNORE:
+                continue
+            executable = file
+            break
         exe_cmd = [get_wine_path(game), os.path.join(game.install_dir, executable)]
 
     # Backwards compatibility with windows games installed before installer fixes.
