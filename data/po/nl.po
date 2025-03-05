@@ -30,7 +30,7 @@ msgid "About"
 msgstr "Over Minigalaxy"
 
 #. Opens about dialog
-#: data/ui/application.ui:64
+#: data/ui/application.ui:64 data/ui/application.ui:58
 msgctxt "about"
 msgid "About"
 msgstr "Over Minigalaxy"
@@ -58,7 +58,7 @@ msgstr "Toepassen"
 msgid "Are you sure you want to cancel downloading {}?"
 msgstr "Weet je zeker dat je de {} download wilt stoppen?"
 
-#: minigalaxy/ui/window.py:121
+#: minigalaxy/ui/window.py:121 minigalaxy/ui/window.py:117
 msgid "Are you sure you want to log out of GOG?"
 msgstr "Weet je zeker dat je uit wilt loggen?"
 
@@ -85,18 +85,18 @@ msgid "Category Filters"
 msgstr "Categorie Filters"
 
 #. Tooltip for category filter button
-#: data/ui/application.ui:144
+#: data/ui/application.ui:149
 msgctxt "category_filter"
 msgid "Category filters"
-msgstr ""
+msgstr "Categorie filters"
 
 #: data/ui/properties.ui:108 data/ui/properties.ui:120
 msgid "Check for game updates in the background"
-msgstr ""
+msgstr "Controleer op game-updates in de achtergrond"
 
 #: data/ui/properties.ui:107
 msgid "Check for updates:"
-msgstr ""
+msgstr "Controleer op updates:"
 
 #: minigalaxy/constants.py:5
 msgid "Chinese"
@@ -137,7 +137,7 @@ msgstr "Maak menusnelkoppelingen: "
 
 #: minigalaxy/constants.py:54
 msgid "Czech"
-msgstr ""
+msgstr "Tsjechisch"
 
 #: data/ui/gametilelist.ui:194 data/ui/gametile.ui:203
 msgid "DLC"
@@ -157,20 +157,21 @@ msgctxt "download_group"
 msgid "Done:"
 msgstr ""
 
-#: minigalaxy/ui/library_entry.py:476
+#: minigalaxy/ui/library_entry.py:476 minigalaxy/ui/library_entry.py:462
 msgid "Download"
 msgstr "Download"
 
-#: minigalaxy/ui/library_entry.py:477
+#: minigalaxy/ui/library_entry.py:477 minigalaxy/ui/library_entry.py:463
 #, fuzzy
 msgid "Download and install the game"
 msgstr "Laat alleen geïnstalleerde games zien"
 
 #: minigalaxy/ui/library_entry.py:150 minigalaxy/ui/library_entry.py:255
+#: minigalaxy/ui/library_entry.py:247
 msgid "Download error"
 msgstr "Downloadfout"
 
-#: minigalaxy/ui/library_entry.py:518
+#: minigalaxy/ui/library_entry.py:518 minigalaxy/ui/library_entry.py:504
 msgid "Downloading…"
 msgstr "Downloaden…"
 
@@ -210,7 +211,7 @@ msgid ""
 "system."
 msgstr ""
 
-#: minigalaxy/ui/library_entry.py:352
+#: minigalaxy/ui/library_entry.py:352 minigalaxy/ui/library_entry.py:343
 msgid "Failed to install {}"
 msgstr "Kon {} niet geïnstalleerd worden:"
 
@@ -227,7 +228,7 @@ msgctxt "download_group"
 msgid "Files being actively downloaded."
 msgstr ""
 
-#: minigalaxy/ui/library_entry.py:303
+#: minigalaxy/ui/library_entry.py:303 minigalaxy/ui/library_entry.py:295
 msgid "Finished downloading and installing {}"
 msgstr ""
 
@@ -284,7 +285,7 @@ msgstr ""
 msgid "Hungarian"
 msgstr "Hongaars"
 
-#: minigalaxy/ui/library_entry.py:509
+#: minigalaxy/ui/library_entry.py:509 minigalaxy/ui/library_entry.py:495
 msgid "In queue…"
 msgstr "In de wachtrij…"
 
@@ -296,11 +297,11 @@ msgstr ""
 msgid "Information about {}"
 msgstr ""
 
-#: minigalaxy/ui/library_entry.py:494
+#: minigalaxy/ui/library_entry.py:494 minigalaxy/ui/library_entry.py:480
 msgid "Install"
 msgstr "Installeren"
 
-#: minigalaxy/ui/library_entry.py:495
+#: minigalaxy/ui/library_entry.py:495 minigalaxy/ui/library_entry.py:481
 #, fuzzy
 msgid "Install the game"
 msgstr "Geïnstalleerd"
@@ -312,12 +313,12 @@ msgid "Installation path: "
 msgstr "Installatiepad: "
 
 #. Used next to a checkbox which switches between showing all games and only installed ones
-#: data/ui/application.ui:175
+#: data/ui/application.ui:175 data/ui/application.ui:116
 msgctxt "installed"
 msgid "Installed"
 msgstr "Geïnstalleerd"
 
-#: minigalaxy/ui/library_entry.py:527
+#: minigalaxy/ui/library_entry.py:527 minigalaxy/ui/library_entry.py:513
 msgid "Installing…"
 msgstr "Installeren…"
 
@@ -353,7 +354,7 @@ msgctxt "language"
 msgid "Language: "
 msgstr "Taal: "
 
-#: minigalaxy/ui/library_entry.py:540
+#: minigalaxy/ui/library_entry.py:540 minigalaxy/ui/library_entry.py:526
 msgid "Launch the game"
 msgstr ""
 
@@ -366,7 +367,7 @@ msgid "Login"
 msgstr "Log in"
 
 #. Logs the users gog account out and returns to login page
-#: data/ui/application.ui:23
+#: data/ui/application.ui:23 data/ui/application.ui:17
 msgctxt "logout"
 msgid "Logout"
 msgstr "Uitloggen"
@@ -440,7 +441,7 @@ msgid "Open game install folder"
 msgstr ""
 
 #. Tooltip for header menu button
-#: data/ui/application.ui:122
+#: data/ui/application.ui:122 data/ui/application.ui:130
 msgctxt "menu"
 msgid "Options menu"
 msgstr ""
@@ -466,6 +467,7 @@ msgid "Pending:"
 msgstr ""
 
 #: minigalaxy/ui/library_entry.py:539 minigalaxy/ui/library_entry.py:568
+#: minigalaxy/ui/library_entry.py:525 minigalaxy/ui/library_entry.py:554
 msgid "Play"
 msgstr "Spelen"
 
@@ -488,7 +490,7 @@ msgid "Preferences"
 msgstr "Voorkeuren"
 
 #. Opens preferences dialog
-#: data/ui/application.ui:38
+#: data/ui/application.ui:38 data/ui/application.ui:32
 msgctxt "preferences"
 msgid "Preferences"
 msgstr "Voorkeuren"
@@ -508,7 +510,7 @@ msgid "Properties of {}"
 msgstr "Instellingen van {}"
 
 #. Tooltip for refresh button
-#: data/ui/application.ui:105
+#: data/ui/application.ui:105 data/ui/application.ui:89
 msgctxt "refresh"
 msgid "Refresh game list"
 msgstr "Haal gamelijst opnieuw op"
@@ -559,7 +561,7 @@ msgid "Save"
 msgstr "Opslaan"
 
 #. Tooltip for search field
-#: data/ui/application.ui:185
+#: data/ui/application.ui:185 data/ui/application.ui:172
 #, fuzzy
 msgctxt "search"
 msgid "Search games list"
@@ -584,6 +586,7 @@ msgid "Show an FPS (frames per second) counter overlaid in the game"
 msgstr ""
 
 #: minigalaxy/ui/library_entry.py:484 minigalaxy/ui/library_entry.py:544
+#: minigalaxy/ui/library_entry.py:470 minigalaxy/ui/library_entry.py:530
 msgid "Show game options menu"
 msgstr ""
 
@@ -594,7 +597,7 @@ msgid "Show hidden games: "
 msgstr "Toon verborgen games: "
 
 #. Tooltip for the switch which allows only showing installed games or all games
-#: data/ui/application.ui:164
+#: data/ui/application.ui:164 data/ui/application.ui:105
 msgctxt "tooltip_installed"
 msgid "Show only installed games"
 msgstr "Laat alleen geïnstalleerde games zien"
@@ -693,7 +696,7 @@ msgstr "Downloadfout"
 msgid "Uninstall"
 msgstr "Verwijderen"
 
-#: minigalaxy/ui/library_entry.py:555
+#: minigalaxy/ui/library_entry.py:555 minigalaxy/ui/library_entry.py:541
 msgid "Uninstalling…"
 msgstr "Verwijderen…"
 
@@ -705,7 +708,7 @@ msgstr ""
 msgid "Update"
 msgstr "Update"
 
-#: minigalaxy/ui/library_entry.py:577
+#: minigalaxy/ui/library_entry.py:577 minigalaxy/ui/library_entry.py:563
 msgid "Updating…"
 msgstr "Updaten…"
 
@@ -771,7 +774,7 @@ msgstr ""
 msgid "Wine executable:"
 msgstr "Het uitpakken met wine is mislukt."
 
-#: minigalaxy/installer.py:210
+#: minigalaxy/installer.py:210 minigalaxy/installer.py:205
 msgid "Wine extraction failed."
 msgstr "Het uitpakken met wine is mislukt."
 
@@ -785,7 +788,7 @@ msgstr ""
 msgid "Winecfg"
 msgstr "Winecfg"
 
-#: minigalaxy/installer.py:178
+#: minigalaxy/installer.py:178 minigalaxy/installer.py:173
 #, fuzzy
 msgid "Wineprefix creation failed."
 msgstr "Het uitpakken met wine is mislukt."
