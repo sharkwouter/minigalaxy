@@ -5,6 +5,7 @@
 - Introduce a UI to show all active, stopped or failed downloads. Also allows to permanently pause a download (thanks to GB609)
 - Make more Windows games able to launch through Minigalaxy
 - The download UI also shows a rough size estimate if possible (thanks to GB609)
+- fix connection resource leak in DownloadManager (thanks to GB609)
 
 **1.3.2**
 - Completely reworked windows wine installation. This should solve a lot of problems with failing game installs. Innoextract (if installed) is only used to detect and configure the installation language. (thanks to GB609)
