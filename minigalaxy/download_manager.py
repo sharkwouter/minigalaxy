@@ -630,7 +630,7 @@ class DownloadManager:
         if self.__is_cancel_type(last_state) and download in self.__cancel:
             del self.__cancel[download]
 
-        if last_state in [DownloadState.FAILED, DownloadState.CANCELED]:
+        if last_state in [DownloadState.CANCELED]:
             if os.path.isfile(download.save_location):
                 os.remove(download.save_location)
 
