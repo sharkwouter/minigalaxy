@@ -92,7 +92,7 @@ IGNORE_GAME_IDS = [
 DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 
 # This is the file size needed for the download manager to consider resuming worthwhile
-MINIMUM_RESUME_SIZE = 50 * 1024**2  # 50 MB
+MINIMUM_RESUME_SIZE = 20 * 1024**2  # 20 MB
 
 # UI download threads are for UI assets like thumbnails or icons
 UI_DOWNLOAD_THREADS = 4
