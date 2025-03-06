@@ -29,7 +29,7 @@ from enum import Enum
 from minigalaxy.config import Config
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
 from minigalaxy.download import Download, DownloadType
-from requests import Session
+from requests import codes, Session
 from requests.exceptions import RequestException
 
 module_logger = logging.getLogger("minigalaxy.download_manager")
@@ -488,28 +488,28 @@ class DownloadManager:
               or "ab" to append to a file for download resumes
         """
         resume_header = {'Range': 'bytes={}-'.format(start_point)}
-        download_request = self.session.get(download.url, headers=resume_header, stream=True, timeout=30)
-        # stop retries when 404 is received
-        if download_request.status_code == 404:
-            return DownloadState.FAILED
+        with self.session.get(download.url, headers=resume_header, stream=True, timeout=30) as download_request:
+            # stop retries when 404 is received
+            if download_request.status_code == 404:
+                return DownloadState.FAILED
 
-        downloaded_size = start_point
-        self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[0])
-        file_size = self.__handle_download_size(download_request, download, downloaded_size)
+            downloaded_size = start_point
+            self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[0])
+            file_size = self.__handle_download_size(download_request, download, downloaded_size)
 
-        if file_size == downloaded_size:
-            self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[100])
-            return DownloadState.COMPLETED
+            if file_size == downloaded_size:
+                self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[100])
+                return DownloadState.COMPLETED
 
-        current_progress = 0
-        with open(download.save_location, download_mode) as save_file:
-            for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-                save_file.write(chunk)
-                downloaded_size += len(chunk)
-                if self.__cancel_requested(download):
-                    return None
+            current_progress = 0
+            with open(download.save_location, download_mode) as save_file:
+                for chunk in download_request.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+                    save_file.write(chunk)
+                    downloaded_size += len(chunk)
+                    if self.__cancel_requested(download):
+                        return None
 
-                current_progress = self.__update_download_progress(downloaded_size, file_size, current_progress, download)
+                    current_progress = self.__update_download_progress(downloaded_size, file_size, current_progress, download)
 
         if not file_size:
             self.__notify_listeners(DownloadState.PROGRESS, download, download_params=[100])
@@ -564,13 +564,26 @@ class DownloadManager:
         if file_stats.st_size < MINIMUM_RESUME_SIZE:
             return False
 
-        # Check if the first part of the file
-        download_request = self.session.get(download.url, stream=True)
         size_to_check = DOWNLOAD_CHUNK_SIZE * 5
-        for chunk in download_request.iter_content(chunk_size=size_to_check):
-            with open(download.save_location, "rb") as file:
-                file_content = file.read(size_to_check)
-                return file_content == chunk
+        # Check first part of the file
+        resume_header = {'Range': 'bytes=0-{}'.format(size_to_check - 1)}  # range header is index-0-based
+        with self.session.get(download.url, headers=resume_header, stream=True, timeout=30) as download_request:
+            if not download_request.status_code == codes.ok:
+                '''
+                Response is not ok, so we can't download the file.
+                Raise an error instead of returning False to prevent the potentially correct partial files from being deleted.
+                '''
+                download_request.raise_for_status()
+
+            content_length = int(download_request.headers.get('content-length'))
+            if content_length > size_to_check or download_request.status_code != 206:  # 206: partial content
+                self.logger.debug("%s: server does not support http header 'Range' - need to restart download")
+                return False
+
+            for chunk in download_request.iter_content(chunk_size=size_to_check):
+                with open(download.save_location, "rb") as file:
+                    file_content = file.read(size_to_check)
+                    return file_content == chunk
 
     def __download_callback(self, download, state, *params, forked=False):
         '''encapsulates invocation of callbacks on Download to assure uniform threading and
@@ -630,7 +643,7 @@ class DownloadManager:
         if self.__is_cancel_type(last_state) and download in self.__cancel:
             del self.__cancel[download]
 
-        if last_state in [DownloadState.FAILED, DownloadState.CANCELED]:
+        if last_state in [DownloadState.CANCELED]:
             if os.path.isfile(download.save_location):
                 os.remove(download.save_location)
 

@@ -18,6 +18,7 @@ class TestDownloadManager(TestCase):
         self.config_mock = MagicMock()
         self.config_mock.paused_downloads = {}
         self.download_request = MagicMock()
+        self.download_request.__enter__.return_value = self.download_request
 
         self.session.get.return_value = self.download_request
 

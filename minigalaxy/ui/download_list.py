@@ -123,8 +123,6 @@ class DownloadManagerList(Gtk.ScrolledWindow):
         # make sure to clear previous error messages when restarting a failed download
         entry.update_tooltip("")
 
-        self.__update_list_size()
-
     def update_group_visibility(self, group_flowbox):
         if group_flowbox.get_children():
             self.flowbow_labels[group_flowbox].show()
@@ -137,6 +135,7 @@ class DownloadManagerList(Gtk.ScrolledWindow):
             self.menu_button.get_style_context().add_class("suggested-action")
         else:
             self.menu_button.get_style_context().remove_class("suggested-action")
+        self.__update_list_size()
 
     @Gtk.Template.Callback("on_manage_button")
     def open_file_manager(self, widget, *data):
@@ -162,7 +161,7 @@ class DownloadManagerList(Gtk.ScrolledWindow):
         # try to keep download list height between 300 - 50% of window height
         # minimum of 300 is reduced of that would be larger than the window
         max_height = max([int(window_height * 0.75), min([300, window_height - 25])])
-        self.get_parent().set_size_request(-1, min([content_height, max_height]))
+        self.set_size_request(-1, min([content_height, max_height]))
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "download_list_entry.ui"))
