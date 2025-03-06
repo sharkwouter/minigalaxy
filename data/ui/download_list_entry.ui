@@ -75,7 +75,7 @@
                 <property name="valign">start</property>
                 <property name="margin-start">5</property>
                 <property name="margin-end">5</property>
-                <property name="label" translatable="yes">label_size</property>
+                <property name="label">label_size</property>
               </object>
               <packing>
                 <property name="expand">False</property>

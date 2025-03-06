@@ -212,8 +212,10 @@ class OngoingDownloadListEntry(Gtk.Box):
 
         size = filesize / 1024 ** 3
         if int(size) >= 1:
+            # game size estimate for download ui
             return _('{} GB').format(round(size, 1))
 
+        # game size estimate for download ui
         return _('{} MB').format(int(size * 1024))
 
     def update_state(self, new_state):
