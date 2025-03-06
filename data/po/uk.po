@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-04 20:22+0100\n"
-"PO-Revision-Date: 2025-02-27 17:02+0000\n"
+"PO-Revision-Date: 2025-03-06 10:24+0000\n"
 "Last-Translator: Dan <jonweblin2205@protonmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/minigalaxy/"
 "minigalaxy/uk/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 5.10.2-dev\n"
+"X-Generator: Weblate 5.10.3-dev\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -39,7 +39,7 @@ msgstr "Про MiniGalaxy"
 #: data/ui/download_list.ui:23
 msgctxt "download_group"
 msgid "Active Downloads:"
-msgstr ""
+msgstr "Активні завантаження:"
 
 #: data/ui/properties.ui:269 data/ui/properties.ui:281
 msgid "Added at the end of the command used to launch the game"
@@ -146,12 +146,12 @@ msgstr "Датська"
 #. Tooltip of icon button to delete a downloaded file
 #: minigalaxy/ui/download_list.py:250
 msgid "Delete file"
-msgstr ""
+msgstr "Видалити файл"
 
 #: data/ui/download_list.ui:116
 msgctxt "download_group"
 msgid "Done:"
-msgstr ""
+msgstr "Готово:"
 
 #: minigalaxy/ui/library_entry.py:476
 msgid "Download"
@@ -172,12 +172,12 @@ msgstr "Завантаження…"
 #: data/ui/download_list.ui:115
 msgctxt "download_group"
 msgid "Downloads that completed, failed or were stopped."
-msgstr ""
+msgstr "Завантаження, які завершилися, завершилися невдало або були зупинені."
 
 #: data/ui/download_list.ui:53
 msgctxt "download_group"
 msgid "Downloads waiting for a free worker slot."
-msgstr ""
+msgstr "Завантаження чекають на вільну робочу комірку."
 
 #: minigalaxy/constants.py:7 minigalaxy/constants.py:55
 msgid "Dutch"
@@ -226,7 +226,7 @@ msgstr "Не вдалося запустити {}:"
 #: data/ui/download_list.ui:22
 msgctxt "download_group"
 msgid "Files being actively downloaded."
-msgstr ""
+msgstr "Файли активно завантажуються."
 
 #: minigalaxy/ui/library_entry.py:303
 msgid "Finished downloading and installing {}"
@@ -372,13 +372,13 @@ msgstr "Вийти"
 #: data/ui/application.ui:201
 msgctxt "game_download_management"
 msgid "Manage downloads"
-msgstr ""
+msgstr "Керування завантаженнями"
 
 #. Klick on button will open file explorer to manage downloaded installers
 #: data/ui/download_list.ui:173
 msgctxt "game_download_management"
 msgid "Manage installers"
-msgstr ""
+msgstr "Керування встановлювачами"
 
 #: minigalaxy/ui/properties.py:92
 msgid "MangoHud wasn't found. Using MangoHud cannot be enabled."
@@ -423,7 +423,7 @@ msgstr "Відкрити Winetricks для цієї гри"
 #: data/ui/download_list.ui:147
 msgctxt "game_download_management"
 msgid "Open file manager at location where installers are saved"
-msgstr ""
+msgstr "Відкрити файловий менеджер у місці, де збережено встановлювачі"
 
 #: data/ui/properties.ui:76
 msgid "Open files"
@@ -442,22 +442,22 @@ msgstr "Меню налаштувань"
 #. Tooltip of icon button to pause a download
 #: minigalaxy/ui/download_list.py:241
 msgid "Pause"
-msgstr ""
+msgstr "Пауза"
 
 #: data/ui/download_list.ui:84
 msgctxt "download_group"
 msgid "Paused downlods will not automatically resume."
-msgstr ""
+msgstr "Призупинені завантаження не відновлюються автоматично."
 
 #: data/ui/download_list.ui:85
 msgctxt "download_group"
 msgid "Paused:"
-msgstr ""
+msgstr "Призупинено:"
 
 #: data/ui/download_list.ui:54
 msgctxt "download_group"
 msgid "Pending:"
-msgstr ""
+msgstr "Очікується:"
 
 #: minigalaxy/ui/library_entry.py:539 minigalaxy/ui/library_entry.py:568
 msgid "Play"
@@ -514,7 +514,7 @@ msgstr "Regedit"
 #. Tooltip of icon button which removes a download from the ui list of downloads
 #: minigalaxy/ui/download_list.py:253
 msgid "Remove from list"
-msgstr ""
+msgstr "Видалити зі списку"
 
 #: data/ui/categoryfilters.ui:44
 msgid "Reset"
@@ -531,12 +531,12 @@ msgstr "Скинути виконуваний файл Wine"
 #. Tooltip of icon button for download (re)start
 #: minigalaxy/ui/download_list.py:238
 msgid "Resume"
-msgstr ""
+msgstr "Відновити"
 
 #. Tooltip of icon button to retry a failed or canceled download
 #: minigalaxy/ui/download_list.py:244
 msgid "Retry"
-msgstr ""
+msgstr "Повторити"
 
 #: minigalaxy/constants.py:23 minigalaxy/constants.py:74
 msgid "Romanian"
@@ -613,7 +613,7 @@ msgstr "Залишатися в системі:"
 #. Tooltip of icon button to stop an active or queued download
 #: minigalaxy/ui/download_list.py:247
 msgid "Stop"
-msgstr ""
+msgstr "Зупинити"
 
 #: data/ui/information.ui:76
 msgid "Store"
@@ -689,7 +689,7 @@ msgstr "Видалення…"
 
 #: minigalaxy/ui/download_list.py:87
 msgid "Unknown error"
-msgstr ""
+msgstr "Невідомова помилка"
 
 #: data/ui/gametilelist.ui:209 data/ui/gametile.ui:182
 msgid "Update"
