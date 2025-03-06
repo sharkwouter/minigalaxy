@@ -172,6 +172,7 @@ class OngoingDownloadListEntry(Gtk.Box):
     icon = Gtk.Template.Child()
     game_title = Gtk.Template.Child()
     download_progress = Gtk.Template.Child()
+    label_size = Gtk.Template.Child()
 
     def __init__(self, parent_manager, download: Download, initial_state: DownloadState):
         Gtk.Box.__init__(self)
@@ -196,6 +197,24 @@ class OngoingDownloadListEntry(Gtk.Box):
     def update_progress(self, percentage):
         self.download_progress.set_fraction(percentage / 100)
         self.download_progress.set_tooltip_text("{}%".format(percentage))
+
+        if self.label_size.get_text() != 'label_size':
+            return
+
+        if self.download.expected_size:
+            label_text = self.__format_size(self.download.expected_size)
+            self.label_size.set_text(label_text)
+            self.label_size.show()
+
+    def __format_size(self, filesize=None):
+        if not filesize:
+            return None
+
+        size = filesize / 1024 ** 3
+        if int(size) >= 1:
+            return _('{} GB').format(round(size, 1))
+
+        return _('{} MB').format(int(size * 1024))
 
     def update_state(self, new_state):
         self.buttons.update_buttons(new_state)
