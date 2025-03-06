@@ -99,7 +99,7 @@ UI_DOWNLOAD_THREADS = 4
 # Game download threads are for long-running downloads like games, DLC or updates
 GAME_DOWNLOAD_THREADS = 4
 
-# Windows executables to not consider when launching, all lower case
+# Windows executables to not consider when launching
 BINARY_NAMES_TO_IGNORE = [
     # Standard uninstaller
     "unins000.exe",
