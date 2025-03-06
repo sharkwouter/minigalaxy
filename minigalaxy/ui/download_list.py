@@ -5,17 +5,20 @@ import subprocess
 
 import minigalaxy.logger  # noqa: F401
 
+from gi.overrides.GdkPixbuf import GdkPixbuf
+
 from minigalaxy.download import Download, DownloadType
 from minigalaxy.download_manager import DownloadManager, DownloadState
 from minigalaxy.paths import UI_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import GLib, Gtk
-from gi.overrides.GdkPixbuf import GdkPixbuf
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "download_list.ui"))
-class DownloadManagerList(Gtk.Viewport):
+class DownloadManagerList(Gtk.ScrolledWindow):
     __gtype_name__ = "DownloadList"
+
+    content_box = Gtk.Template.Child()
 
     label_active = Gtk.Template.Child()
     flowbox_active = Gtk.Template.Child()
@@ -33,11 +36,12 @@ class DownloadManagerList(Gtk.Viewport):
 
     listener_download_types = [DownloadType.GAME, DownloadType.GAME_UPDATE, DownloadType.GAME_DLC]
 
-    def __init__(self, download_manager: DownloadManager, downloads_menu_button, config):
-        Gtk.Viewport.__init__(self)
+    def __init__(self, download_manager: DownloadManager, window, config):
+        Gtk.ScrolledWindow.__init__(self)
         self.logger = logging.getLogger('minigalaxy.download_list.DownloadManagerList')
         self.download_manager = download_manager
-        self.menu_button = downloads_menu_button
+        self.parent_window = window
+        self.menu_button = window.download_list_button
         self.config = config
         self.downloads = {}
 
@@ -116,8 +120,10 @@ class DownloadManagerList(Gtk.Viewport):
 
         entry.add_to_box(flowbox)
         entry.update_state(new_state)
-        # make sure to clear previous error messages when restarting a failed downloa
+        # make sure to clear previous error messages when restarting a failed download
         entry.update_tooltip("")
+
+        self.__update_list_size()
 
     def update_group_visibility(self, group_flowbox):
         if group_flowbox.get_children():
@@ -141,10 +147,22 @@ class DownloadManagerList(Gtk.Viewport):
 
     @Gtk.Template.Callback("manage_button_visibility")
     def handle_manage_button(self, widget, *data):
+        '''
+        This is called on the event 'map' that is fired whenever the widget becomes visible
+        '''
         if self.config.keep_installers and shutil.which("xdg-open"):
             self.button_manage_installers.show()
         else:
             self.button_manage_installers.hide()
+        self.__update_list_size()
+
+    def __update_list_size(self):
+        content_height = self.content_box.get_preferred_height()[1]
+        window_height = self.parent_window.get_allocated_height()
+        # try to keep download list height between 300 - 50% of window height
+        # minimum of 300 is reduced of that would be larger than the window
+        max_height = max([int(window_height * 0.75), min([300, window_height - 25])])
+        self.get_parent().set_size_request(-1, min([content_height, max_height]))
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "download_list_entry.ui"))
@@ -154,6 +172,7 @@ class OngoingDownloadListEntry(Gtk.Box):
     icon = Gtk.Template.Child()
     game_title = Gtk.Template.Child()
     download_progress = Gtk.Template.Child()
+    label_size = Gtk.Template.Child()
 
     def __init__(self, parent_manager, download: Download, initial_state: DownloadState):
         Gtk.Box.__init__(self)
@@ -178,6 +197,26 @@ class OngoingDownloadListEntry(Gtk.Box):
     def update_progress(self, percentage):
         self.download_progress.set_fraction(percentage / 100)
         self.download_progress.set_tooltip_text("{}%".format(percentage))
+
+        if self.label_size.get_text() != 'label_size':
+            return
+
+        if self.download.expected_size:
+            label_text = self.__format_size(self.download.expected_size)
+            self.label_size.set_text(label_text)
+            self.label_size.show()
+
+    def __format_size(self, filesize=None):
+        if not filesize:
+            return None
+
+        size = filesize / 1024 ** 3
+        if int(size) >= 1:
+            # game size estimate for download ui
+            return _('{} GB').format(round(size, 1))
+
+        # game size estimate for download ui
+        return _('{} MB').format(int(size * 1024))
 
     def update_state(self, new_state):
         self.buttons.update_buttons(new_state)

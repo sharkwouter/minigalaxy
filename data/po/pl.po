@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-04 20:22+0100\n"
+"POT-Creation-Date: 2025-03-06 11:16+0100\n"
 "PO-Revision-Date: 2025-02-27 17:02+0000\n"
 "Last-Translator: Eryk Michalak <gnu.ewm@protonmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/minigalaxy/"
@@ -36,7 +36,7 @@ msgctxt "about"
 msgid "About"
 msgstr "O programie"
 
-#: data/ui/download_list.ui:23
+#: data/ui/download_list.ui:28
 msgctxt "download_group"
 msgid "Active Downloads:"
 msgstr ""
@@ -147,11 +147,11 @@ msgid "Danish"
 msgstr "Duński"
 
 #. Tooltip of icon button to delete a downloaded file
-#: minigalaxy/ui/download_list.py:250
+#: minigalaxy/ui/download_list.py:289
 msgid "Delete file"
 msgstr ""
 
-#: data/ui/download_list.ui:116
+#: data/ui/download_list.ui:121
 msgctxt "download_group"
 msgid "Done:"
 msgstr ""
@@ -173,12 +173,12 @@ msgstr "Błąd pobierania"
 msgid "Downloading…"
 msgstr "Pobieranie…"
 
-#: data/ui/download_list.ui:115
+#: data/ui/download_list.ui:120
 msgctxt "download_group"
 msgid "Downloads that completed, failed or were stopped."
 msgstr ""
 
-#: data/ui/download_list.ui:53
+#: data/ui/download_list.ui:58
 msgctxt "download_group"
 msgid "Downloads waiting for a free worker slot."
 msgstr ""
@@ -217,11 +217,11 @@ msgstr "Instalacja {} nie powiodła się"
 msgid "Failed to retrieve library"
 msgstr "Nie można pobrać biblioteki"
 
-#: minigalaxy/launcher.py:60 minigalaxy/ui/library_entry.py:109
+#: minigalaxy/launcher.py:61 minigalaxy/ui/library_entry.py:109
 msgid "Failed to start {}:"
 msgstr "Nie można uruchomić {}:"
 
-#: data/ui/download_list.ui:22
+#: data/ui/download_list.ui:27
 msgctxt "download_group"
 msgid "Files being actively downloaded."
 msgstr ""
@@ -377,7 +377,7 @@ msgid "Manage downloads"
 msgstr ""
 
 #. Klick on button will open file explorer to manage downloaded installers
-#: data/ui/download_list.ui:173
+#: data/ui/download_list.ui:178
 msgctxt "game_download_management"
 msgid "Manage installers"
 msgstr ""
@@ -389,7 +389,7 @@ msgstr ""
 "Wine nie został znaleziony. Nie można włączyć wyświetlania gier systemu "
 "Windows."
 
-#: minigalaxy/launcher.py:230
+#: minigalaxy/launcher.py:246
 msgid "No executable was found in {}"
 msgstr "Nie znaleziono pliku wykonywalnego w {}"
 
@@ -425,7 +425,7 @@ msgstr ""
 msgid "Open Winetricks for this game"
 msgstr ""
 
-#: data/ui/download_list.ui:147
+#: data/ui/download_list.ui:152
 msgctxt "game_download_management"
 msgid "Open file manager at location where installers are saved"
 msgstr ""
@@ -445,21 +445,21 @@ msgid "Options menu"
 msgstr ""
 
 #. Tooltip of icon button to pause a download
-#: minigalaxy/ui/download_list.py:241
+#: minigalaxy/ui/download_list.py:280
 msgid "Pause"
 msgstr ""
 
-#: data/ui/download_list.ui:84
+#: data/ui/download_list.ui:89
 msgctxt "download_group"
 msgid "Paused downlods will not automatically resume."
 msgstr ""
 
-#: data/ui/download_list.ui:85
+#: data/ui/download_list.ui:90
 msgctxt "download_group"
 msgid "Paused:"
 msgstr ""
 
-#: data/ui/download_list.ui:54
+#: data/ui/download_list.ui:59
 msgctxt "download_group"
 msgid "Pending:"
 msgstr ""
@@ -517,7 +517,7 @@ msgid "Regedit"
 msgstr "Regedit"
 
 #. Tooltip of icon button which removes a download from the ui list of downloads
-#: minigalaxy/ui/download_list.py:253
+#: minigalaxy/ui/download_list.py:292
 msgid "Remove from list"
 msgstr ""
 
@@ -534,12 +534,12 @@ msgid "Reset wine executable"
 msgstr ""
 
 #. Tooltip of icon button for download (re)start
-#: minigalaxy/ui/download_list.py:238
+#: minigalaxy/ui/download_list.py:277
 msgid "Resume"
 msgstr ""
 
 #. Tooltip of icon button to retry a failed or canceled download
-#: minigalaxy/ui/download_list.py:244
+#: minigalaxy/ui/download_list.py:283
 msgid "Retry"
 msgstr ""
 
@@ -617,7 +617,7 @@ msgid "Stay logged in:"
 msgstr "Pozostań zalogowany:"
 
 #. Tooltip of icon button to stop an active or queued download
-#: minigalaxy/ui/download_list.py:247
+#: minigalaxy/ui/download_list.py:286
 msgid "Stop"
 msgstr ""
 
@@ -695,7 +695,7 @@ msgstr "Odinstaluj"
 msgid "Uninstalling…"
 msgstr "Odinstalowywanie…"
 
-#: minigalaxy/ui/download_list.py:87
+#: minigalaxy/ui/download_list.py:91
 msgid "Unknown error"
 msgstr ""
 
@@ -801,6 +801,16 @@ msgstr ""
 #: minigalaxy/ui/information.py:137
 msgid "unknown"
 msgstr "nieznane"
+
+#. game size estimate for download ui
+#: minigalaxy/ui/download_list.py:216
+msgid "{} GB"
+msgstr ""
+
+#. game size estimate for download ui
+#: minigalaxy/ui/download_list.py:219
+msgid "{} MB"
+msgstr ""
 
 #: minigalaxy/installer.py:145
 msgid "{} could not be unzipped."

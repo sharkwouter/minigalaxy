@@ -2,190 +2,197 @@
 <!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <template class="DownloadList" parent="GtkViewport">
+  <template class="DownloadList" parent="GtkScrolledWindow">
     <property name="visible">True</property>
-    <property name="can-focus">False</property>
-    <property name="shadow-type">none</property>
-    <signal name="map" handler="manage_button_visibility" swapped="no"/>
+    <property name="can-focus">True</property>
+    <property name="hscrollbar-policy">never</property>
     <child>
-      <object class="GtkBox">
+      <object class="GtkViewport">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
-        <property name="margin-start">3</property>
-        <property name="margin-end">3</property>
-        <property name="margin-top">3</property>
-        <property name="margin-bottom">3</property>
-        <property name="orientation">vertical</property>
+        <property name="shadow-type">none</property>
+        <signal name="map" handler="manage_button_visibility" swapped="no"/>
         <child>
-          <object class="GtkLabel" id="label_active">
+          <object class="GtkBox" id="content_box">
+            <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes" context="download_group">Files being actively downloaded.</property>
-            <property name="label" translatable="yes" context="download_group">Active Downloads:</property>
-            <property name="xalign">0.05000000074505806</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFlowBox" id="flowbox_active">
-            <property name="can-focus">False</property>
-            <property name="valign">start</property>
-            <property name="border-width">10</property>
-            <property name="homogeneous">True</property>
-            <property name="column-spacing">15</property>
-            <property name="row-spacing">10</property>
-            <property name="max-children-per-line">1</property>
-            <property name="selection-mode">none</property>
-            <property name="activate-on-single-click">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="label_queued">
-            <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes" context="download_group">Downloads waiting for a free worker slot.</property>
-            <property name="label" translatable="yes" context="download_group">Pending:</property>
-            <property name="xalign">0.05000000074505806</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFlowBox" id="flowbox_queued">
-            <property name="can-focus">False</property>
-            <property name="valign">start</property>
-            <property name="border-width">10</property>
-            <property name="homogeneous">True</property>
-            <property name="column-spacing">15</property>
-            <property name="row-spacing">10</property>
-            <property name="max-children-per-line">1</property>
-            <property name="selection-mode">none</property>
-            <property name="activate-on-single-click">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">3</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="label_paused">
-            <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes" context="download_group">Paused downlods will not automatically resume.</property>
-            <property name="label" translatable="yes" context="download_group">Paused:</property>
-            <property name="xalign">0.05000000074505806</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">4</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFlowBox" id="flowbox_paused">
-            <property name="can-focus">False</property>
-            <property name="valign">start</property>
-            <property name="border-width">10</property>
-            <property name="homogeneous">True</property>
-            <property name="column-spacing">15</property>
-            <property name="row-spacing">10</property>
-            <property name="max-children-per-line">1</property>
-            <property name="selection-mode">none</property>
-            <property name="activate-on-single-click">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">5</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="label_done">
-            <property name="can-focus">False</property>
-            <property name="tooltip-text" translatable="yes" context="download_group">Downloads that completed, failed or were stopped.</property>
-            <property name="label" translatable="yes" context="download_group">Done:</property>
-            <property name="xalign">0.05000000074505806</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">6</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFlowBox" id="flowbox_done">
-            <property name="can-focus">False</property>
-            <property name="valign">start</property>
-            <property name="border-width">10</property>
-            <property name="homogeneous">True</property>
-            <property name="column-spacing">15</property>
-            <property name="row-spacing">10</property>
-            <property name="max-children-per-line">1</property>
-            <property name="selection-mode">none</property>
-            <property name="activate-on-single-click">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">7</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="button_manage_installers">
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes" context="game_download_management">Open file manager at location where installers are saved</property>
-            <property name="halign">center</property>
-            <property name="valign">center</property>
-            <property name="always-show-image">True</property>
-            <signal name="clicked" handler="on_manage_button" swapped="no"/>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
+              <object class="GtkLabel" id="label_active">
                 <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="download_group">Files being actively downloaded.</property>
+                <property name="label" translatable="yes" context="download_group">Active Downloads:</property>
+                <property name="xalign">0.05000000074505806</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFlowBox" id="flowbox_active">
+                <property name="can-focus">False</property>
+                <property name="valign">start</property>
+                <property name="border-width">10</property>
+                <property name="homogeneous">True</property>
+                <property name="column-spacing">15</property>
+                <property name="row-spacing">5</property>
+                <property name="max-children-per-line">1</property>
+                <property name="selection-mode">none</property>
+                <property name="activate-on-single-click">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_queued">
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="download_group">Downloads waiting for a free worker slot.</property>
+                <property name="label" translatable="yes" context="download_group">Pending:</property>
+                <property name="xalign">0.05000000074505806</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFlowBox" id="flowbox_queued">
+                <property name="can-focus">False</property>
+                <property name="valign">start</property>
+                <property name="border-width">10</property>
+                <property name="homogeneous">True</property>
+                <property name="column-spacing">15</property>
+                <property name="row-spacing">5</property>
+                <property name="max-children-per-line">1</property>
+                <property name="selection-mode">none</property>
+                <property name="activate-on-single-click">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_paused">
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="download_group">Paused downlods will not automatically resume.</property>
+                <property name="label" translatable="yes" context="download_group">Paused:</property>
+                <property name="xalign">0.05000000074505806</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFlowBox" id="flowbox_paused">
+                <property name="can-focus">False</property>
+                <property name="valign">start</property>
+                <property name="border-width">10</property>
+                <property name="homogeneous">True</property>
+                <property name="column-spacing">15</property>
+                <property name="row-spacing">5</property>
+                <property name="max-children-per-line">1</property>
+                <property name="selection-mode">none</property>
+                <property name="activate-on-single-click">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_done">
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="download_group">Downloads that completed, failed or were stopped.</property>
+                <property name="label" translatable="yes" context="download_group">Done:</property>
+                <property name="xalign">0.05000000074505806</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">6</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFlowBox" id="flowbox_done">
+                <property name="can-focus">False</property>
+                <property name="valign">start</property>
+                <property name="border-width">10</property>
+                <property name="homogeneous">True</property>
+                <property name="column-spacing">15</property>
+                <property name="row-spacing">5</property>
+                <property name="max-children-per-line">1</property>
+                <property name="selection-mode">none</property>
+                <property name="activate-on-single-click">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">7</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button_manage_installers">
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes" context="game_download_management">Open file manager at location where installers are saved</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="always-show-image">True</property>
+                <signal name="clicked" handler="on_manage_button" swapped="no"/>
                 <child>
-                  <object class="GtkImage" id="icon-harddisk">
+                  <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="icon-name">drive-harddisk</property>
-                    <property name="icon_size">3</property>
+                    <child>
+                      <object class="GtkImage" id="icon-harddisk">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="icon-name">drive-harddisk</property>
+                        <property name="icon_size">3</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_manage_installers">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes" context="game_download_management" comments="Klick on button will open file explorer to manage downloaded installers">Manage installers</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="label_manage_installers">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="label" translatable="yes" context="game_download_management" comments="Klick on button will open file explorer to manage downloaded installers">Manage installers</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
                 </child>
               </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">8</property>
+              </packing>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">8</property>
-          </packing>
         </child>
       </object>
     </child>
