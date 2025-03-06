@@ -161,7 +161,7 @@ def get_windows_exe_cmd(game, files):
     else:
         # Find the first executable file that is not blacklisted
         for file in files:
-            if file.upper().rsplit(".")[-1] not in ["EXE", "LNK"]:
+            if os.path.splitext(file.upper())[-1] not in [".EXE", ".LNK"]:
                 continue
             if file in BINARY_NAMES_TO_IGNORE:
                 continue
