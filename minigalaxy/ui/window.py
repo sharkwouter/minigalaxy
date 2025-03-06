@@ -57,7 +57,7 @@ class Window(Gtk.ApplicationWindow):
 
         self.window_library.add(self.library)
         self.header_installed.set_active(self.config.installed_filter)
-        self.download_list.add(DownloadManagerList(self.download_manager, self.download_list_button, self.config))
+        self.download_list.add(DownloadManagerList(self.download_manager, self, self.config))
 
         # Set the icon
         icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_IMAGE_PATH)
