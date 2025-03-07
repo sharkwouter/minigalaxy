@@ -26,7 +26,7 @@ import minigalaxy.logger  # noqa: F401
 
 from concurrent.futures.thread import ThreadPoolExecutor
 from enum import Enum
-from minigalaxy.config import Config, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
+from minigalaxy.config import Config, UI_DOWNLOAD_THREADS
 from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE
 from minigalaxy.download import Download, DownloadType
 from requests import Session
@@ -110,10 +110,10 @@ class DownloadManager:
 
         # The queues and associated limits
         self.queues = [(self.__ui_queue, UI_DOWNLOAD_THREADS),
-                       (self.__game_queue, GAME_DOWNLOAD_THREADS)]
+                       (self.__game_queue, config.max_parallel_game_downloads)]
 
         self.__cancel = {}
-        self.workers = []
+        self.workers = {}
         # The list of currently active downloads
         # These are items not in the queue, but currently being downloaded
         self.active_downloads = {}
@@ -130,11 +130,15 @@ class DownloadManager:
         self.logger = logging.getLogger("minigalaxy.download_manager.DownloadManager")
 
         for q, number_threads in self.queues:
-            for i in range(number_threads):
-                download_thread = threading.Thread(target=lambda: self.__download_thread(q))
-                download_thread.daemon = True
-                download_thread.start()
-                self.workers.append(download_thread)
+            self.workers[q] = []
+            self.__initialize_workers(q, number_threads)
+
+    def __initialize_workers(self, queue, num_workers):
+        for i in range(num_workers):
+            download_thread = threading.Thread(target=lambda: self.__download_thread(queue))
+            download_thread.daemon = True
+            download_thread.start()
+            self.workers[queue].append(download_thread)
 
     def add_active_downloads_listener(self, listener):
         if listener not in self.download_list_change_listener:
