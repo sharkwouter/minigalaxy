@@ -76,7 +76,7 @@ class DownloadManagerList(Gtk.ScrolledWindow):
         if download.save_location in self.pending_icons:
             icon_file = download.save_location
             for entry in self.pending_icons[icon_file]:
-                entry.set_icon_from_file(icon_file)
+                GLib.idle_add(entry.set_icon_from_file, icon_file)
             del self.pending_icons[icon_file]
             return
 
