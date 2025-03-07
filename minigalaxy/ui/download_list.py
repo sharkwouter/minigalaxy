@@ -47,6 +47,7 @@ class DownloadManagerList(Gtk.ScrolledWindow):
         self.config = config
         self.download_worker_config.set_value(config.max_parallel_game_downloads)
         self.downloads = {}
+        self.pending_icons = {}
 
         self.change_handler = {
             DownloadState.STARTED: self.download_started,
@@ -72,6 +73,13 @@ class DownloadManagerList(Gtk.ScrolledWindow):
     def download_manager_listener(self, change: DownloadState, download: Download, *additional_params):
         self.logger.debug('Received %s for Download[save_location=%s, progress=%d]',
                           change, download.filename(), download.current_progress)
+        if download.save_location in self.pending_icons:
+            icon_file = download.save_location
+            for entry in self.pending_icons[icon_file]:
+                GLib.idle_add(entry.set_icon_from_file, icon_file)
+            del self.pending_icons[icon_file]
+            return
+
         if download.download_type not in self.listener_download_types:
             return
         if change not in self.change_handler:
@@ -194,9 +202,13 @@ class OngoingDownloadListEntry(Gtk.Box):
         self.update_state(initial_state)
 
         self.manager.logger.debug("trying to pull icon from: %s", download.download_icon)
-        if download.download_icon and os.path.exists(download.download_icon):
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(download.download_icon, 48, 48)
-            self.icon.set_from_pixbuf(pixbuf)
+        if download.download_icon:
+            if os.path.exists(download.download_icon):
+                self.set_icon_from_file(download.download_icon)
+            else:
+                awaiting_entries = self.manager.pending_icons.get(download.download_icon, [])
+                awaiting_entries.append(self)
+                self.manager.pending_icons[download.download_icon] = awaiting_entries
 
         self.pack_start(self.buttons, False, False, 0)
 
@@ -269,6 +281,14 @@ class OngoingDownloadListEntry(Gtk.Box):
         self.manager.update_group_visibility(old_flowbox)
 
     '''----- END VISIBILITY CONTROL -----'''
+
+    '''----- UI utilities -----'''
+
+    def set_icon_from_file(self, filename):
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename, 48, 48)
+        self.icon.set_from_pixbuf(pixbuf)
+
+    '''----- END UI utilities -----'''
 
 
 @Gtk.Template.from_file(os.path.join(UI_DIR, "download_action_buttons.ui"))
