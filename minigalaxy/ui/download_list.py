@@ -20,6 +20,8 @@ class DownloadManagerList(Gtk.ScrolledWindow):
 
     content_box = Gtk.Template.Child()
 
+    download_worker_config = Gtk.Template.Child()
+
     label_active = Gtk.Template.Child()
     flowbox_active = Gtk.Template.Child()
 
@@ -43,6 +45,7 @@ class DownloadManagerList(Gtk.ScrolledWindow):
         self.parent_window = window
         self.menu_button = window.download_list_button
         self.config = config
+        self.download_worker_config.set_value(config.max_parallel_game_downloads)
         self.downloads = {}
 
         self.change_handler = {
@@ -154,6 +157,10 @@ class DownloadManagerList(Gtk.ScrolledWindow):
         else:
             self.button_manage_installers.hide()
         self.__update_list_size()
+
+    @Gtk.Template.Callback("update_worker_number")
+    def update_worker_number(self, widget):
+        self.logger.debug("Number of workers was adjusted. New: %s", str(widget.get_value()))
 
     def __update_list_size(self):
         content_height = self.content_box.get_preferred_height()[1] + 6  # pixel of upper and lower border

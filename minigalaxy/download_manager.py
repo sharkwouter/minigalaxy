@@ -26,10 +26,10 @@ import minigalaxy.logger  # noqa: F401
 
 from concurrent.futures.thread import ThreadPoolExecutor
 from enum import Enum
-from minigalaxy.config import Config
-from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
+from minigalaxy.config import Config, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
+from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE
 from minigalaxy.download import Download, DownloadType
-from requests import codes, Session
+from requests import Session
 from requests.exceptions import RequestException
 
 module_logger = logging.getLogger("minigalaxy.download_manager")
