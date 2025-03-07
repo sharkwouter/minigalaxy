@@ -209,8 +209,7 @@ class DownloadManager:
                 else:
                     self.__notify_listeners(DownloadState.PAUSED, d)
                     # let paused downloads at least display a rough estimate of where they are
-                    d.current_progress = paused_downloads[file]
-                    self.__notify_listeners(DownloadState.PROGRESS, d, d.current_progress)
+                    self.__notify_listeners(DownloadState.PROGRESS, d, download_params=[paused_downloads[file]])
                     continue
 
             self.put_in_proper_queue(d)
