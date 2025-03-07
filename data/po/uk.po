@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-06 11:16+0100\n"
-"PO-Revision-Date: 2025-02-27 17:02+0000\n"
+"PO-Revision-Date: 2025-03-08 10:01+0000\n"
 "Last-Translator: Dan <jonweblin2205@protonmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/minigalaxy/"
 "minigalaxy/uk/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Weblate 5.10.2-dev\n"
+"X-Generator: Weblate 5.10.3-dev\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -791,12 +791,12 @@ msgstr "невідомо"
 #. game size estimate for download ui
 #: minigalaxy/ui/download_list.py:216
 msgid "{} GB"
-msgstr ""
+msgstr "{} ГБ"
 
 #. game size estimate for download ui
 #: minigalaxy/ui/download_list.py:219
 msgid "{} MB"
-msgstr ""
+msgstr "{} МБ"
 
 #: minigalaxy/installer.py:145
 msgid "{} could not be unzipped."
