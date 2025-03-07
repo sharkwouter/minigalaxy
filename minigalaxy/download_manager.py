@@ -129,7 +129,7 @@ class DownloadManager:
 
         self.logger = logging.getLogger("minigalaxy.download_manager.DownloadManager")
 
-        for q, number_threads in self.queues
+        for q, number_threads in self.queues:
             self.workers[q] = []
             self.__initialize_workers(q, number_threads)
 
