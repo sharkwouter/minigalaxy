@@ -239,6 +239,31 @@ class DownloadManager:
             # Add other items to the UI queue
             self.__ui_queue.put(QueuedDownloadItem(download, 0))
 
+    def adjust_game_workers(self, new_amount, stop_active=False):
+        '''
+        This method allows to dynamically change the number of download threads used by the game queue.
+        The new number is compared against the current value set in config, afterwards the config value is updated.
+          1. When greater, new threads are spawned for this queue.
+          2. When smaller, idle threads will orderly terminate until len(workers[game_queue]) == new_amount (TBD)
+          2a. Threads which are currently busy will only be actively stopped when stop_active=True is given. (TBD)
+              In that case, the download with the least amount of progress is stopped and requeued afterwards
+        '''
+
+        difference = new_amount - self.config.max_parallel_game_downloads
+        if difference == 0 or new_amount < 1:
+            return
+
+        self.config.max_parallel_game_downloads = new_amount
+        if difference > 0:
+            self.__initialize_workers(self.__game_queue, difference)
+            return
+
+        if not stop_active:
+            return
+
+        # TODO:
+        # Find a way to fetch and count active downloads from game queue
+
     def download_now(self, download):
         """
         Download an item with a higher priority
@@ -422,7 +447,9 @@ class DownloadManager:
                 last_error = str(e)  # FIXME: need a way to remove token from error
                 download_attempt += 1
                 # TODO: maybe add an incrementally growing sleep time instead
-                time.sleep(10)  # don't immediately use up all retries
+                if download_attempt < download_max_attempts:
+                    # only sleep when there are retries left
+                    time.sleep(10)  # don't immediately use up all retries
 
         if download_attempt == download_max_attempts:
             result = DownloadState.FAILED
