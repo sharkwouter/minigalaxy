@@ -2,6 +2,12 @@
 <!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkAdjustment" id="download_worker_range">
+    <property name="lower">1</property>
+    <property name="upper">8</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
   <template class="DownloadList" parent="GtkScrolledWindow">
     <property name="visible">True</property>
     <property name="can-focus">True</property>
@@ -22,6 +28,81 @@
             <property name="margin-bottom">3</property>
             <property name="orientation">vertical</property>
             <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">5</property>
+                <property name="margin-end">5</property>
+                <property name="homogeneous">True</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">baseline</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes" context="download_configuration" comments="Label for configuration option">Max. active downloads:</property>
+                    <property name="xalign">0.10000000149011612</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinButton" id="download_worker_config">
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="tooltip-text" translatable="yes" context="download_configuration">Change how many parallel downloads are allowed.
+Range is 1-8.</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="max-length">2</property>
+                    <property name="width-chars">1</property>
+                    <property name="max-width-chars">1</property>
+                    <property name="overwrite-mode">True</property>
+                    <property name="progress-pulse-step">1</property>
+                    <property name="primary-icon-activatable">False</property>
+                    <property name="secondary-icon-activatable">False</property>
+                    <property name="primary-icon-sensitive">False</property>
+                    <property name="secondary-icon-sensitive">False</property>
+                    <property name="primary-icon-tooltip-text" translatable="yes">P</property>
+                    <property name="secondary-icon-tooltip-text" translatable="yes">S</property>
+                    <property name="input-purpose">digits</property>
+                    <property name="adjustment">download_worker_range</property>
+                    <property name="climb-rate">1</property>
+                    <property name="numeric">True</property>
+                    <property name="update-policy">if-valid</property>
+                    <signal name="value-changed" handler="update_worker_number" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="pack-type">end</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparator">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkLabel" id="label_active">
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes" context="download_group">Files being actively downloaded.</property>
@@ -31,7 +112,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -49,7 +130,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -62,7 +143,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -80,7 +161,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child>
@@ -93,7 +174,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">6</property>
               </packing>
             </child>
             <child>
@@ -111,7 +192,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">5</property>
+                <property name="position">7</property>
               </packing>
             </child>
             <child>
@@ -124,7 +205,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">6</property>
+                <property name="position">8</property>
               </packing>
             </child>
             <child>
@@ -142,7 +223,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">7</property>
+                <property name="position">9</property>
               </packing>
             </child>
             <child>
@@ -189,7 +270,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">8</property>
+                <property name="position">10</property>
               </packing>
             </child>
           </object>
