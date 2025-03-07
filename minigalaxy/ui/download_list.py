@@ -156,7 +156,7 @@ class DownloadManagerList(Gtk.ScrolledWindow):
         self.__update_list_size()
 
     def __update_list_size(self):
-        content_height = self.content_box.get_preferred_height()[1]
+        content_height = self.content_box.get_preferred_height()[1] + 6  # pixel of upper and lower border
         window_height = self.parent_window.get_allocated_height()
         # try to keep download list height between 300 - 50% of window height
         # minimum of 300 is reduced of that would be larger than the window
