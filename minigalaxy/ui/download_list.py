@@ -72,7 +72,7 @@ class DownloadManagerList(Gtk.ScrolledWindow):
 
     def download_manager_listener(self, change: DownloadState, download: Download, *additional_params):
         self.logger.debug('Received %s for Download[save_location=%s, progress=%d]',
-                          change, download.filename(), download.current_progress
+                          change, download.filename(), download.current_progress)
         if download.save_location in self.pending_icons:
             icon_file = download.save_location
             for entry in self.pending_icons[icon_file]:
