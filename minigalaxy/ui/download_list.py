@@ -287,7 +287,7 @@ class OngoingDownloadListEntry(Gtk.Box):
     def set_icon_from_file(self, filename):
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename, 48, 48)
         self.icon.set_from_pixbuf(pixbuf)
-        
+
     '''----- END UI utilities -----'''
 
 
