@@ -589,11 +589,10 @@ class DownloadManager:
         error safeguarding to not kill downloads threads by uncaught exceptions'''
         if state in DownloadManager.STATE_DOWNLOAD_CALLBACKS:
             callback = DownloadManager.STATE_DOWNLOAD_CALLBACKS[state]
-            error_wrapper = self.__call_listener_failsafe
             if forked:
-                error_wrapper(callback, download, *params)
+                self.__call_listener_failsafe(callback, download, *params)
             else:
-                self.listener_thread.submit(error_wrapper, callback, download, *params)
+                self.listener_thread.submit(self.__download_callback, download, state, *params)
 
     def __is_pending(self, download):
         file = download.save_location
