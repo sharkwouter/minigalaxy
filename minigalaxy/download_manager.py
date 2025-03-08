@@ -26,10 +26,10 @@ import minigalaxy.logger  # noqa: F401
 
 from concurrent.futures.thread import ThreadPoolExecutor
 from enum import Enum
-from minigalaxy.config import Config
-from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
+from minigalaxy.config import Config, UI_DOWNLOAD_THREADS
+from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE
 from minigalaxy.download import Download, DownloadType
-from requests import codes, Session
+from requests import Session
 from requests.exceptions import RequestException
 
 module_logger = logging.getLogger("minigalaxy.download_manager")
@@ -110,10 +110,10 @@ class DownloadManager:
 
         # The queues and associated limits
         self.queues = [(self.__ui_queue, UI_DOWNLOAD_THREADS),
-                       (self.__game_queue, GAME_DOWNLOAD_THREADS)]
+                       (self.__game_queue, config.max_parallel_game_downloads)]
 
         self.__cancel = {}
-        self.workers = []
+        self.workers = {}
         # The list of currently active downloads
         # These are items not in the queue, but currently being downloaded
         self.active_downloads = {}
@@ -130,11 +130,15 @@ class DownloadManager:
         self.logger = logging.getLogger("minigalaxy.download_manager.DownloadManager")
 
         for q, number_threads in self.queues:
-            for i in range(number_threads):
-                download_thread = threading.Thread(target=lambda: self.__download_thread(q))
-                download_thread.daemon = True
-                download_thread.start()
-                self.workers.append(download_thread)
+            self.workers[q] = []
+            self.__initialize_workers(q, number_threads)
+
+    def __initialize_workers(self, queue, num_workers):
+        for i in range(num_workers):
+            download_thread = threading.Thread(target=lambda: self.__download_thread(queue))
+            download_thread.daemon = True
+            download_thread.start()
+            self.workers[queue].append(download_thread)
 
     def add_active_downloads_listener(self, listener):
         if listener not in self.download_list_change_listener:
@@ -209,8 +213,7 @@ class DownloadManager:
                 else:
                     self.__notify_listeners(DownloadState.PAUSED, d)
                     # let paused downloads at least display a rough estimate of where they are
-                    d.current_progress = paused_downloads[file]
-                    self.__notify_listeners(DownloadState.PROGRESS, d, d.current_progress)
+                    self.__notify_listeners(DownloadState.PROGRESS, d, download_params=[paused_downloads[file]])
                     continue
 
             self.put_in_proper_queue(d)
@@ -235,6 +238,31 @@ class DownloadManager:
         else:
             # Add other items to the UI queue
             self.__ui_queue.put(QueuedDownloadItem(download, 0))
+
+    def adjust_game_workers(self, new_amount, stop_active=False):
+        '''
+        This method allows to dynamically change the number of download threads used by the game queue.
+        The new number is compared against the current value set in config, afterwards the config value is updated.
+          1. When greater, new threads are spawned for this queue.
+          2. When smaller, idle threads will orderly terminate until len(workers[game_queue]) == new_amount (TBD)
+          2a. Threads which are currently busy will only be actively stopped when stop_active=True is given. (TBD)
+              In that case, the download with the least amount of progress is stopped and requeued afterwards
+        '''
+
+        difference = new_amount - self.config.max_parallel_game_downloads
+        if difference == 0 or new_amount < 1:
+            return
+
+        self.config.max_parallel_game_downloads = new_amount
+        if difference > 0:
+            self.__initialize_workers(self.__game_queue, difference)
+            return
+
+        if not stop_active:
+            return
+
+        # TODO:
+        # Find a way to fetch and count active downloads from game queue
 
     def download_now(self, download):
         """
@@ -419,7 +447,9 @@ class DownloadManager:
                 last_error = str(e)  # FIXME: need a way to remove token from error
                 download_attempt += 1
                 # TODO: maybe add an incrementally growing sleep time instead
-                time.sleep(10)  # don't immediately use up all retries
+                if download_attempt < download_max_attempts:
+                    # only sleep when there are retries left
+                    time.sleep(10)  # don't immediately use up all retries
 
         if download_attempt == download_max_attempts:
             result = DownloadState.FAILED
@@ -568,7 +598,7 @@ class DownloadManager:
         # Check first part of the file
         resume_header = {'Range': 'bytes=0-{}'.format(size_to_check - 1)}  # range header is index-0-based
         with self.session.get(download.url, headers=resume_header, stream=True, timeout=30) as download_request:
-            if not download_request.status_code == codes.ok:
+            if not 200 <= download_request.status_code < 300:
                 '''
                 Response is not ok, so we can't download the file.
                 Raise an error instead of returning False to prevent the potentially correct partial files from being deleted.
@@ -590,11 +620,10 @@ class DownloadManager:
         error safeguarding to not kill downloads threads by uncaught exceptions'''
         if state in DownloadManager.STATE_DOWNLOAD_CALLBACKS:
             callback = DownloadManager.STATE_DOWNLOAD_CALLBACKS[state]
-            error_wrapper = self.__call_listener_failsafe
             if forked:
-                error_wrapper(callback, download, *params)
+                self.__call_listener_failsafe(callback, download, *params)
             else:
-                self.listener_thread.submit(error_wrapper, callback, download, *params)
+                self.listener_thread.submit(self.__download_callback, download, state, *params)
 
     def __is_pending(self, download):
         file = download.save_location
