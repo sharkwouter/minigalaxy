@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-06 11:16+0100\n"
-"PO-Revision-Date: 2025-02-26 11:02+0000\n"
+"PO-Revision-Date: 2025-03-13 17:01+0000\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/minigalaxy/"
 "minigalaxy/nl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10.2-dev\n"
+"X-Generator: Weblate 5.11-dev\n"
 
 #. A short description of what Minigalaxy is
 #: data/ui/about.ui:10
@@ -38,7 +38,7 @@ msgstr "Over Minigalaxy"
 #: data/ui/download_list.ui:28
 msgctxt "download_group"
 msgid "Active Downloads:"
-msgstr ""
+msgstr "Actieve Downloads:"
 
 #: data/ui/properties.ui:269 data/ui/properties.ui:281
 msgid "Added at the end of the command used to launch the game"
