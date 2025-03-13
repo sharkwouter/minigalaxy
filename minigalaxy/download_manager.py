@@ -428,6 +428,7 @@ class DownloadManager:
                 max_workers = self.queues[download_queue]
                 if len(self.workers[download_queue]) > max_workers:
                     self.logger.debug("Shutting down worker because there are more then allowed")
+                    self.workers[download_queue].remove(threading.current_thread())
                     # The number of workers was reduced and the current thread is idle:
                     # Exit the thread in an orderly way
                     return
