@@ -31,7 +31,6 @@ from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE
 from minigalaxy.download import Download, DownloadType
 from requests import Session
 from requests.exceptions import RequestException
-from minigalaxy import download
 
 module_logger = logging.getLogger("minigalaxy.download_manager")
 
