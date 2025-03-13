@@ -96,7 +96,7 @@ class TestDownloadManager(TestCase):
 
         temp_file = tempfile.mktemp()
         download = Download("example.com", temp_file, DownloadType.GAME, finish_func, progress_func, cancel_func)
-        self.download_manager.active_downloads[download] = download
+        self.download_manager._add_to_active_downloads(download)
         self.download_manager.cancel_download(download)
         self.download_manager._DownloadManager__download_operation(download, 0, "wb")
 
@@ -131,7 +131,7 @@ class TestDownloadManager(TestCase):
         self.download_manager.cancel_download(download)
         print(str(time.time()) + " assert")
         cancel_func.assert_called_once()
-        for queue in self.download_manager.queues:
-            for i in queue:
-                self.assertNotEqual(i, download)
+        self.assertFalse(download in self.download_manager.active_downloads)
+        for d in self.download_manager.queued_downloads.values():
+            self.assertNotEqual(download, d)
         self.assertFalse(os.path.isfile(temp_file))
