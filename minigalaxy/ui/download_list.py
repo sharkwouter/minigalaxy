@@ -168,7 +168,9 @@ class DownloadManagerList(Gtk.ScrolledWindow):
 
     @Gtk.Template.Callback("update_worker_number")
     def update_worker_number(self, widget):
-        self.logger.debug("Number of workers was adjusted. New: %s", str(widget.get_value()))
+        new_workers = int(widget.get_value())
+        self.logger.debug("Number of workers was adjusted. New: %s", new_workers)
+        self.download_manager.adjust_game_workers(new_workers, stop_active=True)
 
     def __update_list_size(self):
         content_height = self.content_box.get_preferred_height()[1] + 6  # pixel of upper and lower border

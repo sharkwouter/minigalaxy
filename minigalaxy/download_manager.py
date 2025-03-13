@@ -73,6 +73,7 @@ class DownloadState(Enum):
     STOPPED = 6  # Download was stopped. Does not prevent regular restart by calling download()
     FAILED = 7  # Active downloaded stopped because of an error
     CANCELED = 8  # Download was stopped, all partial progress and state info about it deleted
+    REQUEUE = 9  # Internal state to stop active and immediately requeue again
 
 
 class DownloadManager:
@@ -83,7 +84,13 @@ class DownloadManager:
     DownloadManager download or download_now method to download it.
     """
 
-    CANCEL_STATES = [DownloadState.PAUSED, DownloadState.STOPPED, DownloadState.FAILED, DownloadState.CANCELED]
+    CANCEL_STATES = [
+        DownloadState.PAUSED,
+        DownloadState.STOPPED,
+        DownloadState.FAILED,
+        DownloadState.CANCELED,
+        DownloadState.REQUEUE
+    ]
 
     STATE_DOWNLOAD_CALLBACKS = {
         DownloadState.COMPLETED: lambda d, *a: d.finish(),
@@ -135,7 +142,7 @@ class DownloadManager:
         for q, number_threads in self.queues.items():
             self.workers[q] = []
             self.__initialize_workers(q, number_threads)
-            
+
     @property
     def active_downloads(self):
         '''produces a simple list view of the all currently active downloads'''
@@ -281,8 +288,7 @@ class DownloadManager:
                 # max workers is reached
                 downloads_on_queue.sort(key=lambda d: d.current_progress)
                 to_stop = downloads_on_queue[0:abs(difference)]
-                self.cancel_download(to_stop, DownloadState.STOPPED)
-                self.download(to_stop)
+                self.cancel_download(to_stop, DownloadState.REQUEUE)
 
     def download_now(self, download):
         """
@@ -419,9 +425,10 @@ class DownloadManager:
         Users of this library should not need to call this.
         """
         while True:
-            if download_queue in self.queues: 
+            if download_queue in self.queues:
                 max_workers = self.queues[download_queue]
                 if len(self.workers[download_queue]) > max_workers:
+                    self.logger.debug("Shutting down worker because there are more then allowed")
                     # The number of workers was reduced and the current thread is idle:
                     # Exit the thread in an orderly way
                     return
@@ -726,8 +733,9 @@ class DownloadManager:
             self.config.remove_paused_download(download.save_location)
 
         self.__remove_from_queued_list(download)
-        # We may want to unset current_downloads here
-        # For example, if a download was added that is impossible to complete
+
+        if last_state == DownloadState.REQUEUE:
+            self.download(download)
 
     def __is_cancel_type(self, state: DownloadState):
         return state in DownloadManager.CANCEL_STATES
