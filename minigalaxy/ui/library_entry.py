@@ -284,7 +284,7 @@ class LibraryEntry:
             ds_msg_title = _("Download error")
             dl_name = download_info.get('name', self.game.name)
             ds_msg_text = _("Not enough disk space to install game:\n{}").format(dl_name)
-            GLib.idle_add(self.parent_window.show_error, _(ds_msg_title), _(ds_msg_text))
+            GLib.idle_add(self.parent_window.show_error, ds_msg_title, ds_msg_text)
             self.config.remove_ongoing_download(self.game.id)
             download_success = False
 
