@@ -9,7 +9,7 @@ from minigalaxy.paths import CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
 # UI download threads are for UI assets like thumbnails or icons
 UI_DOWNLOAD_THREADS = 4
 # Game download threads are for long-running downloads like games, DLC or updates
-GAME_DOWNLOAD_THREADS = 4
+DEFAULT_DOWNLOAD_THREAD_COUNT = 4
 
 
 class Config:
@@ -168,7 +168,7 @@ class Config:
 
     @property
     def max_parallel_game_downloads(self) -> int:
-        return self.__config.get("max_download_workers", GAME_DOWNLOAD_THREADS)
+        return self.__config.get("max_download_workers", DEFAULT_DOWNLOAD_THREAD_COUNT)
 
     @max_parallel_game_downloads.setter
     def max_parallel_game_downloads(self, new_value: int) -> None:
