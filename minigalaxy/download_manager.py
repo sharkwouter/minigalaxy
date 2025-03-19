@@ -26,10 +26,10 @@ import minigalaxy.logger  # noqa: F401
 
 from concurrent.futures.thread import ThreadPoolExecutor
 from enum import Enum
-from minigalaxy.config import Config
-from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE, GAME_DOWNLOAD_THREADS, UI_DOWNLOAD_THREADS
+from minigalaxy.config import Config, UI_DOWNLOAD_THREADS
+from minigalaxy.constants import DOWNLOAD_CHUNK_SIZE, MINIMUM_RESUME_SIZE
 from minigalaxy.download import Download, DownloadType
-from requests import codes, Session
+from requests import Session
 from requests.exceptions import RequestException
 
 module_logger = logging.getLogger("minigalaxy.download_manager")
@@ -72,6 +72,7 @@ class DownloadState(Enum):
     STOPPED = 6  # Download was stopped. Does not prevent regular restart by calling download()
     FAILED = 7  # Active downloaded stopped because of an error
     CANCELED = 8  # Download was stopped, all partial progress and state info about it deleted
+    REQUEUE = 9  # Internal state to stop active and immediately requeue again
 
 
 class DownloadManager:
@@ -82,7 +83,13 @@ class DownloadManager:
     DownloadManager download or download_now method to download it.
     """
 
-    CANCEL_STATES = [DownloadState.PAUSED, DownloadState.STOPPED, DownloadState.FAILED, DownloadState.CANCELED]
+    CANCEL_STATES = [
+        DownloadState.PAUSED,
+        DownloadState.STOPPED,
+        DownloadState.FAILED,
+        DownloadState.CANCELED,
+        DownloadState.REQUEUE
+    ]
 
     STATE_DOWNLOAD_CALLBACKS = {
         DownloadState.COMPLETED: lambda d, *a: d.finish(),
@@ -109,14 +116,16 @@ class DownloadManager:
         self.__game_queue = queue.PriorityQueue()
 
         # The queues and associated limits
-        self.queues = [(self.__ui_queue, UI_DOWNLOAD_THREADS),
-                       (self.__game_queue, GAME_DOWNLOAD_THREADS)]
+        self.queues = {
+            self.__ui_queue: UI_DOWNLOAD_THREADS,
+            self.__game_queue: config.max_parallel_game_downloads
+        }
 
         self.__cancel = {}
-        self.workers = []
+        self.workers = {}
         # The list of currently active downloads
         # These are items not in the queue, but currently being downloaded
-        self.active_downloads = {}
+        self._active_downloads_data = {}
         self.active_downloads_lock = threading.RLock()
 
         # to keep track and prevent re-queueing, because queue.get() would empty it otherwise
@@ -129,12 +138,25 @@ class DownloadManager:
 
         self.logger = logging.getLogger("minigalaxy.download_manager.DownloadManager")
 
-        for q, number_threads in self.queues:
-            for i in range(number_threads):
-                download_thread = threading.Thread(target=lambda: self.__download_thread(q))
-                download_thread.daemon = True
-                download_thread.start()
-                self.workers.append(download_thread)
+        for q, number_threads in self.queues.items():
+            self.workers[q] = []
+            self.__initialize_workers(q, number_threads)
+
+    @property
+    def active_downloads(self):
+        '''produces a simple list view of the all currently active downloads'''
+        with self.active_downloads_lock:
+            result = []
+            for d in self._active_downloads_data.values():
+                result.append(d['download'])
+            return result
+
+    def __initialize_workers(self, queue, num_workers):
+        for i in range(num_workers):
+            download_thread = threading.Thread(target=lambda: self.__download_thread(queue))
+            download_thread.daemon = True
+            download_thread.start()
+            self.workers[queue].append(download_thread)
 
     def add_active_downloads_listener(self, listener):
         if listener not in self.download_list_change_listener:
@@ -209,8 +231,7 @@ class DownloadManager:
                 else:
                     self.__notify_listeners(DownloadState.PAUSED, d)
                     # let paused downloads at least display a rough estimate of where they are
-                    d.current_progress = paused_downloads[file]
-                    self.__notify_listeners(DownloadState.PROGRESS, d, d.current_progress)
+                    self.__notify_listeners(DownloadState.PROGRESS, d, download_params=[paused_downloads[file]])
                     continue
 
             self.put_in_proper_queue(d)
@@ -235,6 +256,38 @@ class DownloadManager:
         else:
             # Add other items to the UI queue
             self.__ui_queue.put(QueuedDownloadItem(download, 0))
+
+    def adjust_game_workers(self, new_amount, stop_active=False):
+        '''
+        This method allows to dynamically change the number of download threads used by the game queue.
+        The new number is compared against the current value set in config, afterwards the config value is updated.
+          1. When greater, new threads are spawned for this queue.
+          2. When smaller, idle threads will orderly terminate until len(workers[game_queue]) == new_amount (TBD)
+          2a. Threads which are currently busy will only be actively stopped when stop_active=True is given. (TBD)
+              In that case, the download with the least amount of progress is stopped and requeued afterwards
+        '''
+
+        difference = new_amount - self.config.max_parallel_game_downloads
+        if difference == 0 or new_amount < 1:
+            return
+
+        self.config.max_parallel_game_downloads = new_amount
+        self.queues[self.__game_queue] = new_amount
+        if difference > 0:
+            self.__initialize_workers(self.__game_queue, difference)
+            return
+
+        if not stop_active:
+            return
+
+        with self.active_downloads_lock:
+            downloads_on_queue = self.__get_active_from_queue(self.__game_queue)
+            if len(downloads_on_queue) > new_amount:
+                # when stop_active=True, sort by progress and stop the lowest until
+                # max workers is reached
+                downloads_on_queue.sort(key=lambda d: d.current_progress)
+                to_stop = downloads_on_queue[0:abs(difference)]
+                self.cancel_download(to_stop, DownloadState.REQUEUE)
 
     def download_now(self, download):
         """
@@ -301,7 +354,7 @@ class DownloadManager:
         """
         for download in download_dict.keys():
             self.logger.debug("download: {}".format(download))
-            for download_queue, limit in self.queues:
+            for download_queue in self.queues:
                 new_queue = queue.PriorityQueue()
 
                 while not download_queue.empty():
@@ -334,7 +387,7 @@ class DownloadManager:
         Cancel all current downloads queued
         """
         self.logger.debug("Canceling all downloads")
-        for download_queue, limit in self.queues:
+        for download_queue in self.queues:
             self.logger.debug("queue length: {}".format(download_queue.qsize()))
             while not download_queue.empty():
                 download = download_queue.get().item
@@ -364,15 +417,6 @@ class DownloadManager:
                 self.__request_download_cancel(d, cancel_state)
                 self.__notify_listeners(cancel_state, d)
 
-    def __remove_download_from_active_downloads(self, download):
-        "Remove a download from the list of active downloads"
-        with self.active_downloads_lock:
-            if download in self.active_downloads:
-                self.logger.debug("Removing download from active downloads list")
-                del self.active_downloads[download]
-            else:
-                self.logger.debug("Didn't find download in active downloads list")
-
     def __download_thread(self, download_queue):
         """
         The main DownloadManager thread calls this when it is created
@@ -380,11 +424,20 @@ class DownloadManager:
         Users of this library should not need to call this.
         """
         while True:
+            if download_queue in self.queues:
+                max_workers = self.queues[download_queue]
+                if len(self.workers[download_queue]) > max_workers:
+                    self.logger.debug("Shutting down worker because there are more then allowed")
+                    self.workers[download_queue].remove(threading.current_thread())
+                    # The number of workers was reduced and the current thread is idle:
+                    # Exit the thread in an orderly way
+                    return
+
             if not download_queue.empty():
                 # Update the active downloads
                 with self.active_downloads_lock:
                     download = download_queue.get().item
-                    self.active_downloads[download] = download
+                    self._add_to_active_downloads(download, download_queue)
                     self.__remove_from_queued_list(download)
 
                 self.__notify_listeners(DownloadState.STARTED, download)
@@ -419,7 +472,9 @@ class DownloadManager:
                 last_error = str(e)  # FIXME: need a way to remove token from error
                 download_attempt += 1
                 # TODO: maybe add an incrementally growing sleep time instead
-                time.sleep(10)  # don't immediately use up all retries
+                if download_attempt < download_max_attempts:
+                    # only sleep when there are retries left
+                    time.sleep(10)  # don't immediately use up all retries
 
         if download_attempt == download_max_attempts:
             result = DownloadState.FAILED
@@ -438,7 +493,7 @@ class DownloadManager:
             result = DownloadState.FAILED
 
         self.__notify_listeners(result, download, additional_params=additional_info)
-        self.__remove_download_from_active_downloads(download)
+        self._remove_from_active_downloads(download)
         self.__cleanup_meta(download, result)
 
     def __prepare_location(self, save_location):
@@ -568,7 +623,7 @@ class DownloadManager:
         # Check first part of the file
         resume_header = {'Range': 'bytes=0-{}'.format(size_to_check - 1)}  # range header is index-0-based
         with self.session.get(download.url, headers=resume_header, stream=True, timeout=30) as download_request:
-            if not download_request.status_code == codes.ok:
+            if not download_request.ok:
                 '''
                 Response is not ok, so we can't download the file.
                 Raise an error instead of returning False to prevent the potentially correct partial files from being deleted.
@@ -590,17 +645,44 @@ class DownloadManager:
         error safeguarding to not kill downloads threads by uncaught exceptions'''
         if state in DownloadManager.STATE_DOWNLOAD_CALLBACKS:
             callback = DownloadManager.STATE_DOWNLOAD_CALLBACKS[state]
-            error_wrapper = self.__call_listener_failsafe
             if forked:
-                error_wrapper(callback, download, *params)
+                self.__call_listener_failsafe(callback, download, *params)
             else:
-                self.listener_thread.submit(error_wrapper, callback, download, *params)
+                self.listener_thread.submit(self.__download_callback, download, state, *params)
 
     def __is_pending(self, download):
         file = download.save_location
         with self.active_downloads_lock:
             # ignore if the file is already pending
-            return file in self.active_downloads or file in self.queued_downloads
+            return file in self._active_downloads_data or file in self.queued_downloads
+
+    def _add_to_active_downloads(self, download, on_queue=None):
+        if not on_queue:
+            on_queue = self.__game_queue
+        with self.active_downloads_lock:
+            self._active_downloads_data[download.save_location] = {
+                'download': download,
+                'queue': on_queue
+            }
+
+    def _remove_from_active_downloads(self, download):
+        "Remove a download from the list of active downloads"
+        with self.active_downloads_lock:
+            save_loc = download.save_location
+            if save_loc in self._active_downloads_data:
+                self.logger.debug("Removing download %s from active downloads list", save_loc)
+                del self._active_downloads_data[save_loc]
+            else:
+                self.logger.debug("Didn't find download %s in active downloads list", save_loc)
+
+    def __get_active_from_queue(self, queue):
+        '''Goes through all active downloads and collects all are active in workers from the given queue'''
+        with self.active_downloads_lock:
+            result = []
+            for d in self._active_downloads_data.values():
+                if queue == d['queue']:
+                    result.append(d['download'])
+            return result
 
     def __add_to_queued_list(self, download):
         with self.active_downloads_lock:
@@ -651,8 +733,9 @@ class DownloadManager:
             self.config.remove_paused_download(download.save_location)
 
         self.__remove_from_queued_list(download)
-        # We may want to unset current_downloads here
-        # For example, if a download was added that is impossible to complete
+
+        if last_state == DownloadState.REQUEUE:
+            self.download(download)
 
     def __is_cancel_type(self, state: DownloadState):
         return state in DownloadManager.CANCEL_STATES

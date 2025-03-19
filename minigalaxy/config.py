@@ -5,6 +5,12 @@ from typing import List
 from minigalaxy.logger import logger
 from minigalaxy.paths import CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
 
+# Moved from constants.py to here because of circular import between translations, config and constants
+# UI download threads are for UI assets like thumbnails or icons
+UI_DOWNLOAD_THREADS = 4
+# Game download threads are for long-running downloads like games, DLC or updates
+DEFAULT_DOWNLOAD_THREAD_COUNT = 4
+
 
 class Config:
 
@@ -158,6 +164,15 @@ class Config:
     @create_applications_file.setter
     def create_applications_file(self, new_value: bool) -> None:
         self.__config["create_applications_file"] = new_value
+        self.__write()
+
+    @property
+    def max_parallel_game_downloads(self) -> int:
+        return self.__config.get("max_download_workers", DEFAULT_DOWNLOAD_THREAD_COUNT)
+
+    @max_parallel_game_downloads.setter
+    def max_parallel_game_downloads(self, new_value: int) -> None:
+        self.__config["max_download_workers"] = new_value
         self.__write()
 
     @property

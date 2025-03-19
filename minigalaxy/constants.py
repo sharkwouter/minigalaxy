@@ -94,11 +94,6 @@ DOWNLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 # This is the file size needed for the download manager to consider resuming worthwhile
 MINIMUM_RESUME_SIZE = 20 * 1024**2  # 20 MB
 
-# UI download threads are for UI assets like thumbnails or icons
-UI_DOWNLOAD_THREADS = 4
-# Game download threads are for long-running downloads like games, DLC or updates
-GAME_DOWNLOAD_THREADS = 4
-
 # Windows executables to not consider when launching
 BINARY_NAMES_TO_IGNORE = [
     # Standard uninstaller
