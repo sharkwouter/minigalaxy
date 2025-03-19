@@ -623,7 +623,7 @@ class DownloadManager:
         # Check first part of the file
         resume_header = {'Range': 'bytes=0-{}'.format(size_to_check - 1)}  # range header is index-0-based
         with self.session.get(download.url, headers=resume_header, stream=True, timeout=30) as download_request:
-            if not 200 <= download_request.status_code < 300:
+            if not download_request.ok:
                 '''
                 Response is not ok, so we can't download the file.
                 Raise an error instead of returning False to prevent the potentially correct partial files from being deleted.
