@@ -9,6 +9,7 @@
 - The number of parallel downloads can now be adjusted dynamically. Previous setting is saved. (thanks to GB609)
 - Fixed a bug that would lead to DLCs being recognized as stand-alone games (thanks to GB609)
 - Allow more games to be launched via information from goggame.info (thanks to GB609)
+- The DLC list will now show a table-like multi-column view where necessary. This fixes issues with games having a high number of DLCs. (thanks to GB609)
 
 **1.3.2**
 - Completely reworked windows wine installation. This should solve a lot of problems with failing game installs. Innoextract (if installed) is only used to detect and configure the installation language. (thanks to GB609)

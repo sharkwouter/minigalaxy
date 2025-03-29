@@ -20,6 +20,7 @@ class GameTileList(LibraryEntry, Gtk.Box):
     menu_button_update = Gtk.Template.Child()
     menu_button_dlc = Gtk.Template.Child()
     menu_button_uninstall = Gtk.Template.Child()
+    dlc_scroll_panel = Gtk.Template.Child()
     dlc_horizontal_box = Gtk.Template.Child()
     menu_button_information = Gtk.Template.Child()
     menu_button_properties = Gtk.Template.Child()
@@ -76,3 +77,7 @@ class GameTileList(LibraryEntry, Gtk.Box):
     @Gtk.Template.Callback("on_menu_button_update_clicked")
     def on_menu_button_update(self, widget):
         super().run_update(widget)
+
+    @Gtk.Template.Callback("recalculate_dlc_list_size")
+    def recalc_dlc_list_size(self, widget, *data):
+        super().recalc_dlc_list_size(self.dlc_scroll_panel, self.dlc_horizontal_box)
