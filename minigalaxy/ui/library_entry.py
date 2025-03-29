@@ -176,10 +176,6 @@ class LibraryEntry:
             self.update_to_state(cancel_to_state)
 
     def __download_dlc(self, dlc_installers) -> None:
-
-        def finish_func(save_location):
-            self.__install_dlc(save_location, dlc_title=dlc_title)
-
         download_info = self.api.get_download_info(self.game, dlc_installers=dlc_installers)
         dlc_title = self.game.name
         dlc_icon = None
@@ -188,6 +184,9 @@ class LibraryEntry:
                 dlc_id = dlc.get('id', None)
                 dlc_icon = self.game.get_cached_icon_path(dlc_id)
                 dlc_title = dlc["title"]
+
+        def finish_func(save_location):
+            self.__install_dlc(save_location, dlc_title=dlc_title)
 
         cancel_to_state = State.INSTALLED
         result = self.__download(download_info, DownloadType.GAME_DLC, finish_func,

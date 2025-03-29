@@ -126,39 +126,41 @@ def get_windows_exe_cmd_from_goggame_info(game, file: str) -> List[str]:
     with open(file, 'r') as info_file:
         info = json.loads(info_file.read())
         # if we have the workingDir property, start the executable at that directory
-        if "playTasks" in info:
-            for task in info["playTasks"]:
-                if "isPrimary" not in task or not task["isPrimary"]:
-                    continue
-                if "category" in task and task["category"] == "game" and "path" in task:
-                    working_dir = task["workingDir"] if "workingDir" in task else "."
-                    path = task["path"]
-                    exe_cmd = [get_wine_path(game), "start", "/b", "/wait",
-                               "/d", f'c:\\game\\{working_dir}',
-                               f'c:\\game\\{path}']
-                    if "arguments" in task:
-                        exe_cmd += shlex.split(task["arguments"])
-                    break
+        for task in info.get("playTasks", []):
+            if not task.get('isPrimary', False):
+                continue
 
+            if "path" in task:
+                working_dir = task.get("workingDir", ".")
+                path = task["path"]
+                exe_cmd = [get_wine_path(game), "start", "/b", "/wait",
+                           "/d", f'c:\\game\\{working_dir}',
+                           f'c:\\game\\{path}']
+                if "arguments" in task:
+                    exe_cmd += shlex.split(task["arguments"])
+                break
+
+    logger.debug("%s contains execute command [%s]", file, ' '.join(exe_cmd))
     return exe_cmd
 
 
 def get_windows_exe_cmd(game, files):
+    '''Find game executable file'''
+
     exe_cmd = []
     prefix = os.path.join(game.install_dir, "prefix")
 
-    # Find game executable file
-    if goggame_info_file_list := [file for file in files if re.match(r"^goggame-\d*\.info$", file)]:
-        # Get the execute command from the goggame info file
-        for file in goggame_info_file_list:
-            output = get_windows_exe_cmd_from_goggame_info(game, file)
-            if output:
-                exe_cmd = output
-                break
-    elif launch_file_list := [file for file in files if re.match(r"^Launch .*\.lnk$", file)]:
+    # Get the execute command from the goggame info file
+    goggame_file = os.path.join(game.install_dir, f'goggame-{game.id}.info')
+    if os.path.exists(goggame_file):
+        exe_cmd = get_windows_exe_cmd_from_goggame_info(game, goggame_file)
+
+    if not exe_cmd and (launch_file_list := [file for file in files if re.match(r"^Launch .*\.lnk$", file)]):
         # Set Launch Game.lnk as executable
         exe_cmd = [get_wine_path(game), os.path.join(game.install_dir, launch_file_list[0])]
-    else:
+        logger.debug("using link file [%s] as execute command", launch_file_list[0])
+
+    if not exe_cmd:
         # Find the first executable file that is not blacklisted
         for file in files:
             if os.path.splitext(file.upper())[-1] not in [".EXE", ".LNK"]:
@@ -283,10 +285,12 @@ def check_if_game_start_process_spawned_final_process(error_message, game):
 
 
 def send_game_output_to_stdout(process):
+
     def _internal_call(process):
         for line in iter(process.stdout.readline, b''):
             print(line.decode('utf-8'), end='')  # TODO Is this intentionally a print statement?
         process.stdout.close()
         process.wait()
+
     t = threading.Thread(target=_internal_call, args=(process,))
     t.start()

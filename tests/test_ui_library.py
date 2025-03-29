@@ -192,7 +192,8 @@ class TestLibrary(TestCase):
     @mock.patch('os.listdir')
     def test1_get_installed_windows_game(self, mock_listdir):
         mock_listdir.return_value = ["goggame-1207665883.info"]
-        game_json_data = '{ "gameId": "1207665883", "name": "Aliens vs Predator Classic 2000" }'.encode('utf-8')
+        # none-empty list of playTasks needed so that library recognizes it as installed game
+        game_json_data = '{ "gameId": "1207665883", "name": "Aliens vs Predator Classic 2000", "playTasks":[{}]}'.encode('utf-8')
         with patch("builtins.open", mock_open(read_data=game_json_data)):
             games = get_installed_windows_games("/example/path")
         exp = "Aliens vs Predator Classic 2000"
@@ -202,7 +203,8 @@ class TestLibrary(TestCase):
     @mock.patch('os.listdir')
     def test2_get_installed_windows_game(self, mock_listdir):
         mock_listdir.return_value = ["goggame-1207665883.info"]
-        game_json_data = '{ "gameId": "1207665883", "name": "Aliens vs Predator Classic 2000" }'.encode('utf-8-sig')
+        # none-empty list of playTasks needed so that library recognizes it as installed game
+        game_json_data = '{ "gameId": "1207665883", "name": "Aliens vs Predator Classic 2000", "playTasks":[{}]}'.encode('utf-8-sig')
         with patch("builtins.open", mock_open(read_data=game_json_data)):
             games = get_installed_windows_games("/example/path")
         exp = "Aliens vs Predator Classic 2000"
