@@ -165,15 +165,20 @@ class Test(TestCase):
         "rootGameId": "1407287452",
         "version": 1
         }"""
-        handlers = (
-            mock_open(read_data=goggame_1414471894_info_content).return_value,
-            mock_open(read_data=goggame_1407287452_info_content).return_value,
-        )
-        mo.side_effect = handlers
+
+        def open_file(filename, mode):
+            if filename.endswith("goggame-1414471894.info"):
+                return mock_open(read_data=goggame_1414471894_info_content).return_value
+            elif filename.endswith("goggame-1407287452.info"):
+                return mock_open(read_data=goggame_1407287452_info_content).return_value
+            else:
+                print('open called with '+filename)
+                pass
+        mo.side_effect = open_file
         mock_exists.return_value = True
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'MetroExodus.exe', 'unins000.exe',
                  'goggame-1407287452.info', 'goggame-1414471894.info']
-        game = Game("Test Game", install_dir="/test/install/dir")
+        game = Game("Test Game", install_dir="/test/install/dir", game_id=1407287452)
         exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', 'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\.',
                'c:\\game\\MetroExodus.exe']
         obs = launcher.get_windows_exe_cmd(game, files)

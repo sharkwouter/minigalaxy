@@ -176,10 +176,6 @@ class LibraryEntry:
             self.update_to_state(cancel_to_state)
 
     def __download_dlc(self, dlc_installers) -> None:
-
-        def finish_func(save_location):
-            self.__install_dlc(save_location, dlc_title=dlc_title)
-
         download_info = self.api.get_download_info(self.game, dlc_installers=dlc_installers)
         dlc_title = self.game.name
         dlc_icon = None
@@ -188,6 +184,9 @@ class LibraryEntry:
                 dlc_id = dlc.get('id', None)
                 dlc_icon = self.game.get_cached_icon_path(dlc_id)
                 dlc_title = dlc["title"]
+
+        def finish_func(save_location):
+            self.__install_dlc(save_location, dlc_title=dlc_title)
 
         cancel_to_state = State.INSTALLED
         result = self.__download(download_info, DownloadType.GAME_DLC, finish_func,
@@ -397,6 +396,29 @@ class LibraryEntry:
     '''----- END UPDATE CHECK HELPERS -----'''
 
     '''----- UI REPRESENTATION UTILITIES -----'''
+
+    def recalc_dlc_list_size(self, scrollable_window, dlc_flowbox):
+        '''Adjusts the DLC list size when the DLC button is clicked.
+        Must be called from child class instances where needed.
+
+        Algorithm:
+        1. Take half window height and divide by dlc item height.
+        2. Set result as max items per column
+        3. DLC list will open more columns horizontally as needed
+        4. Configure fixed with for scrollable container to be 80% of window
+
+        => This results in a table-like layout of all DLCs at roughly the size [window_width * 0.8, window_height / 2]
+        '''
+
+        max_height = int(self.parent_window.get_allocated_height() / 2)
+        max_width = int(self.parent_window.get_allocated_width() * 0.8)
+        first_dlc = dlc_flowbox.get_child_at_index(0)
+        item_height = first_dlc.get_preferred_height()[1]
+        num_vertical_items = int(max_height / item_height)
+
+        dlc_flowbox.set_max_children_per_line(num_vertical_items)
+        preferred_width = dlc_flowbox.get_preferred_width()[1]
+        scrollable_window.set_size_request(min(preferred_width, max_width), dlc_flowbox.get_preferred_height()[1])
 
     def update_gtk_box_for_dlc(self, dlc_info):
         title = dlc_info['title']
@@ -608,7 +630,7 @@ class DlcListEntry(Gtk.Box):
         self.install_button.connect("clicked", self.__dlc_button_clicked)
         self.pack_start(self.install_button, False, True, 0)
 
-        parent_entry.dlc_horizontal_box.pack_start(self, False, True, 0)
+        parent_entry.dlc_horizontal_box.add(self)
         self.show_all()
         self.get_async_image_dlc_icon(dlc_info['id'], dlc_info["images"]["sidebarIcon"])
 

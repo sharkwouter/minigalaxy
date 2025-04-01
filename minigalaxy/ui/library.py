@@ -217,6 +217,9 @@ def get_installed_windows_games(full_path, game_categories_dict=None):
         if re.match(r'^goggame-[0-9]*\.info$', file):
             with open(os.path.join(full_path, file), 'rb') as info_file:
                 info = json.loads(info_file.read().decode('utf-8-sig'))
+                if not info.get('playTasks', []):
+                    continue
+
                 game = Game(
                     name=info["name"],
                     game_id=int(info["gameId"]),
