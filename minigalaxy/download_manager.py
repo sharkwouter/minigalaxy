@@ -96,7 +96,7 @@ class DownloadManager:
         DownloadState.CANCELED: lambda d, *a: d.cancel(),
         DownloadState.FAILED: lambda d, *a: d.cancel(),
         DownloadState.STOPPED: lambda d, *a: d.cancel(),
-        DownloadState.PROGRESS: lambda d, percent: d.set_progress(percent)
+        DownloadState.PROGRESS: lambda d, state, percent: d.set_progress(percent)
     }
 
     def __init__(self, session: Session, config: Config):
@@ -362,9 +362,7 @@ class DownloadManager:
 
                     # Test a Download against a QueuedDownloadItem
                     should_cancel = download == queued_download.item
-                    # test for games
-                    if not should_cancel:
-                        should_cancel = (download.game is not None) and (download.game == queued_download.item.game)
+
                     # test for other assets
                     if not should_cancel:
                         should_cancel = download.save_location == queued_download.item.save_location
@@ -413,7 +411,7 @@ class DownloadManager:
             return
 
         for d in downloads:
-            if os.path.exists(d.save_location):
+            if os.path.exists(d.save_location) and self.__get_cancel_state(d) is DownloadState.STOPPED:
                 self.__request_download_cancel(d, cancel_state)
                 self.__notify_listeners(cancel_state, d)
 
@@ -445,7 +443,8 @@ class DownloadManager:
                 # Mark the task as done to keep counts correct so
                 # we can use join() or other functions later
                 download_queue.task_done()
-            time.sleep(0.02)
+
+            time.sleep(0.5)
 
     def __download_file(self, download, download_queue):
         """
@@ -457,29 +456,27 @@ class DownloadManager:
             The Download to download
         """
         self.__prepare_location(download.save_location)
-        download_max_attempts = 5
-        download_attempt = 0
+        # clear flags from previous attempts
+        self.__clear_cancel_state(download)
+
+        download_attempts = 5
         result = None
-        additional_info = []
         last_error = None
-        while download_attempt < download_max_attempts:
+        while 0 < download_attempts:
             try:
                 start_point, download_mode = self.__get_start_point_and_download_mode(download)
                 result = self.__download_operation(download, start_point, download_mode)
+                self.logger.debug("Returning result from _download_operation: {}".format(result))
                 break
             except RequestException as e:
+                result = DownloadState.FAILED
                 self.logger.error("Received error downloading file [%s]: %s", download.url, e)
                 last_error = str(e)  # FIXME: need a way to remove token from error
-                download_attempt += 1
                 # TODO: maybe add an incrementally growing sleep time instead
-                if download_attempt < download_max_attempts:
+                if download_attempts > 1:
                     # only sleep when there are retries left
                     time.sleep(10)  # don't immediately use up all retries
-
-        if download_attempt == download_max_attempts:
-            result = DownloadState.FAILED
-            if last_error:
-                additional_info.append(last_error)
+            download_attempts -= 1
 
         # Successful downloads
         if result is DownloadState.COMPLETED:
@@ -492,6 +489,7 @@ class DownloadManager:
         if not result:
             result = DownloadState.FAILED
 
+        additional_info = [last_error] if last_error else []
         self.__notify_listeners(result, download, additional_params=additional_info)
         self._remove_from_active_downloads(download)
         self.__cleanup_meta(download, result)
@@ -642,13 +640,13 @@ class DownloadManager:
 
     def __download_callback(self, download, state, *params, forked=False):
         '''encapsulates invocation of callbacks on Download to assure uniform threading and
-        error safeguarding to not kill downloads threads by uncaught exceptions'''
+        error safeguarding to not kill download threads by uncaught exceptions'''
         if state in DownloadManager.STATE_DOWNLOAD_CALLBACKS:
-            callback = DownloadManager.STATE_DOWNLOAD_CALLBACKS[state]
             if forked:
-                self.__call_listener_failsafe(callback, download, *params)
+                callback = DownloadManager.STATE_DOWNLOAD_CALLBACKS[state]
+                self.__call_listener_failsafe(callback, download, state, *params)
             else:
-                self.listener_thread.submit(self.__download_callback, download, state, *params)
+                self.listener_thread.submit(self.__download_callback, download, state, *params, forked=True)
 
     def __is_pending(self, download):
         file = download.save_location
@@ -697,7 +695,6 @@ class DownloadManager:
         '''used to separate data structure of self.__cancel from the logic procedure of flagging a download for cancel'''
         if not self.__is_cancel_type(cancel_type):
             raise ValueError(str(cancel_type) + " is not a valid cancel reason")
-
         is_active = False
         with self.active_downloads_lock:
             if download in self.active_downloads:
@@ -715,6 +712,10 @@ class DownloadManager:
     def __cancel_requested(self, download):
         return download in self.__cancel
 
+    def __clear_cancel_state(self, download):
+        if download in self.__cancel:
+            del self.__cancel.get[download]
+
     def __get_cancel_state(self, download):
         return self.__cancel.get(download, None)
 
@@ -722,10 +723,9 @@ class DownloadManager:
         '''depending on the end state of a download, we might want to keep/remove a different set of state data
         about a download. That is what this method controls'''
         self.logger.debug('Cleaning up meta data for: %s', download.filename())
-        if self.__is_cancel_type(last_state) and download in self.__cancel:
-            del self.__cancel[download]
-
         if last_state in [DownloadState.CANCELED]:
+            if download in self.__cancel:
+                del self.__cancel[download]
             if os.path.isfile(download.save_location):
                 os.remove(download.save_location)
 
