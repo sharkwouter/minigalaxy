@@ -461,6 +461,7 @@ class DownloadManager:
 
         download_attempts = 5
         result = None
+        last_error = None
         while 0 < download_attempts:
             try:
                 start_point, download_mode = self.__get_start_point_and_download_mode(download)
@@ -472,7 +473,7 @@ class DownloadManager:
                 self.logger.error("Received error downloading file [%s]: %s", download.url, e)
                 last_error = str(e)  # FIXME: need a way to remove token from error
                 # TODO: maybe add an incrementally growing sleep time instead
-                if download_attempts > 0:
+                if download_attempts > 1:
                     # only sleep when there are retries left
                     time.sleep(10)  # don't immediately use up all retries
             download_attempts -= 1
