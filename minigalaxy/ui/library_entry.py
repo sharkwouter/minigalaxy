@@ -227,6 +227,7 @@ class LibraryEntry:
         self.config.add_ongoing_download(self.game.id)
         # Start the download for all files
         self.download_list = []
+        ProgressHack.unset_progress_tracker(self)
         number_of_files = len(download_info['files'])
         total_file_size = 0
         download_files = []
@@ -267,13 +268,11 @@ class LibraryEntry:
                 save_location=download_path,
                 download_type=download_type,
                 finish_func=finish_func_wrapper(finish_func),
-                progress_func=self.set_progress,
-                cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
-                number=number_of_files - key,
-                out_of_amount=number_of_files,
                 game=self.game,
                 download_icon=download_icon
             )
+            # uses side-effects to maintain a list of progress percentages
+            ProgressHack(download, self, lambda: self.__cancel(to_state=cancel_to_state))
             download_files.insert(0, download)
         self.download_list.extend(download_files)
 
@@ -296,6 +295,7 @@ class LibraryEntry:
     def __install_game(self, save_location):
         self.config.remove_ongoing_download(self.game.id)
         self.download_list = []
+        ProgressHack.unset_progress_tracker(self)
         self.game.set_install_dir(self.config.install_dir)
         install_success = self.__install(save_location)
         if install_success:
@@ -363,6 +363,7 @@ class LibraryEntry:
 
     def __cancel(self, to_state):
         self.download_list = []
+        ProgressHack.unset_progress_tracker(self)
         self.update_to_state(to_state)
         GLib.idle_add(self.reload_state)
 
@@ -604,6 +605,48 @@ class LibraryEntry:
             GLib.idle_add(self.STATE_UPDATE_HANDLERS[state])
 
     '''----- END STATE HANDLING -----'''
+
+
+class ProgressHack():
+    '''Temporary total progress estimation until MultiPartDownloads are fully implemented'''
+
+    def __init__(self, download, parent, cancel_fun):
+        self.download = download
+        # need to post-patch progress callback because it should normally be passed to download at construction time
+        download.callback_progress = self.received_progress
+        download.callback_cancel = self.cancel
+        self.parent = parent
+        self.cancel_fun = cancel_fun
+        if not self.parent.download_progress:
+            self.parent.download_progress = {}
+            self.parent.current_progress = 0
+
+        self.parent.download_progress[self.download] = 0
+
+    def received_progress(self, progress):
+        '''
+        rough overall progress estimate. Basically the sum of all percentages / num files
+        this is rough because it does not consider file sizes at all, 
+        so percentages will update very fast in the beginning when small files are downloaded, then slow down
+        '''
+        self.parent.download_progress[self.download] = progress
+        new_progress = sum(self.parent.download_progress.values()) / len(self.parent.download_list)
+        if new_progress > self.parent.current_progress:
+            self.parent.set_progress(new_progress)
+            self.parent.current_progress = new_progress
+
+    def cancel(self):
+        # the download might not have been started yet
+        print("cancel received:", self.download)
+        if self.download in self.parent.download_progress:
+            del self.parent.download_progress[self.download]
+
+        if len(self.parent.download_progress) == 0:
+            self.cancel_fun()
+
+    @staticmethod
+    def unset_progress_tracker(library_entry):
+        library_entry.download_progress = {}
 
 
 class DlcListEntry(Gtk.Box):
