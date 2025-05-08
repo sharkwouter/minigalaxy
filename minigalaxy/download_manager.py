@@ -714,7 +714,7 @@ class DownloadManager:
 
     def __clear_cancel_state(self, download):
         if download in self.__cancel:
-            del self.__cancel.get[download]
+            del self.__cancel[download]
 
     def __get_cancel_state(self, download):
         return self.__cancel.get(download, None)
@@ -724,8 +724,7 @@ class DownloadManager:
         about a download. That is what this method controls'''
         self.logger.debug('Cleaning up meta data for: %s', download.filename())
         if last_state in [DownloadState.CANCELED]:
-            if download in self.__cancel:
-                del self.__cancel[download]
+            self.__clear_cancel_state(download)
             if os.path.isfile(download.save_location):
                 os.remove(download.save_location)
 
