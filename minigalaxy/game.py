@@ -21,10 +21,10 @@ class Game:
         self.status_file_path = self.get_status_file_path()
 
     def get_stripped_name(self, to_path=False):
-        return self.__strip_string(self.name, to_path)
+        return self.strip_string(self.name, to_path)
 
     def get_install_directory_name(self):
-        return self.__strip_string(self.name, to_path=True)
+        return self.strip_string(self.name, to_path=True)
 
     def get_cached_icon_path(self, dlc_id=None):
         if dlc_id:
@@ -54,8 +54,9 @@ class Game:
             json.dump(json_dict, status_file)
 
     @staticmethod
-    def __strip_string(string, to_path=False):
-        return re.sub('[^A-Za-z0-9]+', '', string) if not to_path else re.sub('[^A-Za-z0-9 ]+', '', string)
+    def strip_string(string, to_path=False):
+        cleaned_string = re.sub('[^A-Za-z0-9]+', '', string) if not to_path else re.sub('[^A-Za-z0-9 ]+', '', string)
+        return cleaned_string.strip()  # make sure the directory does not start or end with any whitespace
 
     def is_installed(self, dlc_title="") -> bool:
         installed = False
