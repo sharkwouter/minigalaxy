@@ -14,7 +14,7 @@ from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command, get_wine_path, wine_restore_game_link
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, WINE_RES_PATH
+from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, WINE_RES_PATH, DOWNLOAD_DIR
 
 
 def get_available_disk_space(location):
@@ -53,7 +53,8 @@ def install_game(  # noqa: C901
         language: str,
         install_dir: str,
         keep_installers: bool,
-        create_desktop_file: bool
+        create_desktop_file: bool,
+        file_list=None
 ):
     error_message = ""
     tmp_dir = ""
@@ -76,7 +77,7 @@ def install_game(  # noqa: C901
     except Exception:
         logger.error("Error installing game %s", game.name, exc_info=1)
         error_message = _("Unhandled error.")
-    _removal_error = remove_installer(game, installer, install_dir, keep_installers)
+    _removal_error = remove_installer(game, installer, install_dir, keep_installers, file_list)
     error_message = error_message or _removal_error or postinstaller(game)
     if error_message:
         logger.error(error_message)
@@ -341,31 +342,61 @@ def compare_directories(dir1, dir2):
     return result
 
 
-def remove_installer(game: Game, installer: str, install_dir: str, keep_installers: bool):
-    error_message = ""
-    installer_directory = os.path.dirname(installer)
-    if not os.path.isdir(installer_directory):
-        error_message = "No installer directory is present: {}".format(installer_directory)
+def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_installers: bool, file_list=None):
+    installer_dir = os.path.dirname(installer)
+    if not os.path.isdir(installer_dir):
+        error_message = "No installer directory is present: {}".format(installer_dir)
         return error_message
 
-    if keep_installers:
-        keep_dir = os.path.join(install_dir, "installer")
-        keep_dir2 = os.path.join(keep_dir, game.get_install_directory_name())
-        if keep_dir2 == installer_directory:
-            # We are using the keep installer already
-            return error_message
+    installer_root_dirs = [
+        os.path.realpath(DOWNLOAD_DIR),
+        keep_installers_dir
+    ]
 
-        if not compare_directories(installer_directory, keep_dir2):
-            shutil.rmtree(keep_dir2, ignore_errors=True)
-            try:
-                shutil.move(installer_directory, keep_dir2)
-            except Exception as e:
-                error_message = str(e)
-    else:
-        for file in os.listdir(installer_directory):
-            os.remove(os.path.join(installer_directory, file))
+    keep_files = []
+    if keep_installers and file_list:
+        keep_files = file_list
+    elif keep_installers:
+        # assume all support files are named with the same prefix and only differ in ending
+        # we run into this case when installing from local file by ui clicking instead of from the download_finish callback
+        installer_prefix = os.path.splitext(os.path.basename(installer))[0]
+        for f in os.listdir(installer_dir):
+            fullpath = os.path.join(installer_dir, f)
+            if os.path.isfile(fullpath) and f.startswith(installer_prefix):
+                keep_files.append(fullpath)
 
-    return error_message
+    logger.info("Cleaning [%s] - keep_files:%s", installer_dir, keep_files)
+
+    # assume all files in file_list are in the same directory relative to dirname(installer)
+    try:
+        for file in os.listdir(installer_dir):
+            file = os.path.join(installer_dir, file)
+            if os.path.isfile(file) and file not in keep_files:
+                logger.info("Deleting file [%s] - not in keep_files", file)
+                os.remove(file)
+
+        # walk up and delete empty directories, but stop if the parent is one of the roots used by MG
+        # this is just maintenance to prevent aggregating empty directories in cache
+        remove_empty_dirs_upwards(installer_dir, installer_root_dirs)
+    except BaseException as e:
+        logger.error(e)
+        return str(e)
+
+    return ""
+
+
+def is_empty_dir(path):
+    return not os.listdir(path)
+
+
+def remove_empty_dirs_upwards(start_dir, stop_dirs):
+    file_dir = start_dir
+    while is_empty_dir(file_dir):
+        logger.info("Remove now empty sub-directory [%s]", file_dir)
+        os.rmdir(file_dir)
+        file_dir = os.path.dirname(file_dir)
+        if file_dir in stop_dirs:
+            break
 
 
 def postinstaller(game):

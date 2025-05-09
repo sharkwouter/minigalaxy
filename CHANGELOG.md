@@ -11,6 +11,7 @@
 - Allow more games to be launched via information from goggame.info (thanks to GB609)
 - The DLC list will now show a table-like multi-column view where necessary. This fixes issues with games having a high number of DLCs. (thanks to GB609)
 - Some bug fixes in DownloadManager related to canceling active and queued downloads (thanks to GB609)
+- Fix deletion logic of downloaded installation files. Base installers and DLC will not interfere with each other anymore. (thanks to GB609)
 
 **1.3.2**
 - Completely reworked windows wine installation. This should solve a lot of problems with failing game installs. Innoextract (if installed) is only used to detect and configure the installation language. (thanks to GB609)
