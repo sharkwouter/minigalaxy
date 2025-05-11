@@ -305,7 +305,7 @@ class LibraryEntry:
             download_dir = self.keep_path
 
         # DLC download go into subfolder of their own
-        cleaned_name = self.game.strip_string(download_info['name'], True)
+        cleaned_name = Game.strip_string(download_info['name'], True)
         if not download_dir.endswith(cleaned_name):
             download_dir = os.path.join(download_dir, cleaned_name)
 

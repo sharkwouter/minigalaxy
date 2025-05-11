@@ -21,10 +21,10 @@ class Game:
         self.status_file_path = self.get_status_file_path()
 
     def get_stripped_name(self, to_path=False):
-        return self.strip_string(self.name, to_path)
+        return Game.strip_string(self.name, to_path)
 
     def get_install_directory_name(self):
-        return self.strip_string(self.name, to_path=True)
+        return Game.strip_string(self.name, to_path=True)
 
     def get_cached_icon_path(self, dlc_id=None):
         if dlc_id:
