@@ -378,7 +378,7 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
         # walk up and delete empty directories, but stop if the parent is one of the roots used by MG
         # this is just maintenance to prevent aggregating empty directories in cache
         remove_empty_dirs_upwards(installer_dir, installer_root_dirs)
-    except BaseException as e:
+    except Exception as e:
         logger.error(e)
         return str(e)
 
