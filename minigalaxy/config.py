@@ -104,15 +104,6 @@ class Config:
         self.__write()
 
     @property
-    def keep_installer_history(self) -> bool:
-        return self.__config.get("keep_installer_history", False)
-
-    @keep_installer_history.setter
-    def keep_installer_history(self, new_value: bool) -> None:
-        self.__config["keep_installer_history"] = new_value
-        self.__write()
-
-    @property
     def stay_logged_in(self) -> bool:
         return self.__config.get("stay_logged_in", True)
 
