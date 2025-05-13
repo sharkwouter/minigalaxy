@@ -136,6 +136,9 @@ class LibraryEntry:
         if os.path.isdir(self.keep_path):
             for dir_content in os.listdir(self.keep_path):
                 kept_file = os.path.join(self.keep_path, dir_content)
+                if not os.path.isfile(kept_file):
+                    continue
+
                 if os.access(kept_file, os.X_OK) or os.path.splitext(kept_file)[-1] in [".exe", ".sh"]:
                     exes_by_creation_date[int(os.path.getmtime(kept_file))] = kept_file
 
@@ -305,8 +308,9 @@ class LibraryEntry:
             download_dir = self.keep_path
 
         # DLC download go into subfolder of their own
-        cleaned_name = Game.strip_string(download_info['name'], True)
-        if not download_dir.endswith(cleaned_name):
+        last_dir = os.path.basename(download_dir)  # basename to avoid issues with trailing slashes
+        cleaned_name = Game.strip_string(download_info['name'], to_path=True)
+        if last_dir != cleaned_name:
             download_dir = os.path.join(download_dir, cleaned_name)
 
         return download_dir

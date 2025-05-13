@@ -9,8 +9,9 @@ import minigalaxy
 
 
 class Test(TestCase):
+    @mock.patch('os.listdir')
     @mock.patch('os.path.exists')
-    def test_install_game(self, mock_exists):
+    def test_install_game(self, mock_exists, mock_listdir):
         """[scenario: unhandled error]"""
         mock_exists.side_effect = FileNotFoundError("Testing unhandled errors during install")
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
@@ -33,7 +34,7 @@ class Test(TestCase):
                          "Beneath a Steel Sky/{}".format(installer_name)
         exp = ""
         with patch("builtins.open", mock_open(read_data=b"")):
-            obs = installer.verify_installer_integrity(game, installer_path)
+            obs = installer.verify_installer_integrity(game, [installer_path])
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
@@ -52,7 +53,7 @@ class Test(TestCase):
                          "Beneath a Steel Sky/{}".format(installer_name)
         exp = _("{} was corrupted. Please download it again.").format(installer_name)
         with patch("builtins.open", mock_open(read_data=b"aaaa")):
-            obs = installer.verify_installer_integrity(game, installer_path)
+            obs = installer.verify_installer_integrity(game, [installer_path])
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')

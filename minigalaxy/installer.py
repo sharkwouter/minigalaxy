@@ -59,9 +59,13 @@ def install_game(  # noqa: C901
     error_message = ""
     tmp_dir = ""
     logger.info("Installing {}".format(game.name))
+
+    if not file_list:
+        file_list = list_installer_files(installer)
+
     try:
         if not error_message:
-            error_message = verify_installer_integrity(game, installer)
+            error_message = verify_installer_integrity(game, file_list)
         if not error_message:
             error_message = verify_disk_space(game, installer)
         if not error_message:
@@ -84,26 +88,31 @@ def install_game(  # noqa: C901
     return error_message
 
 
-def verify_installer_integrity(game, installer):
-    error_message = ""
-    if not os.path.exists(installer):
-        error_message = _("{} failed to download.").format(installer)
-    if not error_message:
-        for installer_file_name in os.listdir(os.path.dirname(installer)):
-            hash_md5 = hashlib.md5()
-            with open(os.path.join(os.path.dirname(installer), installer_file_name), "rb") as installer_file:
-                for chunk in iter(lambda: installer_file.read(4096), b""):
-                    hash_md5.update(chunk)
-            calculated_checksum = hash_md5.hexdigest()
-            if installer_file_name in game.md5sum:
-                if game.md5sum[installer_file_name] == calculated_checksum:
-                    logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
-                else:
-                    error_message = _("{} was corrupted. Please download it again.").format(installer_file_name)
-                    break
-            else:
-                logger.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
-    return error_message
+def verify_installer_integrity(game, installer_files):
+    error_message = []
+
+    for installer in installer_files:
+        installer_file_name = os.path.basename(installer)
+        if not os.path.exists(installer):
+            error_message = _("{} failed to download.").format(installer_file_name)
+
+        hash_md5 = hashlib.md5()
+        with open(installer, "rb") as installer_file:
+            for chunk in iter(lambda: installer_file.read(4096), b""):
+                hash_md5.update(chunk)
+        calculated_checksum = hash_md5.hexdigest()
+
+        if installer_file_name not in game.md5sum:
+            logger.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
+            continue
+
+        if game.md5sum[installer_file_name] == calculated_checksum:
+            logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
+        else:
+            error_message.append(_("{} was corrupted. Please download it again.").format(installer_file_name))
+            break
+
+    return '\n'.join(error_message)
 
 
 def verify_disk_space(game, installer):
@@ -359,11 +368,7 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
     elif keep_installers:
         # assume all support files are named with the same prefix and only differ in ending
         # we run into this case when installing from local file by ui clicking instead of from the download_finish callback
-        installer_prefix = os.path.splitext(os.path.basename(installer))[0]
-        for f in os.listdir(installer_dir):
-            fullpath = os.path.join(installer_dir, f)
-            if os.path.isfile(fullpath) and f.startswith(installer_prefix):
-                keep_files.append(fullpath)
+        keep_files = list_installer_files(installer)
 
     logger.info("Cleaning [%s] - keep_files:%s", installer_dir, keep_files)
 
@@ -383,6 +388,29 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
         return str(e)
 
     return ""
+
+
+def list_installer_files(installer):
+    '''
+    Helper utility to list all files in the same directory that belong to the given installer executable.
+    Expects the following naming convention:
+    - game_installer_version.[exe|sh]
+    - game_installer_version-1.bin
+    - game_installer_version-2.bin ...
+
+    Returns unsorted array of absolute paths for all files whose names are matching
+    the base name of the installer (without extension) in the SAME directory.
+    No recursion.
+    '''
+    installer_prefix = os.path.splitext(os.path.basename(installer))[0]
+    installer_dir = os.path.dirname(installer)
+    installer_files = []
+    for f in os.listdir(installer_dir):
+        fullpath = os.path.join(installer_dir, f)
+        if os.path.isfile(fullpath) and f.startswith(installer_prefix):
+            installer_files.append(fullpath)
+
+    return installer_files
 
 
 def is_empty_dir(path):
