@@ -1,12 +1,17 @@
-import sys
+import hashlib
 import os
-import shutil
+import re
 import shlex
 import subprocess
-import hashlib
+import shutil
+import sys
 import textwrap
 import time
-import re
+
+from collections import deque
+from enum import Enum
+from queue import Empty
+from threading import Thread, RLock
 
 from minigalaxy.config import Config
 from minigalaxy.constants import GAME_LANGUAGE_IDS
@@ -15,6 +20,9 @@ from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command, get_wine_path, wine_restore_game_link
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, WINE_RES_PATH, DOWNLOAD_DIR
+
+
+INSTALL_QUEUE = None
 
 
 def get_available_disk_space(location):
@@ -45,6 +53,15 @@ def check_diskspace(required_size, location):
     installed_game_size = int(required_size)
     diskspace_available = get_available_disk_space(location)
     return diskspace_available >= installed_game_size
+
+
+def enqueue_game_install(install_id, result_callback, *args, **kwargs):
+    global INSTALL_QUEUE
+    if not INSTALL_QUEUE:
+        INSTALL_QUEUE = InstallerQueue()
+
+    task = InstallTask(install_id, result_callback, *args, **kwargs)
+    INSTALL_QUEUE.put(task)
 
 
 def install_game(  # noqa: C901
@@ -98,7 +115,7 @@ def verify_installer_integrity(game, installer_files):
 
         hash_md5 = hashlib.md5()
         with open(installer, "rb") as installer_file:
-            for chunk in iter(lambda: installer_file.read(4096), b""):
+            for chunk in iter(lambda: installer_file.read(8 * 1024), b""):
                 hash_md5.update(chunk)
         calculated_checksum = hash_md5.hexdigest()
 
@@ -120,8 +137,8 @@ def verify_disk_space(game, installer):
     if game.platform == "linux":
         required_space = get_game_size_from_unzip(installer)
         if not check_diskspace(required_space, game.install_dir):
-            err_msg = _("Not enough space to extract game. Required: {} Available: {}"
-                        ).format(required_space, get_available_disk_space(game.install_dir))
+            err_msg = _("Not enough space to extract game. Required: {} Available: {}")\
+                .format(required_space, get_available_disk_space(game.install_dir))
     return err_msg
 
 
@@ -537,3 +554,122 @@ def match_game_lang_to_installer(installer: str, language: str, outputLogFile=No
                 return lang_id
 
     return "en-US"
+
+
+class InstallResultType(Enum):
+    SUCCESS = 1
+    FAILURE = 2
+    CHECKSUM_ERROR = 3
+
+
+class InstallResult:
+    def __init__(self, install_id, result_type: InstallResultType, reason):
+        '''Data class that will be passed to result_callback of InstallTask
+        reason is a type-dependent object:
+        - SUCCESS: currently None, will be install directory path as string after rework of install_game
+        - FAILURE: string error message
+        - CHECKSUM_ERROR: dict {abs_file_path: calculated_checksum}
+        '''
+        self.install_id = install_id
+        self.type = result_type
+        self.reason = reason
+
+
+class InstallTask:
+    def __init__(self, install_id=None, result_callback=None, *args, **kwargs):
+        self.game = InstallTask.__locate_game_in_args(*args, **kwargs)
+        if not install_id:
+            install_id = self.game.id
+        if not result_callback:
+            raise ValueError("result_callback is required")
+        self.installer_id = install_id
+        self.callback = result_callback
+        self.arg_array = args
+        self.named_args = kwargs
+
+    def execute(self):
+        try:
+            error_message = install_game(*self.arg_array, **self.named_args)
+        except Exception as e:
+            logger.error("Error installing item %s", self.installer_id, exc_info=1)
+            error_message = str(e)
+        if error_message:
+            self.callback(InstallResult(self.installer_id, InstallResultType.FAILURE, error_message))
+        else:
+            self.callback(InstallResult(self.installer_id, InstallResultType.SUCCESS, None))
+
+    def __eq__(self, other):
+        if not isinstance(other, InstallTask):
+            return False
+        return self.installer_id == other.installer_id and self.arg_array == other.arg_array
+
+    def __str__(self):
+        return f"InstallTask(id={self.installer_id}, args={self.arg_array}, kwargs={str(self.named_args)})"
+
+    @staticmethod
+    def __locate_game_in_args(*args, **kwargs):
+        for a in [*args, *kwargs.values()]:
+            if isinstance(a, Game):
+                return a
+        raise ValueError("No instance of Game in InstallTask constructor arguments")
+
+
+class InstallerQueue:
+    '''
+    Special queue which includes a worker thread to handle game installations.
+    The worker will only be started and active while there are items in the queue.
+    Custom implementation is chosen because ThreadPoolExecutors don't auto-stop
+    and regular Queues don't provide a check for contained items aside from iterating through everything.
+    '''
+
+    def __init__(self):
+        self.queue = deque()
+        self.worker = None
+        self.active_item = None
+        self.state_lock = RLock()
+
+    def get(self):
+        with self.state_lock:
+            if not self.queue:
+                raise Empty
+            return self.queue.popleft()
+
+    def put(self, item):
+        '''
+        Puts the given item into the queue, if it is not contained (or in work) already.
+        Returns True if the item was added, False otherwise.
+        (Re)starts the internally managed install task worker thread if the item was put into to queue.
+        '''
+
+        with self.state_lock:
+            if self.active_item == item or item in self.queue:
+                return False
+            logger.debug("Queuing: %s", item)
+            self.queue.append(item)
+            if not self.worker or not self.worker.is_alive():
+                self.worker = Thread(name="InstallerQueue worker", target=self.__install_queued_items)
+                self.worker.start()
+            return True
+
+    def empty(self):
+        with self.state_lock:
+            return len(self.queue) == 0
+
+    def __install_queued_items(self):
+        logger.debug("Starting installer thread")
+        is_empty = self.empty()
+        try:
+            while not is_empty:
+                with self.state_lock:
+                    self.active_item = self.get()
+                self.active_item.execute()
+                with self.state_lock:
+                    self.active_item = None
+                is_empty = self.empty()
+        except Empty:
+            pass
+
+        with self.state_lock:
+            self.active_item = None
+            self.worker = None
+        logger.debug("Stopping installer thread")
