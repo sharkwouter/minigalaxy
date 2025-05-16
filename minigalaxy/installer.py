@@ -83,7 +83,7 @@ def install_game(  # noqa: C901
         if not file_list:
             file_list = list_installer_files(installer)
 
-        fail_on_error(verify_installer_integrity(game, file_list), 
+        fail_on_error(verify_installer_integrity(game, file_list),
                       InstallResultType.CHECKSUM_ERROR)
 
         fail_on_error(verify_disk_space(game, installer), InstallResultType.FAILURE)
@@ -100,7 +100,7 @@ def install_game(  # noqa: C901
         if create_desktop_file:
             fail_on_error(create_applications_file(game))
 
-        # Remove at end, but only on success. Allows retries without re-download 
+        # Remove at end, but only on success. Allows retries without re-download
         fail_on_error(remove_installer(game, installer, install_dir, keep_installers, file_list))
 
     except InstallException as e:
@@ -143,6 +143,7 @@ def fail_on_error(message_to_test, fail_type=None, data=None):
         raise InstallException(message_to_test, fail_type, data)
 
     return remaining_args
+
 
 def verify_installer_integrity(game, installer_files):
     error_message = []

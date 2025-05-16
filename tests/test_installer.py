@@ -28,8 +28,8 @@ class Test(TestCase):
         mock_checksum.return_value = ("Checksum Error", failed_file_list)
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
 
-        with self.assertRaises(installer.InstallException) as result: 
-            installer.install_game(game, installer="", language="", install_dir="", 
+        with self.assertRaises(installer.InstallException) as result:
+            installer.install_game(game, installer="", language="", install_dir="",
                                    keep_installers=False, create_desktop_file=True,
                                    file_list=["/cache/adrift_setup.exe", "/cache/adrift_setup-1.bin"], raise_error=True)
 
@@ -45,8 +45,8 @@ class Test(TestCase):
 
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
 
-        with self.assertRaises(installer.InstallException) as result: 
-            installer.install_game(game, installer="", language="", install_dir="", 
+        with self.assertRaises(installer.InstallException) as result:
+            installer.install_game(game, installer="", language="", install_dir="",
                                    keep_installers=False, create_desktop_file=True,
                                    file_list=["/cache/adrift_setup.exe", "/cache/adrift_setup-1.bin"], raise_error=True)
 
