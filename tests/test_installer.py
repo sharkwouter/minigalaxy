@@ -5,11 +5,13 @@ from unittest.mock import patch, mock_open, MagicMock
 from minigalaxy.game import Game
 from minigalaxy import installer
 from minigalaxy.translation import _
+import minigalaxy
 
 
 class Test(TestCase):
+    @mock.patch('os.listdir')
     @mock.patch('os.path.exists')
-    def test_install_game(self, mock_exists):
+    def test_install_game(self, mock_exists, mock_listdir):
         """[scenario: unhandled error]"""
         mock_exists.side_effect = FileNotFoundError("Testing unhandled errors during install")
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
@@ -32,7 +34,7 @@ class Test(TestCase):
                          "Beneath a Steel Sky/{}".format(installer_name)
         exp = ""
         with patch("builtins.open", mock_open(read_data=b"")):
-            obs = installer.verify_installer_integrity(game, installer_path)
+            obs = installer.verify_installer_integrity(game, [installer_path])
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
@@ -51,7 +53,7 @@ class Test(TestCase):
                          "Beneath a Steel Sky/{}".format(installer_name)
         exp = _("{} was corrupted. Please download it again.").format(installer_name)
         with patch("builtins.open", mock_open(read_data=b"aaaa")):
-            obs = installer.verify_installer_integrity(game, installer_path)
+            obs = installer.verify_installer_integrity(game, [installer_path])
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
@@ -339,82 +341,106 @@ class Test(TestCase):
         exp = "No installer directory is present: /home/i/.cache/minigalaxy/download/Beneath a Steel Sky"
         self.assertEqual(obs, exp)
 
-    @mock.patch('os.path.isdir')
-    @mock.patch('minigalaxy.installer.compare_directories')
-    @mock.patch('shutil.rmtree')
+    @mock.patch("os.path.isdir")
+    @mock.patch("os.path.realpath")
+    @mock.patch("minigalaxy.installer.is_empty_dir")
     @mock.patch('os.remove')
+    @mock.patch("os.path.isfile")
+    @mock.patch('os.rmdir')
     @mock.patch('os.listdir')
-    def test_remove_installer_no_keep(self, mock_list_dir, mock_os_remove, mock_shutil_rmtree, mock_compare_directories, mock_os_path_isdir):
-        """
-        Disabled keep_installer
-        """
-        mock_os_path_isdir.return_value = True
-        mock_compare_directories.return_value = False
-        mock_list_dir.return_value = ["beneath_a_steel_sky_en_gog_2_20150.sh"]
+    def test_remove_installer_no_keep(self, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_realpath, mock_isdir):
+        """Disabled keep_installer"""
+        DL_DIR = "/home/i/.cache/minigalaxy/download"
+        mock_realpath.side_effect = lambda p: DL_DIR if p == minigalaxy.paths.DOWNLOAD_DIR else p
+        list_dir_returns = {
+            "/home/i/.cache/minigalaxy": ["download", "icons"],
+            DL_DIR: ["Beneath a Steel Sky"],
+            "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky": ["beneath_a_steel_sky_en_gog_2_20150.sh"],
+        }
+
+        self.setup_os_mocks(list_dir_returns, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_isdir)
 
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
         installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         obs = installer.remove_installer(game1, installer_path, "/some/directory/test", False)
-        assert mock_os_remove.called
-        assert not mock_shutil_rmtree.called
+
+        assert mock_remove.called
         self.assertEqual(obs, "")
 
+    @mock.patch("os.path.isdir")
     @mock.patch('os.remove')
-    @mock.patch('shutil.rmtree')
-    @mock.patch('minigalaxy.installer.compare_directories')
-    @mock.patch('os.path.isdir')
-    def test_remove_installer_same_content(self, mock_os_path_isdir, mock_compare_directories, mock_shutil_rmtree, mock_os_remove):
-        """
-        Same content of installer and keep dir
-        """
-        mock_os_path_isdir.return_value = True
-        mock_compare_directories.return_value = True
+    @mock.patch("os.path.isfile")
+    @mock.patch('os.rmdir')
+    @mock.patch('os.listdir')
+    def test_remove_installer_keep(self, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isdir):
+        """Keep installer dir"""
+
+        list_dir_returns = {
+            "/home/i/GOG Games/installer": ["Beneath a Steel Sky"],
+            "/home/i/GOG Games/installer/Beneath a Steel Sky": ["beneath_a_steel_sky_en_gog_2_20150.sh"]
+        }
+
+        mock_listdir.side_effect = lambda path: list_dir_returns.get(path, [])
+        mock_isfile.return_value = True
+        mock_isdir.return_value = True
 
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
-        installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
+        installer_path = "/home/i/GOG Games/installer/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         obs = installer.remove_installer(game1, installer_path, "/home/i/GOG Games/installer", True)
-        assert not mock_shutil_rmtree.called
-        assert not mock_os_remove.called
+        assert not mock_remove.called
+        assert not mock_rmdir.called
         self.assertEqual(obs, "")
 
+    @mock.patch("os.path.isdir")
+    @mock.patch("os.path.realpath")
+    @mock.patch("minigalaxy.installer.is_empty_dir")
     @mock.patch('os.remove')
-    @mock.patch('shutil.move')
-    @mock.patch('shutil.rmtree')
-    @mock.patch('minigalaxy.installer.compare_directories')
-    @mock.patch('os.path.isdir')
-    def test_remove_installer_keep(self, mock_os_path_isdir, mock_compare_directories, mock_shutil_rmtree, mock_shutil_move, mock_os_remove):
-        """
-        Keep installer dir
-        """
-        mock_os_path_isdir.return_value = True
-        mock_compare_directories.return_value = False
+    @mock.patch("os.path.isfile")
+    @mock.patch('os.rmdir')
+    @mock.patch('os.listdir')
+    def test_remove_installer_from_keep(self, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_realpath, mock_isdir):
+        """ Called from keep dir"""
 
-        game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
-        installer_path = "/home/i/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
-        obs = installer.remove_installer(game1, installer_path, "/home/i/GOG Games/installer", True)
-        assert mock_shutil_rmtree.called
-        assert mock_shutil_move.called
-        assert not mock_os_remove.called
-        self.assertEqual(obs, "")
+        DL_DIR = "/home/i/.cache/minigalaxy/download"
+        mock_realpath.side_effect = lambda p: DL_DIR if p == minigalaxy.paths.DOWNLOAD_DIR else p
+        list_dir_returns = {
+            "/home/i/GOG Games": ["installer"],
+            "/home/i/GOG Games/installer": ["Beneath A Steel Sky"],
+            "/home/i/GOG Games/installer/Beneath A Steel Sky": []
+        }
 
-    @patch("os.listdir")
-    @mock.patch('os.remove')
-    @mock.patch('shutil.move')
-    @mock.patch('shutil.rmtree')
-    @mock.patch('minigalaxy.installer.compare_directories')
-    @mock.patch('os.path.isdir')
-    def test_remove_installer_from_keep(self, mock_os_path_isdir, mock_compare_directories, mock_shutil_rmtree, mock_shutil_move, mock_os_remove, mock_os_listdir):
-        """
-        Called from keep dir
-        """
-        mock_os_path_isdir.return_value = True
-        mock_compare_directories.return_value = False
-        mock_os_listdir.return_value = []
+        self.setup_os_mocks(list_dir_returns, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_isdir)
 
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath A Steel Sky", platform="linux")
         installer_path = "/home/i/GOG Games/installer/Beneath A Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         obs = installer.remove_installer(game1, installer_path, "/home/i/GOG Games/installer", False)
-        assert not mock_shutil_rmtree.called
-        assert not mock_shutil_move.called
-        assert not mock_os_remove.called
+
+        assert not mock_remove.called
         self.assertEqual(obs, "")
+
+    def setup_os_mocks(self, file_structure, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_isdir):
+
+        def rmdir_fake(path):
+            if path in file_structure and len(file_structure[path]) == 0:
+                # remove dir content listing itself
+                del file_structure[path]
+                # remove entry from parent list
+                remove_fake(path)
+            else:
+                raise IOError("Directory not empty")
+
+        def remove_fake(path):
+            from os.path import dirname, basename
+            filedir = dirname(path)
+            filename = basename(path)
+            if filedir in file_structure and filename in file_structure[filedir]:
+                file_structure[filedir].remove(filename)
+            else:
+                raise FileNotFoundError(path)
+
+        mock_isfile.side_effect = lambda path: path.endswith(".sh")
+        mock_isdir.return_value = lambda path: path in file_structure
+        mock_listdir.side_effect = lambda path: file_structure.get(path, [])
+        mock_isempty.side_effect = lambda path: len(file_structure.get(path)) == 0
+        mock_rmdir.side_effect = rmdir_fake
+        mock_remove.side_effect = remove_fake

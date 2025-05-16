@@ -132,12 +132,21 @@ class LibraryEntry:
 
     def get_keep_executable_path(self):
         keep_path = ""
+        exes_by_creation_date = {}
         if os.path.isdir(self.keep_path):
             for dir_content in os.listdir(self.keep_path):
                 kept_file = os.path.join(self.keep_path, dir_content)
+                if not os.path.isfile(kept_file):
+                    continue
+
                 if os.access(kept_file, os.X_OK) or os.path.splitext(kept_file)[-1] in [".exe", ".sh"]:
-                    keep_path = kept_file
-                    break
+                    exes_by_creation_date[int(os.path.getmtime(kept_file))] = kept_file
+
+        if exes_by_creation_date:
+            ctimes_sorted = [*exes_by_creation_date.keys()]
+            ctimes_sorted.sort()
+            keep_path = exes_by_creation_date[ctimes_sorted[-1]]
+
         return keep_path
 
     def get_download_info(self, platform="linux"):
@@ -185,8 +194,8 @@ class LibraryEntry:
                 dlc_icon = self.game.get_cached_icon_path(dlc_id)
                 dlc_title = dlc["title"]
 
-        def finish_func(save_location):
-            self.__install_dlc(save_location, dlc_title=dlc_title)
+        def finish_func(save_location, file_list=None):
+            self.__install_dlc(save_location, dlc_title=dlc_title, file_list=file_list)
 
         cancel_to_state = State.INSTALLED
         result = self.__download(download_info, DownloadType.GAME_DLC, finish_func,
@@ -218,6 +227,7 @@ class LibraryEntry:
     def __download(self, download_info, download_type, finish_func, cancel_to_state, download_icon=None):  # noqa: C901
         download_success = True
         self.game.set_install_dir(self.config.install_dir)
+        target_download_dir = self.__determine_download_dir(download_info)
         self.update_to_state(State.QUEUED)
 
         if not download_icon:
@@ -239,7 +249,10 @@ class LibraryEntry:
                 if self.download_finished == number_of_files:
                     # Assume the first item in download_info['files] is the executable
                     # This item ends up last in self.download_list because it's reversed
-                    finish_func(self.download_list[-1].save_location)
+                    save_locations = []
+                    for d in download_files:
+                        save_locations.append(d.save_location)
+                    finish_func(self.download_list[-1].save_location, file_list=save_locations)
 
             if func is not None:
                 return wrapper
@@ -259,7 +272,7 @@ class LibraryEntry:
             # Extract the filename from the download url
             filename = urllib.parse.unquote(urllib.parse.urlsplit(download_url).path)
             filename = filename.split("/")[-1]
-            download_path = os.path.join(self.download_dir, filename)
+            download_path = os.path.join(target_download_dir, filename)
             if info.md5:
                 self.game.md5sum[os.path.basename(download_path)] = info.md5
             download = Download(
@@ -289,23 +302,36 @@ class LibraryEntry:
 
         return download_success
 
+    def __determine_download_dir(self, download_info):
+        download_dir = self.download_dir
+        if self.config.keep_installers:
+            download_dir = self.keep_path
+
+        # DLC download go into subfolder of their own
+        last_dir = os.path.basename(download_dir)  # basename to avoid issues with trailing slashes
+        cleaned_name = Game.strip_string(download_info['name'], to_path=True)
+        if last_dir != cleaned_name:
+            download_dir = os.path.join(download_dir, cleaned_name)
+
+        return download_dir
+
     '''----- END DOWNLOAD ACTIONS -----'''
 
     '''----- INSTALL ACTIONS -----'''
 
-    def __install_game(self, save_location):
+    def __install_game(self, save_location, file_list=None):
         self.config.remove_ongoing_download(self.game.id)
         self.download_list = []
         self.game.set_install_dir(self.config.install_dir)
-        install_success = self.__install(save_location)
+        install_success = self.__install(save_location, file_list=file_list)
         if install_success:
             popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
                                             .format(self.game.name), "dialog-information")
             popup.show()
             self.__check_for_dlc(self.api.get_info(self.game))
 
-    def __install_update(self, save_location):
-        install_success = self.__install(save_location, update=True)
+    def __install_update(self, save_location, file_list=None):
+        install_success = self.__install(save_location, update=True, file_list=file_list)
         if install_success:
             if self.game.platform == "windows":
                 self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
@@ -316,13 +342,13 @@ class LibraryEntry:
             if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=dlc["title"]):
                 self.__download_dlc(dlc["downloads"]["installers"])
 
-    def __install_dlc(self, save_location, dlc_title):
-        install_success = self.__install(save_location, dlc_title=dlc_title)
+    def __install_dlc(self, save_location, dlc_title, file_list=None):
+        install_success = self.__install(save_location, dlc_title=dlc_title, file_list=file_list)
         if not install_success:
             self.update_to_state(State.INSTALLED)
         self.__check_for_update_dlc()
 
-    def __install(self, save_location, update=False, dlc_title=""):
+    def __install(self, save_location, update=False, dlc_title="", file_list=None):
         if update:
             processing_state = State.UPDATING
             failed_state = State.INSTALLED
@@ -337,7 +363,8 @@ class LibraryEntry:
             self.config.lang,
             self.config.install_dir,
             self.config.keep_installers,
-            self.config.create_applications_file
+            self.config.create_applications_file,
+            file_list=file_list
         )
 
         if not err_msg:

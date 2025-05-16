@@ -14,7 +14,7 @@ from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command, get_wine_path, wine_restore_game_link
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, WINE_RES_PATH
+from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, WINE_RES_PATH, DOWNLOAD_DIR
 
 
 def get_available_disk_space(location):
@@ -53,14 +53,19 @@ def install_game(  # noqa: C901
         language: str,
         install_dir: str,
         keep_installers: bool,
-        create_desktop_file: bool
+        create_desktop_file: bool,
+        file_list=None
 ):
     error_message = ""
     tmp_dir = ""
     logger.info("Installing {}".format(game.name))
+
+    if not file_list:
+        file_list = list_installer_files(installer)
+
     try:
         if not error_message:
-            error_message = verify_installer_integrity(game, installer)
+            error_message = verify_installer_integrity(game, file_list)
         if not error_message:
             error_message = verify_disk_space(game, installer)
         if not error_message:
@@ -76,33 +81,38 @@ def install_game(  # noqa: C901
     except Exception:
         logger.error("Error installing game %s", game.name, exc_info=1)
         error_message = _("Unhandled error.")
-    _removal_error = remove_installer(game, installer, install_dir, keep_installers)
+    _removal_error = remove_installer(game, installer, install_dir, keep_installers, file_list)
     error_message = error_message or _removal_error or postinstaller(game)
     if error_message:
         logger.error(error_message)
     return error_message
 
 
-def verify_installer_integrity(game, installer):
-    error_message = ""
-    if not os.path.exists(installer):
-        error_message = _("{} failed to download.").format(installer)
-    if not error_message:
-        for installer_file_name in os.listdir(os.path.dirname(installer)):
-            hash_md5 = hashlib.md5()
-            with open(os.path.join(os.path.dirname(installer), installer_file_name), "rb") as installer_file:
-                for chunk in iter(lambda: installer_file.read(4096), b""):
-                    hash_md5.update(chunk)
-            calculated_checksum = hash_md5.hexdigest()
-            if installer_file_name in game.md5sum:
-                if game.md5sum[installer_file_name] == calculated_checksum:
-                    logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
-                else:
-                    error_message = _("{} was corrupted. Please download it again.").format(installer_file_name)
-                    break
-            else:
-                logger.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
-    return error_message
+def verify_installer_integrity(game, installer_files):
+    error_message = []
+
+    for installer in installer_files:
+        installer_file_name = os.path.basename(installer)
+        if not os.path.exists(installer):
+            error_message = _("{} failed to download.").format(installer_file_name)
+
+        hash_md5 = hashlib.md5()
+        with open(installer, "rb") as installer_file:
+            for chunk in iter(lambda: installer_file.read(4096), b""):
+                hash_md5.update(chunk)
+        calculated_checksum = hash_md5.hexdigest()
+
+        if installer_file_name not in game.md5sum:
+            logger.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
+            continue
+
+        if game.md5sum[installer_file_name] == calculated_checksum:
+            logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
+        else:
+            error_message.append(_("{} was corrupted. Please download it again.").format(installer_file_name))
+            break
+
+    return '\n'.join(error_message)
 
 
 def verify_disk_space(game, installer):
@@ -341,31 +351,80 @@ def compare_directories(dir1, dir2):
     return result
 
 
-def remove_installer(game: Game, installer: str, install_dir: str, keep_installers: bool):
-    error_message = ""
-    installer_directory = os.path.dirname(installer)
-    if not os.path.isdir(installer_directory):
-        error_message = "No installer directory is present: {}".format(installer_directory)
+def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_installers: bool, file_list=None):
+    installer_dir = os.path.dirname(installer)
+    if not os.path.isdir(installer_dir):
+        error_message = "No installer directory is present: {}".format(installer_dir)
         return error_message
 
-    if keep_installers:
-        keep_dir = os.path.join(install_dir, "installer")
-        keep_dir2 = os.path.join(keep_dir, game.get_install_directory_name())
-        if keep_dir2 == installer_directory:
-            # We are using the keep installer already
-            return error_message
+    installer_root_dirs = [
+        os.path.realpath(DOWNLOAD_DIR),
+        keep_installers_dir
+    ]
 
-        if not compare_directories(installer_directory, keep_dir2):
-            shutil.rmtree(keep_dir2, ignore_errors=True)
-            try:
-                shutil.move(installer_directory, keep_dir2)
-            except Exception as e:
-                error_message = str(e)
-    else:
-        for file in os.listdir(installer_directory):
-            os.remove(os.path.join(installer_directory, file))
+    keep_files = []
+    if keep_installers and file_list:
+        keep_files = file_list
+    elif keep_installers:
+        # assume all support files are named with the same prefix and only differ in ending
+        # we run into this case when installing from local file by ui clicking instead of from the download_finish callback
+        keep_files = list_installer_files(installer)
 
-    return error_message
+    logger.info("Cleaning [%s] - keep_files:%s", installer_dir, keep_files)
+
+    # assume all files in file_list are in the same directory relative to dirname(installer)
+    try:
+        for file in os.listdir(installer_dir):
+            file = os.path.join(installer_dir, file)
+            if os.path.isfile(file) and file not in keep_files:
+                logger.info("Deleting file [%s] - not in keep_files", file)
+                os.remove(file)
+
+        # walk up and delete empty directories, but stop if the parent is one of the roots used by MG
+        # this is just maintenance to prevent aggregating empty directories in cache
+        remove_empty_dirs_upwards(installer_dir, installer_root_dirs)
+    except Exception as e:
+        logger.error(e)
+        return str(e)
+
+    return ""
+
+
+def list_installer_files(installer):
+    '''
+    Helper utility to list all files in the same directory that belong to the given installer executable.
+    Expects the following naming convention:
+    - game_installer_version.[exe|sh]
+    - game_installer_version-1.bin
+    - game_installer_version-2.bin ...
+
+    Returns unsorted array of absolute paths for all files whose names are matching
+    the base name of the installer (without extension) in the SAME directory.
+    No recursion.
+    '''
+    installer_prefix = os.path.splitext(os.path.basename(installer))[0]
+    installer_dir = os.path.dirname(installer)
+    installer_files = []
+    for f in os.listdir(installer_dir):
+        fullpath = os.path.join(installer_dir, f)
+        if os.path.isfile(fullpath) and f.startswith(installer_prefix):
+            installer_files.append(fullpath)
+
+    return installer_files
+
+
+def is_empty_dir(path):
+    return not os.listdir(path)
+
+
+def remove_empty_dirs_upwards(start_dir, stop_dirs):
+    file_dir = start_dir
+    while is_empty_dir(file_dir):
+        logger.info("Remove now empty sub-directory [%s]", file_dir)
+        os.rmdir(file_dir)
+        file_dir = os.path.dirname(file_dir)
+        if file_dir in stop_dirs:
+            break
 
 
 def postinstaller(game):
