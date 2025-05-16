@@ -2,7 +2,7 @@ import os
 import re
 import json
 
-from minigalaxy.paths import CONFIG_GAMES_DIR, ICON_DIR
+from minigalaxy.paths import CONFIG_GAMES_DIR, ICON_DIR, THUMBNAIL_DIR
 
 
 class Game:
@@ -31,6 +31,29 @@ class Game:
             return os.path.join(ICON_DIR, f"{dlc_id}.jpg")
         else:
             return os.path.join(ICON_DIR, f'{self.id}.png')
+
+    def get_thumbnail_path(self, use_fallback=True):
+        """
+        Returns path to thumbnail file. Has 2 ways to use:
+        1. As a file name/path factory - files don't have to exist
+        2. To find the actually existing file
+        Looks in 2 locations:
+        - game.install_dir: When game is installed and file exists.
+          use_fallback=False enforces returning this path even when the file
+          does not exist. But the game must still be installed.
+        - global thumbnail dir as denoted by minigalaxy.paths.THUMBNAIL_DIR
+        """
+
+        if self.is_installed():
+            thumbnail_file = os.path.join(self.install_dir, "thumbnail.jpg")
+            if os.path.isfile(thumbnail_file) or not use_fallback:
+                return thumbnail_file
+
+        thumbnail_file = os.path.join(THUMBNAIL_DIR, f"{self.id}.jpg")
+        if os.path.isfile(thumbnail_file) or use_fallback:
+            return thumbnail_file
+
+        return ""
 
     def get_status_file_path(self):
         if self.install_dir:
