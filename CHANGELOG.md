@@ -13,6 +13,9 @@
 - Some bug fixes in DownloadManager related to canceling active and queued downloads (thanks to GB609)
 - Fix deletion logic of downloaded installation files. Base installers and DLC will not interfere with each other anymore. (thanks to GB609)
 - Failed installs will try to keep as many downloaded parts as possible, even without the keep_installers option enabled. (thanks to GB609)
+- Installations will now run one at a time through a queue, multiple DLC can be downloaded in quick sequence. (thanks to GB609)
+- Large DLC downloads will be resumed automatically on restart. (thanks to GB609)
+
 
 **1.3.2**
 - Completely reworked windows wine installation. This should solve a lot of problems with failing game installs. Innoextract (if installed) is only used to detect and configure the installation language. (thanks to GB609)
