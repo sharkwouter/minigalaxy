@@ -133,6 +133,10 @@ class LibraryEntry:
         download_thread.start()
 
     def get_keep_executable_path(self):
+        # required for partial redownload after checksum error
+        if self.game.get_info("force_download", False):
+            return ""
+
         keep_path = ""
         exes_by_creation_date = {}
         if os.path.isdir(self.keep_path):
@@ -207,6 +211,9 @@ class LibraryEntry:
 
         download_success = True
         self.game.set_install_dir(self.config.install_dir)
+        if self.game.id == gog_item_id:
+            self.game.set_info("force_download", False)
+
         target_download_dir = self.__determine_download_dir(download_info)
         self.update_to_state(State.QUEUED)
 
@@ -253,7 +260,8 @@ class LibraryEntry:
             download_files.insert(0, download)
         self.download_list.extend(download_files)
 
-        if check_diskspace(total_file_size, self.game.install_dir):
+        if download_success and check_diskspace(total_file_size, self.game.install_dir):
+            # checking file size only makes sense when the real downlink has been found for all files
             self.download_manager.download(download_files)
         else:
             ds_msg_title = _("Download error")
@@ -321,7 +329,6 @@ class LibraryEntry:
         self.config.remove_ongoing_download(result.install_id)
         item_name = dlc_title if dlc_title else self.game.name
         logger.info("Received install finished notification for %s: %s", item_name, result)
-        print("callback received", str(result))
         if result.type is InstallResultType.SUCCESS:
             self.update_to_state_if_idle(State.INSTALLED)
             if dlc_title:
@@ -330,12 +337,20 @@ class LibraryEntry:
                 self.game.set_info("version", self.api.get_version(self.game))
             if on_success:
                 on_success()
-        else:
-            item_name = dlc_title if dlc_title else self.game.name
-            GLib.idle_add(self.parent_window.show_error, _("Failed to install {}").format(item_name), result.reason)
-            self.reset_to_idle_state_if_possible()
-            if on_failure:
-                on_failure()
+            return
+
+        # use force_download flag to disable keep_path executable detection:
+        # one or more of the .bin files might be corrupt and was deleted
+        # if we don't override the result from keep_path, minigalaxy can never repair the incomplete download by itself
+        # because it's not possible to re-trigger the download
+        if result.type is InstallResultType.CHECKSUM_ERROR:
+            self.game.set_info("force_download", True)
+
+        item_name = dlc_title if dlc_title else self.game.name
+        GLib.idle_add(self.parent_window.show_error, _("Failed to install {}").format(item_name), result.reason)
+        self.reset_to_idle_state_if_possible()
+        if on_failure:
+            on_failure()
 
     def _install(self, gog_item_id, save_location, update=False, dlc_title="",
                  file_list=None, on_success=None, on_failure=None):
