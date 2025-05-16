@@ -150,10 +150,20 @@ class Api:
         response = self.__request(request_url)
         return response
 
+    def get_dlc_info(self, game: Game, dlc_id):
+        full_info = self.get_info(game)
+        dlc_infos = full_info.get("expanded_dlcs", [])
+        for dlc in dlc_infos:
+            if dlc.get('id', -1) == dlc_id:
+                return dlc
+
     # This returns a unique download url and a link to the checksum of the download
-    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="") -> dict:
+    def get_download_info(self, game: Game, operating_system="linux", dlc_installers="", dlc_id="") -> dict:
         if dlc_installers:
             installers = dlc_installers
+        elif dlc_id:
+            response = self.get_dlc_info(game, dlc_id)
+            installers = response["downloads"]["installers"]
         else:
             response = self.get_info(game)
             installers = response["downloads"]["installers"]
@@ -175,7 +185,7 @@ class Api:
             if installer['language'] == "en":
                 download_info = installer
 
-        # Return last entry in possible_downloads. This will either be English or the first langauge in the list
+        # Return last entry in possible_downloads. This will either be English or the first language in the list
         # This is just a backup, if the preferred language has been found, this part won't execute
         return download_info
 
