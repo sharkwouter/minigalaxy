@@ -43,11 +43,12 @@ def main():
     if cli_args.reset: conf_reset()
 
     # Import the gi module after parsing arguments
+    from minigalaxy import installer
     from minigalaxy.ui.gtk import Gtk
     from minigalaxy.ui import Window
     from minigalaxy.config import Config
     from minigalaxy.api import Api
-    from minigalaxy.download_manager import DownloadManager
+    from minigalaxy.download_manager import DownloadManager, DownloadState
     from minigalaxy.css import load_css
 
     # Start the application
@@ -57,8 +58,23 @@ def main():
     session.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {})'.format(VERSION, platform.machine())})
     api = Api(config, session)
     download_manager = DownloadManager(session, config)
+
     window = Window(config, api, download_manager, APPLICATION_NAME)
-    window.connect("destroy", Gtk.main_quit)
+
+    def shutdown(*args):
+        # perform orderly shutdown and stop of download threads to prevent download being killed at random places
+        download_manager.cancel_all_downloads(DownloadState.STOPPED)
+
+        # empty install queue, but don't stop the currently running installation (if any)
+        # so the forked process will resume until the installation is done, then the threads dies in an orderly fashion
+        # because the queue is empty
+        if installer.INSTALL_QUEUE:
+            installer.INSTALL_QUEUE.clear()
+
+        # gtk quit
+        Gtk.main_quit(*args)
+
+    window.connect("destroy", shutdown)
     Gtk.main()
 
 

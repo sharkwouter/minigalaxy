@@ -1,14 +1,16 @@
 import copy
+import minigalaxy
+
 from unittest import TestCase, mock
 from unittest.mock import patch, mock_open, MagicMock
 
 from minigalaxy.game import Game
 from minigalaxy import installer
 from minigalaxy.translation import _
-import minigalaxy
 
 
 class Test(TestCase):
+
     @mock.patch('os.listdir')
     @mock.patch('os.path.exists')
     def test_install_game(self, mock_exists, mock_listdir):
@@ -18,6 +20,119 @@ class Test(TestCase):
         exp = "Unhandled error."
         obs = installer.install_game(game, installer="", language="", install_dir="", keep_installers=False, create_desktop_file=True)
         self.assertEqual(exp, obs)
+
+    @mock.patch('minigalaxy.installer.verify_installer_integrity')
+    def test_install_game_with_checksum_exception(self, mock_checksum):
+        '''[scenario: install_game with raise_error=True uses raise instead of return - checksum failure variant]'''
+        failed_file_list = {"/cache/adrift_setup-1.bin": "md5abc"}
+        mock_checksum.return_value = ("Checksum Error", failed_file_list)
+        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
+
+        with self.assertRaises(installer.InstallException) as result:
+            installer.install_game(game, installer="", language="", install_dir="",
+                                   keep_installers=False, create_desktop_file=True,
+                                   file_list=["/cache/adrift_setup.exe", "/cache/adrift_setup-1.bin"], raise_error=True)
+
+        self.assertEqual(installer.InstallResultType.CHECKSUM_ERROR, result.exception.fail_type)
+        self.assertIs(failed_file_list, result.exception.data)
+
+    @mock.patch('minigalaxy.installer.verify_disk_space')
+    @mock.patch('minigalaxy.installer.verify_installer_integrity')
+    def test_install_game_with_failure_exception(self, mock_checksum, mock_disk_check):
+        '''[scenario: install_game with raise_error=True uses raise instead of return - regular failure variant]'''
+        mock_checksum.return_value = ("", {})
+        mock_disk_check.return_value = "disk_full"
+
+        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
+
+        with self.assertRaises(installer.InstallException) as result:
+            installer.install_game(game, installer="", language="", install_dir="",
+                                   keep_installers=False, create_desktop_file=True,
+                                   file_list=["/cache/adrift_setup.exe", "/cache/adrift_setup-1.bin"], raise_error=True)
+
+        self.assertEqual(installer.InstallResultType.FAILURE, result.exception.fail_type)
+        self.assertIs("disk_full", result.exception.message)
+
+    def test_fail_on_error(self):
+        '''[scenario: fail_on_error throws on thruthy first argument]'''
+
+        test_combinations = [
+            [installer.InstallResultType.FAILURE, None],
+            [installer.InstallResultType.FAILURE, "some/path"],
+            [installer.InstallResultType.CHECKSUM_ERROR, {}]
+        ]
+
+        # should not throw as long as the first argument is empty/falsy
+        for combination in test_combinations:
+            installer.fail_on_error("", combination[0], combination[1])
+
+        # now use an error message
+        for combination in test_combinations:
+            with self.assertRaises(installer.InstallException) as result:
+                installer.fail_on_error("This must fail", combination[0], combination[1])
+
+            exception = result.exception
+            self.assertEqual("This must fail", exception.message)
+            self.assertEqual(combination[0], exception.fail_type)
+            self.assertEqual(combination[1], exception.data)
+
+    def test_fail_on_error_tuple(self):
+        '''[scenario: fail_on_error supports tuple as first argument]:
+        * first element is error_message
+        * second will be used as data, if data is not given
+        * when there is no error, tuple[1:] is returned
+        '''
+
+        no_error = ("", "expected_return_value")
+        actual, = installer.fail_on_error(no_error)
+        self.assertEqual("expected_return_value", actual)
+
+        # exception with no data argument uses tuple
+        with self.assertRaises(installer.InstallException) as cm:
+            installer.fail_on_error(("error_message", 12345))
+        self.assertEqual(12345, cm.exception.data, "Second entry of tuple must be set as data")
+
+        # exception with no data argument uses tuple, but tuple has length 1, so no data
+        with self.assertRaises(installer.InstallException) as cm:
+            installer.fail_on_error(("error_message"))
+        self.assertIsNone(cm.exception.data, "data must be None when tuple is too small")
+
+        # tuple input overridden by data parameter
+        with self.assertRaises(installer.InstallException) as cm:
+            installer.fail_on_error(("error_message", 12345), data="data_overridden")
+        self.assertEqual("data_overridden", cm.exception.data, "data parameter must have priority over tuple entries")
+
+    @mock.patch('minigalaxy.installer.remove_installer')
+    @mock.patch('minigalaxy.installer.verify_installer_integrity')
+    def test_remove_corrupt_files_only(self, mock_checksum, mock_remove):
+        '''[scenario: install_game fails checksum, verify that remove_installer will be called, but not remove valid files]'''
+
+        install_dir = "/home/makson/GOG Games/Absolute Drift"
+        failed_file_list = {
+            "/cache/adrift_setup-1.bin": "md5abc",
+            "/cache/adrift_setup-3.bin": "md5abc"
+        }
+        full_file_list = [
+            "/cache/adrift_setup.exe",
+            "/cache/adrift_setup-1.bin",
+            "/cache/adrift_setup-2.bin",
+            "/cache/adrift_setup-3.bin",
+            "/cache/adrift_setup-4.bin"
+        ]
+        mock_checksum.return_value = ("Checksum Error", failed_file_list)
+        game = Game("Absolute Drift", install_dir=install_dir, platform="windows")
+
+        with self.assertRaises(installer.InstallException):
+            installer.install_game(game, installer="", language="", install_dir=install_dir,
+                                   keep_installers=False, create_desktop_file=True,
+                                   file_list=full_file_list, raise_error=True)
+
+        valid_files = [
+            "/cache/adrift_setup.exe",
+            "/cache/adrift_setup-2.bin",
+            "/cache/adrift_setup-4.bin"
+        ]
+        mock_remove.assert_called_once_with(game, "", install_dir, True, valid_files)
 
     @mock.patch('os.path.exists')
     @mock.patch('hashlib.md5')
@@ -34,7 +149,7 @@ class Test(TestCase):
                          "Beneath a Steel Sky/{}".format(installer_name)
         exp = ""
         with patch("builtins.open", mock_open(read_data=b"")):
-            obs = installer.verify_installer_integrity(game, [installer_path])
+            obs, failures = installer.verify_installer_integrity(game, [installer_path])
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
@@ -53,7 +168,7 @@ class Test(TestCase):
                          "Beneath a Steel Sky/{}".format(installer_name)
         exp = _("{} was corrupted. Please download it again.").format(installer_name)
         with patch("builtins.open", mock_open(read_data=b"aaaa")):
-            obs = installer.verify_installer_integrity(game, [installer_path])
+            obs, failures = installer.verify_installer_integrity(game, [installer_path])
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
