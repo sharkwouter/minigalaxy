@@ -115,10 +115,11 @@ def install_game(  # noqa: C901
 
     except Exception as e:
         error = InstallException(_("Unhandled error."), data=e)
+        error.__cause__ = e
         error_message = error.message
 
     if error_message:
-        logger.error("Error installing game %s", game.name, exc_info=1)
+        logger.error("Error installing game '%s'", game.name, exc_info=error)
         logger.error(error_message)
 
     if error_message and raise_error:
@@ -601,10 +602,11 @@ class InstallResultType(Enum):
     SUCCESS = 1
     FAILURE = 2
     CHECKSUM_ERROR = 3
+    POST_INSTALL_FAILURE = 4
 
 
 class InstallResult:
-    def __init__(self, install_id, result_type: InstallResultType, reason, details):
+    def __init__(self, install_id, result_type: InstallResultType, reason, details=None):
         '''Data class that will be passed to result_callback of InstallTask
         reason is a type-dependent string:
         - SUCCESS: install directory path
@@ -621,6 +623,10 @@ class InstallResult:
     def __str__(self):
         return f"InstallResult(id={self.install_id}, type={self.type}), reason={self.reason})"
 
+    def __eq__(self, other):
+        '''mainly used for testing, therefore not the most efficient implementation'''
+        return str(self) == str(other)
+
 
 class InstallException(Exception):
     def __init__(self, message, fail_type=InstallResultType.FAILURE, data=None):
@@ -634,7 +640,7 @@ class InstallTask:
         self.game = InstallTask.__locate_game_in_args(*args, **kwargs)
         if not install_id:
             install_id = self.game.id
-        if not result_callback:
+        if not result_callback or not callable(result_callback):
             raise ValueError("result_callback is required")
         self.installer_id = install_id
         self.callback = result_callback
@@ -700,6 +706,10 @@ class InstallerQueue:
                 self.worker = Thread(name="InstallerQueue worker", target=self.__install_queued_items)
                 self.worker.start()
             return True
+
+    def clear(self):
+        with self.state_lock:
+            self.queue.clear()
 
     def empty(self):
         with self.state_lock:
