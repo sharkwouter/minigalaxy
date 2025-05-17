@@ -102,6 +102,38 @@ class Test(TestCase):
             installer.fail_on_error(("error_message", 12345), data="data_overridden")
         self.assertEqual("data_overridden", cm.exception.data, "data parameter must have priority over tuple entries")
 
+    @mock.patch('minigalaxy.installer.remove_installer')
+    @mock.patch('minigalaxy.installer.verify_installer_integrity')
+    def test_remove_corrupt_files_only(self, mock_checksum, mock_remove):
+        '''[scenario: install_game fails checksum, verify that remove_installer will be called, but not remove valid files]'''
+
+        install_dir = "/home/makson/GOG Games/Absolute Drift"
+        failed_file_list = {
+            "/cache/adrift_setup-1.bin": "md5abc",
+            "/cache/adrift_setup-3.bin": "md5abc"
+        }
+        full_file_list = [
+            "/cache/adrift_setup.exe",
+            "/cache/adrift_setup-1.bin",
+            "/cache/adrift_setup-2.bin",
+            "/cache/adrift_setup-3.bin",
+            "/cache/adrift_setup-4.bin"
+        ]
+        mock_checksum.return_value = ("Checksum Error", failed_file_list)
+        game = Game("Absolute Drift", install_dir=install_dir, platform="windows")
+
+        with self.assertRaises(installer.InstallException):
+            installer.install_game(game, installer="", language="", install_dir=install_dir,
+                                   keep_installers=False, create_desktop_file=True,
+                                   file_list=full_file_list, raise_error=True)
+
+        valid_files = [
+            "/cache/adrift_setup.exe",
+            "/cache/adrift_setup-2.bin",
+            "/cache/adrift_setup-4.bin"
+        ]
+        mock_remove.assert_called_once_with(game, "", install_dir, True, valid_files)
+
     @mock.patch('os.path.exists')
     @mock.patch('hashlib.md5')
     @mock.patch('os.listdir')

@@ -92,12 +92,9 @@ class Test(TestCase):
         lock = installer.INSTALL_QUEUE.state_lock
         with lock:
             mock_install.assert_called_once()
-            result_callback.assert_called_once()
-
-            name, args, kwargs = result_callback.mock_calls[-1]
-            install_result = args[0]
-            self.assertEqual(installer.InstallResultType.SUCCESS, install_result.type)
-            self.assertEqual("/home/makson/GOG Games/Absolute Drift", install_result.reason)
+            result_callback.assert_called_once_with(installer.InstallResult(
+                12345, installer.InstallResultType.SUCCESS, "/home/makson/GOG Games/Absolute Drift"
+            ))
 
     @mock.patch('minigalaxy.installer.install_game')
     def test_enqueue_game_failure(self, mock_install):
@@ -115,9 +112,29 @@ class Test(TestCase):
         lock = installer.INSTALL_QUEUE.state_lock
         with lock:
             mock_install.assert_called_once()
-            result_callback.assert_called_once()
+            result_callback.assert_called_once_with(installer.InstallResult(
+                12345, installer.InstallResultType.FAILURE, "error"
+            ))
 
-            name, args, kwargs = result_callback.mock_calls[-1]
-            install_result = args[0]
-            self.assertEqual(installer.InstallResultType.FAILURE, install_result.type)
-            self.assertEqual("error", install_result.reason)
+    def test_InstallTask_init_requires_callback(self):
+        '''[scenario: InstallTask__init__ enforces result_callback to be a callable]'''
+
+        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
+        with self.assertRaises(ValueError) as cm:
+            installer.InstallTask(815, "not-a-callable", game)
+        # the search for a Game instance happens before the check of callback, so assert the message as well
+        self.assertEqual("result_callback is required", str(cm.exception))
+
+    def test_InstallTask_init_requires_Game(self):
+        '''[scenario: InstallTask__init__ must have received a Game instance as part of *args or **kwargs]'''
+
+        def callback(): pass
+
+        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
+
+        with self.assertRaises(ValueError) as cm:
+            installer.InstallTask(815, callback)
+        self.assertEqual("No instance of Game in InstallTask constructor arguments", str(cm.exception))
+
+        # counter-test: pass game as part of kwargs, it should not raise an exception
+        installer.InstallTask(815, callback, game=game)
