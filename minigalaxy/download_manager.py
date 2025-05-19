@@ -411,7 +411,7 @@ class DownloadManager:
             return
 
         for d in downloads:
-            if os.path.exists(d.save_location) and self.__get_cancel_state(d) is DownloadState.STOPPED:
+            if self.__get_cancel_state(d) is DownloadState.STOPPED:
                 self.__request_download_cancel(d, cancel_state)
                 self.__notify_listeners(cancel_state, d)
 
@@ -695,11 +695,10 @@ class DownloadManager:
         '''used to separate data structure of self.__cancel from the logic procedure of flagging a download for cancel'''
         if not self.__is_cancel_type(cancel_type):
             raise ValueError(str(cancel_type) + " is not a valid cancel reason")
-        is_active = False
+
+        self.__cancel[download] = cancel_type
         with self.active_downloads_lock:
-            if download in self.active_downloads:
-                self.__cancel[download] = cancel_type
-                is_active = True
+            is_active = download in self.active_downloads
 
         # active downloads are taken care of in __download_file
         if not is_active and self.__is_cancel_type(cancel_type):
