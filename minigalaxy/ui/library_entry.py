@@ -19,7 +19,8 @@ from minigalaxy.ui.gtk import Gtk, GLib, Notify
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 
-
+# FIXME: needs an additional 'download in progress' / 'download finished' flag
+# to prevent incomplete files from shifting the state to 'INSTALL'
 class LibraryEntry:
     '''encapsulates all actions that can be taken for an individual game'''
 
@@ -110,6 +111,7 @@ class LibraryEntry:
         if err_msg:
             self.parent_window.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
 
+    # FIXME: state does not correctly reset
     def confirm_and_cancel_download(self, widget):
         question = _("Are you sure you want to cancel downloading {}?").format(self.game.name)
         if self.parent_window.show_question(question):
@@ -362,6 +364,7 @@ class LibraryEntry:
             processing_state = State.UPDATING
         else:
             processing_state = State.INSTALLING
+
         self.update_to_state_if_idle(processing_state)
 
         def install_finished(result):
@@ -672,13 +675,13 @@ class FinishFuncWrapper:
         if sum(self.finished_downloads.values()) != len(self.download_files):
             return
 
+        self.remove_from_download_list()
+
         if self.callback_finish:
             save_locations = []
             for d in self.download_files:
                 save_locations.append(d.save_location)
             self.callback_finish(self.download_files[0].save_location, file_list=save_locations)
-
-        self.remove_from_download_list()
 
     def remove_from_download_list(self):
         for download in self.download_files:
