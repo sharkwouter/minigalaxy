@@ -215,7 +215,6 @@ class OngoingDownloadListEntry(Gtk.Box):
         '''
         if download is self.download:
             return
-        print("updating download instance:", download.save_location)
         self.game_title.set_text(f'{download.game.name}:\n{os.path.basename(download.save_location)}')
         self.buttons.download = download
 
