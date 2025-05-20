@@ -113,10 +113,12 @@ class DownloadManagerList(Gtk.ScrolledWindow):
         download_entry.update_progress(download.current_progress)
 
     def __get_create_entry(self, change, download):
+        location = download.save_location
         if download.save_location not in self.downloads:
-            self.downloads[download.save_location] = OngoingDownloadListEntry(self, download, change)
+            self.downloads[location] = OngoingDownloadListEntry(self, download, change)
 
-        return self.downloads[download.save_location]
+        self.downloads[location].update_download_instance(download)
+        return self.downloads[location]
 
     def __move_to_section(self, flowbox, entry, new_state: DownloadState):
         in_done_section = entry.flowbox == self.flowbox_done
@@ -193,18 +195,32 @@ class OngoingDownloadListEntry(Gtk.Box):
     def __init__(self, parent_manager, download: Download, initial_state: DownloadState):
         Gtk.Box.__init__(self)
         self.manager = parent_manager
-        self.download = download
         self.flowbox = None
         self.label_color_change = None
-        self.game_title.set_text(f'{download.game.name}:\n{os.path.basename(download.save_location)}')
         self.buttons = DownloadActionButtons(download, initial_state,
                                              download_manager=parent_manager.download_manager,
                                              remove_panel_action=self.remove_from_current_box,
                                              logger=self.manager.logger)
+        self.download = None
+        self.update_download_instance(download)
         self.update_state(initial_state)
 
-        self.manager.logger.debug("trying to pull icon from: %s", download.download_icon)
-        if download.download_icon:
+        self.pack_start(self.buttons, False, False, 0)
+
+    def update_download_instance(self, download: Download):
+        '''
+        A download might be re-triggered with a new download instance which has the same save_location.
+        Update and keep the list entry for it to make sure all buttons keep working and
+        pass the correct instance to DownloadManager.
+        '''
+        if download is self.download:
+            return
+        self.game_title.set_text(f'{download.game.name}:\n{os.path.basename(download.save_location)}')
+        self.buttons.download = download
+
+        current_icon = self.download.download_icon if self.download else None
+        if download.download_icon and download.download_icon != current_icon:
+            self.manager.logger.debug("trying to pull icon from: %s", download.download_icon)
             if os.path.exists(download.download_icon):
                 self.set_icon_from_file(download.download_icon)
             else:
@@ -212,7 +228,7 @@ class OngoingDownloadListEntry(Gtk.Box):
                 awaiting_entries.append(self)
                 self.manager.pending_icons[download.download_icon] = awaiting_entries
 
-        self.pack_start(self.buttons, False, False, 0)
+        self.download = download
 
     def update_progress(self, percentage):
         self.download_progress.set_fraction(percentage / 100)
