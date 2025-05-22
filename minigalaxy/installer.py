@@ -71,42 +71,84 @@ def install_game(  # noqa: C901
         install_dir: str,
         keep_installers: bool,
         create_desktop_file: bool,
-        file_list=None
+        file_list=None,
+        raise_error=False
 ):
     error_message = ""
+    error = None
     tmp_dir = ""
     logger.info("Installing {}".format(game.name))
 
-    if not file_list:
-        file_list = list_installer_files(installer)
-
     try:
-        if not error_message:
-            error_message = verify_installer_integrity(game, file_list)
-        if not error_message:
-            error_message = verify_disk_space(game, installer)
-        if not error_message:
-            error_message, tmp_dir = make_tmp_dir(game)
-        if not error_message:
-            error_message, installed_to_tmp = extract_installer(game, installer, tmp_dir, language)
-        if not error_message:
-            error_message = move_and_overwrite(game, tmp_dir, installed_to_tmp)
-        if not error_message:
-            error_message = copy_thumbnail(game)
-        if not error_message and create_desktop_file:
-            error_message = create_applications_file(game)
-    except Exception:
-        logger.error("Error installing game %s", game.name, exc_info=1)
-        error_message = _("Unhandled error.")
-    _removal_error = remove_installer(game, installer, install_dir, keep_installers, file_list)
-    error_message = error_message or _removal_error or postinstaller(game)
+        if not file_list:
+            file_list = list_installer_files(installer)
+
+        fail_on_error(verify_installer_integrity(game, file_list),
+                      InstallResultType.CHECKSUM_ERROR)
+
+        fail_on_error(verify_disk_space(game, installer), InstallResultType.FAILURE)
+
+        tmp_dir, = fail_on_error(make_tmp_dir(game))
+
+        installed_to_tmp, = fail_on_error(extract_installer(game, installer, tmp_dir, language))
+
+        fail_on_error(move_and_overwrite(game, tmp_dir, installed_to_tmp))
+        fail_on_error(copy_thumbnail(game))
+
+        fail_on_error(postinstaller(game), InstallResultType.POST_INSTALL_FAILURE)
+
+        if create_desktop_file:
+            fail_on_error(create_applications_file(game))
+
+        # Remove at end, but only on success. Allows retries without re-download
+        fail_on_error(remove_installer(game, installer, install_dir, keep_installers, file_list))
+
+    except InstallException as e:
+        error = e
+        error_message = e.message
+        # delete invalid files
+        if e.fail_type == InstallResultType.CHECKSUM_ERROR:
+            keep_list = [*file_list]
+            for f in e.data.keys():
+                keep_list.remove(f)
+            error_message = remove_installer(game, installer, install_dir, True, keep_list)
+
+    except Exception as e:
+        error = InstallException(_("Unhandled error."), data=e)
+        error.__cause__ = e
+        error_message = error.message
+
     if error_message:
+        logger.error("Error installing game '%s'", game.name, exc_info=error)
         logger.error(error_message)
+
+    if error_message and raise_error:
+        if not error:
+            error = InstallException(error_message)
+        raise error
+
     return error_message
+
+
+def fail_on_error(message_to_test, fail_type=None, data=None):
+    remaining_args = None
+    if isinstance(message_to_test, tuple):
+        remaining_args = message_to_test[1:]
+        message_to_test = message_to_test[0]
+
+    if message_to_test:
+        if not fail_type:
+            fail_type = InstallResultType.FAILURE
+        if not data and remaining_args:
+            data = remaining_args[0]
+        raise InstallException(message_to_test, fail_type, data)
+
+    return remaining_args
 
 
 def verify_installer_integrity(game, installer_files):
     error_message = []
+    invalid_files = {}
 
     for installer in installer_files:
         installer_file_name = os.path.basename(installer)
@@ -127,9 +169,9 @@ def verify_installer_integrity(game, installer_files):
             logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
         else:
             error_message.append(_("{} was corrupted. Please download it again.").format(installer_file_name))
-            break
+            invalid_files[installer] = calculated_checksum
 
-    return '\n'.join(error_message)
+    return '\n'.join(error_message), invalid_files
 
 
 def verify_disk_space(game, installer):
@@ -560,19 +602,37 @@ class InstallResultType(Enum):
     SUCCESS = 1
     FAILURE = 2
     CHECKSUM_ERROR = 3
+    POST_INSTALL_FAILURE = 4
 
 
 class InstallResult:
-    def __init__(self, install_id, result_type: InstallResultType, reason):
+    def __init__(self, install_id, result_type: InstallResultType, reason, details=None):
         '''Data class that will be passed to result_callback of InstallTask
-        reason is a type-dependent object:
-        - SUCCESS: currently None, will be install directory path as string after rework of install_game
-        - FAILURE: string error message
-        - CHECKSUM_ERROR: dict {abs_file_path: calculated_checksum}
+        reason is a type-dependent string:
+        - SUCCESS: install directory path
+        - FAILURE and CHECKSUM_ERROR: string error message
+        the "details" field provides additional context information:
+        - FAILURE: depending on the failing step, usually a directory path
+        - CHECKSUM_ERROR: dict {abs_file: calculated_checksum}
         '''
         self.install_id = install_id
         self.type = result_type
         self.reason = reason
+        self.details = details
+
+    def __str__(self):
+        return f"InstallResult(id={self.install_id}, type={self.type}), reason={self.reason})"
+
+    def __eq__(self, other):
+        '''mainly used for testing, therefore not the most efficient implementation'''
+        return str(self) == str(other)
+
+
+class InstallException(Exception):
+    def __init__(self, message, fail_type=InstallResultType.FAILURE, data=None):
+        self.fail_type = fail_type
+        self.message = message
+        self.data = data
 
 
 class InstallTask:
@@ -580,7 +640,7 @@ class InstallTask:
         self.game = InstallTask.__locate_game_in_args(*args, **kwargs)
         if not install_id:
             install_id = self.game.id
-        if not result_callback:
+        if not result_callback or not callable(result_callback):
             raise ValueError("result_callback is required")
         self.installer_id = install_id
         self.callback = result_callback
@@ -589,14 +649,11 @@ class InstallTask:
 
     def execute(self):
         try:
-            error_message = install_game(*self.arg_array, **self.named_args)
-        except Exception as e:
-            logger.error("Error installing item %s", self.installer_id, exc_info=1)
-            error_message = str(e)
-        if error_message:
-            self.callback(InstallResult(self.installer_id, InstallResultType.FAILURE, error_message))
-        else:
-            self.callback(InstallResult(self.installer_id, InstallResultType.SUCCESS, None))
+            install_game(*self.arg_array, **self.named_args, raise_error=True)
+            self.callback(InstallResult(self.installer_id, InstallResultType.SUCCESS, self.game.install_dir, None))
+        except InstallException as e:
+            logger.error("Error installing item %s: %s", self.installer_id, e.message, exc_info=1)
+            self.callback(InstallResult(self.installer_id, e.fail_type, e.message, e.data))
 
     def __eq__(self, other):
         if not isinstance(other, InstallTask):
@@ -622,11 +679,11 @@ class InstallerQueue:
     and regular Queues don't provide a check for contained items aside from iterating through everything.
     '''
 
-    def __init__(self):
+    def __init__(self, lock_to_use=RLock()):
         self.queue = deque()
         self.worker = None
         self.active_item = None
-        self.state_lock = RLock()
+        self.state_lock = lock_to_use
 
     def get(self):
         with self.state_lock:
@@ -640,7 +697,6 @@ class InstallerQueue:
         Returns True if the item was added, False otherwise.
         (Re)starts the internally managed install task worker thread if the item was put into to queue.
         '''
-
         with self.state_lock:
             if self.active_item == item or item in self.queue:
                 return False
@@ -650,6 +706,10 @@ class InstallerQueue:
                 self.worker = Thread(name="InstallerQueue worker", target=self.__install_queued_items)
                 self.worker.start()
             return True
+
+    def clear(self):
+        with self.state_lock:
+            self.queue.clear()
 
     def empty(self):
         with self.state_lock:
