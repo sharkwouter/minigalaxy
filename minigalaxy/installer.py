@@ -634,6 +634,9 @@ class InstallException(Exception):
         self.message = message
         self.data = data
 
+    def __str__(self):
+        return f"InstallResult(id={self.install_id}, type={self.type}), reason={self.reason})"
+
 
 class InstallTask:
     def __init__(self, install_id=None, result_callback=None, *args, **kwargs):
