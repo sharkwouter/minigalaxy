@@ -37,6 +37,7 @@ class Download:
         self.__finish_func = finish_func
         self.__progress_func = progress_func
         self.__cancel_func = cancel_func
+        self.cancel_reason = None
         self.number = number
         self.out_of_amount = out_of_amount
         self.game = game
@@ -65,6 +66,7 @@ class Download:
         finish is called when the download has completed
         If a finish_func was specified when the Download was created, call the function
         """
+        self.cancel_reason = None  # make sure cancel_reason is reset
         if self.__finish_func:
             try:
                 self.__finish_func(self.save_location)
@@ -75,3 +77,17 @@ class Download:
         "Cancel the download, calling a cancel_func if one was specified"
         if self.__cancel_func:
             self.__cancel_func()
+
+    def on_finish(self, callback):
+        if not self.__finish_func and callable(callback):
+            self.__finish_func = callback
+
+    def on_cancel(self, callback):
+        if not self.__cancel_func and callable(callback):
+            self.__cancel_func = callback
+
+    def __str__(self):
+        return self.filename()
+
+    def __repr__(self):
+        return self.filename()

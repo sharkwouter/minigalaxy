@@ -1,9 +1,11 @@
 import copy
 import minigalaxy
+import os
 
 from unittest import TestCase, mock
 from unittest.mock import patch, mock_open, MagicMock
 
+from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy import installer
 from minigalaxy.translation import _
@@ -28,10 +30,12 @@ class Test(TestCase):
         mock_checksum.return_value = ("Checksum Error", failed_file_list)
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
 
+        inventory = self.prepare_inventory("/cache/adrift_setup.exe", "", 0)
+        inventory.add_file("/cache/adrift_setup-1.bin", FileInfo("", 0))
         with self.assertRaises(installer.InstallException) as result:
             installer.install_game(game, installer="", language="", install_dir="",
                                    keep_installers=False, create_desktop_file=True,
-                                   file_list=["/cache/adrift_setup.exe", "/cache/adrift_setup-1.bin"], raise_error=True)
+                                   installer_inventory=inventory, raise_error=True)
 
         self.assertEqual(installer.InstallResultType.CHECKSUM_ERROR, result.exception.fail_type)
         self.assertIs(failed_file_list, result.exception.data)
@@ -45,10 +49,12 @@ class Test(TestCase):
 
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
 
+        inventory = self.prepare_inventory("/cache/adrift_setup.exe", "", 0)
+        inventory.add_file("/cache/adrift_setup-1.bin", FileInfo("", 0))
         with self.assertRaises(installer.InstallException) as result:
             installer.install_game(game, installer="", language="", install_dir="",
                                    keep_installers=False, create_desktop_file=True,
-                                   file_list=["/cache/adrift_setup.exe", "/cache/adrift_setup-1.bin"], raise_error=True)
+                                   installer_inventory=inventory, raise_error=True)
 
         self.assertEqual(installer.InstallResultType.FAILURE, result.exception.fail_type)
         self.assertIs("disk_full", result.exception.message)
@@ -102,37 +108,39 @@ class Test(TestCase):
             installer.fail_on_error(("error_message", 12345), data="data_overridden")
         self.assertEqual("data_overridden", cm.exception.data, "data parameter must have priority over tuple entries")
 
-    @mock.patch('minigalaxy.installer.remove_installer')
+    @mock.patch('minigalaxy.installer.safe_delete')
     @mock.patch('minigalaxy.installer.verify_installer_integrity')
     def test_remove_corrupt_files_only(self, mock_checksum, mock_remove):
         '''[scenario: install_game fails checksum, verify that remove_installer will be called, but not remove valid files]'''
 
         install_dir = "/home/makson/GOG Games/Absolute Drift"
-        failed_file_list = {
-            "/cache/adrift_setup-1.bin": "md5abc",
-            "/cache/adrift_setup-3.bin": "md5abc"
-        }
-        full_file_list = [
+        failed_file_list = [
+            "/cache/adrift_setup-1.bin",
+            "/cache/adrift_setup-3.bin"
+        ]
+        all_files = [
             "/cache/adrift_setup.exe",
             "/cache/adrift_setup-1.bin",
             "/cache/adrift_setup-2.bin",
             "/cache/adrift_setup-3.bin",
             "/cache/adrift_setup-4.bin"
         ]
+
+        inventory = installer.InstallerInventory("/cache/adrift_setup.exe")
+        for f in all_files:
+            inventory.add_file(f, FileInfo("ok_md5", 0))
+        for f in failed_file_list:
+            inventory.verify_checksum(os.path.basename(f), "calculated_stuff")
+
         mock_checksum.return_value = ("Checksum Error", failed_file_list)
         game = Game("Absolute Drift", install_dir=install_dir, platform="windows")
 
         with self.assertRaises(installer.InstallException):
             installer.install_game(game, installer="", language="", install_dir=install_dir,
                                    keep_installers=False, create_desktop_file=True,
-                                   file_list=full_file_list, raise_error=True)
+                                   installer_inventory=inventory, raise_error=True)
 
-        valid_files = [
-            "/cache/adrift_setup.exe",
-            "/cache/adrift_setup-2.bin",
-            "/cache/adrift_setup-4.bin"
-        ]
-        mock_remove.assert_called_once_with(game, "", install_dir, True, valid_files)
+        mock_remove.assert_called_once_with(failed_file_list)
 
     @mock.patch('os.path.exists')
     @mock.patch('hashlib.md5')
@@ -143,13 +151,13 @@ class Test(TestCase):
         mock_is_file.return_value = True
         mock_hash().hexdigest.return_value = md5_sum
         mock_listdir.return_value = [installer_name]
-        game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky",
-                    md5sum={installer_name: md5_sum})
+        game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
         installer_path = "/home/user/.cache/minigalaxy/download/" \
                          "Beneath a Steel Sky/{}".format(installer_name)
+        inventory = self.prepare_inventory(installer_path, md5_sum, 0)
         exp = ""
         with patch("builtins.open", mock_open(read_data=b"")):
-            obs, failures = installer.verify_installer_integrity(game, [installer_path])
+            obs, failures = installer.verify_installer_integrity(game, inventory)
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
@@ -166,9 +174,10 @@ class Test(TestCase):
                     md5sum={installer_name: md5_sum})
         installer_path = "/home/user/.cache/minigalaxy/download/" \
                          "Beneath a Steel Sky/{}".format(installer_name)
+        inventory = self.prepare_inventory(installer_path, md5_sum, 0)
         exp = _("{} was corrupted. Please download it again.").format(installer_name)
         with patch("builtins.open", mock_open(read_data=b"aaaa")):
-            obs, failures = installer.verify_installer_integrity(game, [installer_path])
+            obs, failures = installer.verify_installer_integrity(game, inventory)
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
@@ -456,6 +465,7 @@ class Test(TestCase):
         exp = "No installer directory is present: /home/i/.cache/minigalaxy/download/Beneath a Steel Sky"
         self.assertEqual(obs, exp)
 
+    @mock.patch("os.stat")
     @mock.patch("os.path.isdir")
     @mock.patch("os.path.realpath")
     @mock.patch("minigalaxy.installer.is_empty_dir")
@@ -463,7 +473,7 @@ class Test(TestCase):
     @mock.patch("os.path.isfile")
     @mock.patch('os.rmdir')
     @mock.patch('os.listdir')
-    def test_remove_installer_no_keep(self, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_realpath, mock_isdir):
+    def test_remove_installer_no_keep(self, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_realpath, mock_isdir, mock_os_stat):
         """Disabled keep_installer"""
         DL_DIR = "/home/i/.cache/minigalaxy/download"
         mock_realpath.side_effect = lambda p: DL_DIR if p == minigalaxy.paths.DOWNLOAD_DIR else p
@@ -482,22 +492,28 @@ class Test(TestCase):
         assert mock_remove.called
         self.assertEqual(obs, "")
 
+    @mock.patch("minigalaxy.installer.InstallerInventory.size_of")
     @mock.patch("os.path.isdir")
+    @mock.patch("minigalaxy.installer.is_empty_dir")
     @mock.patch('os.remove')
     @mock.patch("os.path.isfile")
     @mock.patch('os.rmdir')
     @mock.patch('os.listdir')
-    def test_remove_installer_keep(self, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isdir):
+    def test_remove_installer_keep(self, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_isdir, mock_size_of):
         """Keep installer dir"""
 
+        mock_size_of.return_value = 0
         list_dir_returns = {
             "/home/i/GOG Games/installer": ["Beneath a Steel Sky"],
             "/home/i/GOG Games/installer/Beneath a Steel Sky": ["beneath_a_steel_sky_en_gog_2_20150.sh"]
         }
 
+        '''
         mock_listdir.side_effect = lambda path: list_dir_returns.get(path, [])
         mock_isfile.return_value = True
         mock_isdir.return_value = True
+        '''
+        self.setup_os_mocks(list_dir_returns, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_isdir)
 
         game1 = Game("Beneath A Steel Sky", install_dir="/home/test/GOG Games/Beneath a Steel Sky", platform="linux")
         installer_path = "/home/i/GOG Games/installer/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
@@ -533,6 +549,15 @@ class Test(TestCase):
         assert not mock_remove.called
         self.assertEqual(obs, "")
 
+    def prepare_inventory(self, installer_name, md5, size):
+        '''
+        Helper tool to construct instances of InstallerInventory for tests.
+        Takes data for a single file.
+        '''
+        inventory = installer.InstallerInventory(installer_name)
+        inventory.add_file(installer_name, FileInfo(md5, size))
+        return inventory
+
     def setup_os_mocks(self, file_structure, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_isdir):
 
         def rmdir_fake(path):
@@ -554,8 +579,8 @@ class Test(TestCase):
                 raise FileNotFoundError(path)
 
         mock_isfile.side_effect = lambda path: path.endswith(".sh")
-        mock_isdir.return_value = lambda path: path in file_structure
+        mock_isdir.side_effect = lambda path: path in file_structure
         mock_listdir.side_effect = lambda path: file_structure.get(path, [])
-        mock_isempty.side_effect = lambda path: len(file_structure.get(path)) == 0
+        mock_isempty.side_effect = lambda path: mock_isdir(path) and len(file_structure.get(path)) == 0
         mock_rmdir.side_effect = rmdir_fake
         mock_remove.side_effect = remove_fake

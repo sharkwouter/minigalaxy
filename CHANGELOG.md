@@ -13,6 +13,8 @@
 - Some bug fixes in DownloadManager related to canceling active and queued downloads (thanks to GB609)
 - Fix deletion logic of downloaded installation files. Base installers and DLC will not interfere with each other anymore. (thanks to GB609)
 - Failed installs will try to keep as many downloaded parts as possible, even without the keep_installers option enabled. (thanks to GB609)
+- Deleting a file in download ui now also provides the option to fully cancel the game download as if cancel on the thumbnail was clicked. (thanks to GB609)
+- With keep_installers enabled, Minigalaxy can now detect if a game has been fully downloaded. If not, the UI will still show the 'Download' button. (thanks to GB609)
 
 **1.3.2**
 - Completely reworked windows wine installation. This should solve a lot of problems with failing game installs. Innoextract (if installed) is only used to detect and configure the installation language. (thanks to GB609)

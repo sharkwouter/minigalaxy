@@ -7,9 +7,10 @@ import urllib.parse
 
 from minigalaxy.api import NoDownloadLinkFound
 from minigalaxy.download import Download, DownloadType
+from minigalaxy.download_manager import DownloadState
 from minigalaxy.entity.state import State
 from minigalaxy.game import Game
-from minigalaxy.installer import uninstall_game, install_game, check_diskspace
+from minigalaxy.installer import uninstall_game, install_game, check_diskspace, InstallerInventory
 from minigalaxy.launcher import start_game
 from minigalaxy.logger import logger
 from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, ICON_WINE_PATH, THUMBNAIL_DIR
@@ -108,17 +109,29 @@ class LibraryEntry:
         if err_msg:
             self.parent_window.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
 
-    def confirm_and_cancel_download(self, widget):
+    def confirm_and_cancel_download(self, widget=None, download_list=None):
         question = _("Are you sure you want to cancel downloading {}?").format(self.game.name)
         if self.parent_window.show_question(question):
             self.prevent_resume_on_startup()
-            self.download_manager.cancel_download(self.download_list)
-            try:
-                for filename in os.listdir(self.download_dir):
-                    if self.game.get_install_directory_name() in filename:
-                        os.remove(os.path.join(self.download_dir, filename))
-            except FileNotFoundError:
-                pass
+            if not download_list:
+                download_list = [*self.download_list]  # use copy or feedback from download_manager will change the list
+
+            if not download_list:  # Safety measure. DownloadManager will cancel ALL active when empty is passed
+                return
+            self.download_manager.cancel_download(download_list)
+            for d in download_list:
+                if d.cancel_reason:
+                    continue
+
+                # download has finished regularly (no cancel reason), so it won't receive cancel from download manager
+                # manually call the cancel() callback
+                d.cancel()
+            # second round to support parallel downloads:
+            # expect multiple executables and try to delete inventory for each of them
+            for d in download_list:
+                if self.is_executable(d.save_location):
+                    inventory = InstallerInventory.from_file_system(d.save_location)
+                    inventory.delete_files()
 
     def confirm_and_uninstall(self, widget):
         question = _("Are you sure you want to uninstall %s?" % self.game.name)
@@ -136,18 +149,22 @@ class LibraryEntry:
         if os.path.isdir(self.keep_path):
             for dir_content in os.listdir(self.keep_path):
                 kept_file = os.path.join(self.keep_path, dir_content)
-                if not os.path.isfile(kept_file):
-                    continue
-
-                if os.access(kept_file, os.X_OK) or os.path.splitext(kept_file)[-1] in [".exe", ".sh"]:
+                if self.is_executable(kept_file):
                     exes_by_creation_date[int(os.path.getmtime(kept_file))] = kept_file
 
         if exes_by_creation_date:
             ctimes_sorted = [*exes_by_creation_date.keys()]
             ctimes_sorted.sort()
-            keep_path = exes_by_creation_date[ctimes_sorted[-1]]
+            for creation_time in ctimes_sorted:
+                installer = exes_by_creation_date[creation_time]
+                inventory = InstallerInventory(installer)
+                if inventory.is_complete():
+                    return installer
 
         return keep_path
+
+    def is_executable(self, file):
+        return os.path.isfile(file) and (os.access(file, os.X_OK) or os.path.splitext(file)[-1] in [".exe", ".sh"])
 
     def get_download_info(self, platform="linux"):
         try:
@@ -236,28 +253,12 @@ class LibraryEntry:
         # Need to update the config with DownloadType metadata
         self.config.add_ongoing_download(self.game.id)
         # Start the download for all files
-        self.download_list = []
         number_of_files = len(download_info['files'])
         total_file_size = 0
         download_files = []
-        self.download_finished = 0
 
-        def finish_func_wrapper(func):
-
-            def wrapper(*args):
-                self.download_finished += 1
-                if self.download_finished == number_of_files:
-                    # Assume the first item in download_info['files] is the executable
-                    # This item ends up last in self.download_list because it's reversed
-                    save_locations = []
-                    for d in download_files:
-                        save_locations.append(d.save_location)
-                    finish_func(self.download_list[-1].save_location, file_list=save_locations)
-
-            if func is not None:
-                return wrapper
-            else:
-                return None
+        download_inventory = InstallerInventory()
+        callback_factory = CallbackFuncWrapper(finish_func, self.__cancel, self, download_files, download_inventory)
 
         for key, file_info in enumerate(download_info['files']):
             try:
@@ -267,30 +268,34 @@ class LibraryEntry:
                 GLib.idle_add(self.parent_window.show_error, _("Download error"), _(str(e)))
                 download_success = False
                 break
+
             info = self.api.get_download_file_info(file_info["downlink"])
             total_file_size += info.size
             # Extract the filename from the download url
             filename = urllib.parse.unquote(urllib.parse.urlsplit(download_url).path)
             filename = filename.split("/")[-1]
             download_path = os.path.join(target_download_dir, filename)
+            download_inventory.set_path_once(download_path)  # assumption: first file is installer executable
             if info.md5:
                 self.game.md5sum[os.path.basename(download_path)] = info.md5
+            download_inventory.add_file(download_path, info)
             download = Download(
                 url=download_url,
                 save_location=download_path,
                 download_type=download_type,
-                finish_func=finish_func_wrapper(finish_func),
                 progress_func=self.set_progress,
-                cancel_func=lambda: self.__cancel(to_state=cancel_to_state),
                 number=number_of_files - key,
                 out_of_amount=number_of_files,
                 game=self.game,
                 download_icon=download_icon
             )
-            download_files.insert(0, download)
+            callback_factory.add_callbacks(download, cancel_to_state)
+            download_files.append(download)
+
         self.download_list.extend(download_files)
 
         if check_diskspace(total_file_size, self.game.install_dir):
+            download_inventory.save()
             self.download_manager.download(download_files)
         else:
             ds_msg_title = _("Download error")
@@ -319,19 +324,18 @@ class LibraryEntry:
 
     '''----- INSTALL ACTIONS -----'''
 
-    def __install_game(self, save_location, file_list=None):
+    def __install_game(self, save_location, inventory=None):
         self.config.remove_ongoing_download(self.game.id)
-        self.download_list = []
         self.game.set_install_dir(self.config.install_dir)
-        install_success = self.__install(save_location, file_list=file_list)
+        install_success = self.__install(save_location, inventory=inventory)
         if install_success:
             popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
                                             .format(self.game.name), "dialog-information")
             popup.show()
             self.__check_for_dlc(self.api.get_info(self.game))
 
-    def __install_update(self, save_location, file_list=None):
-        install_success = self.__install(save_location, update=True, file_list=file_list)
+    def __install_update(self, save_location, inventory=None):
+        install_success = self.__install(save_location, update=True, inventory=inventory)
         if install_success:
             if self.game.platform == "windows":
                 self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
@@ -342,13 +346,13 @@ class LibraryEntry:
             if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=dlc["title"]):
                 self.__download_dlc(dlc["downloads"]["installers"])
 
-    def __install_dlc(self, save_location, dlc_title, file_list=None):
-        install_success = self.__install(save_location, dlc_title=dlc_title, file_list=file_list)
+    def __install_dlc(self, save_location, dlc_title, inventory=None):
+        install_success = self.__install(save_location, dlc_title=dlc_title, inventory=inventory)
         if not install_success:
             self.update_to_state(State.INSTALLED)
         self.__check_for_update_dlc()
 
-    def __install(self, save_location, update=False, dlc_title="", file_list=None):
+    def __install(self, save_location, update=False, dlc_title="", inventory=None):
         if update:
             processing_state = State.UPDATING
             failed_state = State.INSTALLED
@@ -364,7 +368,7 @@ class LibraryEntry:
             self.config.install_dir,
             self.config.keep_installers,
             self.config.create_applications_file,
-            file_list=file_list
+            installer_inventory=inventory
         )
 
         if not err_msg:
@@ -388,10 +392,16 @@ class LibraryEntry:
 
     '''----- END INSTALL ACTIONS -----'''
 
-    def __cancel(self, to_state):
-        self.download_list = []
-        self.update_to_state(to_state)
-        GLib.idle_add(self.reload_state)
+    def __cancel(self, to_state, item_list=None):
+        items_to_clear = item_list if item_list else [*self.download_list]
+        for item in items_to_clear:
+            if item in self.download_list:
+                self.download_list.remove(item)
+
+        # only cancel state if no more active downloads
+        if not self.download_list:
+            self.update_to_state(to_state)
+            GLib.idle_add(self.reload_state)
 
     '''----- UPDATE CHECK HELPERS -----'''
 
@@ -399,9 +409,7 @@ class LibraryEntry:
         if self.game.is_installed() and self.game.id and not self.offline:
             game_info = self.api.get_info(self.game)
             self.__download_icon(game_info=game_info)
-            if self.game.get_info("check_for_updates") == "":
-                self.game.set_info("check_for_updates", True)
-            if self.game.get_info("check_for_updates"):
+            if self.game.get_info("check_for_updates", True):
                 game_version = self.api.get_version(self.game, gameinfo=game_info)
                 update_available = self.game.is_update_available(game_version)
                 if update_available:
@@ -509,7 +517,7 @@ class LibraryEntry:
     def reload_state(self):
         self.game.set_install_dir(self.config.install_dir)
         dont_act_in_states = [State.QUEUED, State.DOWNLOADING, State.INSTALLING, State.UNINSTALLING,
-                              State.UPDATING, State.DOWNLOADING]
+                              State.UPDATING]
         if self.current_state in dont_act_in_states:
             return
         if self.game.is_installed():
@@ -631,6 +639,45 @@ class LibraryEntry:
             GLib.idle_add(self.STATE_UPDATE_HANDLERS[state])
 
     '''----- END STATE HANDLING -----'''
+
+
+class CallbackFuncWrapper:
+    def __init__(self, finish_func, cancel_func, lib_entry, download_files, installer_inventory=None):
+        self.lib_entry = lib_entry
+        # empty or incomplete at construction time, must be evaluated when finish_func is called
+        self.download_files = download_files
+        self.finished_downloads = {}
+        self.callback_finish = finish_func
+        self.callback_cancel = cancel_func
+        self.require_confirmation = True  # for cancel
+        self.inventory = installer_inventory
+
+    def finish_func(self, save_location):
+        self.finished_downloads[save_location] = 1
+        if sum(self.finished_downloads.values()) != len(self.download_files):
+            return
+
+        save_locations = []
+        for d in self.download_files:
+            save_locations.append(d.save_location)
+        self.callback_finish(self.download_files[0].save_location, inventory=self.inventory)
+
+    def cancel_func(self, trigger, cancel_to_state):
+        item_id = self.lib_entry.game.id
+        if item_id not in self.lib_entry.config.current_downloads:
+            # trigger for cancel was cancel button on GameTile
+            self.require_confirmation = False
+
+        self.callback_cancel(to_state=cancel_to_state, item_list=[trigger])
+        if trigger.cancel_reason is DownloadState.CANCELED and self.require_confirmation:
+            self.require_confirmation = False
+            GLib.idle_add(self.lib_entry.confirm_and_cancel_download, None, self.download_files)
+
+    def add_callbacks(self, download, cancel_to_state):
+        handler_instance = self
+        download.on_cancel(lambda: handler_instance.cancel_func(download, cancel_to_state))
+        if self.callback_finish:
+            download.on_finish(self.finish_func)
 
 
 class DlcListEntry(Gtk.Box):

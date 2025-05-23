@@ -697,6 +697,7 @@ class DownloadManager:
             raise ValueError(str(cancel_type) + " is not a valid cancel reason")
 
         self.__cancel[download] = cancel_type
+        download.cancel_reason = cancel_type  # temporary addition for feedback by side_effect for LibraryEntry
         with self.active_downloads_lock:
             is_active = download in self.active_downloads
 
