@@ -108,7 +108,7 @@ class Game:
         json_dict["dlcs"][dlc_title][key] = value
         self.save_minigalaxy_info_json(json_dict)
 
-    def get_info(self, key):
+    def get_info(self, key, default_value=""):
         value = ""
         json_dict = self.load_minigalaxy_info_json()
         if key in json_dict:
@@ -122,7 +122,7 @@ class Game:
                 # Lets move this value to new config
                 self.set_info(key, value)
         # End: Code for compatibility with minigalaxy 1.0.1 and 1.0.2
-        return value
+        return default_value if value == "" else value
 
     def get_dlc_info(self, key, dlc_title):
         value = ""

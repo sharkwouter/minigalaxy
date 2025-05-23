@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 import re
 import shlex
@@ -15,6 +16,7 @@ from threading import Thread, RLock
 
 from minigalaxy.config import Config
 from minigalaxy.constants import GAME_LANGUAGE_IDS
+from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
@@ -449,6 +451,18 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
     return ""
 
 
+def safe_delete(file_list):
+    '''
+    Tries to delete the given files without throwing exceptions where possible.
+    '''
+    logger.info("Trying to safely delete: %s", file_list)
+    for f in file_list:
+        if is_empty_dir(f):
+            os.rmdir(f)
+        elif os.path.isfile(f):
+            os.remove(f)
+
+
 def list_installer_files(installer):
     '''
     Helper utility to list all files in the same directory that belong to the given installer executable.
@@ -598,6 +612,138 @@ def match_game_lang_to_installer(installer: str, language: str, outputLogFile=No
     return "en-US"
 
 
+class InstallerInventory:
+    '''Helper class to keep track of completeness of installer downloads'''
+
+    def __init__(self, installer_path=None):
+        self.inventory_file = None
+        if installer_path:
+            self.set_path_once(installer_path)
+
+    @staticmethod
+    def from_file_system(installer_path):
+        '''
+        Helper utility to build an instance of InstallerInventory from files in the same directory
+        that belong to the given installer_path.
+        Expects the following naming convention:
+        - game_installer_version.[exe|sh]
+        - game_installer_version-1.bin
+        - game_installer_version-2.bin ...
+
+        The inventory will contain all files whose names are matching
+        the base name of the installer (without extension) in the SAME directory.
+        No recursion.
+
+        This is a fallback for games that have been downloaded before InstallerInventory was introduced.
+        Files added like this won't have checksums and the is_complete check makes little sense.
+        '''
+        inventory = InstallerInventory(installer_path)
+        if os.path.isfile(inventory.inventory_file):
+            return inventory
+
+        # if the file doesn't exist, populate from disk to get names at the very least
+        for f in os.listdir(inventory.directory):
+            fullpath = os.path.join(inventory.directory, f)
+            if os.path.isfile(fullpath) and f.startswith(inventory.name_prefix):
+                inventory.add_file(f, FileInfo(size=InstallerInventory.size_of(fullpath)))
+
+        return inventory
+
+    @staticmethod
+    def size_of(file):
+        return os.stat(file).st_size
+
+    def set_path_once(self, installer_path=None):
+        if not self.inventory_file and installer_path:
+            self.directory = os.path.dirname(installer_path)
+            self.name_prefix = os.path.basename(os.path.splitext(installer_path)[0])
+            self.inventory_file = os.path.join(self.directory, f"{self.name_prefix}.json")
+            self.load()
+
+    def load(self):
+        if not os.path.isfile(self.inventory_file):
+            self.data = {}
+            return self.data
+
+        with open(self.inventory_file, 'r') as inventory:
+            self.data = json.load(inventory)
+
+        return self.data
+
+    def save(self):
+        if not os.path.exists(self.directory):
+            os.makedirs(self.directory, mode=0o755)
+
+        with open(self.inventory_file, 'w') as inventory_file:
+            json.dump(self.data, inventory_file)
+
+    def add_file(self, name, file_info):
+        self.data[os.path.basename(name)] = file_info.as_dict()
+
+    def has_checksum(self, file_name):
+        return not self.data.get(file_name, {}).get("md5", None) is None
+
+    def verify_checksum(self, file_name, actual_checksum):
+        file_info = self.data.get(file_name)
+        recorded_checksum = file_info.get("md5", "")
+        if recorded_checksum == actual_checksum:
+            return True
+        else:
+            file_info["md5"] = False
+            return False
+
+    def is_complete(self):
+        self.load()
+        if not self.data:
+            return False
+
+        for file in self.data.keys():
+            full_path = os.path.join(self.directory, file)
+            if not os.path.exists(full_path) or InstallerInventory.size_of(full_path) != self.data[file].get("size", 0):
+                return False
+
+        return True
+
+    def as_keep_files_list(self):
+        files = [self.inventory_file]
+        for f in self.data.keys():
+            files.append(os.path.join(self.directory, f))
+        return files
+
+    def delete_files(self):
+        '''delete files which are part of this inventory'''
+        file_list = self.as_keep_files_list()
+        file_list.append(self.directory)
+        safe_delete(file_list)
+
+    def delete_others(self):
+        '''
+        Delete files in the same directory, which are NOT part of this inventory.
+        Used to remove previous versions after successful install.
+        '''
+        delete_list = []
+        for f in os.listdir(self.directory):
+            if os.path.isdir(f):
+                continue
+            if f not in self.data:
+                delete_list.append(f)
+
+        safe_delete(delete_list)
+
+    def delete_invalid_files(self):
+        '''
+        Delete files of this inventory which are flagged as having an invalid checksum.
+        Flagging must have happened by calling IntallerInventory.verify_checksum.
+        It is advised not to call save() afterwards because that will overwrite the recorded checksums with False
+        '''
+        delete_list = []
+        for file, info in self.data.items():
+            if info.get("md5", None) is False:
+                delete_list.append(os.path.join(self.directory, file))
+
+        safe_delete(delete_list)
+
+
 class InstallResultType(Enum):
     SUCCESS = 1
     FAILURE = 2
@@ -633,6 +779,9 @@ class InstallException(Exception):
         self.fail_type = fail_type
         self.message = message
         self.data = data
+
+    def __str__(self):
+        return f"InstallResult(id={self.install_id}, type={self.type}), reason={self.reason})"
 
 
 class InstallTask:
