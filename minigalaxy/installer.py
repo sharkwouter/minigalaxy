@@ -73,7 +73,6 @@ def install_game(  # noqa: C901
         install_dir: str,
         keep_installers: bool,
         create_desktop_file: bool,
-        file_list=None,
         installer_inventory=None,
         raise_error=False
 ):
@@ -83,13 +82,10 @@ def install_game(  # noqa: C901
     logger.info("Installing {}".format(game.name))
 
     try:
-        if not file_list:
-            file_list = list_installer_files(installer)
-
         if not installer_inventory:
             installer_inventory = InstallerInventory.from_file_system(installer)
 
-        fail_on_error(verify_installer_integrity(game, file_list),
+        fail_on_error(verify_installer_integrity(game, installer_inventory),
                       InstallResultType.CHECKSUM_ERROR)
 
         fail_on_error(verify_disk_space(game, installer), InstallResultType.FAILURE)
@@ -115,10 +111,7 @@ def install_game(  # noqa: C901
         error_message = e.message
         # delete invalid files
         if e.fail_type == InstallResultType.CHECKSUM_ERROR:
-            keep_list = [*file_list]
-            for f in e.data.keys():
-                keep_list.remove(f)
-            error_message = remove_installer(game, installer, install_dir, True, keep_list)
+            installer_inventory.delete_invalid_files()
 
     except Exception as e:
         error = InstallException(_("Unhandled error."), data=e)
@@ -153,14 +146,18 @@ def fail_on_error(message_to_test, fail_type=None, data=None):
     return remaining_args
 
 
-def verify_installer_integrity(game, installer_files):
+def verify_installer_integrity(game, installer_inventory):
     error_message = []
     invalid_files = {}
 
-    for installer in installer_files:
+    for installer in installer_inventory.as_keep_files_list():
         installer_file_name = os.path.basename(installer)
         if not os.path.exists(installer):
             error_message = _("{} failed to download.").format(installer_file_name)
+
+        if not installer_inventory.has_checksum(installer_file_name):
+            logger.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
+            continue
 
         hash_md5 = hashlib.md5()
         with open(installer, "rb") as installer_file:
@@ -168,11 +165,7 @@ def verify_installer_integrity(game, installer_files):
                 hash_md5.update(chunk)
         calculated_checksum = hash_md5.hexdigest()
 
-        if installer_file_name not in game.md5sum:
-            logger.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
-            continue
-
-        if game.md5sum[installer_file_name] == calculated_checksum:
+        if installer_inventory.verify_checksum(installer_file_name, calculated_checksum):
             logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
         else:
             error_message.append(_("{} was corrupted. Please download it again.").format(installer_file_name))
@@ -458,29 +451,6 @@ def safe_delete(file_list):
             os.rmdir(f)
         elif os.path.isfile(f):
             os.remove(f)
-
-
-def list_installer_files(installer):
-    '''
-    Helper utility to list all files in the same directory that belong to the given installer executable.
-    Expects the following naming convention:
-    - game_installer_version.[exe|sh]
-    - game_installer_version-1.bin
-    - game_installer_version-2.bin ...
-
-    Returns unsorted array of absolute paths for all files whose names are matching
-    the base name of the installer (without extension) in the SAME directory.
-    No recursion.
-    '''
-    installer_prefix = os.path.splitext(os.path.basename(installer))[0]
-    installer_dir = os.path.dirname(installer)
-    installer_files = []
-    for f in os.listdir(installer_dir):
-        fullpath = os.path.join(installer_dir, f)
-        if os.path.isfile(fullpath) and f.startswith(installer_prefix):
-            installer_files.append(fullpath)
-
-    return installer_files
 
 
 def is_empty_dir(path):

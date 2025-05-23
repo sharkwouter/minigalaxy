@@ -155,7 +155,11 @@ class LibraryEntry:
         if exes_by_creation_date:
             ctimes_sorted = [*exes_by_creation_date.keys()]
             ctimes_sorted.sort()
-            keep_path = exes_by_creation_date[ctimes_sorted[-1]]
+            for creation_time in ctimes_sorted:
+                installer = exes_by_creation_date[creation_time]
+                inventory = InstallerInventory(installer)
+                if inventory.is_complete():
+                    return installer
 
         return keep_path
 
@@ -253,6 +257,7 @@ class LibraryEntry:
         total_file_size = 0
         download_files = []
 
+        download_inventory = InstallerInventory()
         callback_factory = CallbackFuncWrapper(finish_func, self.__cancel, self, download_files, download_inventory)
 
         for key, file_info in enumerate(download_info['files']):
@@ -270,8 +275,10 @@ class LibraryEntry:
             filename = urllib.parse.unquote(urllib.parse.urlsplit(download_url).path)
             filename = filename.split("/")[-1]
             download_path = os.path.join(target_download_dir, filename)
+            download_inventory.set_path_once(download_path)  # assumption: first file is installer executable
             if info.md5:
                 self.game.md5sum[os.path.basename(download_path)] = info.md5
+            download_inventory.add_file(download_path, info)
             download = Download(
                 url=download_url,
                 save_location=download_path,
@@ -288,6 +295,7 @@ class LibraryEntry:
         self.download_list.extend(download_files)
 
         if check_diskspace(total_file_size, self.game.install_dir):
+            download_inventory.save()
             self.download_manager.download(download_files)
         else:
             ds_msg_title = _("Download error")
@@ -316,18 +324,18 @@ class LibraryEntry:
 
     '''----- INSTALL ACTIONS -----'''
 
-    def __install_game(self, save_location, file_list=None):
+    def __install_game(self, save_location, inventory=None):
         self.config.remove_ongoing_download(self.game.id)
         self.game.set_install_dir(self.config.install_dir)
-        install_success = self.__install(save_location, file_list=file_list)
+        install_success = self.__install(save_location, inventory=inventory)
         if install_success:
             popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
                                             .format(self.game.name), "dialog-information")
             popup.show()
             self.__check_for_dlc(self.api.get_info(self.game))
 
-    def __install_update(self, save_location, file_list=None):
-        install_success = self.__install(save_location, update=True, file_list=file_list)
+    def __install_update(self, save_location, inventory=None):
+        install_success = self.__install(save_location, update=True, inventory=inventory)
         if install_success:
             if self.game.platform == "windows":
                 self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
@@ -338,13 +346,13 @@ class LibraryEntry:
             if self.game.is_update_available(version_from_api=download_info["version"], dlc_title=dlc["title"]):
                 self.__download_dlc(dlc["downloads"]["installers"])
 
-    def __install_dlc(self, save_location, dlc_title, file_list=None):
-        install_success = self.__install(save_location, dlc_title=dlc_title, file_list=file_list)
+    def __install_dlc(self, save_location, dlc_title, inventory=None):
+        install_success = self.__install(save_location, dlc_title=dlc_title, inventory=inventory)
         if not install_success:
             self.update_to_state(State.INSTALLED)
         self.__check_for_update_dlc()
 
-    def __install(self, save_location, update=False, dlc_title="", file_list=None):
+    def __install(self, save_location, update=False, dlc_title="", inventory=None):
         if update:
             processing_state = State.UPDATING
             failed_state = State.INSTALLED
@@ -360,7 +368,7 @@ class LibraryEntry:
             self.config.install_dir,
             self.config.keep_installers,
             self.config.create_applications_file,
-            file_list=file_list
+            installer_inventory=inventory
         )
 
         if not err_msg:
@@ -634,7 +642,7 @@ class LibraryEntry:
 
 
 class CallbackFuncWrapper:
-    def __init__(self, finish_func, cancel_func, lib_entry, download_files):
+    def __init__(self, finish_func, cancel_func, lib_entry, download_files, installer_inventory=None):
         self.lib_entry = lib_entry
         # empty or incomplete at construction time, must be evaluated when finish_func is called
         self.download_files = download_files
@@ -642,6 +650,7 @@ class CallbackFuncWrapper:
         self.callback_finish = finish_func
         self.callback_cancel = cancel_func
         self.require_confirmation = True  # for cancel
+        self.inventory = installer_inventory
 
     def finish_func(self, save_location):
         self.finished_downloads[save_location] = 1
@@ -651,7 +660,7 @@ class CallbackFuncWrapper:
         save_locations = []
         for d in self.download_files:
             save_locations.append(d.save_location)
-        self.callback_finish(self.download_files[0].save_location, file_list=self.download_files)
+        self.callback_finish(self.download_files[0].save_location, inventory=self.inventory)
 
     def cancel_func(self, trigger, cancel_to_state):
         item_id = self.lib_entry.game.id
