@@ -74,6 +74,7 @@ def install_game(  # noqa: C901
         keep_installers: bool,
         create_desktop_file: bool,
         file_list=None,
+        installer_inventory=None,
         raise_error=False
 ):
     error_message = ""
@@ -84,6 +85,9 @@ def install_game(  # noqa: C901
     try:
         if not file_list:
             file_list = list_installer_files(installer)
+
+        if not installer_inventory:
+            installer_inventory = InstallerInventory.from_file_system(installer)
 
         fail_on_error(verify_installer_integrity(game, file_list),
                       InstallResultType.CHECKSUM_ERROR)
@@ -103,7 +107,8 @@ def install_game(  # noqa: C901
             fail_on_error(create_applications_file(game))
 
         # Remove at end, but only on success. Allows retries without re-download
-        fail_on_error(remove_installer(game, installer, install_dir, keep_installers, file_list))
+        fail_on_error(remove_installer(game, installer, install_dir,
+                                       keep_installers, installer_inventory))
 
     except InstallException as e:
         error = e
@@ -412,7 +417,7 @@ def compare_directories(dir1, dir2):
     return result
 
 
-def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_installers: bool, file_list=None):
+def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_installers: bool, inventory=None):
     installer_dir = os.path.dirname(installer)
     if not os.path.isdir(installer_dir):
         error_message = "No installer directory is present: {}".format(installer_dir)
@@ -423,29 +428,21 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
         keep_installers_dir
     ]
 
-    keep_files = []
-    if keep_installers and file_list:
-        keep_files = file_list
-    elif keep_installers:
-        # assume all support files are named with the same prefix and only differ in ending
-        # we run into this case when installing from local file by ui clicking instead of from the download_finish callback
-        keep_files = list_installer_files(installer)
+    if not inventory:
+        inventory = InstallerInventory.from_file_system(installer)
 
-    logger.info("Cleaning [%s] - keep_files:%s", installer_dir, keep_files)
+    logger.info("Cleaning [%s] - keep_installers:%s", installer_dir, keep_installers)
 
-    # assume all files in file_list are in the same directory relative to dirname(installer)
     try:
-        for file in os.listdir(installer_dir):
-            file = os.path.join(installer_dir, file)
-            if os.path.isfile(file) and file not in keep_files:
-                logger.info("Deleting file [%s] - not in keep_files", file)
-                os.remove(file)
+        inventory.delete_others()
+        if not keep_installers:
+            inventory.delete_files()
 
         # walk up and delete empty directories, but stop if the parent is one of the roots used by MG
         # this is just maintenance to prevent aggregating empty directories in cache
         remove_empty_dirs_upwards(installer_dir, installer_root_dirs)
     except Exception as e:
-        logger.error(e)
+        logger.error("Error while removing installer", exc_info=e)
         return str(e)
 
     return ""
@@ -487,7 +484,7 @@ def list_installer_files(installer):
 
 
 def is_empty_dir(path):
-    return not os.listdir(path)
+    return os.path.isdir(path) and not os.listdir(path)
 
 
 def remove_empty_dirs_upwards(start_dir, stop_dirs):
