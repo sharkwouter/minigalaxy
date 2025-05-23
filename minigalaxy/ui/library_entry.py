@@ -10,7 +10,7 @@ from minigalaxy.download import Download, DownloadType
 from minigalaxy.download_manager import DownloadState
 from minigalaxy.entity.state import State
 from minigalaxy.game import Game
-from minigalaxy.installer import uninstall_game, install_game, check_diskspace, safe_delete
+from minigalaxy.installer import uninstall_game, install_game, check_diskspace, InstallerInventory
 from minigalaxy.launcher import start_game
 from minigalaxy.logger import logger
 from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, ICON_WINE_PATH, THUMBNAIL_DIR
@@ -126,7 +126,12 @@ class LibraryEntry:
                 # download has finished regularly (no cancel reason), so it won't receive cancel from download manager
                 # manually call the cancel() callback
                 d.cancel()
-                safe_delete([d.save_location])
+            # second round to support parallel downloads:
+            # expect multiple executables and try to delete inventory for each of them
+            for d in download_list:
+                if self.is_executable(d.save_location):
+                    inventory = InstallerInventory.from_file_system(d.save_location)
+                    inventory.delete_files()
 
     def confirm_and_uninstall(self, widget):
         question = _("Are you sure you want to uninstall %s?" % self.game.name)
