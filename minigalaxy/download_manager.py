@@ -62,7 +62,7 @@ class QueuedDownloadItem:
 
 
 class DownloadState(Enum):
-    '''This enum represents the various states that a Download goes through in DownloadManager'''
+    """This enum represents the various states that a Download goes through in DownloadManager"""
 
     QUEUED = 1  # Download request is put into the queue of pending downloads
     STARTED = 2  # The download url response is now actively being streamed into save_location
@@ -144,7 +144,7 @@ class DownloadManager:
 
     @property
     def active_downloads(self):
-        '''produces a simple list view of the all currently active downloads'''
+        """produces a simple list view of the all currently active downloads"""
         with self.active_downloads_lock:
             result = []
             for d in self._active_downloads_data.values():
@@ -154,7 +154,6 @@ class DownloadManager:
     def __initialize_workers(self, queue, num_workers):
         for i in range(num_workers):
             download_thread = threading.Thread(target=lambda: self.__download_thread(queue))
-            download_thread.daemon = True
             download_thread.start()
             self.workers[queue].append(download_thread)
 
@@ -177,18 +176,21 @@ class DownloadManager:
                 self.__call_listener_failsafe(listener, DownloadState.QUEUED, download)
 
     def __notify_listeners(self, change: DownloadState, download, additional_params=[], download_params=[], forked=None):
-        '''helper function to notify listeners of changes to the active download list
-        Will be used for each atomic add/remove action in the list of active downloads'''
+        """helper function to notify listeners of changes to the active download list
+        Will be used for each atomic add/remove action in the list of active downloads"""
         if not change:
             return
 
         # must differentiate from False to get default
         if forked is None:
             forked = not self.fork_listener
+        if not self.listener_thread:
+            # listener thread has been shutdown already, run the notification in the current thread
+            forked = True
 
         if forked:
             self.logger.debug('[%s] NOTIFY:%s - %s, params:%s',
-                              threading.currentThread().getName(), change, download.filename(), download_params)
+                              threading.current_thread().name, change, download.filename(), download_params)
             for listener in self.download_list_change_listener:
                 self.__call_listener_failsafe(listener, change, download, *additional_params)
             self.__download_callback(download, change, *download_params, forked=forked)
@@ -202,7 +204,7 @@ class DownloadManager:
     def __call_listener_failsafe(self, listener, *parameters):
         try:
             listener(*parameters)
-        except BaseException:
+        except Exception:
             self.logger.exception("Error while trying to notify listener:")
 
     def download(self, download, restart_paused=False):
@@ -237,35 +239,27 @@ class DownloadManager:
             self.put_in_proper_queue(d)
 
     def put_in_proper_queue(self, download):
-        "Put the download in the proper queue"
+        """Put the download in the proper queue"""
 
         self.__notify_listeners(DownloadState.QUEUED, download)
         self.__add_to_queued_list(download)
 
-        # Add game type downloads to the game queue
-        if download.download_type == DownloadType.GAME:
+        if download.download_type in [DownloadType.GAME, DownloadType.GAME_UPDATE, DownloadType.GAME_DLC]:
+            # Add game types downloads to the game queue
             self.__game_queue.put(QueuedDownloadItem(download, 1))
-        elif download.download_type == DownloadType.GAME_UPDATE:
-            self.__game_queue.put(QueuedDownloadItem(download, 1))
-        elif download.download_type == DownloadType.GAME_DLC:
-            self.__game_queue.put(QueuedDownloadItem(download, 1))
-        elif download.download_type == DownloadType.ICON:
-            self.__ui_queue.put(QueuedDownloadItem(download, 0))
-        elif download.download_type == DownloadType.THUMBNAIL:
-            self.__ui_queue.put(QueuedDownloadItem(download, 0))
         else:
             # Add other items to the UI queue
             self.__ui_queue.put(QueuedDownloadItem(download, 0))
 
     def adjust_game_workers(self, new_amount, stop_active=False):
-        '''
+        """
         This method allows to dynamically change the number of download threads used by the game queue.
         The new number is compared against the current value set in config, afterwards the config value is updated.
           1. When greater, new threads are spawned for this queue.
           2. When smaller, idle threads will orderly terminate until len(workers[game_queue]) == new_amount (TBD)
           2a. Threads which are currently busy will only be actively stopped when stop_active=True is given. (TBD)
               In that case, the download with the least amount of progress is stopped and requeued afterwards
-        '''
+        """
 
         difference = new_amount - self.config.max_parallel_game_downloads
         if difference == 0 or new_amount < 1:
@@ -330,9 +324,7 @@ class DownloadManager:
         self.cancel_current_downloads(download_dict, cancel_state)
 
     def cancel_current_downloads(self, download_dict=None, cancel_state=DownloadState.CANCELED):
-        """
-        Cancel the current downloads
-        """
+        """Cancel the current downloads"""
 
         if not download_dict:
             download_dict = self.active_downloads
@@ -381,9 +373,8 @@ class DownloadManager:
                     download_queue.put(item)
 
     def cancel_all_downloads(self, cancel_state=DownloadState.CANCELED):
-        """
-        Cancel all current downloads queued
-        """
+        """Cancel all current downloads queued"""
+
         self.logger.debug("Canceling all downloads")
         for download_queue in self.queues:
             self.logger.debug("queue length: {}".format(download_queue.qsize()))
@@ -397,6 +388,14 @@ class DownloadManager:
                 download_queue.task_done()
 
         self.cancel_current_downloads(cancel_state=cancel_state)
+
+    def shutdown(self):
+        with self.active_downloads_lock:
+            self.listener_thread.shutdown(cancel_futures=True)
+            self.listener_thread = None
+            self.cancel_all_downloads(DownloadState.STOPPED)
+            for download_queue in self.queues:
+                download_queue.shutdown(immediate=True)
 
     def __cancel_paused_downloads(self, downloads, cancel_state=DownloadState.CANCELED):
         paused_downloads = self.config.paused_downloads
@@ -417,8 +416,8 @@ class DownloadManager:
 
     def __download_thread(self, download_queue):
         """
-        The main DownloadManager thread calls this when it is created
-        It checks the queue, starting new downloads when they are available
+        The main DownloadManager thread calls this when it is created.
+        It checks the queue, starting new downloads when they are available.
         Users of this library should not need to call this.
         """
         while True:
@@ -431,10 +430,10 @@ class DownloadManager:
                     # Exit the thread in an orderly way
                     return
 
-            if not download_queue.empty():
+            try:
+                download = download_queue.get(block=True, timeout=0.5).item
                 # Update the active downloads
                 with self.active_downloads_lock:
-                    download = download_queue.get().item
                     self._add_to_active_downloads(download, download_queue)
                     self.__remove_from_queued_list(download)
 
@@ -443,8 +442,14 @@ class DownloadManager:
                 # Mark the task as done to keep counts correct so
                 # we can use join() or other functions later
                 download_queue.task_done()
+            except queue.Empty:
+                # happens all the time
+                pass
 
-            time.sleep(0.5)
+            except queue.ShutDown:
+                self.logger.debug("Shutting down worker %s because DownloadManager.shutdown() was called",
+                                  threading.current_thread().name)
+                return
 
     def __download_file(self, download, download_queue):
         """
@@ -578,7 +583,7 @@ class DownloadManager:
                 file_size += downloaded_size
         except (ValueError, TypeError):
             if download.expected_size:
-                self.logger.warn("Couldn't get file size for %s. Use download.expected_size=%s.",
+                self.logger.warning("Couldn't get file size for %s. Use download.expected_size=%s.",
                                  download.save_location, download.expected_size)
                 file_size = download.expected_size
             else:
@@ -639,8 +644,8 @@ class DownloadManager:
                     return file_content == chunk
 
     def __download_callback(self, download, state, *params, forked=False):
-        '''encapsulates invocation of callbacks on Download to assure uniform threading and
-        error safeguarding to not kill download threads by uncaught exceptions'''
+        """encapsulates invocation of callbacks on Download to assure uniform threading and
+        error safeguarding to not kill download threads by uncaught exceptions"""
         if state in DownloadManager.STATE_DOWNLOAD_CALLBACKS:
             if forked:
                 callback = DownloadManager.STATE_DOWNLOAD_CALLBACKS[state]
@@ -664,7 +669,7 @@ class DownloadManager:
             }
 
     def _remove_from_active_downloads(self, download):
-        "Remove a download from the list of active downloads"
+        """Remove a download from the list of active downloads"""
         with self.active_downloads_lock:
             save_loc = download.save_location
             if save_loc in self._active_downloads_data:
@@ -674,7 +679,7 @@ class DownloadManager:
                 self.logger.debug("Didn't find download %s in active downloads list", save_loc)
 
     def __get_active_from_queue(self, queue):
-        '''Goes through all active downloads and collects all are active in workers from the given queue'''
+        """Goes through all active downloads and collects all are active in workers from the given queue"""
         with self.active_downloads_lock:
             result = []
             for d in self._active_downloads_data.values():
@@ -692,7 +697,7 @@ class DownloadManager:
                 del self.queued_downloads[download.save_location]
 
     def __request_download_cancel(self, download, cancel_type=DownloadState.CANCELED):
-        '''used to separate data structure of self.__cancel from the logic procedure of flagging a download for cancel'''
+        """used to separate data structure of self.__cancel from the logic procedure of flagging a download for cancel"""
         if not self.__is_cancel_type(cancel_type):
             raise ValueError(str(cancel_type) + " is not a valid cancel reason")
 
@@ -720,8 +725,8 @@ class DownloadManager:
         return self.__cancel.get(download, None)
 
     def __cleanup_meta(self, download, last_state):
-        '''depending on the end state of a download, we might want to keep/remove a different set of state data
-        about a download. That is what this method controls'''
+        """depending on the end state of a download, we might want to keep/remove a different set of state data
+        about a download. That is what this method controls"""
         self.logger.debug('Cleaning up meta data for: %s', download.filename())
         if last_state in [DownloadState.CANCELED]:
             self.__clear_cancel_state(download)

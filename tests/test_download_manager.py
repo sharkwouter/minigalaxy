@@ -17,6 +17,7 @@ class TestDownloadManager(TestCase):
         self.session = MagicMock()
         self.config_mock = MagicMock()
         self.config_mock.paused_downloads = {}
+        self.config_mock.max_parallel_game_downloads = 4
         self.download_request = MagicMock()
         self.download_request.__enter__.return_value = self.download_request
 
@@ -32,6 +33,10 @@ class TestDownloadManager(TestCase):
         self.download_request.headers.get.return_value = len(self.chunks) * DOWNLOAD_CHUNK_SIZE
         self.download_manager = DownloadManager(self.session, self.config_mock)
         self.download_manager.fork_listener = False
+
+    def tearDown(self)->None:
+        TestCase.tearDown(self)
+        self.download_manager.shutdown()
 
     def test_download_operation(self):
         progress_func = MagicMock()

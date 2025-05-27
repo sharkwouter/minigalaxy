@@ -54,7 +54,7 @@ class Test(TestCase):
             item.execute.assert_called_once()
 
             # worker must be dead and gone
-            self.assertTrue(test_queue.empty(), "Queue should be empty again")
+            self.assertTrue(test_queue.is_empty(), "Queue should be empty again")
             self.assertFalse(spawned_worker.is_alive(), "Worker thread should be dead when the queue is empty")
             self.assertIsNone(test_queue.worker, "Worker thread should be gone")
         finally:
