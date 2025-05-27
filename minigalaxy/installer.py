@@ -1,4 +1,5 @@
 import hashlib
+import json
 import os
 import re
 import shlex
@@ -15,6 +16,7 @@ from threading import Thread, RLock
 
 from minigalaxy.config import Config
 from minigalaxy.constants import GAME_LANGUAGE_IDS
+from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
@@ -71,7 +73,7 @@ def install_game(  # noqa: C901
         install_dir: str,
         keep_installers: bool,
         create_desktop_file: bool,
-        file_list=None,
+        installer_inventory=None,
         raise_error=False
 ):
     error_message = ""
@@ -80,10 +82,10 @@ def install_game(  # noqa: C901
     logger.info("Installing {}".format(game.name))
 
     try:
-        if not file_list:
-            file_list = list_installer_files(installer)
+        if not installer_inventory:
+            installer_inventory = InstallerInventory.from_file_system(installer)
 
-        fail_on_error(verify_installer_integrity(game, file_list),
+        fail_on_error(verify_installer_integrity(game, installer_inventory),
                       InstallResultType.CHECKSUM_ERROR)
 
         fail_on_error(verify_disk_space(game, installer), InstallResultType.FAILURE)
@@ -101,17 +103,15 @@ def install_game(  # noqa: C901
             fail_on_error(create_applications_file(game))
 
         # Remove at end, but only on success. Allows retries without re-download
-        fail_on_error(remove_installer(game, installer, install_dir, keep_installers, file_list))
+        fail_on_error(remove_installer(game, installer, install_dir,
+                                       keep_installers, installer_inventory))
 
     except InstallException as e:
         error = e
         error_message = e.message
         # delete invalid files
         if e.fail_type == InstallResultType.CHECKSUM_ERROR:
-            keep_list = [*file_list]
-            for f in e.data.keys():
-                keep_list.remove(f)
-            error_message = remove_installer(game, installer, install_dir, True, keep_list)
+            installer_inventory.delete_invalid_files()
 
     except Exception as e:
         error = InstallException(_("Unhandled error."), data=e)
@@ -146,14 +146,18 @@ def fail_on_error(message_to_test, fail_type=None, data=None):
     return remaining_args
 
 
-def verify_installer_integrity(game, installer_files):
+def verify_installer_integrity(game, installer_inventory):
     error_message = []
     invalid_files = {}
 
-    for installer in installer_files:
+    for installer in installer_inventory.as_keep_files_list():
         installer_file_name = os.path.basename(installer)
         if not os.path.exists(installer):
             error_message = _("{} failed to download.").format(installer_file_name)
+
+        if not installer_inventory.has_checksum(installer_file_name):
+            logger.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
+            continue
 
         hash_md5 = hashlib.md5()
         with open(installer, "rb") as installer_file:
@@ -161,11 +165,7 @@ def verify_installer_integrity(game, installer_files):
                 hash_md5.update(chunk)
         calculated_checksum = hash_md5.hexdigest()
 
-        if installer_file_name not in game.md5sum:
-            logger.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
-            continue
-
-        if game.md5sum[installer_file_name] == calculated_checksum:
+        if installer_inventory.verify_checksum(installer_file_name, calculated_checksum):
             logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
         else:
             error_message.append(_("{} was corrupted. Please download it again.").format(installer_file_name))
@@ -410,7 +410,7 @@ def compare_directories(dir1, dir2):
     return result
 
 
-def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_installers: bool, file_list=None):
+def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_installers: bool, inventory=None):
     installer_dir = os.path.dirname(installer)
     if not os.path.isdir(installer_dir):
         error_message = "No installer directory is present: {}".format(installer_dir)
@@ -421,59 +421,40 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
         keep_installers_dir
     ]
 
-    keep_files = []
-    if keep_installers and file_list:
-        keep_files = file_list
-    elif keep_installers:
-        # assume all support files are named with the same prefix and only differ in ending
-        # we run into this case when installing from local file by ui clicking instead of from the download_finish callback
-        keep_files = list_installer_files(installer)
+    if not inventory:
+        inventory = InstallerInventory.from_file_system(installer)
 
-    logger.info("Cleaning [%s] - keep_files:%s", installer_dir, keep_files)
+    logger.info("Cleaning [%s] - keep_installers:%s", installer_dir, keep_installers)
 
-    # assume all files in file_list are in the same directory relative to dirname(installer)
     try:
-        for file in os.listdir(installer_dir):
-            file = os.path.join(installer_dir, file)
-            if os.path.isfile(file) and file not in keep_files:
-                logger.info("Deleting file [%s] - not in keep_files", file)
-                os.remove(file)
+        inventory.delete_others()
+        if not keep_installers:
+            inventory.delete_files()
 
         # walk up and delete empty directories, but stop if the parent is one of the roots used by MG
         # this is just maintenance to prevent aggregating empty directories in cache
         remove_empty_dirs_upwards(installer_dir, installer_root_dirs)
     except Exception as e:
-        logger.error(e)
+        logger.error("Error while removing installer", exc_info=e)
         return str(e)
 
     return ""
 
 
-def list_installer_files(installer):
+def safe_delete(file_list):
     '''
-    Helper utility to list all files in the same directory that belong to the given installer executable.
-    Expects the following naming convention:
-    - game_installer_version.[exe|sh]
-    - game_installer_version-1.bin
-    - game_installer_version-2.bin ...
-
-    Returns unsorted array of absolute paths for all files whose names are matching
-    the base name of the installer (without extension) in the SAME directory.
-    No recursion.
+    Tries to delete the given files without throwing exceptions where possible.
     '''
-    installer_prefix = os.path.splitext(os.path.basename(installer))[0]
-    installer_dir = os.path.dirname(installer)
-    installer_files = []
-    for f in os.listdir(installer_dir):
-        fullpath = os.path.join(installer_dir, f)
-        if os.path.isfile(fullpath) and f.startswith(installer_prefix):
-            installer_files.append(fullpath)
-
-    return installer_files
+    logger.info("Trying to safely delete: %s", file_list)
+    for f in file_list:
+        if is_empty_dir(f):
+            os.rmdir(f)
+        elif os.path.isfile(f):
+            os.remove(f)
 
 
 def is_empty_dir(path):
-    return not os.listdir(path)
+    return os.path.isdir(path) and not os.listdir(path)
 
 
 def remove_empty_dirs_upwards(start_dir, stop_dirs):
@@ -598,6 +579,138 @@ def match_game_lang_to_installer(installer: str, language: str, outputLogFile=No
     return "en-US"
 
 
+class InstallerInventory:
+    '''Helper class to keep track of completeness of installer downloads'''
+
+    def __init__(self, installer_path=None):
+        self.inventory_file = None
+        if installer_path:
+            self.set_path_once(installer_path)
+
+    @staticmethod
+    def from_file_system(installer_path):
+        '''
+        Helper utility to build an instance of InstallerInventory from files in the same directory
+        that belong to the given installer_path.
+        Expects the following naming convention:
+        - game_installer_version.[exe|sh]
+        - game_installer_version-1.bin
+        - game_installer_version-2.bin ...
+
+        The inventory will contain all files whose names are matching
+        the base name of the installer (without extension) in the SAME directory.
+        No recursion.
+
+        This is a fallback for games that have been downloaded before InstallerInventory was introduced.
+        Files added like this won't have checksums and the is_complete check makes little sense.
+        '''
+        inventory = InstallerInventory(installer_path)
+        if os.path.isfile(inventory.inventory_file):
+            return inventory
+
+        # if the file doesn't exist, populate from disk to get names at the very least
+        for f in os.listdir(inventory.directory):
+            fullpath = os.path.join(inventory.directory, f)
+            if os.path.isfile(fullpath) and f.startswith(inventory.name_prefix):
+                inventory.add_file(f, FileInfo(size=InstallerInventory.size_of(fullpath)))
+
+        return inventory
+
+    @staticmethod
+    def size_of(file):
+        return os.stat(file).st_size
+
+    def set_path_once(self, installer_path=None):
+        if not self.inventory_file and installer_path:
+            self.directory = os.path.dirname(installer_path)
+            self.name_prefix = os.path.basename(os.path.splitext(installer_path)[0])
+            self.inventory_file = os.path.join(self.directory, f"{self.name_prefix}.json")
+            self.load()
+
+    def load(self):
+        if not os.path.isfile(self.inventory_file):
+            self.data = {}
+            return self.data
+
+        with open(self.inventory_file, 'r') as inventory:
+            self.data = json.load(inventory)
+
+        return self.data
+
+    def save(self):
+        if not os.path.exists(self.directory):
+            os.makedirs(self.directory, mode=0o755)
+
+        with open(self.inventory_file, 'w') as inventory_file:
+            json.dump(self.data, inventory_file)
+
+    def add_file(self, name, file_info):
+        self.data[os.path.basename(name)] = file_info.as_dict()
+
+    def has_checksum(self, file_name):
+        return not self.data.get(file_name, {}).get("md5", None) is None
+
+    def verify_checksum(self, file_name, actual_checksum):
+        file_info = self.data.get(file_name)
+        recorded_checksum = file_info.get("md5", "")
+        if recorded_checksum == actual_checksum:
+            return True
+        else:
+            file_info["md5"] = False
+            return False
+
+    def is_complete(self):
+        self.load()
+        if not self.data:
+            return False
+
+        for file in self.data.keys():
+            full_path = os.path.join(self.directory, file)
+            if not os.path.exists(full_path) or InstallerInventory.size_of(full_path) != self.data[file].get("size", 0):
+                return False
+
+        return True
+
+    def as_keep_files_list(self):
+        files = [self.inventory_file]
+        for f in self.data.keys():
+            files.append(os.path.join(self.directory, f))
+        return files
+
+    def delete_files(self):
+        '''delete files which are part of this inventory'''
+        file_list = self.as_keep_files_list()
+        file_list.append(self.directory)
+        safe_delete(file_list)
+
+    def delete_others(self):
+        '''
+        Delete files in the same directory, which are NOT part of this inventory.
+        Used to remove previous versions after successful install.
+        '''
+        delete_list = []
+        for f in os.listdir(self.directory):
+            if os.path.isdir(f):
+                continue
+            if f not in self.data:
+                delete_list.append(f)
+
+        safe_delete(delete_list)
+
+    def delete_invalid_files(self):
+        '''
+        Delete files of this inventory which are flagged as having an invalid checksum.
+        Flagging must have happened by calling IntallerInventory.verify_checksum.
+        It is advised not to call save() afterwards because that will overwrite the recorded checksums with False
+        '''
+        delete_list = []
+        for file, info in self.data.items():
+            if info.get("md5", None) is False:
+                delete_list.append(os.path.join(self.directory, file))
+
+        safe_delete(delete_list)
+
+
 class InstallResultType(Enum):
     SUCCESS = 1
     FAILURE = 2
@@ -633,6 +746,9 @@ class InstallException(Exception):
         self.fail_type = fail_type
         self.message = message
         self.data = data
+
+    def __str__(self):
+        return f"InstallResult(id={self.install_id}, type={self.type}), reason={self.reason})"
 
 
 class InstallTask:

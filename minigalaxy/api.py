@@ -167,7 +167,7 @@ class Api:
             else:
                 raise NoDownloadLinkFound("Error: {} with id {} couldn't be installed".format(game.name, game.id))
 
-        download_info = possible_downloads[0]
+        download_info = possible_downloads[-1]
         for installer in possible_downloads:
             if installer['language'] == self.config.lang:
                 download_info = installer
@@ -175,7 +175,7 @@ class Api:
             if installer['language'] == "en":
                 download_info = installer
 
-        # Return last entry in possible_downloads. This will either be English or the first langauge in the list
+        # Return last entry in possible_downloads. This will either be English or the first language in the list
         # This is just a backup, if the preferred language has been found, this part won't execute
         return download_info
 
