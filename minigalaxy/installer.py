@@ -755,7 +755,7 @@ class InstallTask:
         if not result_callback or not callable(result_callback):
             raise ValueError("result_callback is required")
         self.installer_id = install_id
-        self.title = InstallTask.__get_title_for_id(self.game, install_id)
+        self.title = InstallTask.get_title_for_id(self.game, install_id)
         self.callback = result_callback
         self.arg_array = args
         self.named_args = kwargs
@@ -784,7 +784,7 @@ class InstallTask:
         raise ValueError("No instance of Game in InstallTask constructor arguments")
 
     @staticmethod
-    def __get_title_for_id(game: Game, item_id):
+    def get_title_for_id(game: Game, item_id):
         if game.id == item_id:
             return game.name
         else:
@@ -794,6 +794,7 @@ class InstallTask:
         # this normally shouldn't happen and would mean that an
         # id was passed which is not in the dlc list
         return game.name
+
 
 class InstallerQueue:
     """

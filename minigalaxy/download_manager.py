@@ -584,7 +584,7 @@ class DownloadManager:
         except (ValueError, TypeError):
             if download.expected_size:
                 self.logger.warning("Couldn't get file size for %s. Use download.expected_size=%s.",
-                                 download.save_location, download.expected_size)
+                                    download.save_location, download.expected_size)
                 file_size = download.expected_size
             else:
                 self.logger.error(f"Couldn't get file size for {download.save_location}. No progress will be shown.")

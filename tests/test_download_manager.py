@@ -34,7 +34,7 @@ class TestDownloadManager(TestCase):
         self.download_manager = DownloadManager(self.session, self.config_mock)
         self.download_manager.fork_listener = False
 
-    def tearDown(self)->None:
+    def tearDown(self):
         TestCase.tearDown(self)
         self.download_manager.shutdown()
 
