@@ -82,7 +82,7 @@ Minigalaxy does **not** ship for the following distributions because they do not
 Other Linux distributions may work as well. Minigalaxy requires the following dependencies:
 
 - GTK+
-- Python 3
+- Python 3.10+
 - PyGObject 3.29.1+
 - Webkit2gtk with API version 4.0 support
 - Python Requests

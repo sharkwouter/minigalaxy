@@ -393,9 +393,11 @@ class DownloadManager:
         with self.active_downloads_lock:
             self.listener_thread.shutdown(cancel_futures=True)
             self.listener_thread = None
-            self.cancel_all_downloads(DownloadState.STOPPED)
             for download_queue in self.queues:
-                download_queue.shutdown(immediate=True)
+                # Set max_workers per queue to zero. 
+                # Every download thread will then just die normally after its current wait
+                self.queues[download_queue] = 0
+            self.cancel_all_downloads(DownloadState.STOPPED)
 
     def __cancel_paused_downloads(self, downloads, cancel_state=DownloadState.CANCELED):
         paused_downloads = self.config.paused_downloads
@@ -424,14 +426,14 @@ class DownloadManager:
             if download_queue in self.queues:
                 max_workers = self.queues[download_queue]
                 if len(self.workers[download_queue]) > max_workers:
-                    self.logger.debug("Shutting down worker because there are more then allowed")
+                    self.logger.debug("Shutting down worker %s because there are more then allowed", threading.current_thread().ident)
                     self.workers[download_queue].remove(threading.current_thread())
                     # The number of workers was reduced and the current thread is idle:
                     # Exit the thread in an orderly way
                     return
 
             try:
-                download = download_queue.get(block=True, timeout=0.5).item
+                download = download_queue.get(block=True, timeout=0.3).item
                 # Update the active downloads
                 with self.active_downloads_lock:
                     self._add_to_active_downloads(download, download_queue)
@@ -446,10 +448,11 @@ class DownloadManager:
                 # happens all the time
                 pass
 
-            except queue.ShutDown:
-                self.logger.debug("Shutting down worker %s because DownloadManager.shutdown() was called",
-                                  threading.current_thread().name)
-                return
+            # This code block only works with python 3.13 and requires usage of Queue.shutdown
+            #except queue.ShutDown:
+            #    self.logger.debug("Shutting down worker %s because DownloadManager.shutdown() was called",
+            #                      threading.current_thread().name)
+            #    return
 
     def __download_file(self, download, download_queue):
         """
