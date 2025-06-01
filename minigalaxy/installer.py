@@ -657,7 +657,6 @@ class InstallerInventory:
             file_info["md5"] = False
             return False
 
-
     def get_expected_total_size(self):
         total_size = 0
         for file_data in self.data.values():

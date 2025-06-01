@@ -394,7 +394,7 @@ class DownloadManager:
             self.listener_thread.shutdown(cancel_futures=True)
             self.listener_thread = None
             for download_queue in self.queues:
-                # Set max_workers per queue to zero. 
+                # Set max_workers per queue to zero.
                 # Every download thread will then just die normally after its current wait
                 self.queues[download_queue] = 0
             self.cancel_all_downloads(DownloadState.STOPPED)
@@ -426,7 +426,8 @@ class DownloadManager:
             if download_queue in self.queues:
                 max_workers = self.queues[download_queue]
                 if len(self.workers[download_queue]) > max_workers:
-                    self.logger.debug("Shutting down worker %s because there are more then allowed", threading.current_thread().ident)
+                    self.logger.debug("Shutting down worker %s because there are more then allowed",
+                                      threading.current_thread().ident)
                     self.workers[download_queue].remove(threading.current_thread())
                     # The number of workers was reduced and the current thread is idle:
                     # Exit the thread in an orderly way
@@ -449,7 +450,7 @@ class DownloadManager:
                 pass
 
             # This code block only works with python 3.13 and requires usage of Queue.shutdown
-            #except queue.ShutDown:
+            # except queue.ShutDown:
             #    self.logger.debug("Shutting down worker %s because DownloadManager.shutdown() was called",
             #                      threading.current_thread().name)
             #    return
