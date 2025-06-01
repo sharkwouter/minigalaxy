@@ -188,14 +188,12 @@ class LibraryEntry:
     def __download_game(self) -> None:
         finish_func = self.__install_game
         result, download_info = self.get_download_info()
-        if result:
-            result = self._download(self.game.id, download_info, DownloadType.GAME, finish_func)
+        self._download(self.game.id, download_info, DownloadType.GAME, finish_func)
 
     def __download_update(self) -> None:
         finish_func = self.__install_update
         result, download_info = self.get_download_info(self.game.platform)
-        if result:
-            result = self._download(self.game.id, download_info, DownloadType.GAME_UPDATE, finish_func)
+        self._download(self.game.id, download_info, DownloadType.GAME_UPDATE, finish_func)
 
     def __download_icon(self, force=False, game_info=None):
         local_name = self.game.get_cached_icon_path()
@@ -235,8 +233,6 @@ class LibraryEntry:
         # Need to update the config with DownloadType metadata
         self.config.add_ongoing_download(gog_item_id)
         # Start the download for all files
-        number_of_files = len(download_info['files'])
-        total_file_size = 0
         download_files = []
 
         download_inventory = InstallerInventory()
@@ -252,14 +248,11 @@ class LibraryEntry:
                 break
 
             info = self.api.get_download_file_info(file_info["downlink"])
-            total_file_size += info.size
-            # Extract the filename from the download url
-            filename = urllib.parse.unquote(urllib.parse.urlsplit(download_url).path)
-            filename = filename.split("/")[-1]
+            filename = self.__filename_from_url(download_url)
             download_path = os.path.join(target_download_dir, filename)
-            download_inventory.set_path_once(download_path)  # assumption: first file is installer executable
-            if info.md5:
-                self.game.md5sum[os.path.basename(download_path)] = info.md5
+            # assumption: first file is installer executable
+            download_inventory.set_path_once(download_path)
+
             download_inventory.add_file(download_path, info)
             download = Download(
                 url=download_url,
@@ -271,6 +264,7 @@ class LibraryEntry:
             callback_factory.add_callbacks(download)
             download_files.append(download)
 
+        total_file_size = download_inventory.get_expected_total_size()
         if download_success and check_diskspace(total_file_size, self.game.install_dir):
             # checking file size only makes sense when the real downlink has been found for all files
             download_inventory.save()
@@ -287,6 +281,10 @@ class LibraryEntry:
             download_success = False
 
         return download_success
+
+    def __filename_from_url(self, url):
+        filename = urllib.parse.unquote(urllib.parse.urlsplit(url).path)
+        return filename.split("/")[-1]
 
     def __determine_download_dir(self, download_info):
         download_dir = self.download_dir
