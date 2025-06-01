@@ -18,6 +18,7 @@
 - Installations will now run one at a time through a queue, multiple DLC can be downloaded in quick sequence. (thanks to GB609)
 - Large DLC downloads will be resumed automatically on restart. (thanks to GB609)
 - Improved shutdown logic of Minigalaxy. If there is an installation running, it will be finished. (thanks to GB609)
+- Simple fix progress bar for games consisting of multiple files. (thanks to GB609)
 
 **1.3.2**
 - Completely reworked windows wine installation. This should solve a lot of problems with failing game installs. Innoextract (if installed) is only used to detect and configure the installation language. (thanks to GB609)

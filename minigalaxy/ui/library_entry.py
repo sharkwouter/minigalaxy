@@ -5,7 +5,7 @@ import threading
 import urllib.parse
 
 from minigalaxy.api import NoDownloadLinkFound
-from minigalaxy.download import Download, DownloadType
+from minigalaxy.download import CombinedProgressWatcher, Download, DownloadType
 from minigalaxy.download_manager import DownloadState
 from minigalaxy.entity.state import State
 from minigalaxy.game import Game
@@ -35,6 +35,7 @@ class LibraryEntry:
         self.offline = parent_library.offline
         self.thumbnail_set = False
         self.download_list = []
+        self.download_progress_manager = CombinedProgressWatcher(self.set_progress, self.download_list)
         self.dlc_dict = {}
         self.current_state = State.DOWNLOADABLE
         self.predownload_state = None  # helper used to correctly reset ui states
@@ -264,20 +265,17 @@ class LibraryEntry:
                 url=download_url,
                 save_location=download_path,
                 download_type=download_type,
-                progress_func=self.set_progress,
-                number=number_of_files - key,
-                out_of_amount=number_of_files,
                 game=self.game,
                 download_icon=download_icon
             )
             callback_factory.add_callbacks(download)
             download_files.append(download)
 
-        self.download_list.extend(download_files)
-
         if download_success and check_diskspace(total_file_size, self.game.install_dir):
             # checking file size only makes sense when the real downlink has been found for all files
             download_inventory.save()
+            self.download_list.extend(download_files)
+            self.download_progress_manager.list_updated()
             self.download_manager.download(download_files)
         else:
             ds_msg_title = _("Download error")
@@ -398,9 +396,13 @@ class LibraryEntry:
 
     def __cancel(self, item_list=None):
         items_to_clear = item_list if item_list else [*self.download_list]
+        list_changed = False
         for item in items_to_clear:
             if item in self.download_list:
                 self.download_list.remove(item)
+                list_changed = True
+        if list_changed:
+            self.download_progress_manager.list_updated()
 
         # only cancel state if no more active downloads
         self.reset_to_idle_state_if_possible()
@@ -699,9 +701,13 @@ class CallbackFuncWrapper:
             GLib.idle_add(self.lib_entry.confirm_and_cancel_download, None, self.download_files)
 
     def remove_from_download_list(self):
+        list_updated = False
         for download in self.download_files:
             if download in self.lib_entry.download_list:
                 self.lib_entry.download_list.remove(download)
+                list_updated = True
+        if list_updated:
+            self.lib_entry.download_progress_manager.list_updated()
 
     def add_callbacks(self, download):
         handler_instance = self
