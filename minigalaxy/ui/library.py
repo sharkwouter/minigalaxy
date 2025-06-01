@@ -129,11 +129,19 @@ class Library(Gtk.Viewport):
         return tile2 < tile1
 
     def __create_gametiles(self) -> None:
+        """Gets called twice: Once for installed, once for not installed games."""
         games_with_tiles = []
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
             if tile.game in self.games:
                 games_with_tiles.append(tile.game)
+                """Games which already have a tile during the second invocation are installed games.
+                These did NOT have api information about the thumbnail url in their Game instance in the first pass.
+                Thus, they weren't able to load the thumbnail if it wasn't cached before. Try again now.
+                This mostly applies when the user empties the cache. Otherwise THUMBNAIL dir should contain a file from
+                when the game still wasn't installed
+                """
+                tile.load_thumbnail()
 
         for game in self.games:
             if game not in games_with_tiles:
@@ -199,12 +207,15 @@ class Library(Gtk.Viewport):
         for game in retrieved_games:
             if game not in self.games:
                 self.games.append(game)
-            elif self.games[self.games.index(game)].id == 0 or self.games[self.games.index(game)].name != game.name:
-                self.games[self.games.index(game)].id = game.id
-                self.games[self.games.index(game)].name = game.name
-            self.games[self.games.index(game)].image_url = game.image_url
-            self.games[self.games.index(game)].url = game.url
-            self.games[self.games.index(game)].category = game.category
+
+            local_game = self.games[self.games.index(game)]
+            if local_game.id == 0 or local_game.name != game.name:
+                local_game.id = game.id
+                local_game.name = game.name
+
+            local_game.image_url = game.image_url
+            local_game.url = game.url
+            local_game.category = game.category
             if len(game.category) > 0:  # exclude games without set category
                 game_category_dict[game.name] = game.category
         update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
