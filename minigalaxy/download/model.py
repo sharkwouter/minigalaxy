@@ -1,3 +1,5 @@
+"""Contains different data files and enums used in the download logic"""
+
 import os
 
 from enum import Enum
@@ -85,6 +87,10 @@ class Download:
     def on_cancel(self, callback):
         if not self.__cancel_func and callable(callback):
             self.__cancel_func = callback
+
+    def on_progress(self, callback):
+        """Set or remove the progress callback."""
+        self.__progress_func = callback
 
     def __str__(self):
         return self.filename()

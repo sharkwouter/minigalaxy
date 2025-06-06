@@ -9,6 +9,7 @@ from os.path import realpath, dirname, normpath
 import requests
 
 APPLICATION_NAME = "Minigalaxy"
+SHUTDOWN_DONE = False
 
 LAUNCH_PATH = dirname(realpath(__file__))
 if os.path.isdir(os.path.join(LAUNCH_PATH, "../minigalaxy")):
@@ -36,6 +37,18 @@ def cli_params():
 
     return parser.parse_args()
 
+def show_installer_notification(installer_item):
+    if not installer_item:
+        return
+
+    from minigalaxy.ui.gtk import Gtk, Notify
+    from minigalaxy.translation import _
+
+    message = _("The installation of {} will continue in the background")
+    popup = Notify.Notification.new("Minigalaxy",
+                                    message.format(installer_item.title),
+                                    "dialog-information")
+    popup.show()
 
 def main():
     cli_args = cli_params()
@@ -43,11 +56,13 @@ def main():
     if cli_args.reset: conf_reset()
 
     # Import the gi module after parsing arguments
+    import signal
+    from minigalaxy import installer
     from minigalaxy.ui.gtk import Gtk
     from minigalaxy.ui import Window
     from minigalaxy.config import Config
     from minigalaxy.api import Api
-    from minigalaxy.download_manager import DownloadManager
+    from minigalaxy.download_manager import DownloadManager, DownloadState
     from minigalaxy.css import load_css
 
     # Start the application
@@ -57,8 +72,30 @@ def main():
     session.headers.update({'User-Agent': 'Minigalaxy/{} (Linux {})'.format(VERSION, platform.machine())})
     api = Api(config, session)
     download_manager = DownloadManager(session, config)
+
     window = Window(config, api, download_manager, APPLICATION_NAME)
-    window.connect("destroy", Gtk.main_quit)
+
+    def shutdown(*args):
+        global SHUTDOWN_DONE
+        if SHUTDOWN_DONE:
+          return
+        SHUTDOWN_DONE = True
+
+        # perform orderly shutdown and stop of download threads to prevent download being killed at random places
+        download_manager.shutdown()
+
+        # empty installation queue, but don't stop the currently running installation (if any)
+        # so the forked process will resume until the installation is done, then the threads die in an orderly fashion
+        # because the queue is empty
+        if installer.INSTALL_QUEUE:
+            active_item = installer.INSTALL_QUEUE.shutdown()
+            show_installer_notification(active_item)
+
+        # gtk quit
+        Gtk.main_quit(*args)
+
+    signal.signal(signal.SIGINT, shutdown)
+    window.connect("destroy", shutdown)
     Gtk.main()
 
 

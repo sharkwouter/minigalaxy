@@ -5,11 +5,12 @@ import threading
 import urllib.parse
 
 from minigalaxy.api import NoDownloadLinkFound
-from minigalaxy.download import Download, DownloadType
+from minigalaxy.download import CombinedProgressWatcher, Download, DownloadType
 from minigalaxy.download_manager import DownloadState
 from minigalaxy.entity.state import State
 from minigalaxy.game import Game
-from minigalaxy.installer import uninstall_game, install_game, check_diskspace, InstallerInventory
+from minigalaxy.installer import uninstall_game, enqueue_game_install, check_diskspace, \
+    InstallerInventory, InstallResult, InstallResultType
 from minigalaxy.launcher import start_game
 from minigalaxy.logger import logger
 from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, ICON_WINE_PATH, THUMBNAIL_DIR
@@ -34,6 +35,7 @@ class LibraryEntry:
         self.offline = parent_library.offline
         self.thumbnail_set = False
         self.download_list = []
+        self.download_progress_manager = CombinedProgressWatcher(self.set_progress, self.download_list)
         self.dlc_dict = {}
         self.current_state = State.DOWNLOADABLE
         self.predownload_state = None  # helper used to correctly reset ui states
@@ -186,18 +188,12 @@ class LibraryEntry:
     def __download_game(self) -> None:
         finish_func = self.__install_game
         result, download_info = self.get_download_info()
-        if result:
-            result = self._download(self.game.id, download_info, DownloadType.GAME, finish_func)
-        if not result:
-            self.update_to_state(self.predownload_state)
+        self._download(self.game.id, download_info, DownloadType.GAME, finish_func)
 
     def __download_update(self) -> None:
         finish_func = self.__install_update
         result, download_info = self.get_download_info(self.game.platform)
-        if result:
-            result = self._download(self.game.id, download_info, DownloadType.GAME_UPDATE, finish_func)
-        if not result:
-            self.update_to_state(self.predownload_state)
+        self._download(self.game.id, download_info, DownloadType.GAME_UPDATE, finish_func)
 
     def __download_icon(self, force=False, game_info=None):
         local_name = self.game.get_cached_icon_path()
@@ -237,8 +233,6 @@ class LibraryEntry:
         # Need to update the config with DownloadType metadata
         self.config.add_ongoing_download(gog_item_id)
         # Start the download for all files
-        number_of_files = len(download_info['files'])
-        total_file_size = 0
         download_files = []
 
         download_inventory = InstallerInventory()
@@ -254,33 +248,28 @@ class LibraryEntry:
                 break
 
             info = self.api.get_download_file_info(file_info["downlink"])
-            total_file_size += info.size
-            # Extract the filename from the download url
-            filename = urllib.parse.unquote(urllib.parse.urlsplit(download_url).path)
-            filename = filename.split("/")[-1]
+            filename = self.__filename_from_url(download_url)
             download_path = os.path.join(target_download_dir, filename)
-            download_inventory.set_path_once(download_path)  # assumption: first file is installer executable
-            if info.md5:
-                self.game.md5sum[os.path.basename(download_path)] = info.md5
+            # assumption: first file is installer executable
+            download_inventory.set_path_once(download_path)
+
             download_inventory.add_file(download_path, info)
             download = Download(
                 url=download_url,
                 save_location=download_path,
                 download_type=download_type,
-                progress_func=self.set_progress,
-                number=number_of_files - key,
-                out_of_amount=number_of_files,
                 game=self.game,
                 download_icon=download_icon
             )
             callback_factory.add_callbacks(download)
             download_files.append(download)
 
-        self.download_list.extend(download_files)
-
+        total_file_size = download_inventory.get_expected_total_size()
         if download_success and check_diskspace(total_file_size, self.game.install_dir):
             # checking file size only makes sense when the real downlink has been found for all files
             download_inventory.save()
+            self.download_list.extend(download_files)
+            self.download_progress_manager.list_updated()
             self.download_manager.download(download_files)
         else:
             ds_msg_title = _("Download error")
@@ -292,6 +281,10 @@ class LibraryEntry:
             download_success = False
 
         return download_success
+
+    def __filename_from_url(self, url):
+        filename = urllib.parse.unquote(urllib.parse.urlsplit(url).path)
+        return filename.split("/")[-1]
 
     def __determine_download_dir(self, download_info):
         download_dir = self.download_dir
@@ -312,35 +305,76 @@ class LibraryEntry:
 
     def __install_game(self, save_location, inventory=None):
         self.game.set_install_dir(self.config.install_dir)
-        install_success = self._install(self.game.id, save_location, inventory=inventory)
-        if install_success:
+
+        def on_success():
             popup = Notify.Notification.new("Minigalaxy", _("Finished downloading and installing {}")
                                             .format(self.game.name), "dialog-information")
             popup.show()
             self.__check_for_dlc(self.api.get_info(self.game))
 
+        self._install(self.game.id, save_location, inventory=inventory, on_success=on_success)
+
     def __install_update(self, save_location, inventory=None):
-        install_success = self._install(self.game.id, save_location, update=True, inventory=inventory)
-        if install_success:
+        def on_success():
             image_tooltip = self.game.name
             if self.game.platform == "windows":
                 image_tooltip += " (Wine)"
 
             self.__set_image_tooltip(image_tooltip)
-        # need to only check and update dlcs which are installed
-        for dlc in self.dlc_dict.values():
-            dlc.refresh_download_info()
-            if dlc.is_update_available():
-                dlc.download()
+            # need to only check and update dlcs which are installed
+            for dlc in self.dlc_dict.values():
+                dlc.refresh_download_info()
+                if dlc.is_update_available():
+                    dlc.download()
 
-    def _install(self, gog_item_id, save_location, update=False, dlc_title="", inventory=None):
+        self._install(self.game.id, save_location, update=True, inventory=inventory, on_success=on_success)
+
+    def __install_finished_callback(self, result: InstallResult, on_success=None, on_failure=None, dlc_title=""):
+        """
+        Generic callback passed to enqueue_game_install.
+        Handles some common work to do on success or failure, like:
+        * updating the installed version info
+        * changing state of the UI element accordingly
+        * showing an error message on failure
+        """
+
+        item_name = dlc_title if dlc_title else self.game.name
+        logger.info("Received install finished notification for %s: %s", item_name, result)
+        if result.type is InstallResultType.SUCCESS:
+            self.update_to_state_if_idle(State.INSTALLED)
+            self.config.remove_ongoing_download(result.install_id)
+            if dlc_title:
+                self.game.set_dlc_info("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title)
+            else:
+                self.game.set_info("version", self.api.get_version(self.game))
+            if on_success:
+                on_success()
+        else:
+            item_name = dlc_title if dlc_title else self.game.name
+            GLib.idle_add(self.parent_window.show_error, _("Failed to install {}").format(item_name), result.reason)
+            self.reset_to_idle_state_if_possible()
+            if on_failure:
+                on_failure()
+
+    def _install(self, gog_item_id, save_location, update=False, dlc_title="",
+                 inventory=None, on_success=None, on_failure=None):
+        if not self.predownload_state:
+            # when started from predownloaded local files
+            self.predownload_state = self.current_state
+
         if update:
             processing_state = State.UPDATING
         else:
             processing_state = State.INSTALLING
 
         self.update_to_state_if_idle(processing_state)
-        err_msg = install_game(
+
+        def install_finished(result):
+            self.__install_finished_callback(result, on_success, on_failure, dlc_title)
+
+        enqueue_game_install(
+            gog_item_id,
+            install_finished,
             self.game,
             save_location,
             self.config.lang,
@@ -349,20 +383,6 @@ class LibraryEntry:
             self.config.create_applications_file,
             installer_inventory=inventory
         )
-
-        if not err_msg:
-            self.update_to_state(State.INSTALLED)
-            install_success = True
-            if dlc_title:
-                self.game.set_dlc_info("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title)
-            else:
-                self.game.set_info("version", self.api.get_version(self.game))
-            self.config.remove_ongoing_download(gog_item_id)
-        else:
-            GLib.idle_add(self.parent_window.show_error, _("Failed to install {}").format(self.game.name), err_msg)
-            self.reset_to_idle_state_if_possible()
-            install_success = False
-        return install_success
 
     def __uninstall_game(self):
         self.update_to_state(State.UNINSTALLING)
@@ -374,9 +394,13 @@ class LibraryEntry:
 
     def __cancel(self, item_list=None):
         items_to_clear = item_list if item_list else [*self.download_list]
+        list_changed = False
         for item in items_to_clear:
             if item in self.download_list:
                 self.download_list.remove(item)
+                list_changed = True
+        if list_changed:
+            self.download_progress_manager.list_updated()
 
         # only cancel state if no more active downloads
         self.reset_to_idle_state_if_possible()
@@ -675,9 +699,13 @@ class CallbackFuncWrapper:
             GLib.idle_add(self.lib_entry.confirm_and_cancel_download, None, self.download_files)
 
     def remove_from_download_list(self):
+        list_updated = False
         for download in self.download_files:
             if download in self.lib_entry.download_list:
                 self.lib_entry.download_list.remove(download)
+                list_updated = True
+        if list_updated:
+            self.lib_entry.download_progress_manager.list_updated()
 
     def add_callbacks(self, download):
         handler_instance = self
@@ -764,10 +792,12 @@ class DlcListEntry(Gtk.Box):
         threading.Thread(target=self.__run_download).start()
 
     def install(self, save_location, inventory=None):
-        install_success = self.parent_entry._install(self.dlc_id, save_location, dlc_title=self.title, inventory=inventory)
-        if not install_success:
-            self.parent_entry.update_to_state(self.parent_entry.predownload_state)
-        self.parent_entry._check_for_update_dlc()
+        self.parent_entry._install(
+            self.dlc_id,
+            save_location,
+            dlc_title=self.title,
+            inventory=inventory,
+            on_success=self.parent_entry._check_for_update_dlc)
 
     def is_update_available(self):
         version = self.dlc_installer["version"]
@@ -783,13 +813,11 @@ class DlcListEntry(Gtk.Box):
         self.dlc_installer = self.api.get_download_info(self.game, dlc_installers=info["downloads"]["installers"])
 
     def __run_download(self):
-        result = self.parent_entry._download(self.dlc_id,
-                                             self.dlc_installer,
-                                             DownloadType.GAME_DLC,
-                                             self.install,
-                                             download_icon=self.dlc_icon_path)
-        if not result:
-            self.parent_entry.update_to_state(self.parent_entry.predownload_state)
+        self.parent_entry._download(self.dlc_id,
+                                    self.dlc_installer,
+                                    DownloadType.GAME_DLC,
+                                    self.install,
+                                    download_icon=self.dlc_icon_path)
 
     def __set_downloaded_dlc_icon(self, save_location):
         GLib.idle_add(self.icon_image.set_from_file, save_location)

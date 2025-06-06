@@ -442,9 +442,7 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
 
 
 def safe_delete(file_list):
-    '''
-    Tries to delete the given files without throwing exceptions where possible.
-    '''
+    """Tries to delete the given files without throwing exceptions where possible."""
     logger.info("Trying to safely delete: %s", file_list)
     for f in file_list:
         if is_empty_dir(f):
@@ -589,7 +587,7 @@ class InstallerInventory:
 
     @staticmethod
     def from_file_system(installer_path):
-        '''
+        """
         Helper utility to build an instance of InstallerInventory from files in the same directory
         that belong to the given installer_path.
         Expects the following naming convention:
@@ -603,7 +601,7 @@ class InstallerInventory:
 
         This is a fallback for games that have been downloaded before InstallerInventory was introduced.
         Files added like this won't have checksums and the is_complete check makes little sense.
-        '''
+        """
         inventory = InstallerInventory(installer_path)
         if os.path.isfile(inventory.inventory_file):
             return inventory
@@ -659,6 +657,12 @@ class InstallerInventory:
             file_info["md5"] = False
             return False
 
+    def get_expected_total_size(self):
+        total_size = 0
+        for file_data in self.data.values():
+            total_size += file_data.get('size', 0)
+        return total_size
+
     def is_complete(self):
         self.load()
         if not self.data:
@@ -678,16 +682,16 @@ class InstallerInventory:
         return files
 
     def delete_files(self):
-        '''delete files which are part of this inventory'''
+        """delete files which are part of this inventory"""
         file_list = self.as_keep_files_list()
         file_list.append(self.directory)
         safe_delete(file_list)
 
     def delete_others(self):
-        '''
+        """
         Delete files in the same directory, which are NOT part of this inventory.
         Used to remove previous versions after successful install.
-        '''
+        """
         delete_list = []
         for f in os.listdir(self.directory):
             if os.path.isdir(f):
@@ -698,11 +702,11 @@ class InstallerInventory:
         safe_delete(delete_list)
 
     def delete_invalid_files(self):
-        '''
+        """
         Delete files of this inventory which are flagged as having an invalid checksum.
         Flagging must have happened by calling IntallerInventory.verify_checksum.
         It is advised not to call save() afterwards because that will overwrite the recorded checksums with False
-        '''
+        """
         delete_list = []
         for file, info in self.data.items():
             if info.get("md5", None) is False:
@@ -720,14 +724,15 @@ class InstallResultType(Enum):
 
 class InstallResult:
     def __init__(self, install_id, result_type: InstallResultType, reason, details=None):
-        '''Data class that will be passed to result_callback of InstallTask
+        """Data class that will be passed to result_callback of InstallTask
         reason is a type-dependent string:
         - SUCCESS: install directory path
         - FAILURE and CHECKSUM_ERROR: string error message
+
         the "details" field provides additional context information:
         - FAILURE: depending on the failing step, usually a directory path
         - CHECKSUM_ERROR: dict {abs_file: calculated_checksum}
-        '''
+        """
         self.install_id = install_id
         self.type = result_type
         self.reason = reason
@@ -737,7 +742,7 @@ class InstallResult:
         return f"InstallResult(id={self.install_id}, type={self.type}), reason={self.reason})"
 
     def __eq__(self, other):
-        '''mainly used for testing, therefore not the most efficient implementation'''
+        """mainly used for testing, therefore not the most efficient implementation"""
         return str(self) == str(other)
 
 
@@ -746,9 +751,6 @@ class InstallException(Exception):
         self.fail_type = fail_type
         self.message = message
         self.data = data
-
-    def __str__(self):
-        return f"InstallResult(id={self.install_id}, type={self.type}), reason={self.reason})"
 
 
 class InstallTask:
@@ -759,6 +761,7 @@ class InstallTask:
         if not result_callback or not callable(result_callback):
             raise ValueError("result_callback is required")
         self.installer_id = install_id
+        self.title = InstallTask.get_title_for_id(self.game, install_id)
         self.callback = result_callback
         self.arg_array = args
         self.named_args = kwargs
@@ -786,14 +789,26 @@ class InstallTask:
                 return a
         raise ValueError("No instance of Game in InstallTask constructor arguments")
 
+    @staticmethod
+    def get_title_for_id(game: Game, item_id):
+        if game.id == item_id:
+            return game.name
+        else:
+            for dlc in game.dlcs:
+                if dlc.get('id') == item_id:
+                    return dlc.get('title')
+        # this normally shouldn't happen and would mean that an
+        # id was passed which is not in the dlc list
+        return game.name
+
 
 class InstallerQueue:
-    '''
+    """
     Special queue which includes a worker thread to handle game installations.
     The worker will only be started and active while there are items in the queue.
     Custom implementation is chosen because ThreadPoolExecutors don't auto-stop
     and regular Queues don't provide a check for contained items aside from iterating through everything.
-    '''
+    """
 
     def __init__(self, lock_to_use=RLock()):
         self.queue = deque()
@@ -808,11 +823,11 @@ class InstallerQueue:
             return self.queue.popleft()
 
     def put(self, item):
-        '''
+        """
         Puts the given item into the queue, if it is not contained (or in work) already.
         Returns True if the item was added, False otherwise.
-        (Re)starts the internally managed install task worker thread if the item was put into to queue.
-        '''
+        (Re)starts the internally managed installation task worker thread if the item was put into to queue.
+        """
         with self.state_lock:
             if self.active_item == item or item in self.queue:
                 return False
@@ -827,13 +842,26 @@ class InstallerQueue:
         with self.state_lock:
             self.queue.clear()
 
-    def empty(self):
+    def is_active(self):
+        with self.state_lock:
+            return self.active_item and self.worker.is_alive()
+
+    def is_empty(self):
         with self.state_lock:
             return len(self.queue) == 0
 
+    def shutdown(self):
+        """
+        Empties the queue. Will not cancel an actively running installation.
+        Returns the active item, if any. None otherwise.
+        """
+        with self.state_lock:
+            self.clear()
+            return self.active_item
+
     def __install_queued_items(self):
         logger.debug("Starting installer thread")
-        is_empty = self.empty()
+        is_empty = self.is_empty()
         try:
             while not is_empty:
                 with self.state_lock:
@@ -841,7 +869,7 @@ class InstallerQueue:
                 self.active_item.execute()
                 with self.state_lock:
                     self.active_item = None
-                is_empty = self.empty()
+                is_empty = self.is_empty()
         except Empty:
             pass
 
