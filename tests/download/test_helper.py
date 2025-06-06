@@ -1,8 +1,7 @@
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-from minigalaxy.download import Download
-from minigalaxy.download.helper import CombinedProgressWatcher
+from minigalaxy.download import CombinedProgressWatcher, Download
 
 
 class TestDownloadHelper(TestCase):
