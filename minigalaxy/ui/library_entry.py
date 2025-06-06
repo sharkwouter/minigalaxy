@@ -5,7 +5,8 @@ import threading
 import urllib.parse
 
 from minigalaxy.api import NoDownloadLinkFound
-from minigalaxy.download import CombinedProgressWatcher, Download, DownloadType
+from minigalaxy.download import Download, DownloadType
+from minigalaxy.download.helper import CombinedProgressWatcher
 from minigalaxy.download_manager import DownloadState
 from minigalaxy.entity.state import State
 from minigalaxy.game import Game
