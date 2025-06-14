@@ -14,6 +14,7 @@
 - Fix deletion logic of downloaded installation files. Base installers and DLC will not interfere with each other anymore. (thanks to GB609)
 - Failed installs will try to keep as many downloaded parts as possible, even without the keep_installers option enabled. (thanks to GB609)
 - Deleting a file in download ui now also provides the option to fully cancel the game download as if cancel on the thumbnail was clicked. (thanks to GB609)
+- It's now possible to cancel auto-resume of one of many parallel DLC downloads for a game by clicking delete in the download ui after stopping it first.(thanks to GB609)
 - With keep_installers enabled, Minigalaxy can now detect if a game has been fully downloaded. If not, the UI will still show the 'Download' button. (thanks to GB609)
 - Installations will now run one at a time through a queue, multiple DLC can be downloaded in quick sequence. (thanks to GB609)
 - Large DLC downloads will be resumed automatically on restart. (thanks to GB609)
