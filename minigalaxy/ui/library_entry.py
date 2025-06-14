@@ -188,12 +188,14 @@ class LibraryEntry:
     def __download_game(self) -> None:
         finish_func = self.__install_game
         result, download_info = self.get_download_info()
-        self._download(self.game.id, download_info, DownloadType.GAME, finish_func)
+        if result:
+            self._download(self.game.id, download_info, DownloadType.GAME, finish_func)
 
     def __download_update(self) -> None:
         finish_func = self.__install_update
         result, download_info = self.get_download_info(self.game.platform)
-        self._download(self.game.id, download_info, DownloadType.GAME_UPDATE, finish_func)
+        if result:
+            self._download(self.game.id, download_info, DownloadType.GAME_UPDATE, finish_func)
 
     def __download_icon(self, force=False, game_info=None):
         local_name = self.game.get_cached_icon_path()
