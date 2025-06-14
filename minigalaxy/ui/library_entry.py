@@ -783,7 +783,12 @@ class DlcListEntry(Gtk.Box):
             self.parent_entry.download_manager.download_now(download)
 
     def resume_download_if_expected(self):
-        if self.parent_entry.current_state not in [State.INSTALLED, State.UPDATABLE, State.UPDATE_INSTALLABLE]:
+        if self.parent_entry.predownload_state:
+            state_to_check = self.parent_entry.predownload_state
+        else:
+            state_to_check = self.parent_entry.current_state
+
+        if state_to_check not in [State.INSTALLED, State.UPDATABLE, State.UPDATE_INSTALLABLE]:
             return
 
         if self.dlc_id in self.parent_entry.config.current_downloads:
