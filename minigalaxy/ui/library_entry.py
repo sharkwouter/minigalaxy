@@ -82,8 +82,20 @@ class LibraryEntry:
             download_thread.start()
 
     # Do not restart the download if Minigalaxy is restarted
-    def prevent_resume_on_startup(self):
-        self.config.remove_ongoing_download(self.game.id)
+    def prevent_resume_on_startup(self, item_id=None):
+        # when no id was given, it shall be a full cancel
+        # make it a batch operation, to prevent continues rewrites of the download list in config
+        if not item_id:
+            ids_to_test = [self.game.id]
+            for dlc in self.dlc_dict.values():
+                ids_to_test.append(dlc.dlc_id)
+            reduced_list = []
+            for download in self.config.current_downloads:
+                if download not in ids_to_test:
+                    reduced_list.append(download)
+            self.config.current_downloads = reduced_list
+        else:
+            self.config.remove_ongoing_download(item_id)
 
     def show_information(self, button):
         information_window = Information(self.parent_window, self.game, self.config, self.api, self.download_manager)
@@ -112,25 +124,42 @@ class LibraryEntry:
         if err_msg:
             self.parent_window.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
 
-    def confirm_and_cancel_download(self, widget=None, download_list=None):
-        question = _("Are you sure you want to cancel downloading {}?").format(self.game.name)
+    def confirm_and_cancel_download(self, widget=None, gog_item=None, download_list=None):
+        """
+        Ask if the download of the given item shall be canceled.
+        When no item is given, everything will be canceled.
+        The is relevant when multiple DLC are in the queue when the cancel button on the GameTile is clicked.
+        """
+        if not gog_item:
+            gog_item = InstallableItem(self.game.id, self.game.name)
+
+        question = _("Are you sure you want to cancel downloading {}?").format(gog_item.name)
         if self.parent_window.show_question(question):
-            self.prevent_resume_on_startup()
-            if not download_list:
+            if not download_list and gog_item.id == self.game.id:
+                # cancel button on the ui game tile was clicked
+                # this is a full cancel-all. canceling just one of many only works as feedback from
+                # download ui
                 download_list = [*self.download_list]  # use copy or feedback from download_manager will change the list
+                cancel_id = None
+            else:
+                cancel_id = gog_item.id
 
             if not download_list:  # Safety measure. DownloadManager will cancel ALL active when empty is passed
                 return
+
+            self.prevent_resume_on_startup(cancel_id)
             self.download_manager.cancel_download(download_list)
             for d in download_list:
                 if d.cancel_reason:
                     continue
 
                 # download has finished regularly (no cancel reason), so it won't receive cancel from download manager
-                # manually call the cancel() callback
+                # manually call the cancel() callback to get it out of the download_list
                 d.cancel()
             # second round to support parallel downloads:
             # expect multiple executables and try to delete inventory for each of them
+            # this is mostly relevant when confirm_and_cancel comes from a click of the ui cancel
+            # button in GameTile(List)
             for d in download_list:
                 if LibraryEntry.is_executable(d.save_location):
                     inventory = InstallerInventory.from_file_system(d.save_location)
@@ -188,12 +217,14 @@ class LibraryEntry:
     def __download_game(self) -> None:
         finish_func = self.__install_game
         result, download_info = self.get_download_info()
-        self._download(self.game.id, download_info, DownloadType.GAME, finish_func)
+        if result:
+            self._download(InstallableItem(self.game.id, self.game.name), download_info, DownloadType.GAME, finish_func)
 
     def __download_update(self) -> None:
         finish_func = self.__install_update
         result, download_info = self.get_download_info(self.game.platform)
-        self._download(self.game.id, download_info, DownloadType.GAME_UPDATE, finish_func)
+        if result:
+            self._download(InstallableItem(self.game.id, self.game.name), download_info, DownloadType.GAME_UPDATE, finish_func)
 
     def __download_icon(self, force=False, game_info=None):
         local_name = self.game.get_cached_icon_path()
@@ -216,7 +247,7 @@ class LibraryEntry:
         self.download_manager.download_now(download)
         return local_name
 
-    def _download(self, gog_item_id, download_info, download_type, finish_func, download_icon=None):  # noqa: C901
+    def _download(self, gog_item, download_info, download_type, finish_func, download_icon=None):  # noqa: C901
         # several dlc could be downloading in parallel, remember state before they started
         # only overwrite if not set already
         if not self.download_list and not self.predownload_state:
@@ -231,12 +262,17 @@ class LibraryEntry:
             download_icon = self.__download_icon()
 
         # Need to update the config with DownloadType metadata
-        self.config.add_ongoing_download(gog_item_id)
+        self.config.add_ongoing_download(gog_item.id)
         # Start the download for all files
         download_files = []
 
         download_inventory = InstallerInventory()
-        callback_factory = CallbackFuncWrapper(finish_func, self.__cancel, self, download_files, download_inventory)
+        callback_factory = CallbackFuncWrapper(gog_item,
+                                               finish_func,
+                                               self.__cancel,
+                                               self,
+                                               download_files,
+                                               download_inventory)
 
         for key, file_info in enumerate(download_info['files']):
             try:
@@ -276,7 +312,7 @@ class LibraryEntry:
             dl_name = download_info.get('name', self.game.name)
             ds_msg_text = _("Not enough disk space to install game:\n{}").format(dl_name)
             GLib.idle_add(self.parent_window.show_error, ds_msg_title, ds_msg_text)
-            self.config.remove_ongoing_download(gog_item_id)
+            self.config.remove_ongoing_download(gog_item.id)
             self.reset_to_idle_state_if_possible()
             download_success = False
 
@@ -315,6 +351,7 @@ class LibraryEntry:
         self._install(self.game.id, save_location, inventory=inventory, on_success=on_success)
 
     def __install_update(self, save_location, inventory=None):
+
         def on_success():
             image_tooltip = self.game.name
             if self.game.platform == "windows":
@@ -663,9 +700,20 @@ class LibraryEntry:
     '''----- END STATE HANDLING -----'''
 
 
+class InstallableItem:
+    """
+    Helper class to encapsulate several pieces of info used in several methods.
+    """
+    def __init__(self, item_id, name):
+        self.id = item_id
+        self.name = name
+
+
 class CallbackFuncWrapper:
-    def __init__(self, finish_func, cancel_func, lib_entry, download_files, installer_inventory=None):
+
+    def __init__(self, item, finish_func, cancel_func, lib_entry, download_files, installer_inventory=None):
         self.lib_entry = lib_entry
+        self.item = item
         # empty or incomplete at construction time, must be evaluated when finish_func is called
         self.download_files = download_files
         self.finished_downloads = {}
@@ -688,15 +736,14 @@ class CallbackFuncWrapper:
         self.callback_finish(self.download_files[0].save_location, inventory=self.inventory)
 
     def cancel_func(self, trigger):
-        item_id = self.lib_entry.game.id
-        if item_id not in self.lib_entry.config.current_downloads:
+        if self.item.id not in self.lib_entry.config.current_downloads:
             # trigger for cancel was cancel button on GameTile
             self.require_confirmation = False
 
         self.callback_cancel(item_list=[trigger])
         if trigger.cancel_reason is DownloadState.CANCELED and self.require_confirmation:
             self.require_confirmation = False
-            GLib.idle_add(self.lib_entry.confirm_and_cancel_download, None, self.download_files)
+            GLib.idle_add(self.lib_entry.confirm_and_cancel_download, None, self.item, self.download_files)
 
     def remove_from_download_list(self):
         list_updated = False
@@ -715,6 +762,7 @@ class CallbackFuncWrapper:
 
 
 class DlcListEntry(Gtk.Box):
+
     def __init__(self, parent_entry, dlc_info):
         super().__init__(orientation=Gtk.Orientation.HORIZONTAL)
         self.parent_entry = parent_entry
@@ -781,7 +829,12 @@ class DlcListEntry(Gtk.Box):
             self.parent_entry.download_manager.download_now(download)
 
     def resume_download_if_expected(self):
-        if self.parent_entry.current_state not in [State.INSTALLED, State.UPDATABLE, State.UPDATE_INSTALLABLE]:
+        if self.parent_entry.predownload_state:
+            state_to_check = self.parent_entry.predownload_state
+        else:
+            state_to_check = self.parent_entry.current_state
+
+        if state_to_check not in [State.INSTALLED, State.UPDATABLE, State.UPDATE_INSTALLABLE]:
             return
 
         if self.dlc_id in self.parent_entry.config.current_downloads:
@@ -813,7 +866,7 @@ class DlcListEntry(Gtk.Box):
         self.dlc_installer = self.api.get_download_info(self.game, dlc_installers=info["downloads"]["installers"])
 
     def __run_download(self):
-        self.parent_entry._download(self.dlc_id,
+        self.parent_entry._download(InstallableItem(self.dlc_id, self.title),
                                     self.dlc_installer,
                                     DownloadType.GAME_DLC,
                                     self.install,
