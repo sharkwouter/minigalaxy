@@ -56,7 +56,7 @@ def main():
     if cli_args.reset: conf_reset()
 
     # Disable webkit compositing, ensuring the login screen shows
-    os.environ["WEBKIT_DISABLE_COMPOSITING_MODE"] = 1
+    os.environ["WEBKIT_DISABLE_COMPOSITING_MODE"] = "1"
 
     # Import the gi module after parsing arguments
     import signal
