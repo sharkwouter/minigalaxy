@@ -55,6 +55,9 @@ def main():
 
     if cli_args.reset: conf_reset()
 
+    # Disable webkit compositing, ensuring the login screen shows
+    os.environ["WEBKIT_DISABLE_COMPOSITING_MODE"] = "1"
+
     # Import the gi module after parsing arguments
     import signal
     from minigalaxy import installer
@@ -62,7 +65,7 @@ def main():
     from minigalaxy.ui import Window
     from minigalaxy.config import Config
     from minigalaxy.api import Api
-    from minigalaxy.download_manager import DownloadManager, DownloadState
+    from minigalaxy.download_manager import DownloadManager
     from minigalaxy.css import load_css
 
     # Start the application
