@@ -77,6 +77,13 @@ class Window(Gtk.ApplicationWindow):
 
         self.make_directories()
 
+    def load_library(self):
+        """
+        This method attempts to connect to GOG and load all games. Must be called after initial construction of the window.
+        It is separate from the constructor because this method might close the application on login errors.
+        Before this happens, a destroy event for global resources like ThreadPools must be registered.
+        Otherwise, the application will freeze.
+        """
         # Interact with the API
         logger.debug("Checking API connectivity...")
         self.offline = not self.api.can_connect()
@@ -217,7 +224,7 @@ class Window(Gtk.ApplicationWindow):
             response = login.run()
             login.hide()
             if response == Gtk.ResponseType.DELETE_EVENT:
-                Gtk.main_quit()
+                self.destroy()
                 exit(0)
             if response == Gtk.ResponseType.NONE:
                 result = login.get_result()
