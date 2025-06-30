@@ -58,6 +58,9 @@ def main():
     # Disable webkit compositing, ensuring the login screen shows
     os.environ["WEBKIT_DISABLE_COMPOSITING_MODE"] = "1"
 
+    # Disable DMABUF because it causes issues with older Nvidia cards
+    os.environ["WEBKIT_DISABLE_DMABUF_RENDERER"] = "1"
+
     # Import the gi module after parsing arguments
     import signal
     from minigalaxy import installer

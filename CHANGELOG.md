@@ -21,6 +21,7 @@
 - Improved shutdown logic of Minigalaxy. If there is an installation running, it will be finished. (thanks to GB609)
 - Simple fix progress bar for games consisting of multiple files. (thanks to GB609)
 - Fix log in screen remaining blank on some distributions
+- Fix Minigalaxy not launching on some setups with older Nvidia cards
 
 **1.3.2**
 - Completely reworked windows wine installation. This should solve a lot of problems with failing game installs. Innoextract (if installed) is only used to detect and configure the installation language. (thanks to GB609)
