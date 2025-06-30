@@ -61,7 +61,7 @@ def main():
     # Import the gi module after parsing arguments
     import signal
     from minigalaxy import installer
-    from minigalaxy.ui.gtk import Gtk
+    from minigalaxy.ui.gtk import Gtk, GLib
     from minigalaxy.ui import Window
     from minigalaxy.config import Config
     from minigalaxy.api import Api
@@ -99,6 +99,8 @@ def main():
 
     signal.signal(signal.SIGINT, shutdown)
     window.connect("destroy", shutdown)
+
+    window.load_library()
     Gtk.main()
 
 
