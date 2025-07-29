@@ -68,6 +68,7 @@ Minigalaxy should work on the following distributions:
 - Arch Linux
 - Manjaro
 - Fedora Linux 31 or newer
+- Gentoo Linux
 - openSUSE Tumbleweed and Leap 15.2 or newer
 - MX Linux 19 or newer
 - Solus
@@ -122,6 +123,16 @@ sudo dnf install minigalaxy
 </pre>
 </details>
 
+<details><summary>Gentoo</summary>
+
+Available in the <a href="https://wiki.gentoo.org/wiki/Project:GURU">GURU overlay</a>. You can enable the repository and install it with:
+<pre>
+sudo emerge --ask app-eselect/eselect-repository
+sudo eselect repository enable guru
+sudo emaint sync -r guru
+sudo emerge --ask games-util/minigalaxy
+</pre>
+</details>
 <details><summary>openSUSE</summary>
 
 Available in the official repositories for openSUSE Tumbleweed and also Leap since 15.2. You can install it with:
