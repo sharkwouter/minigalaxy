@@ -2,7 +2,10 @@ from setuptools import setup, find_packages
 from glob import glob
 import subprocess
 import os
-from minigalaxy.version import VERSION
+import sys
+
+sys.path.insert(0, os.getcwd())
+from minigalaxy.version import VERSION  # noqa: E402
 
 # Generate the translations
 subprocess.run(['bash', 'scripts/compile-translations.sh'])
@@ -15,7 +18,7 @@ for language_file in glob("data/mo/*/*/*.mo"):
 setup(
     name="minigalaxy",
     version=VERSION,
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(exclude=['tests', 'tests.*']),
     scripts=['bin/minigalaxy'],
 
     data_files=[
