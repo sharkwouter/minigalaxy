@@ -239,6 +239,7 @@ Special thanks goes out to all contributors:
 - slowsage for contributing code
 - viacheslavka for contributing code
 - GB609 for contributing code
+- kyle-zhang-42 for contributing code
 - s8321414 for translating to Taiwanese Mandarin
 - fuzunspm for translating to Turkish
 - thomansb22 for translating to French
