@@ -24,7 +24,7 @@ class Config:
 
     def __load(self) -> None:
         if os.path.isfile(self.__config_file):
-            with open(self.__config_file, "r") as file:
+            with open(self.__config_file, "r", encoding="utf-8") as file:
                 try:
                     self.__config = json.loads(file.read())
                 except (json.decoder.JSONDecodeError, UnicodeDecodeError):
@@ -36,7 +36,7 @@ class Config:
             config_dir = os.path.dirname(self.__config_file)
             os.makedirs(config_dir, mode=0o700, exist_ok=True)
         temp_file = f"{self.__config_file}.tmp"
-        with open(temp_file, "w") as file:
+        with open(temp_file, "w", encoding="utf-8") as file:
             file.write(json.dumps(self.__config, ensure_ascii=False))
         os.rename(temp_file, self.__config_file)
 
