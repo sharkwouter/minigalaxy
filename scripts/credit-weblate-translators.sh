@@ -31,5 +31,5 @@ function createTranslationCredits {
 }
 
 git log --no-merges --sparse --committer=weblate \
-  | grep -E "Author: .*|Translated" \
+  | grep -E "^Author: .*|^\s*Translated using" \
   | createTranslationCredits | tee "$TRANSLATORS_FILE"
