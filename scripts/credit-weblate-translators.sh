@@ -108,7 +108,7 @@ function patchReadme {
 # It is also not possible to declare a global one and pass it to the function for manipulation,
 # because local manipulations will not propagate back.
 # So the script re-declares it from the 'declare -p' function output
-source <(git log --no-merges --sparse --committer=weblate \
+source <(git log --no-merges --sparse --committer=weblate --author='^(?!Wouter Wijsman).*$' --perl-regexp \
   | grep -E "^Author: .*|^\s*Translated using" \
   | createTranslationCredits)
 
