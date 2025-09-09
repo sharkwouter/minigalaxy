@@ -1,5 +1,6 @@
 **1.4.1**
 - Fix an issue where CJK characters in game library path prevents the config file from being loaded properly. (thanks to kyle-zhang-42)
+- Automatically add Weblate contributions to README and About dialog on release. (thanks to GB609)
 
 **1.4.0**
 - Various improvements to the download manager, including a pause function (thanks to GB609)
