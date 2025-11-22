@@ -123,6 +123,14 @@ sudo dnf install minigalaxy
 </pre>
 </details>
 
+<details><summary>FreeBSD</summary>
+
+Available in the <a href="https://www.freshports.org/games/minigalaxy/">official repositories</a>. You can install it with:
+<pre>
+# pkg install games/minigalaxy
+</pre>
+</details>
+
 <details><summary>Gentoo</summary>
 
 Available in the <a href="https://wiki.gentoo.org/wiki/Project:GURU">GURU overlay</a>. You can enable the repository and install it with:
