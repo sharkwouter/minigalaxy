@@ -1,4 +1,6 @@
 **1.4.1**
+- Installations now report more intermediate steps like checksum verifications to the UI. (thanks to GB609)
+- Fix bugs related to error handling of ongoing installations. (thanks to GB609)
 - Fix an issue where CJK characters in game library path prevents the config file from being loaded properly. (thanks to kyle-zhang-42)
 - Automatically add Weblate contributions to README and About dialog on release. (thanks to GB609)
 
