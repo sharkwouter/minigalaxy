@@ -680,7 +680,13 @@ class InstallerInventory:
         return True
 
     def as_keep_files_list(self):
-        files = [self.inventory_file]
+        """Returns a list of all files contained in this inventory INCLUDING the inventory itself"""
+        files = self.contained_files()
+        files.append(self.inventory_file)
+        return files
+
+    def contained_files(self):
+        files = []
         for f in self.data.keys():
             files.append(os.path.join(self.directory, f))
         return files

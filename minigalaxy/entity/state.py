@@ -13,3 +13,4 @@ class State(Enum):
     UNINSTALLING = auto()
     UPDATING = auto()
     UPDATE_INSTALLABLE = auto()
+    VERIFYING = auto()

@@ -59,6 +59,7 @@ class LibraryEntry:
             State.UNINSTALLING: self.state_uninstalling,
             State.UPDATABLE: self.state_updatable,
             State.UPDATING: self.state_updating,
+            State.VERIFYING: self.state_verifying
         }
         self.thumbnail_loaded = False
 
@@ -374,6 +375,8 @@ class LibraryEntry:
         * updating the installed version info
         * changing state of the UI element accordingly
         * showing an error message on failure
+        * this function only handles 'final' states of an installation, dealing with progress reports
+          is delegated to __handle_install_state_update
         """
 
         item_name = dlc_title if dlc_title else self.game.name
@@ -382,6 +385,10 @@ class LibraryEntry:
         if result.installation_terminated:
             # Regardless of whether the installation succeeds or fails, we should stop trying to restart the install
             self.config.remove_ongoing_download(result.install_id)
+            # installations are sequenced - there can never be more than one at a time, so it's ok
+            # to maintain the state of the current installation when it finishes
+            del self.num_verified_files
+            del self.install_inventory
 
         if result.type is InstallResultType.SUCCESS:
             self.update_to_state_if_idle(State.INSTALLED)
@@ -391,12 +398,37 @@ class LibraryEntry:
                 self.game.set_info("version", self.api.get_version(self.game))
             if on_success:
                 on_success()
-        else:
+            return
+
+        if result.installation_terminated:
             item_name = dlc_title if dlc_title else self.game.name
             GLib.idle_add(self.parent_window.show_error, _("Failed to install {}").format(item_name), result.reason)
             self.reset_to_idle_state_if_possible()
             if on_failure:
                 on_failure()
+            return
+
+        self.__handle_install_state_update(result)
+
+    def __handle_install_state_update(self, result: InstallResult):
+        if result.type is InstallResultType.VERIFY_START:
+            self.num_verified_files = 0
+            self.update_to_state_if_idle(State.VERIFYING)
+            self.install_inventory = result.details
+            return
+
+        if result.type is InstallResultType.VERIFY_PROGRESS:
+            self.num_verified_files = self.num_verified_files + 1
+            self.update_to_state_if_idle(State.VERIFYING)
+            if self.current_state is State.VERIFYING:
+                # progress bar will be occupied by download progress when not idle
+                # this can only happen when several large DLCs are downloaded in parallel
+                percentage = self.num_verified_files / len(self.install_inventory.contained_files()) * 100
+                self.set_progress(percentage)
+            return
+
+        if result.type is InstallResultType.INSTALL_START:
+            self.update_to_state_if_idle(State.INSTALLING)
 
     def _install(self, gog_item_id, save_location, update=False, dlc_title="",
                  inventory=None, on_success=None, on_failure=None):
@@ -588,13 +620,13 @@ class LibraryEntry:
         - self.menu_button_uninstall
         - self.button_cancel
         - self.progress_bar
-        
+
         Additionally, self.menu_button can be enforced to be visible by setting info_buttons=True.
         It will also be shown when one of its sub-buttons shall be visible.
         """
         if info_buttons:
             self.menu_button.show()
-        else: 
+        else:
             self.menu_button.hide()
 
         menu_buttons = [self.menu_button_update, self.menu_button_uninstall]
@@ -680,6 +712,10 @@ class LibraryEntry:
     def state_updating(self):
         self.set_main_button(False, _("Updating…"))
         self.update_visible_widgets(info_buttons=True)
+
+    def state_verifying(self):
+        self.set_main_button(False, _("Verifying checksums…"))
+        self.update_visible_widgets(self.progress_bar, self.button_cancel, info_buttons=True)
 
     def update_to_state(self, state):
         self.current_state = state
