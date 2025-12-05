@@ -64,6 +64,7 @@ class LibraryEntry:
 
     def init_ui_elements(self):
         self.image.set_tooltip_text(self.game.name)
+        self.menu_button.set_tooltip_text(_("Show game options menu"))
         self.reload_state()
         load_thumbnail_thread = threading.Thread(target=self.load_thumbnail)
         load_thumbnail_thread.start()
@@ -571,109 +572,114 @@ class LibraryEntry:
         else:
             self.update_to_state(State.DOWNLOADABLE)
 
+    def set_main_button(self, clickable, label=None, tooltip=None):
+        self.button.set_sensitive(clickable)
+        if label is not None:
+            self.button.set_label(label)
+        if tooltip is not None:
+            self.button.set_tooltip_text(tooltip)
+
+    def update_visible_widgets(self, *widgets, info_buttons=True):
+        """
+        Helper to ensure consistent widget visibility updates on state changes.
+        The following widgets are automatically made invisible if not explicitely declare as visible
+        by mentioning them as argument:
+        - self.menu_button_update
+        - self.menu_button_uninstall
+        - self.button_cancel
+        - self.progress_bar
+        
+        Additionally, self.menu_button can be enforced to be visible by setting info_buttons=True.
+        It will also be shown when one of its sub-buttons shall be visible.
+        """
+        if info_buttons:
+            self.menu_button.show()
+        else: 
+            self.menu_button.hide()
+
+        menu_buttons = [self.menu_button_update, self.menu_button_uninstall]
+        for b in [self.menu_button_update, self.menu_button_uninstall, self.button_cancel, self.progress_bar]:
+            if b in widgets:
+                b.show()
+                # force menu button to be visible if any child shall be visible
+                if b in menu_buttons and not info_buttons:
+                    self.menu_button.show()
+            else:
+                b.hide()
+
     def state_downloadable(self):
-        self.button.set_label(_("Download"))
-        self.button.set_tooltip_text(_("Download and install the game"))
-        self.button.set_sensitive(True)
+        self.set_main_button(True, _("Download"), _("Download and install the game"))
         self.image.set_sensitive(False)
 
         # The user must have the possibility to access
         # to the store button even if the game is not installed
-        self.menu_button.show()
-        self.menu_button.set_tooltip_text(_("Show game options menu"))
-        self.menu_button_update.hide()
-        self.menu_button_dlc.hide()
-        self.menu_button_uninstall.hide()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
+        self.update_visible_widgets(info_buttons=True)
 
         self.game.install_dir = ""
 
     def state_installable(self):
-        self.button.set_label(_("Install"))
-        self.button.set_tooltip_text(_("Install the game"))
-        self.button.set_sensitive(True)
+        self.set_main_button(True, _("Install"), _("Install the game"))
         self.image.set_sensitive(False)
         # The user must have the possibility to access
         # to the store button even if the game is not installed
-        self.menu_button.show()
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
+        self.update_visible_widgets(info_buttons=True)
 
         self.game.install_dir = ""
 
     def state_queued(self):
-        self.button.set_label(_("In queue…"))
-        self.button.set_sensitive(False)
+        self.set_main_button(False, _("In queue…"))
         self.image.set_sensitive(False)
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.show()
-        self.progress_bar.show()
+        self.update_visible_widgets(self.progress_bar, self.button_cancel, info_buttons=True)
 
     def state_downloading(self):
-        self.button.set_label(_("Downloading…"))
-        self.button.set_sensitive(False)
+        self.set_main_button(False, _("Downloading…"))
         self.image.set_sensitive(False)
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.show()
-        self.progress_bar.show()
+        self.update_visible_widgets(self.progress_bar, self.button_cancel, info_buttons=True)
 
     def state_installing(self):
-        self.button.set_label(_("Installing…"))
-        self.button.set_sensitive(False)
+        self.set_main_button(False, _("Installing…"))
         self.image.set_sensitive(True)
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
+        self.update_visible_widgets(info_buttons=True)
 
         self.game.set_install_dir(self.config.install_dir)
         self.parent_library.filter_library()
 
     def state_installed(self):
-        self.button.set_label(_("Play"))
-        self.button.set_tooltip_text(_("Launch the game"))
+        self.set_main_button(True, _("Play"), _("Launch the game"))
         self.button.get_style_context().add_class("suggested-action")
-        self.button.set_sensitive(True)
+
         self.image.set_sensitive(True)
-        self.menu_button.set_tooltip_text(_("Show game options menu"))
-        self.menu_button.show()
-        self.menu_button_uninstall.show()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
-        self.menu_button_update.hide()
+        self.update_visible_widgets(self.menu_button_uninstall, info_buttons=True)
         self.update_icon.hide()
 
         self.game.set_install_dir(self.config.install_dir)
 
     def state_uninstalling(self):
-        self.button.set_label(_("Uninstalling…"))
+        self.set_main_button(False, _("Uninstalling…"))
         self.button.get_style_context().remove_class("suggested-action")
-        self.button.set_sensitive(False)
+
         self.image.set_sensitive(False)
-        self.menu_button.hide()
-        self.button_cancel.hide()
+        self.update_visible_widgets(info_buttons=False)
 
         self.game.install_dir = ""
         self.parent_library.filter_library()
 
     def state_updatable(self):
+        self.set_main_button(True, _("Play"))
+
         self.update_icon.show()
         self.update_icon.set_from_icon_name("emblem-synchronizing", Gtk.IconSize.LARGE_TOOLBAR)
-        self.button.set_label(_("Play"))
-        self.menu_button.show()
+
+        self.update_visible_widgets(self.menu_button_update, self.menu_button_uninstall, info_buttons=True)
+
         tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")
         self.image.set_tooltip_text(tooltip_text)
-        self.menu_button_update.show()
         if self.game.platform == "windows":
             self.wine_icon.set_margin_left(22)
 
     def state_updating(self):
-        self.button.set_label(_("Updating…"))
+        self.set_main_button(False, _("Updating…"))
+        self.update_visible_widgets(info_buttons=True)
 
     def update_to_state(self, state):
         self.current_state = state
