@@ -193,6 +193,15 @@ class Library(Gtk.Viewport):
                 games.append(Game(name=name, game_id=game_id, install_dir=full_path, category=category))
             else:
                 games.extend(get_installed_windows_games(full_path, game_categories_dict))
+
+        # try to repair a corrupted list of ongoing downloads
+        # if something is considered 'installed', it shouldn't be on the download list anymore
+        ongoing_downloads = self.config.current_downloads()
+        for game in games:
+            if game.id in ongoing_downloads:
+                ongoing_downloads.remove(game.id)
+        self.config.current_downloads = ongoing_downloads
+
         return games
 
     def __add_games_from_api(self):

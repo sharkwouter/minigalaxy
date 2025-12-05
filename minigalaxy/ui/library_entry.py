@@ -366,7 +366,7 @@ class LibraryEntry:
 
         self._install(self.game.id, save_location, update=True, inventory=inventory, on_success=on_success)
 
-    def __install_finished_callback(self, result: InstallResult, on_success=None, on_failure=None, dlc_title=""):
+    def __install_step_callback(self, result: InstallResult, on_success=None, on_failure=None, dlc_title=""):
         """
         Generic callback passed to enqueue_game_install.
         Handles some common work to do on success or failure, like:
@@ -376,10 +376,14 @@ class LibraryEntry:
         """
 
         item_name = dlc_title if dlc_title else self.game.name
-        logger.info("Received install finished notification for %s: %s", item_name, result)
+        logger.info("Received install step notification for %s: %s", item_name, result)
+
+        if result.installation_terminated:
+            # Regardless of whether the installation succeeds or fails, we should stop trying to restart the install
+            self.config.remove_ongoing_download(result.install_id)
+
         if result.type is InstallResultType.SUCCESS:
             self.update_to_state_if_idle(State.INSTALLED)
-            self.config.remove_ongoing_download(result.install_id)
             if dlc_title:
                 self.game.set_dlc_info("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title)
             else:
@@ -407,7 +411,7 @@ class LibraryEntry:
         self.update_to_state_if_idle(processing_state)
 
         def install_finished(result):
-            self.__install_finished_callback(result, on_success, on_failure, dlc_title)
+            self.__install_step_callback(result, on_success, on_failure, dlc_title)
 
         enqueue_game_install(
             gog_item_id,
@@ -704,6 +708,7 @@ class InstallableItem:
     """
     Helper class to encapsulate several pieces of info used in several methods.
     """
+
     def __init__(self, item_id, name):
         self.id = item_id
         self.name = name
