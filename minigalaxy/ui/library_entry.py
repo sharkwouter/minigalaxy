@@ -59,11 +59,13 @@ class LibraryEntry:
             State.UNINSTALLING: self.state_uninstalling,
             State.UPDATABLE: self.state_updatable,
             State.UPDATING: self.state_updating,
+            State.VERIFYING: self.state_verifying
         }
         self.thumbnail_loaded = False
 
     def init_ui_elements(self):
         self.image.set_tooltip_text(self.game.name)
+        self.menu_button.set_tooltip_text(_("Show game options menu"))
         self.reload_state()
         load_thumbnail_thread = threading.Thread(target=self.load_thumbnail)
         load_thumbnail_thread.start()
@@ -366,32 +368,67 @@ class LibraryEntry:
 
         self._install(self.game.id, save_location, update=True, inventory=inventory, on_success=on_success)
 
-    def __install_finished_callback(self, result: InstallResult, on_success=None, on_failure=None, dlc_title=""):
+    def __install_step_callback(self, result: InstallResult, on_success=None, on_failure=None, dlc_title=""):
         """
         Generic callback passed to enqueue_game_install.
         Handles some common work to do on success or failure, like:
         * updating the installed version info
         * changing state of the UI element accordingly
         * showing an error message on failure
+        * this function only handles 'final' states of an installation, dealing with progress reports
+          is delegated to __handle_install_state_update
         """
 
         item_name = dlc_title if dlc_title else self.game.name
-        logger.info("Received install finished notification for %s: %s", item_name, result)
+        logger.info("Received install step notification for %s: %s", item_name, result)
+
+        if result.installation_terminated:
+            # Regardless of whether the installation succeeds or fails, we should stop trying to restart the install
+            self.config.remove_ongoing_download(result.install_id)
+            # installations are sequenced - there can never be more than one at a time, so it's ok
+            # to maintain the state of the current installation when it finishes
+            del self.num_verified_files
+            del self.install_inventory
+
         if result.type is InstallResultType.SUCCESS:
             self.update_to_state_if_idle(State.INSTALLED)
-            self.config.remove_ongoing_download(result.install_id)
             if dlc_title:
                 self.game.set_dlc_info("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title)
             else:
                 self.game.set_info("version", self.api.get_version(self.game))
             if on_success:
                 on_success()
-        else:
+            return
+
+        if result.installation_terminated:
             item_name = dlc_title if dlc_title else self.game.name
             GLib.idle_add(self.parent_window.show_error, _("Failed to install {}").format(item_name), result.reason)
             self.reset_to_idle_state_if_possible()
             if on_failure:
                 on_failure()
+            return
+
+        self.__handle_install_state_update(result)
+
+    def __handle_install_state_update(self, result: InstallResult):
+        if result.type is InstallResultType.VERIFY_START:
+            self.num_verified_files = 0
+            self.update_to_state_if_idle(State.VERIFYING)
+            self.install_inventory = result.details
+            return
+
+        if result.type is InstallResultType.VERIFY_PROGRESS:
+            self.num_verified_files = self.num_verified_files + 1
+            self.update_to_state_if_idle(State.VERIFYING)
+            if self.current_state is State.VERIFYING:
+                # progress bar will be occupied by download progress when not idle
+                # this can only happen when several large DLCs are downloaded in parallel
+                percentage = self.num_verified_files / len(self.install_inventory.contained_files()) * 100
+                self.set_progress(percentage)
+            return
+
+        if result.type is InstallResultType.INSTALL_START:
+            self.update_to_state_if_idle(State.INSTALLING)
 
     def _install(self, gog_item_id, save_location, update=False, dlc_title="",
                  inventory=None, on_success=None, on_failure=None):
@@ -407,7 +444,7 @@ class LibraryEntry:
         self.update_to_state_if_idle(processing_state)
 
         def install_finished(result):
-            self.__install_finished_callback(result, on_success, on_failure, dlc_title)
+            self.__install_step_callback(result, on_success, on_failure, dlc_title)
 
         enqueue_game_install(
             gog_item_id,
@@ -567,109 +604,118 @@ class LibraryEntry:
         else:
             self.update_to_state(State.DOWNLOADABLE)
 
+    def set_main_button(self, clickable, label=None, tooltip=None):
+        self.button.set_sensitive(clickable)
+        if label is not None:
+            self.button.set_label(label)
+        if tooltip is not None:
+            self.button.set_tooltip_text(tooltip)
+
+    def update_visible_widgets(self, *widgets, info_buttons=True):
+        """
+        Helper to ensure consistent widget visibility updates on state changes.
+        The following widgets are automatically made invisible if not explicitely declare as visible
+        by mentioning them as argument:
+        - self.menu_button_update
+        - self.menu_button_uninstall
+        - self.button_cancel
+        - self.progress_bar
+
+        Additionally, self.menu_button can be enforced to be visible by setting info_buttons=True.
+        It will also be shown when one of its sub-buttons shall be visible.
+        """
+        if info_buttons:
+            self.menu_button.show()
+        else:
+            self.menu_button.hide()
+
+        menu_buttons = [self.menu_button_update, self.menu_button_uninstall]
+        for b in [self.menu_button_update, self.menu_button_uninstall, self.button_cancel, self.progress_bar]:
+            if b in widgets:
+                b.show()
+                # force menu button to be visible if any child shall be visible
+                if b in menu_buttons and not info_buttons:
+                    self.menu_button.show()
+            else:
+                b.hide()
+
     def state_downloadable(self):
-        self.button.set_label(_("Download"))
-        self.button.set_tooltip_text(_("Download and install the game"))
-        self.button.set_sensitive(True)
+        self.set_main_button(True, _("Download"), _("Download and install the game"))
         self.image.set_sensitive(False)
 
         # The user must have the possibility to access
         # to the store button even if the game is not installed
-        self.menu_button.show()
-        self.menu_button.set_tooltip_text(_("Show game options menu"))
-        self.menu_button_update.hide()
-        self.menu_button_dlc.hide()
-        self.menu_button_uninstall.hide()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
+        self.update_visible_widgets(info_buttons=True)
 
         self.game.install_dir = ""
 
     def state_installable(self):
-        self.button.set_label(_("Install"))
-        self.button.set_tooltip_text(_("Install the game"))
-        self.button.set_sensitive(True)
+        self.set_main_button(True, _("Install"), _("Install the game"))
         self.image.set_sensitive(False)
         # The user must have the possibility to access
         # to the store button even if the game is not installed
-        self.menu_button.show()
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
+        self.update_visible_widgets(info_buttons=True)
 
         self.game.install_dir = ""
 
     def state_queued(self):
-        self.button.set_label(_("In queue…"))
-        self.button.set_sensitive(False)
+        self.set_main_button(False, _("In queue…"))
         self.image.set_sensitive(False)
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.show()
-        self.progress_bar.show()
+        self.update_visible_widgets(self.progress_bar, self.button_cancel, info_buttons=True)
 
     def state_downloading(self):
-        self.button.set_label(_("Downloading…"))
-        self.button.set_sensitive(False)
+        self.set_main_button(False, _("Downloading…"))
         self.image.set_sensitive(False)
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.show()
-        self.progress_bar.show()
+        self.update_visible_widgets(self.progress_bar, self.button_cancel, info_buttons=True)
 
     def state_installing(self):
-        self.button.set_label(_("Installing…"))
-        self.button.set_sensitive(False)
+        self.set_main_button(False, _("Installing…"))
         self.image.set_sensitive(True)
-        self.menu_button_uninstall.hide()
-        self.menu_button_update.hide()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
+        self.update_visible_widgets(info_buttons=True)
 
         self.game.set_install_dir(self.config.install_dir)
         self.parent_library.filter_library()
 
     def state_installed(self):
-        self.button.set_label(_("Play"))
-        self.button.set_tooltip_text(_("Launch the game"))
+        self.set_main_button(True, _("Play"), _("Launch the game"))
         self.button.get_style_context().add_class("suggested-action")
-        self.button.set_sensitive(True)
+
         self.image.set_sensitive(True)
-        self.menu_button.set_tooltip_text(_("Show game options menu"))
-        self.menu_button.show()
-        self.menu_button_uninstall.show()
-        self.button_cancel.hide()
-        self.progress_bar.hide()
-        self.menu_button_update.hide()
+        self.update_visible_widgets(self.menu_button_uninstall, info_buttons=True)
         self.update_icon.hide()
 
         self.game.set_install_dir(self.config.install_dir)
 
     def state_uninstalling(self):
-        self.button.set_label(_("Uninstalling…"))
+        self.set_main_button(False, _("Uninstalling…"))
         self.button.get_style_context().remove_class("suggested-action")
-        self.button.set_sensitive(False)
+
         self.image.set_sensitive(False)
-        self.menu_button.hide()
-        self.button_cancel.hide()
+        self.update_visible_widgets(info_buttons=False)
 
         self.game.install_dir = ""
         self.parent_library.filter_library()
 
     def state_updatable(self):
+        self.set_main_button(True, _("Play"))
+
         self.update_icon.show()
         self.update_icon.set_from_icon_name("emblem-synchronizing", Gtk.IconSize.LARGE_TOOLBAR)
-        self.button.set_label(_("Play"))
-        self.menu_button.show()
+
+        self.update_visible_widgets(self.menu_button_update, self.menu_button_uninstall, info_buttons=True)
+
         tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")
         self.image.set_tooltip_text(tooltip_text)
-        self.menu_button_update.show()
         if self.game.platform == "windows":
             self.wine_icon.set_margin_left(22)
 
     def state_updating(self):
-        self.button.set_label(_("Updating…"))
+        self.set_main_button(False, _("Updating…"))
+        self.update_visible_widgets(info_buttons=True)
+
+    def state_verifying(self):
+        self.set_main_button(False, _("Verifying checksums…"))
+        self.update_visible_widgets(self.progress_bar, self.button_cancel, info_buttons=True)
 
     def update_to_state(self, state):
         self.current_state = state
@@ -704,6 +750,7 @@ class InstallableItem:
     """
     Helper class to encapsulate several pieces of info used in several methods.
     """
+
     def __init__(self, item_id, name):
         self.id = item_id
         self.name = name

@@ -3,7 +3,7 @@ import minigalaxy
 import os
 
 from unittest import TestCase, mock
-from unittest.mock import patch, mock_open, MagicMock
+from unittest.mock import patch, mock_open, MagicMock, call
 
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
@@ -27,7 +27,7 @@ class Test(TestCase):
     def test_install_game_with_checksum_exception(self, mock_checksum):
         '''[scenario: install_game with raise_error=True uses raise instead of return - checksum failure variant]'''
         failed_file_list = {"/cache/adrift_setup-1.bin": "md5abc"}
-        mock_checksum.return_value = ("Checksum Error", failed_file_list)
+        mock_checksum.side_effect = installer.InstallException("Checksum Error", installer.InstallResultType.CHECKSUM_ERROR, failed_file_list)
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
 
         inventory = self.prepare_inventory("/cache/adrift_setup.exe", "", 0)
@@ -37,25 +37,28 @@ class Test(TestCase):
                                    keep_installers=False, create_desktop_file=True,
                                    installer_inventory=inventory, raise_error=True)
 
-        self.assertEqual(installer.InstallResultType.CHECKSUM_ERROR, result.exception.fail_type)
+        self.assertEqual(installer.InstallResultType.CHECKSUM_ERROR, result.exception.fail_type, result.exception.message)
         self.assertIs(failed_file_list, result.exception.data)
 
     @mock.patch('minigalaxy.installer.verify_disk_space')
     @mock.patch('minigalaxy.installer.verify_installer_integrity')
     def test_install_game_with_failure_exception(self, mock_checksum, mock_disk_check):
         '''[scenario: install_game with raise_error=True uses raise instead of return - regular failure variant]'''
-        mock_checksum.return_value = ("", {})
         mock_disk_check.return_value = "disk_full"
 
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
+
+        progress_callback = MagicMock()
 
         inventory = self.prepare_inventory("/cache/adrift_setup.exe", "", 0)
         inventory.add_file("/cache/adrift_setup-1.bin", FileInfo("", 0))
         with self.assertRaises(installer.InstallException) as result:
             installer.install_game(game, installer="", language="", install_dir="",
                                    keep_installers=False, create_desktop_file=True,
-                                   installer_inventory=inventory, raise_error=True)
+                                   installer_inventory=inventory, raise_error=True,
+                                   progress_callback=progress_callback)
 
+        progress_callback.assert_called_once_with(installer.InstallResultType.INSTALL_START, game.name)
         self.assertEqual(installer.InstallResultType.FAILURE, result.exception.fail_type)
         self.assertIs("disk_full", result.exception.message)
 
@@ -132,7 +135,7 @@ class Test(TestCase):
         for f in failed_file_list:
             inventory.verify_checksum(os.path.basename(f), "calculated_stuff")
 
-        mock_checksum.return_value = ("Checksum Error", failed_file_list)
+        mock_checksum.side_effect = installer.InstallException("Checksum Error", installer.InstallResultType.CHECKSUM_ERROR, failed_file_list)
         game = Game("Absolute Drift", install_dir=install_dir, platform="windows")
 
         with self.assertRaises(installer.InstallException):
@@ -155,10 +158,15 @@ class Test(TestCase):
         installer_path = "/home/user/.cache/minigalaxy/download/" \
                          "Beneath a Steel Sky/{}".format(installer_name)
         inventory = self.prepare_inventory(installer_path, md5_sum, 0)
-        exp = ""
+
+        progress_callback = MagicMock()
+
         with patch("builtins.open", mock_open(read_data=b"")):
-            obs, failures = installer.verify_installer_integrity(game, inventory)
-        self.assertEqual(exp, obs)
+            installer.verify_installer_integrity(game, inventory, progress_callback)
+        progress_callback.assert_has_calls([
+            call(installer.InstallResultType.VERIFY_START, game.name, inventory),
+            call(installer.InstallResultType.VERIFY_PROGRESS, installer_name, md5_sum)
+        ])
 
     @mock.patch('os.path.exists')
     @mock.patch('hashlib.md5')
@@ -176,9 +184,13 @@ class Test(TestCase):
                          "Beneath a Steel Sky/{}".format(installer_name)
         inventory = self.prepare_inventory(installer_path, md5_sum, 0)
         exp = _("{} was corrupted. Please download it again.").format(installer_name)
+
+        progress_callback = MagicMock()
         with patch("builtins.open", mock_open(read_data=b"aaaa")):
-            obs, failures = installer.verify_installer_integrity(game, inventory)
-        self.assertEqual(exp, obs)
+            with self.assertRaises(installer.InstallException) as cm:
+                installer.verify_installer_integrity(game, inventory, progress_callback)
+            self.assertEqual(exp, cm.exception.message)
+        progress_callback.assert_called_once_with(installer.InstallResultType.VERIFY_START, game.name, inventory)
 
     @mock.patch('os.path.exists')
     @mock.patch('os.listdir')

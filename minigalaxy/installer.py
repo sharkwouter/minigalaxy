@@ -10,7 +10,7 @@ import textwrap
 import time
 
 from collections import deque
-from enum import Enum
+from enum import Enum, auto
 from queue import Empty
 from threading import Thread, RLock
 
@@ -74,7 +74,8 @@ def install_game(  # noqa: C901
         keep_installers: bool,
         create_desktop_file: bool,
         installer_inventory=None,
-        raise_error=False
+        raise_error=False,
+        progress_callback=None
 ):
     error_message = ""
     error = None
@@ -85,9 +86,9 @@ def install_game(  # noqa: C901
         if not installer_inventory:
             installer_inventory = InstallerInventory.from_file_system(installer)
 
-        fail_on_error(verify_installer_integrity(game, installer_inventory),
-                      InstallResultType.CHECKSUM_ERROR)
+        verify_installer_integrity(game, installer_inventory, progress_callback)
 
+        progress_callback(InstallResultType.INSTALL_START, game.name)
         fail_on_error(verify_disk_space(game, installer), InstallResultType.FAILURE)
 
         tmp_dir, = fail_on_error(make_tmp_dir(game))
@@ -146,10 +147,11 @@ def fail_on_error(message_to_test, fail_type=None, data=None):
     return remaining_args
 
 
-def verify_installer_integrity(game, installer_inventory):
+def verify_installer_integrity(game, installer_inventory, progress_callback=None):
     error_message = []
     invalid_files = {}
 
+    progress_callback(InstallResultType.VERIFY_START, game.name, installer_inventory)
     for installer in installer_inventory.as_keep_files_list():
         installer_file_name = os.path.basename(installer)
         if not os.path.exists(installer):
@@ -167,11 +169,13 @@ def verify_installer_integrity(game, installer_inventory):
 
         if installer_inventory.verify_checksum(installer_file_name, calculated_checksum):
             logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
+            progress_callback(InstallResultType.VERIFY_PROGRESS, installer_file_name, calculated_checksum)
         else:
             error_message.append(_("{} was corrupted. Please download it again.").format(installer_file_name))
             invalid_files[installer] = calculated_checksum
 
-    return '\n'.join(error_message), invalid_files
+    if error_message:
+        raise InstallException('\n'.join(error_message), InstallResultType.CHECKSUM_ERROR, invalid_files)
 
 
 def verify_disk_space(game, installer):
@@ -676,7 +680,13 @@ class InstallerInventory:
         return True
 
     def as_keep_files_list(self):
-        files = [self.inventory_file]
+        """Returns a list of all files contained in this inventory INCLUDING the inventory itself"""
+        files = self.contained_files()
+        files.append(self.inventory_file)
+        return files
+
+    def contained_files(self):
+        files = []
         for f in self.data.keys():
             files.append(os.path.join(self.directory, f))
         return files
@@ -716,27 +726,49 @@ class InstallerInventory:
 
 
 class InstallResultType(Enum):
-    SUCCESS = 1
-    FAILURE = 2
-    CHECKSUM_ERROR = 3
-    POST_INSTALL_FAILURE = 4
+    """checksum verification has started"""
+    VERIFY_START = auto()
+    """A file has been verified successfully"""
+    VERIFY_PROGRESS = auto()
+    """The real installation has started"""
+    INSTALL_START = auto()
+    """Installation ended with success"""
+    SUCCESS = auto()
+    """Installation ended in failure"""
+    FAILURE = auto()
+    """Checksum verification failed"""
+    CHECKSUM_ERROR = auto()
+    """An error happened during post installation actions"""
+    POST_INSTALL_FAILURE = auto()
 
 
 class InstallResult:
     def __init__(self, install_id, result_type: InstallResultType, reason, details=None):
         """Data class that will be passed to result_callback of InstallTask
         reason is a type-dependent string:
+        - INSTALL_START: game name
+        - VERIFY_START: game name
+        - VERIFY_PROGRESS: verified file
         - SUCCESS: install directory path
         - FAILURE and CHECKSUM_ERROR: string error message
+        - POST_INSTALL_FAILURE: error message
 
         the "details" field provides additional context information:
+        - VERIFY_START: InstallerInventory
+        - VERIFY_PROGRESS: the md5 of the file
         - FAILURE: depending on the failing step, usually a directory path
-        - CHECKSUM_ERROR: dict {abs_file: calculated_checksum}
+        - CHECKSUM_ERROR: dict {abs_file: calculated_checksum} of all failed files
         """
         self.install_id = install_id
         self.type = result_type
         self.reason = reason
         self.details = details
+        self.installation_terminated = result_type in [
+            InstallResultType.SUCCESS,
+            InstallResultType.FAILURE,
+            InstallResultType.CHECKSUM_ERROR,
+            InstallResultType.POST_INSTALL_FAILURE
+        ]
 
     def __str__(self):
         return f"InstallResult(id={self.install_id}, type={self.type}), reason={self.reason})"
@@ -768,11 +800,19 @@ class InstallTask:
 
     def execute(self):
         try:
-            install_game(*self.arg_array, **self.named_args, raise_error=True)
-            self.callback(InstallResult(self.installer_id, InstallResultType.SUCCESS, self.game.install_dir, None))
+            # install_game will throw an exception if it doesn't succeed
+            install_game(*self.arg_array, **self.named_args, raise_error=True, progress_callback=self.notifyStep)
+            self.notifyStep(InstallResultType.SUCCESS, self.game.install_dir, None)
         except InstallException as e:
             logger.error("Error installing item %s: %s", self.installer_id, e.message, exc_info=1)
-            self.callback(InstallResult(self.installer_id, e.fail_type, e.message, e.data))
+            self.notifyStep(e.fail_type, e.message, e.data)
+
+    def notifyStep(self, result_type: InstallResultType, reason='', details=None):
+        '''Small proxy method to be passed to install_game for intermediate progress report'''
+        try:
+            self.callback(InstallResult(self.installer_id, result_type, reason, details))
+        except Exception as e:
+            logger.error("Installation callback handler threw an error: %s", e.message, exc_info=1)
 
     def __eq__(self, other):
         if not isinstance(other, InstallTask):
