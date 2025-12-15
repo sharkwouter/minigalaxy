@@ -40,6 +40,18 @@ class Config:
             file.write(json.dumps(self.__config, ensure_ascii=False))
         os.rename(temp_file, self.__config_file)
 
+    def save(self) -> None:
+        """
+        Config will normally immediately save all changes applied to it to the configuration file automatically.
+        This mechanism relies on getters and setters and the method `config.__write` is called whenever
+        one of the properties is assigned a new value.
+        So it only works for direct assignments. But there are some properties which returned Lists or might
+        return other none-simple types in the future. Changes made to these sub-objects would not be detected
+        and thus also not be persisted automatically.
+        In these situations `Config.save`  can be used to avoid having to re-assign the same object reference.
+        """
+        self.__write()
+
     @property
     def locale(self) -> str:
         return self.__config.get("locale", "")

@@ -211,6 +211,27 @@ class TestLibrary(TestCase):
         obs = games[0].name
         self.assertEqual(exp, obs)
 
+    def test_installed_games_removed_from_current_downloads(self):
+        """Make sure that library detects when already installed games are still marked as to be downloaded"""
+
+        # none-empty list of playTasks needed so that library recognizes it as installed game
+        game_json_data = '{ "gameId": "1207665883", "name": "Aliens vs Predator Classic 2000", "playTasks":[{}]}'
+        gog_info_file = "goggame-1207665883.info"
+        self.mock_config.current_downloads = [1207665883]
+
+        api_mock = MagicMock()
+        test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            self.mock_config.install_dir = tmpdir
+            os.makedirs(f'{tmpdir}/Alien', mode=0o755)
+            with open(f'{tmpdir}/Alien/{gog_info_file}', "w", encoding="utf-8") as file:
+                file.write(game_json_data)
+            test_library._Library__get_installed_games()
+
+        self.assertEqual([], self.mock_config.current_downloads)
+        self.mock_config.save.assert_called_once()
+
     def test_read_game_categories_file_should_return_populated_dict(self):
         with tempfile.NamedTemporaryFile(mode='w+t', delete=False) as tmpfile:
             tmpfile.write('{"Test Game":"Adventure"}')
