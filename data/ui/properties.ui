@@ -90,7 +90,7 @@
                         <property name="label" translatable="yes">OS Translator Tools</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Open tools (Winetricks) for the OS translator</property>
+                        <property name="tooltip-text" translatable="yes">Open tools for the OS translator (Winetricks, Protontricks, etc.)</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_winetricks_clicked" swapped="no"/>
                       </object>
