@@ -287,59 +287,17 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button_properties_reset">
-                        <property name="label" translatable="yes">Reset wine executable</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Reset the wine executable for this game</property>
-                        <property name="receives-default">True</property>
-                        <signal name="clicked" handler="on_button_properties_reset_clicked" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left-attach">1</property>
-                        <property name="top-attach">10</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label_wine_custom">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">end</property>
-                        <property name="label" translatable="yes">Wine executable:</property>
-                        <property name="tooltip-text" translatable="yes">Set Wine executable</property>
-                        <property name="justify">fill</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">9</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkFileChooserButton" id="button_properties_wine">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="title" translatable="yes"/>
-                        <property name="tooltip-text" translatable="yes">Set Wine executable</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">1</property>
-                        <property name="top-attach">9</property>
-                      </packing>
-                    </child>
-                     <child>
-                       <object class="GtkLabel">
-                    <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">OS Translator executable:</property>
+                        <property name="label" translatable="yes">OS Translator:</property>
                         <property name="tooltip-text" translatable="yes">Set the OS-level translator executable (Wine, Proton-GE, etc.)</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">11</property>
+                        <property name="top-attach">9</property>
                       </packing>
                     </child>
                     <child>
@@ -351,7 +309,7 @@
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">11</property>
+                        <property name="top-attach">9</property>
                       </packing>
                     </child>
                     <child>
@@ -359,13 +317,13 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">ISA Translator executable:</property>
+                        <property name="label" translatable="yes">ISA Translator:</property>
                         <property name="tooltip-text" translatable="yes">Set the ISA-level translator executable (FEX, QEMU, etc.)</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">12</property>
+                        <property name="top-attach">10</property>
                       </packing>
                     </child>
                     <child>
@@ -377,34 +335,23 @@
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">12</property>
+                        <property name="top-attach">10</property>
                       </packing>
                     </child>
-                     <child>
-                       <object class="GtkLabel">
-                         <property name="visible">True</property>
-                         <property name="can-focus">False</property>
-                         <property name="halign">end</property>
-                         <property name="label" translatable="yes">ISA Translator:</property>
-                         <property name="tooltip-text" translatable="yes">Select the ISA-level translator (FEX, QEMU, etc.)</property>
-                         <property name="justify">fill</property>
-                       </object>
-                       <packing>
-                         <property name="left-attach">0</property>
-                         <property name="top-attach">12</property>
-                       </packing>
-                     </child>
-                     <child>
-                       <object class="GtkComboBoxText" id="combobox_properties_isa_translator">
-                         <property name="visible">True</property>
-                         <property name="can-focus">True</property>
-                         <property name="tooltip-text" translatable="yes">Select the ISA-level translator (FEX, QEMU, etc.)</property>
-                       </object>
-                       <packing>
-                         <property name="left-attach">1</property>
-                         <property name="top-attach">12</property>
-                       </packing>
-                     </child>
+                    <child>
+                      <object class="GtkButton" id="button_properties_reset">
+                        <property name="label" translatable="yes">Reset OS translator</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Reset the OS translator executable for this game</property>
+                        <property name="receives-default">True</property>
+                        <signal name="clicked" handler="on_button_properties_reset_clicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">11</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>

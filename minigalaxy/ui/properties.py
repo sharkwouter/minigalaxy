@@ -20,7 +20,6 @@ class Properties(Gtk.Dialog):
     button_properties_winetricks = Gtk.Template.Child()
     button_properties_open_files = Gtk.Template.Child()
     switch_properties_check_for_updates = Gtk.Template.Child()
-    button_properties_wine = Gtk.Template.Child()
     button_properties_reset = Gtk.Template.Child()
     switch_properties_show_fps = Gtk.Template.Child()
     switch_properties_hide_game = Gtk.Template.Child()
@@ -30,9 +29,9 @@ class Properties(Gtk.Dialog):
     entry_properties_command = Gtk.Template.Child()
     button_properties_cancel = Gtk.Template.Child()
     button_properties_ok = Gtk.Template.Child()
-    label_wine_custom = Gtk.Template.Child()
-    combobox_properties_os_translator = Gtk.Template.Child()
-    combobox_properties_isa_translator = Gtk.Template.Child()
+    button_properties_os_translator = Gtk.Template.Child()
+    button_properties_isa_translator = Gtk.Template.Child()
+
     def __init__(self, parent_library, game, config: Config, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent_library.parent_window,
                             modal=True)
@@ -48,12 +47,6 @@ class Properties(Gtk.Dialog):
 
         # Keep switch check for updates disabled/enabled
         self.switch_properties_check_for_updates.set_active(self.game.get_info("check_for_updates"))
-
-        # Retrieve custom wine path each time Properties is open
-        if self.game.get_info("custom_wine"):
-            self.button_properties_wine.set_filename(self.game.get_info("custom_wine"))
-        elif shutil.which("wine"):
-            self.button_properties_wine.set_filename(shutil.which("wine"))
 
         # Keep switch FPS disabled/enabled
         self.switch_properties_show_fps.set_active(self.game.get_info("show_fps"))
@@ -71,27 +64,19 @@ class Properties(Gtk.Dialog):
         self.entry_properties_variable.set_text(self.game.get_info("variable"))
         self.entry_properties_command.set_text(self.game.get_info("command"))
 
-        # Center properties window
-        # Populate OS/ISA translator dropdowns
-        translators = self.config.translators
-        os_translators = [t["name"] for t in translators if t["type"] == "os"]
-        isa_translators = [t["name"] for t in translators if t["type"] == "isa"]
-        self.combobox_properties_os_translator.remove_all()
-        self.combobox_properties_isa_translator.remove_all()
-        for name in os_translators:
-            self.combobox_properties_os_translator.append_text(name)
-        for name in isa_translators:
-            self.combobox_properties_isa_translator.append_text(name)
-        # Set current selection
-        selected = self.game.get_selected_translators(self.config)
-        if selected.get("os") in os_translators:
-            self.combobox_properties_os_translator.set_active(os_translators.index(selected["os"]))
-        else:
-            self.combobox_properties_os_translator.set_active(-1)
-        if selected.get("isa") in isa_translators:
-            self.combobox_properties_isa_translator.set_active(isa_translators.index(selected["isa"]))
-        else:
-            self.combobox_properties_isa_translator.set_active(-1)
+        # Set OS translator (Wine, Proton, etc.)
+        # First check for custom_wine (legacy), then os_translator_exec, then default to system wine
+        os_exec = self.game.get_info("os_translator_exec") or self.game.get_info("custom_wine")
+        if os_exec:
+            self.button_properties_os_translator.set_filename(os_exec)
+        elif shutil.which("wine"):
+            self.button_properties_os_translator.set_filename(shutil.which("wine"))
+
+        # Set ISA translator (FEX, QEMU, etc.)
+        isa_exec = self.game.get_info("isa_translator_exec")
+        if isa_exec:
+            self.button_properties_isa_translator.set_filename(isa_exec)
+
     @Gtk.Template.Callback("on_button_properties_cancel_clicked")
     def cancel_pressed(self, button):
         self.destroy()
@@ -101,12 +86,13 @@ class Properties(Gtk.Dialog):
         game_installed = self.game.is_installed()
         if game_installed:
             self.game.set_info("check_for_updates", self.switch_properties_check_for_updates.get_active())
-            # Save selected translators
-            os_idx = self.combobox_properties_os_translator.get_active()
-            isa_idx = self.combobox_properties_isa_translator.get_active()
-            os_name = self.combobox_properties_os_translator.get_active_text() if os_idx >= 0 else None
-            isa_name = self.combobox_properties_isa_translator.get_active_text() if isa_idx >= 0 else None
-            self.game.set_selected_translators(self.config, os_translator=os_name, isa_translator=isa_name)
+            # Save OS/ISA translator executable paths
+            os_exec = self.button_properties_os_translator.get_filename()
+            isa_exec = self.button_properties_isa_translator.get_filename()
+            if os_exec:
+                self.game.set_info("os_translator_exec", os_exec)
+            if isa_exec:
+                self.game.set_info("isa_translator_exec", isa_exec)
             if self.switch_properties_use_gamemode.get_active() and not shutil.which("gamemoderun"):
                 self.parent_window.show_error(_("GameMode wasn't found. Using GameMode cannot be enabled."))
                 self.game.set_info("use_gamemode", False)
@@ -120,7 +106,13 @@ class Properties(Gtk.Dialog):
         self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
         self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
-        self.game.set_info("custom_wine", str(self.button_properties_wine.get_filename()))
+        
+        # Save OS translator to both fields for backward compatibility
+        os_exec = self.button_properties_os_translator.get_filename()
+        if os_exec:
+            self.game.set_info("os_translator_exec", os_exec)
+            self.game.set_info("custom_wine", os_exec)  # Keep for backward compatibility
+        
         self.parent_library.filter_library()
 
         if game_installed and self.config.create_applications_file:
@@ -134,7 +126,9 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_reset_clicked")
     def on_menu_button_reset(self, widget):
-        self.button_properties_wine.select_filename(shutil.which("wine"))
+        wine_path = shutil.which("wine")
+        if wine_path:
+            self.button_properties_os_translator.select_filename(wine_path)
 
     @Gtk.Template.Callback("on_button_properties_winecfg_clicked")
     def on_menu_button_winecfg(self, widget):
@@ -154,12 +148,12 @@ class Properties(Gtk.Dialog):
     def button_sensitive(self, game):
         if not game.is_installed():
             self.button_properties_open_files.set_sensitive(False)
-            self.button_properties_wine.set_sensitive(False)
+            self.button_properties_os_translator.set_sensitive(False)
+            self.button_properties_isa_translator.set_sensitive(False)
             self.button_properties_reset.set_sensitive(False)
             self.button_properties_regedit.set_sensitive(False)
             self.button_properties_winecfg.set_sensitive(False)
             self.button_properties_winetricks.set_sensitive(False)
-            self.button_properties_open_files.set_sensitive(False)
             self.switch_properties_check_for_updates.set_sensitive(False)
             self.switch_properties_show_fps.set_sensitive(False)
             self.switch_properties_use_gamemode.set_sensitive(False)
@@ -171,6 +165,5 @@ class Properties(Gtk.Dialog):
             self.button_properties_regedit.hide()
             self.button_properties_winecfg.hide()
             self.button_properties_winetricks.hide()
-            self.button_properties_wine.hide()
+            self.button_properties_os_translator.hide()
             self.button_properties_reset.hide()
-            self.label_wine_custom.hide()
