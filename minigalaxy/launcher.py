@@ -119,7 +119,7 @@ def get_game_command(game):
     """Get the game executable command based on launcher type."""
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
-    
+
     if launcher_type in ["start_script", "wine"]:
         return get_start_script_exe_cmd(game)
     elif launcher_type == "windows":
@@ -146,20 +146,20 @@ def add_performance_tools(game, exe_cmd):
 def get_execute_command(game) -> list:
     """Build the complete execution command with translators and performance tools."""
     exe_cmd = []
-    
+
     # Add translators (ISA and OS)
     add_translators_to_command(game, exe_cmd)
-    
+
     # Add game executable
     game_cmd = get_game_command(game)
     exe_cmd.extend(game_cmd)
-    
+
     # Add performance tools (GameMode, MangoHud)
     add_performance_tools(game, exe_cmd)
-    
+
     # Add variable and command flags
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
-    
+
     logger.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
     return exe_cmd
 
