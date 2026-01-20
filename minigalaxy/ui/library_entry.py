@@ -73,8 +73,8 @@ class LibraryEntry:
         # Icon for Windows games
         if self.game.platform == "windows":
             self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
-            self.wine_icon.set_from_file(ICON_WINE_PATH)
-            self.wine_icon.show()
+            #self.wine_icon.set_from_file(ICON_WINE_PATH)
+            #self.wine_icon.show()
 
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):
@@ -704,12 +704,11 @@ class LibraryEntry:
 
         self.update_visible_widgets(self.menu_button_update, self.menu_button_uninstall, info_buttons=True)
 
-        tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")
+        tooltip_text = "{} (update{})".format(self.game.name, ", OS Translator" if self.game.platform == "windows" else "")
         self.image.set_tooltip_text(tooltip_text)
-        if self.game.platform == "windows":
-            self.wine_icon.set_margin_left(22)
-
-    def state_updating(self):
+        # Removed wine_icon reference, use os_translator_icon if needed
+        # if self.game.platform == "windows":
+        #     self.os_translator_icon.set_margin_left(22)
         self.set_main_button(False, _("Updating…"))
         self.update_visible_widgets(info_buttons=True)
 

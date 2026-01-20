@@ -101,12 +101,13 @@ class Properties(Gtk.Dialog):
         game_installed = self.game.is_installed()
         if game_installed:
             self.game.set_info("check_for_updates", self.switch_properties_check_for_updates.get_active())
-        # Save selected translators
-        os_idx = self.combobox_properties_os_translator.get_active()
-        isa_idx = self.combobox_properties_isa_translator.get_active()
-        os_name = self.combobox_properties_os_translator.get_active_text() if os_idx >= 0 else None
-        isa_name = self.combobox_properties_isa_translator.get_active_text() if isa_idx >= 0 else None
-        self.game.set_selected_translators(self.config, os_translator=os_name, isa_translator=isa_name)
+            # Save selected translators
+            os_idx = self.combobox_properties_os_translator.get_active()
+            isa_idx = self.combobox_properties_isa_translator.get_active()
+            os_name = self.combobox_properties_os_translator.get_active_text() if os_idx >= 0 else None
+            isa_name = self.combobox_properties_isa_translator.get_active_text() if isa_idx >= 0 else None
+            self.game.set_selected_translators(self.config, os_translator=os_name, isa_translator=isa_name)
+            if self.switch_properties_use_gamemode.get_active() and not shutil.which("gamemoderun"):
                 self.parent_window.show_error(_("GameMode wasn't found. Using GameMode cannot be enabled."))
                 self.game.set_info("use_gamemode", False)
             else:
@@ -116,8 +117,8 @@ class Properties(Gtk.Dialog):
                 self.game.set_info("use_mangohud", False)
             else:
                 self.game.set_info("use_mangohud", self.switch_properties_use_mangohud.get_active())
-            self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
-            self.game.set_info("command", str(self.entry_properties_command.get_text()))
+        self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
+        self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
         self.game.set_info("custom_wine", str(self.button_properties_wine.get_filename()))
         self.parent_library.filter_library()

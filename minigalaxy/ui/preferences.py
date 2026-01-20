@@ -30,6 +30,8 @@ class Preferences(Gtk.Dialog):
     button_add_translator = Gtk.Template.Child()
     button_edit_translator = Gtk.Template.Child()
     button_remove_translator = Gtk.Template.Child()
+
+    def __init__(self, parent, config: Config, download_manager: DownloadManager):
         Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
         self.parent = parent
         self.config = config
