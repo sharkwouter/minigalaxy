@@ -198,6 +198,7 @@ class Game:
         # Sort installed games before not installed ones
         if self.is_installed() != other.is_installed():
             return self.is_installed()
+
     def get_selected_translators(self, config) -> dict:
         """Get the selected translators for this game from config (returns dict with 'os' and 'isa')."""
         return config.get_game_translators(self.id)

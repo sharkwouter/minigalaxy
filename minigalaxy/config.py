@@ -230,6 +230,7 @@ class Config:
         if save_location in paused:
             del paused[save_location]
             self.paused_downloads = paused
+
     @property
     def translators(self) -> list:
         """List of all available translators (built-in + custom) as dicts."""

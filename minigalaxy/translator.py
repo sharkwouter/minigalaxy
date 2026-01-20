@@ -1,8 +1,10 @@
 from enum import Enum
 
+
 class TranslatorType(Enum):
     OS = "os"
     ISA = "isa"
+
 
 class Translator:
     def __init__(self, name, type, path, icon=None, version=None, description=None, custom=False):

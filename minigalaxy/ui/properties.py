@@ -107,13 +107,13 @@ class Properties(Gtk.Dialog):
         self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
         self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
-        
+
         # Save OS translator to both fields for backward compatibility
         os_exec = self.button_properties_os_translator.get_filename()
         if os_exec:
             self.game.set_info("os_translator_exec", os_exec)
             self.game.set_info("custom_wine", os_exec)  # Keep for backward compatibility
-        
+
         self.parent_library.filter_library()
 
         if game_installed and self.config.create_applications_file:
@@ -146,7 +146,7 @@ class Properties(Gtk.Dialog):
     def on_menu_button_winetricks(self, widget):
         # Check if using Proton, prefer protontricks
         os_exec = self.button_properties_os_translator.get_filename()
-        
+
         if os_exec and "proton" in os_exec.lower():
             # Using Proton
             if not shutil.which("protontricks") and not shutil.which("winetricks"):
@@ -157,7 +157,7 @@ class Properties(Gtk.Dialog):
             if not shutil.which("winetricks"):
                 self.parent_window.show_error(_("Winetricks wasn't found and cannot be used."))
                 return
-        
+
         winetricks_game(self.game)
 
     @Gtk.Template.Callback("on_button_properties_open_files_clicked")

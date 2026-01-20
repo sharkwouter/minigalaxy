@@ -211,6 +211,8 @@ class Preferences(Gtk.Dialog):
                 self.parent.reset_library()
 
         # Only change the install_dir is it was actually changed
+
+
 class TranslatorEditDialog(Gtk.Dialog):
     def __init__(self, parent, translator=None):
         Gtk.Dialog.__init__(self, title=_('Translator'), parent=parent, modal=True)

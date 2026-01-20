@@ -91,6 +91,7 @@ class GameTile(LibraryEntry, Gtk.Box):
             self.isa_translator_icon.set_from_file(isa_icon)
         else:
             self.isa_translator_icon.set_from_icon_name("applications-engineering", Gtk.IconSize.SMALL_TOOLBAR)
+
     def state_updating(self):
         # You can customize this as needed, or call the parent implementation
         super().state_updating()

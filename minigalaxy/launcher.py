@@ -61,11 +61,11 @@ def winetricks_game(game):
     """
     import shutil
     prefix = os.path.join(game.install_dir, "prefix")
-    
+
     # Check if using Proton
     os_exec = game.get_info("os_translator_exec") or game.get_info("custom_wine")
     wine_path = get_wine_path(game)
-    
+
     # For Proton, try protontricks first, otherwise use winetricks with Proton's wine
     if os_exec and "proton" in os_exec.lower() and shutil.which("protontricks"):
         # Use protontricks with custom prefix
