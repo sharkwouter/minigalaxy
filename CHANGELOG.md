@@ -1,3 +1,14 @@
+**1.4.2**
+- Add multi-tier translator support (ISA + OS) for cross-platform gaming on ARM64, RISC-V, and other architectures (thanks to mateusbentes)
+- Add ISA translator field for architecture translation (FEX, QEMU, Box86/Box64) (thanks to mateusbentes)
+- Consolidate Wine executable into generic OS Translator field supporting Wine, Proton, Proton-GE (thanks to mateusbentes)
+- Add Protontricks support with automatic detection for Proton-based games (thanks to mateusbentes)
+- Add separate reset buttons for OS and ISA translators (thanks to mateusbentes)
+- Update button labels to generic terminology (Registry Editor, Configure OS Translator, OS Translator Tools) (thanks to mateusbentes)
+- Fix custom translator path detection to support absolute paths, not just PATH executables (thanks to mateusbentes)
+- Fix malformed XML tags in properties.ui causing GTK template errors (thanks to mateusbentes)
+- Add comprehensive translator combinations documentation (thanks to mateusbentes)
+
 **1.4.1**
 - Installations now report more intermediate steps like checksum verifications to the UI. (thanks to GB609)
 - Fix bugs related to error handling of ongoing installations. (thanks to GB609)
