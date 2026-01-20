@@ -326,7 +326,6 @@
                         <property name="top-attach">9</property>
                       </packing>
                     </child>
-                    <child>
                      <child>
                        <object class="GtkLabel">
                          <property name="visible">True</property>
