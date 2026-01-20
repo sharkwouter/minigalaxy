@@ -272,4 +272,4 @@ Special thanks goes out to all contributors:
 - karaushu for translating to Ukrainian
 - koraynilay for translating to Italian
 - heidiwenger and jonnelafin for translating to Finnish
-- jakbuz23 for translating to Czech
+- mateusbentes for implementing support for multiple OS and ISA translators (Wine, Proton-GE, FEX, QEMU, etc.), enabling per-game selection and custom integration.

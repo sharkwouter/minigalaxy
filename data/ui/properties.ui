@@ -327,8 +327,56 @@
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
-                    </child>
+                     <child>
+                       <object class="GtkLabel">
+                         <property name="visible">True</property>
+                         <property name="can-focus">False</property>
+                         <property name="halign">end</property>
+                         <property name="label" translatable="yes">OS Translator:</property>
+                         <property name="tooltip-text" translatable="yes">Select the OS-level translator (Wine, Proton-GE, etc.)</property>
+                         <property name="justify">fill</property>
+                       </object>
+                       <packing>
+                         <property name="left-attach">0</property>
+                         <property name="top-attach">11</property>
+                       </packing>
+                     </child>
+                     <child>
+                       <object class="GtkComboBoxText" id="combobox_properties_os_translator">
+                         <property name="visible">True</property>
+                         <property name="can-focus">True</property>
+                         <property name="tooltip-text" translatable="yes">Select the OS-level translator (Wine, Proton-GE, etc.)</property>
+                       </object>
+                       <packing>
+                         <property name="left-attach">1</property>
+                         <property name="top-attach">11</property>
+                       </packing>
+                     </child>
+                     <child>
+                       <object class="GtkLabel">
+                         <property name="visible">True</property>
+                         <property name="can-focus">False</property>
+                         <property name="halign">end</property>
+                         <property name="label" translatable="yes">ISA Translator:</property>
+                         <property name="tooltip-text" translatable="yes">Select the ISA-level translator (FEX, QEMU, etc.)</property>
+                         <property name="justify">fill</property>
+                       </object>
+                       <packing>
+                         <property name="left-attach">0</property>
+                         <property name="top-attach">12</property>
+                       </packing>
+                     </child>
+                     <child>
+                       <object class="GtkComboBoxText" id="combobox_properties_isa_translator">
+                         <property name="visible">True</property>
+                         <property name="can-focus">True</property>
+                         <property name="tooltip-text" translatable="yes">Select the ISA-level translator (FEX, QEMU, etc.)</property>
+                       </object>
+                       <packing>
+                         <property name="left-attach">1</property>
+                         <property name="top-attach">12</property>
+                       </packing>
+                     </child>
                   </object>
                   <packing>
                     <property name="expand">True</property>

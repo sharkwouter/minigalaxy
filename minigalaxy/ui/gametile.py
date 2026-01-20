@@ -14,7 +14,8 @@ class GameTile(LibraryEntry, Gtk.Box):
     button = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
-    wine_icon = Gtk.Template.Child()
+    os_translator_icon = Gtk.Template.Child()
+    isa_translator_icon = Gtk.Template.Child()
     update_icon = Gtk.Template.Child()
     menu_button_update = Gtk.Template.Child()
     menu_button_dlc = Gtk.Template.Child()
@@ -67,5 +68,27 @@ class GameTile(LibraryEntry, Gtk.Box):
         super().state_installed()
 
     def state_uninstalling(self):
-        self.menu_button.get_style_context().remove_class("suggested-action")
+        # Set translator icons
+        from minigalaxy.config import Config
+        config = Config()
+        selected = self.game.get_selected_translators(config)
+        translators = {t["name"]: t for t in config.translators}
+        # OS Translator icon
+        os_icon = None
+        os_name = selected.get("os")
+        if os_name and os_name in translators:
+            os_icon = translators[os_name].get("icon")
+        if os_icon and os.path.isfile(os_icon):
+            self.os_translator_icon.set_from_file(os_icon)
+        else:
+            self.os_translator_icon.set_from_icon_name("applications-system", Gtk.IconSize.SMALL_TOOLBAR)
+        # ISA Translator icon
+        isa_icon = None
+        isa_name = selected.get("isa")
+        if isa_name and isa_name in translators:
+            isa_icon = translators[isa_name].get("icon")
+        if isa_icon and os.path.isfile(isa_icon):
+            self.isa_translator_icon.set_from_file(isa_icon)
+        else:
+            self.isa_translator_icon.set_from_icon_name("applications-engineering", Gtk.IconSize.SMALL_TOOLBAR)
         super().state_uninstalling()

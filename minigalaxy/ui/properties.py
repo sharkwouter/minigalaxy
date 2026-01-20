@@ -31,7 +31,8 @@ class Properties(Gtk.Dialog):
     button_properties_cancel = Gtk.Template.Child()
     button_properties_ok = Gtk.Template.Child()
     label_wine_custom = Gtk.Template.Child()
-
+    combobox_properties_os_translator = Gtk.Template.Child()
+    combobox_properties_isa_translator = Gtk.Template.Child()
     def __init__(self, parent_library, game, config: Config, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent_library.parent_window,
                             modal=True)
@@ -71,8 +72,26 @@ class Properties(Gtk.Dialog):
         self.entry_properties_command.set_text(self.game.get_info("command"))
 
         # Center properties window
-        self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
-
+        # Populate OS/ISA translator dropdowns
+        translators = self.config.translators
+        os_translators = [t["name"] for t in translators if t["type"] == "os"]
+        isa_translators = [t["name"] for t in translators if t["type"] == "isa"]
+        self.combobox_properties_os_translator.remove_all()
+        self.combobox_properties_isa_translator.remove_all()
+        for name in os_translators:
+            self.combobox_properties_os_translator.append_text(name)
+        for name in isa_translators:
+            self.combobox_properties_isa_translator.append_text(name)
+        # Set current selection
+        selected = self.game.get_selected_translators(self.config)
+        if selected.get("os") in os_translators:
+            self.combobox_properties_os_translator.set_active(os_translators.index(selected["os"]))
+        else:
+            self.combobox_properties_os_translator.set_active(-1)
+        if selected.get("isa") in isa_translators:
+            self.combobox_properties_isa_translator.set_active(isa_translators.index(selected["isa"]))
+        else:
+            self.combobox_properties_isa_translator.set_active(-1)
     @Gtk.Template.Callback("on_button_properties_cancel_clicked")
     def cancel_pressed(self, button):
         self.destroy()
@@ -82,8 +101,12 @@ class Properties(Gtk.Dialog):
         game_installed = self.game.is_installed()
         if game_installed:
             self.game.set_info("check_for_updates", self.switch_properties_check_for_updates.get_active())
-            self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
-            if self.switch_properties_use_gamemode.get_active() and not shutil.which("gamemoderun"):
+        # Save selected translators
+        os_idx = self.combobox_properties_os_translator.get_active()
+        isa_idx = self.combobox_properties_isa_translator.get_active()
+        os_name = self.combobox_properties_os_translator.get_active_text() if os_idx >= 0 else None
+        isa_name = self.combobox_properties_isa_translator.get_active_text() if isa_idx >= 0 else None
+        self.game.set_selected_translators(self.config, os_translator=os_name, isa_translator=isa_name)
                 self.parent_window.show_error(_("GameMode wasn't found. Using GameMode cannot be enabled."))
                 self.game.set_info("use_gamemode", False)
             else:

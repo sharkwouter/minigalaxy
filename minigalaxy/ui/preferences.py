@@ -26,8 +26,10 @@ class Preferences(Gtk.Dialog):
     switch_use_dark_theme = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     button_save = Gtk.Template.Child()
-
-    def __init__(self, parent, config: Config, download_manager: DownloadManager):
+    treeview_translators = Gtk.Template.Child()
+    button_add_translator = Gtk.Template.Child()
+    button_edit_translator = Gtk.Template.Child()
+    button_remove_translator = Gtk.Template.Child()
         Gtk.Dialog.__init__(self, title=_("Preferences"), parent=parent, modal=True)
         self.parent = parent
         self.config = config
@@ -41,8 +43,17 @@ class Preferences(Gtk.Dialog):
         self.switch_stay_logged_in.set_active(self.config.stay_logged_in)
         self.switch_use_dark_theme.set_active(self.config.use_dark_theme)
         self.switch_show_hidden_games.set_active(self.config.show_hidden_games)
-        self.switch_show_windows_games.set_active(self.config.show_windows_games)
-        self.switch_create_applications_file.set_active(self.config.create_applications_file)
+        # Setup translators treeview
+        self.translator_store = Gtk.ListStore(str, str, str)  # name, type, path
+        self.treeview_translators.set_model(self.translator_store)
+        for i, title in enumerate([_("Name"), _("Type"), _("Path")]):
+            renderer = Gtk.CellRendererText()
+            column = Gtk.TreeViewColumn(title, renderer, text=i)
+            self.treeview_translators.append_column(column)
+        self.__refresh_translator_list()
+        self.button_add_translator.connect("clicked", self.on_add_translator)
+        self.button_edit_translator.connect("clicked", self.on_edit_translator)
+        self.button_remove_translator.connect("clicked", self.on_remove_translator)
 
         # Set tooltip for keep installers label
         installer_dir = os.path.join(self.button_file_chooser.get_filename(), "installer")
@@ -198,15 +209,61 @@ class Preferences(Gtk.Dialog):
                 self.parent.reset_library()
 
         # Only change the install_dir is it was actually changed
-        if self.button_file_chooser.get_filename() != self.config.install_dir:
-            if self.__save_install_dir_choice():
-                self.download_manager.cancel_all_downloads()
-                self.parent.reset_library()
-            else:
-                self.parent.show_error(_("{} isn't a usable path").format(self.button_file_chooser.get_filename()))
-        self.destroy()
+class TranslatorEditDialog(Gtk.Dialog):
+    def __init__(self, parent, translator=None):
+        Gtk.Dialog.__init__(self, title=_('Translator'), parent=parent, modal=True)
+        self.set_default_size(400, 200)
+        box = self.get_content_area()
+        grid = Gtk.Grid(row_spacing=8, column_spacing=8, margin=12)
+        box.add(grid)
 
-    @Gtk.Template.Callback("on_button_cancel_clicked")
-    def cancel_pressed(self, button):
-        self.response(Gtk.ResponseType.CANCEL)
-        self.destroy()
+        # Name
+        grid.attach(Gtk.Label(label=_('Name:')), 0, 0, 1, 1)
+        self.entry_name = Gtk.Entry()
+        grid.attach(self.entry_name, 1, 0, 1, 1)
+        # Type
+        grid.attach(Gtk.Label(label=_('Type:')), 0, 1, 1, 1)
+        self.combo_type = Gtk.ComboBoxText()
+        self.combo_type.append_text('os')
+        self.combo_type.append_text('isa')
+        grid.attach(self.combo_type, 1, 1, 1, 1)
+        # Path
+        grid.attach(Gtk.Label(label=_('Path:')), 0, 2, 1, 1)
+        self.entry_path = Gtk.Entry()
+        grid.attach(self.entry_path, 1, 2, 1, 1)
+        # Optional: icon, version, description
+        grid.attach(Gtk.Label(label=_('Icon (optional):')), 0, 3, 1, 1)
+        self.entry_icon = Gtk.Entry()
+        grid.attach(self.entry_icon, 1, 3, 1, 1)
+        grid.attach(Gtk.Label(label=_('Version (optional):')), 0, 4, 1, 1)
+        self.entry_version = Gtk.Entry()
+        grid.attach(self.entry_version, 1, 4, 1, 1)
+        grid.attach(Gtk.Label(label=_('Description (optional):')), 0, 5, 1, 1)
+        self.entry_description = Gtk.Entry()
+        grid.attach(self.entry_description, 1, 5, 1, 1)
+
+        self.add_button(_('Cancel'), Gtk.ResponseType.CANCEL)
+        self.add_button(_('OK'), Gtk.ResponseType.OK)
+        self.set_default_response(Gtk.ResponseType.OK)
+
+        if translator:
+            self.entry_name.set_text(translator.get('name', ''))
+            self.combo_type.set_active(0 if translator.get('type') == 'os' else 1)
+            self.entry_path.set_text(translator.get('path', ''))
+            self.entry_icon.set_text(translator.get('icon', ''))
+            self.entry_version.set_text(translator.get('version', ''))
+            self.entry_description.set_text(translator.get('description', ''))
+        else:
+            self.combo_type.set_active(0)
+        self.show_all()
+
+    def get_translator(self):
+        return {
+            'name': self.entry_name.get_text(),
+            'type': self.combo_type.get_active_text(),
+            'path': self.entry_path.get_text(),
+            'icon': self.entry_icon.get_text(),
+            'version': self.entry_version.get_text(),
+            'description': self.entry_description.get_text(),
+            'custom': True,
+        }

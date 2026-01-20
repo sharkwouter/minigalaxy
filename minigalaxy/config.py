@@ -230,4 +230,39 @@ class Config:
         if save_location in paused:
             del paused[save_location]
             self.paused_downloads = paused
-            self.__write()
+    @property
+    def translators(self) -> list:
+        """List of all available translators (built-in + custom) as dicts."""
+        return self.__config.get("translators", [])
+
+    @translators.setter
+    def translators(self, new_value: list) -> None:
+        self.__config["translators"] = new_value
+        self.__write()
+
+    def add_translator(self, translator_dict: dict) -> None:
+        translators = self.translators
+        translators.append(translator_dict)
+        self.translators = translators
+
+    def remove_translator(self, name: str) -> None:
+        translators = [t for t in self.translators if t.get("name") != name]
+        self.translators = translators
+
+    @property
+    def game_translators(self) -> dict:
+        """Dict mapping game IDs to selected translators (by name or dict)."""
+        return self.__config.get("game_translators", {})
+
+    @game_translators.setter
+    def game_translators(self, new_value: dict) -> None:
+        self.__config["game_translators"] = new_value
+        self.__write()
+
+    def set_game_translators(self, game_id: int, os_translator: str = None, isa_translator: str = None) -> None:
+        game_translators = self.game_translators
+        game_translators[str(game_id)] = {"os": os_translator, "isa": isa_translator}
+        self.game_translators = game_translators
+
+    def get_game_translators(self, game_id: int) -> dict:
+        return self.game_translators.get(str(game_id), {"os": None, "isa": None})

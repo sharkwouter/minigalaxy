@@ -347,8 +347,54 @@
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
-        </child>
-      </object>
+             <child>
+               <object class="GtkFrame">
+                 <property name="label" translatable="yes">Translators</property>
+                 <property name="visible">True</property>
+                 <child>
+                   <object class="GtkBox">
+                     <property name="orientation">vertical</property>
+                     <property name="spacing">6</property>
+                     <child>
+                       <object class="GtkTreeView" id="treeview_translators">
+                         <property name="visible">True</property>
+                         <property name="can-focus">True</property>
+                         <property name="headers-visible">True</property>
+                       </object>
+                     </child>
+                     <child>
+                       <object class="GtkBox">
+                         <property name="orientation">horizontal</property>
+                         <property name="spacing">6</property>
+                         <child>
+                           <object class="GtkButton" id="button_add_translator">
+                             <property name="label" translatable="yes">Add</property>
+                             <property name="visible">True</property>
+                           </object>
+                         </child>
+                         <child>
+                           <object class="GtkButton" id="button_edit_translator">
+                             <property name="label" translatable="yes">Edit</property>
+                             <property name="visible">True</property>
+                           </object>
+                         </child>
+                         <child>
+                           <object class="GtkButton" id="button_remove_translator">
+                             <property name="label" translatable="yes">Remove</property>
+                             <property name="visible">True</property>
+                           </object>
+                         </child>
+                       </object>
+                     </child>
+                   </object>
+                 </child>
+               </object>
+               <packing>
+                 <property name="expand">False</property>
+                 <property name="fill">True</property>
+                 <property name="position">2</property>
+               </packing>
+             </child>
     </child>
   </template>
 </interface>

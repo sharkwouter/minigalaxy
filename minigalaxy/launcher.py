@@ -63,22 +63,48 @@ def start_game(game):
     return error_message
 
 
+from minigalaxy.config import Config
+from minigalaxy.translator import Translator, TranslatorType
+
+
 def get_execute_command(game) -> list:
+    # Load config and translators
+    config = Config()
+    selected = game.get_selected_translators(config)
+    translators = {t["name"]: t for t in config.translators}
+    exe_cmd = []
+
+    # ISA translator (outermost)
+    isa_name = selected.get("isa")
+    if isa_name and isa_name in translators:
+        isa = translators[isa_name]
+        exe_cmd.append(isa["path"])
+
+    # OS translator (middle)
+    os_name = selected.get("os")
+    if os_name and os_name in translators:
+        os_tr = translators[os_name]
+        exe_cmd.append(os_tr["path"])
+
+    # Game executable (innermost)
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
     if launcher_type in ["start_script", "wine"]:
-        exe_cmd = get_start_script_exe_cmd(game)
+        game_cmd = get_start_script_exe_cmd(game)
     elif launcher_type == "windows":
-        exe_cmd = get_windows_exe_cmd(game, files)
+        game_cmd = get_windows_exe_cmd(game, files)
     elif launcher_type == "dosbox":
-        exe_cmd = get_dosbox_exe_cmd(game, files)
+        game_cmd = get_dosbox_exe_cmd(game, files)
     elif launcher_type == "scummvm":
-        exe_cmd = get_scummvm_exe_cmd(game, files)
+        game_cmd = get_scummvm_exe_cmd(game, files)
     elif launcher_type == "final_resort":
-        exe_cmd = get_final_resort_exe_cmd(game, files)
+        game_cmd = get_final_resort_exe_cmd(game, files)
     else:
-        # If no executable was found at all, raise an error
         raise FileNotFoundError()
+
+    exe_cmd.extend(game_cmd)
+
+    # Gamemode/MangoHud (optional, after translators)
     if game.get_info("use_gamemode") is True:
         exe_cmd.insert(0, "gamemoderun")
     if game.get_info("use_mangohud") is True:
@@ -87,8 +113,6 @@ def get_execute_command(game) -> list:
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
     logger.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
     return exe_cmd
-
-
 def determine_launcher_type(files):
     launcher_type = "unknown"
     if "unins000.exe" in files:
