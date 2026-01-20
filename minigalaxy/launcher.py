@@ -96,49 +96,70 @@ def start_game(game):
     return error_message
 
 
-def get_execute_command(game) -> list:
+def is_valid_executable(path):
+    """Check if path is a valid executable (in PATH or absolute path)."""
     import shutil
-    exe_cmd = []
+    return shutil.which(path) or (os.path.isfile(path) and os.access(path, os.X_OK))
 
+
+def add_translators_to_command(game, exe_cmd):
+    """Add ISA and OS translators to the execution command."""
     # ISA translator (outermost) - e.g., FEX, QEMU
     isa_exec = game.get_info("isa_translator_exec")
-    if isa_exec:
-        # Check if it's in PATH or if it's a valid executable file
-        if shutil.which(isa_exec) or (os.path.isfile(isa_exec) and os.access(isa_exec, os.X_OK)):
-            exe_cmd.append(isa_exec)
+    if isa_exec and is_valid_executable(isa_exec):
+        exe_cmd.append(isa_exec)
 
     # OS translator (middle) - e.g., Wine, Proton-GE
     os_exec = game.get_info("os_translator_exec")
-    if os_exec:
-        # Check if it's in PATH or if it's a valid executable file
-        if shutil.which(os_exec) or (os.path.isfile(os_exec) and os.access(os_exec, os.X_OK)):
-            exe_cmd.append(os_exec)
+    if os_exec and is_valid_executable(os_exec):
+        exe_cmd.append(os_exec)
 
-    # Game executable (innermost)
+
+def get_game_command(game):
+    """Get the game executable command based on launcher type."""
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
+    
     if launcher_type in ["start_script", "wine"]:
-        game_cmd = get_start_script_exe_cmd(game)
+        return get_start_script_exe_cmd(game)
     elif launcher_type == "windows":
-        game_cmd = get_windows_exe_cmd(game, files)
+        return get_windows_exe_cmd(game, files)
     elif launcher_type == "dosbox":
-        game_cmd = get_dosbox_exe_cmd(game, files)
+        return get_dosbox_exe_cmd(game, files)
     elif launcher_type == "scummvm":
-        game_cmd = get_scummvm_exe_cmd(game, files)
+        return get_scummvm_exe_cmd(game, files)
     elif launcher_type == "final_resort":
-        game_cmd = get_final_resort_exe_cmd(game, files)
+        return get_final_resort_exe_cmd(game, files)
     else:
         raise FileNotFoundError()
 
-    exe_cmd.extend(game_cmd)
 
-    # Gamemode/MangoHud (optional, after translators)
+def add_performance_tools(game, exe_cmd):
+    """Add GameMode and MangoHud to the command if enabled."""
     if game.get_info("use_gamemode") is True:
         exe_cmd.insert(0, "gamemoderun")
     if game.get_info("use_mangohud") is True:
         exe_cmd.insert(0, "mangohud")
         exe_cmd.insert(1, "--dlsym")
+
+
+def get_execute_command(game) -> list:
+    """Build the complete execution command with translators and performance tools."""
+    exe_cmd = []
+    
+    # Add translators (ISA and OS)
+    add_translators_to_command(game, exe_cmd)
+    
+    # Add game executable
+    game_cmd = get_game_command(game)
+    exe_cmd.extend(game_cmd)
+    
+    # Add performance tools (GameMode, MangoHud)
+    add_performance_tools(game, exe_cmd)
+    
+    # Add variable and command flags
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
+    
     logger.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
     return exe_cmd
 
