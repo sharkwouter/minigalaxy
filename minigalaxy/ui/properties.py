@@ -20,7 +20,8 @@ class Properties(Gtk.Dialog):
     button_properties_winetricks = Gtk.Template.Child()
     button_properties_open_files = Gtk.Template.Child()
     switch_properties_check_for_updates = Gtk.Template.Child()
-    button_properties_reset = Gtk.Template.Child()
+    button_properties_reset_os = Gtk.Template.Child()
+    button_properties_reset_isa = Gtk.Template.Child()
     switch_properties_show_fps = Gtk.Template.Child()
     switch_properties_hide_game = Gtk.Template.Child()
     switch_properties_use_gamemode = Gtk.Template.Child()
@@ -124,11 +125,18 @@ class Properties(Gtk.Dialog):
     def on_menu_button_regedit(self, widget):
         regedit_game(self.game)
 
-    @Gtk.Template.Callback("on_button_properties_reset_clicked")
-    def on_menu_button_reset(self, widget):
+    @Gtk.Template.Callback("on_button_properties_reset_os_clicked")
+    def on_menu_button_reset_os(self, widget):
         wine_path = shutil.which("wine")
         if wine_path:
             self.button_properties_os_translator.select_filename(wine_path)
+            self.game.set_info("os_translator_exec", None)
+            self.game.set_info("custom_wine", None)
+
+    @Gtk.Template.Callback("on_button_properties_reset_isa_clicked")
+    def on_menu_button_reset_isa(self, widget):
+        self.button_properties_isa_translator.unselect_all()
+        self.game.set_info("isa_translator_exec", None)
 
     @Gtk.Template.Callback("on_button_properties_winecfg_clicked")
     def on_menu_button_winecfg(self, widget):
@@ -150,7 +158,8 @@ class Properties(Gtk.Dialog):
             self.button_properties_open_files.set_sensitive(False)
             self.button_properties_os_translator.set_sensitive(False)
             self.button_properties_isa_translator.set_sensitive(False)
-            self.button_properties_reset.set_sensitive(False)
+            self.button_properties_reset_os.set_sensitive(False)
+            self.button_properties_reset_isa.set_sensitive(False)
             self.button_properties_regedit.set_sensitive(False)
             self.button_properties_winecfg.set_sensitive(False)
             self.button_properties_winetricks.set_sensitive(False)
@@ -166,4 +175,4 @@ class Properties(Gtk.Dialog):
             self.button_properties_winecfg.hide()
             self.button_properties_winetricks.hide()
             self.button_properties_os_translator.hide()
-            self.button_properties_reset.hide()
+            self.button_properties_reset_os.hide()

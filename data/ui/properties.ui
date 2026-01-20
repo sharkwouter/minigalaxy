@@ -45,10 +45,10 @@
                     <property name="column-homogeneous">True</property>
                     <child>
                       <object class="GtkButton" id="button_properties_regedit">
-                        <property name="label" translatable="yes">Regedit</property>
+                        <property name="label" translatable="yes">Registry Editor</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Open Regedit for this game</property>
+                        <property name="tooltip-text" translatable="yes">Open registry editor for this game</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_regedit_clicked" swapped="no"/>
                       </object>
@@ -59,10 +59,10 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button_properties_winecfg">
-                        <property name="label" translatable="yes">Winecfg</property>
+                        <property name="label" translatable="yes">Configure OS Translator</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Open Winecfg for this game</property>
+                        <property name="tooltip-text" translatable="yes">Configure the OS translator (Wine/Proton) for this game</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_winecfg_clicked" swapped="no"/>
                       </object>
@@ -87,10 +87,10 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button_properties_winetricks">
-                        <property name="label" translatable="yes">Winetricks</property>
+                        <property name="label" translatable="yes">OS Translator Tools</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Open Winetricks for this game</property>
+                        <property name="tooltip-text" translatable="yes">Open tools (Winetricks) for the OS translator</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_winetricks_clicked" swapped="no"/>
                       </object>
@@ -339,13 +339,27 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="button_properties_reset">
+                      <object class="GtkButton" id="button_properties_reset_os">
                         <property name="label" translatable="yes">Reset OS translator</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Reset the OS translator executable for this game</property>
+                        <property name="tooltip-text" translatable="yes">Reset the OS translator executable to system default</property>
                         <property name="receives-default">True</property>
-                        <signal name="clicked" handler="on_button_properties_reset_clicked" swapped="no"/>
+                        <signal name="clicked" handler="on_button_properties_reset_os_clicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">11</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button_properties_reset_isa">
+                        <property name="label" translatable="yes">Reset ISA translator</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Reset the ISA translator executable</property>
+                        <property name="receives-default">True</property>
+                        <signal name="clicked" handler="on_button_properties_reset_isa_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
