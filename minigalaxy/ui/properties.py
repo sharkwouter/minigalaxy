@@ -144,20 +144,19 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_winetricks_clicked")
     def on_menu_button_winetricks(self, widget):
-        # Try to find appropriate tools based on OS translator
-        os_exec = self.button_properties_os_translator.get_filename()
-        tool_name = "winetricks"
-        
         # Check if using Proton, prefer protontricks
+        os_exec = self.button_properties_os_translator.get_filename()
+        
         if os_exec and "proton" in os_exec.lower():
-            if shutil.which("protontricks"):
-                tool_name = "protontricks"
-            elif not shutil.which("winetricks"):
+            # Using Proton
+            if not shutil.which("protontricks") and not shutil.which("winetricks"):
                 self.parent_window.show_error(_("Neither Protontricks nor Winetricks were found."))
                 return
-        elif not shutil.which("winetricks"):
-            self.parent_window.show_error(_("Winetricks wasn't found and cannot be used."))
-            return
+        else:
+            # Using Wine or other
+            if not shutil.which("winetricks"):
+                self.parent_window.show_error(_("Winetricks wasn't found and cannot be used."))
+                return
         
         winetricks_game(self.game)
 

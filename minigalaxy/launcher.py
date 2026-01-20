@@ -13,10 +13,15 @@ from minigalaxy.constants import BINARY_NAMES_TO_IGNORE
 
 
 def get_wine_path(game):
+    """
+    Get the OS translator executable path (Wine, Proton, etc.).
+    Checks os_translator_exec first, then falls back to custom_wine for backward compatibility.
+    """
     binary_name = "wine"
-    custom_wine_path = game.get_info("custom_wine")
-    if custom_wine_path and custom_wine_path != shutil.which(binary_name):
-        binary_name = custom_wine_path
+    # Check new field first, then legacy field
+    os_translator_path = game.get_info("os_translator_exec") or game.get_info("custom_wine")
+    if os_translator_path and os_translator_path != shutil.which(binary_name):
+        binary_name = os_translator_path
     return binary_name
 
 
@@ -32,18 +37,46 @@ def wine_restore_game_link(game):
 
 
 def config_game(game):
+    """
+    Open configuration tool for the OS translator (winecfg for Wine/Proton).
+    """
     prefix = os.path.join(game.install_dir, "prefix")
-    subprocess.Popen(['env', f'WINEPREFIX={prefix}', get_wine_path(game), 'winecfg'])
+    wine_path = get_wine_path(game)
+    subprocess.Popen(['env', f'WINEPREFIX={prefix}', wine_path, 'winecfg'])
 
 
 def regedit_game(game):
+    """
+    Open registry editor for the OS translator (regedit for Wine/Proton).
+    """
     prefix = os.path.join(game.install_dir, "prefix")
-    subprocess.Popen(['env', f'WINEPREFIX={prefix}', get_wine_path(game), 'regedit'])
+    wine_path = get_wine_path(game)
+    subprocess.Popen(['env', f'WINEPREFIX={prefix}', wine_path, 'regedit'])
 
 
 def winetricks_game(game):
+    """
+    Open winetricks or protontricks for the game.
+    Auto-detects which tool to use based on the OS translator.
+    """
+    import shutil
     prefix = os.path.join(game.install_dir, "prefix")
-    subprocess.Popen(['env', f'WINEPREFIX={prefix}', 'winetricks'])
+    
+    # Check if using Proton
+    os_exec = game.get_info("os_translator_exec") or game.get_info("custom_wine")
+    wine_path = get_wine_path(game)
+    
+    # For Proton, try protontricks first, otherwise use winetricks with Proton's wine
+    if os_exec and "proton" in os_exec.lower() and shutil.which("protontricks"):
+        # Use protontricks with custom prefix
+        # Set WINE to point to Proton's wine binary
+        env = os.environ.copy()
+        env['WINEPREFIX'] = prefix
+        env['WINE'] = wine_path
+        subprocess.Popen(['protontricks-launch', '--gui'], env=env)
+    else:
+        # Use winetricks (works with both Wine and Proton)
+        subprocess.Popen(['env', f'WINEPREFIX={prefix}', f'WINE={wine_path}', 'winetricks'])
 
 
 def start_game(game):
