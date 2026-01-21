@@ -18,7 +18,6 @@ for language_file in glob("data/mo/*/*/*.mo"):
 setup(
     version=VERSION,
     packages=find_packages(exclude=['tests', 'tests.*']),
-    scripts=['bin/minigalaxy'],
 
     data_files=[
         ('share/applications', ['data/io.github.sharkwouter.Minigalaxy.desktop']),

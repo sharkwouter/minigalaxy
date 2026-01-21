@@ -37,6 +37,9 @@ source = "https://github.com/sharkwouter/minigalaxy"
 issues = "https://github.com/sharkwouter/minigalaxy/issues"
 documentation = "https://github.com/sharkwouter/minigalaxy/blob/master/README.md"
 
+[project.gui-scripts]
+minigalaxy = "minigalaxy.minigalaxy:main"
+
 [tool.setuptools.package-data]
 "minigalaxy.data" = [ "*.css", "*.reg" ]
 "minigalaxy.ui.data" = [ "*.ui", "*.png" ]
