@@ -32,6 +32,7 @@ class Properties(Gtk.Dialog):
     button_properties_ok = Gtk.Template.Child()
     button_properties_os_translator = Gtk.Template.Child()
     button_properties_isa_translator = Gtk.Template.Child()
+    label_isa_compat_layer = Gtk.Template.Child()
 
     def __init__(self, parent_library, game, config: Config, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent_library.parent_window,
@@ -191,3 +192,11 @@ class Properties(Gtk.Dialog):
             self.button_properties_winetricks.hide()
             self.button_properties_os_translator.hide()
             self.button_properties_reset_os.hide()
+        
+        # Hide ISA compatibility layer on x86/x86_64 systems (not needed)
+        import platform
+        machine = platform.machine().lower()
+        if machine in ['x86_64', 'amd64', 'i386', 'i686']:
+            self.label_isa_compat_layer.hide()
+            self.button_properties_isa_translator.hide()
+            self.button_properties_reset_isa.hide()
