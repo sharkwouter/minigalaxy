@@ -182,24 +182,6 @@
           </object>
         </child>
         <child type="overlay">
-          <object class="GtkImage" id="os_translator_icon">
-            <property name="can-focus">False</property>
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-            <property name="margin-start">2</property>
-            <property name="margin-top">2</property>
-          </object>
-        </child>
-        <child type="overlay">
-          <object class="GtkImage" id="isa_translator_icon">
-            <property name="can-focus">False</property>
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-            <property name="margin-start">24</property>
-            <property name="margin-top">2</property>
-          </object>
-        </child>
-        <child type="overlay">
           <object class="GtkImage" id="update_icon">
             <property name="can-focus">False</property>
             <property name="halign">start</property>
