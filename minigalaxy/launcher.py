@@ -122,16 +122,16 @@ def get_game_command(game):
 
     if launcher_type in ["start_script", "wine"]:
         return get_start_script_exe_cmd(game)
-    elif launcher_type == "windows":
+    if launcher_type == "windows":
         return get_windows_exe_cmd(game, files)
-    elif launcher_type == "dosbox":
+    if launcher_type == "dosbox":
         return get_dosbox_exe_cmd(game, files)
-    elif launcher_type == "scummvm":
+    if launcher_type == "scummvm":
         return get_scummvm_exe_cmd(game, files)
-    elif launcher_type == "final_resort":
+    if launcher_type == "final_resort":
         return get_final_resort_exe_cmd(game, files)
-    else:
-        raise FileNotFoundError()
+    
+    raise FileNotFoundError()
 
 
 def add_performance_tools(game, exe_cmd):
