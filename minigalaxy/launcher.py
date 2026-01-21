@@ -129,7 +129,7 @@ def get_game_command(game):
         return get_scummvm_exe_cmd(game, files)
     if launcher_type == "final_resort":
         return get_final_resort_exe_cmd(game, files)
-    
+
     raise FileNotFoundError()
 
 

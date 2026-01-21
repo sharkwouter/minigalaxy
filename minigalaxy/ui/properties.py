@@ -192,7 +192,7 @@ class Properties(Gtk.Dialog):
             self.button_properties_winetricks.hide()
             self.button_properties_os_translator.hide()
             self.button_properties_reset_os.hide()
-        
+
         # Hide ISA compatibility layer on x86/x86_64 systems (not needed)
         import platform
         machine = platform.machine().lower()
