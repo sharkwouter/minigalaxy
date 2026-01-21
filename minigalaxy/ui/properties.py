@@ -90,10 +90,10 @@ class Properties(Gtk.Dialog):
             # Save OS/ISA translator executable paths
             os_exec = self.button_properties_os_translator.get_filename()
             isa_exec = self.button_properties_isa_translator.get_filename()
-            if os_exec:
-                self.game.set_info("os_translator_exec", os_exec)
-            if isa_exec:
-                self.game.set_info("isa_translator_exec", isa_exec)
+            # Save or clear OS translator
+            self.game.set_info("os_translator_exec", os_exec if os_exec else "")
+            # Save or clear ISA translator
+            self.game.set_info("isa_translator_exec", isa_exec if isa_exec else "")
             if self.switch_properties_use_gamemode.get_active() and not shutil.which("gamemoderun"):
                 self.parent_window.show_error(_("GameMode wasn't found. Using GameMode cannot be enabled."))
                 self.game.set_info("use_gamemode", False)
@@ -113,6 +113,10 @@ class Properties(Gtk.Dialog):
         if os_exec:
             self.game.set_info("os_translator_exec", os_exec)
             self.game.set_info("custom_wine", os_exec)  # Keep for backward compatibility
+        else:
+            # Clear the settings if no file selected
+            self.game.set_info("os_translator_exec", "")
+            self.game.set_info("custom_wine", "")
 
         self.parent_library.filter_library()
 

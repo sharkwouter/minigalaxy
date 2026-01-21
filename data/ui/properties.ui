@@ -45,10 +45,10 @@
                     <property name="column-homogeneous">True</property>
                     <child>
                       <object class="GtkButton" id="button_properties_regedit">
-                        <property name="label" translatable="yes">Registry Editor</property>
+                        <property name="label" translatable="yes">Regedit</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Open registry editor for this game</property>
+                        <property name="tooltip-text" translatable="yes">Open Regedit for this game</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_regedit_clicked" swapped="no"/>
                       </object>
@@ -59,10 +59,10 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button_properties_winecfg">
-                        <property name="label" translatable="yes">Configure OS Translator</property>
+                        <property name="label" translatable="yes">Winecfg</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Configure the OS translator (Wine/Proton) for this game</property>
+                        <property name="tooltip-text" translatable="yes">Open Winecfg for this game</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_winecfg_clicked" swapped="no"/>
                       </object>
@@ -87,10 +87,10 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button_properties_winetricks">
-                        <property name="label" translatable="yes">OS Translator Tools</property>
+                        <property name="label" translatable="yes">Winetricks</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Open tools for the OS translator (Winetricks, Protontricks, etc.)</property>
+                        <property name="tooltip-text" translatable="yes">Open Winetricks for this game</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_winetricks_clicked" swapped="no"/>
                       </object>
