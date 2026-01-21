@@ -1,23 +1,41 @@
 [project]
 name = "minigalaxy"
 description = "A simple GOG Linux client"
-version = "1.4.1"
+dynamic= [ "version" ]
+license = "GPL-3.0-only"
+license-files = [ "LICENSE", "THIRD-PARTY-LICENSES.md" ]
 authors = [
     { name = "Wouter Wijsman", email = "wwijsman@live.nl" }
 ]
-dependencies = [
-    "PyGObject",
-    "requests"
+
+keywords=["GOG", "gog", "client", "gaming", "gtk", "Gtk"]
+classifiers=[
+    "Programming Language :: Python :: 3.11",
+    "Environment :: X11 Applications :: GTK",
+    "Intended Audience :: End Users/Desktop",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Games/Entertainment"
 ]
-dynamic= [
-    "keywords",
-    "classifiers",
-    "urls",
+readme = "README.md"
+requires-python = ">= 3.11"
+
+# Project uses reStructuredText, so ensure that the docutils get
+# installed or upgraded on the target machine
+dependencies = [
+    "PyGObject>=3.30",
+    "requests"
 ]
 
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[project.urls]
+homepage = "https://sharkwouter.github.io/minigalaxy/"
+source = "https://github.com/sharkwouter/minigalaxy"
+issues = "https://github.com/sharkwouter/minigalaxy/issues"
+documentation = "https://github.com/sharkwouter/minigalaxy/blob/master/README.md"
 
 [tool.setuptools.package-data]
 "minigalaxy.data" = [ "*.css", "*.reg" ]

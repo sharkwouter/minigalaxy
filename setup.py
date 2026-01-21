@@ -16,7 +16,6 @@ for language_file in glob("data/mo/*/*/*.mo"):
     translations.append((install_path, [language_file]))
 
 setup(
-    name="minigalaxy",
     version=VERSION,
     packages=find_packages(exclude=['tests', 'tests.*']),
     scripts=['bin/minigalaxy'],
@@ -27,26 +26,4 @@ setup(
         ('share/icons/hicolor/192x192/apps', ['data/icons/192x192/io.github.sharkwouter.Minigalaxy.png']),
         ('share/metainfo', ['data/io.github.sharkwouter.Minigalaxy.metainfo.xml']),
     ] + translations,
-
-    # Project uses reStructuredText, so ensure that the docutils get
-    # installed or upgraded on the target machine
-    install_requires=[
-        'PyGObject>=3.30',
-        'requests',
-    ],
-
-    # metadata to display on PyPI
-    author="Wouter Wijsman",
-    author_email="wwijsman@live.nl",
-    description="A simple GOG Linux client",
-    keywords="GOG gog client gaming gtk Gtk",
-    url="https://github.com/sharkwouter/minigalaxy",  # project home page, if any
-    project_urls={
-        "Bug Tracker": "https://github.com/sharkwouter/minigalaxy/issues",
-        "Documentation": "https://github.com/sharkwouter/minigalaxy/blob/master/README.md",
-        "Source Code": "https://github.com/sharkwouter/minigalaxy",
-    },
-    classifiers=[
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-    ]
 )
