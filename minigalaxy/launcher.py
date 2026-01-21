@@ -57,26 +57,25 @@ def regedit_game(game):
 def winetricks_game(game):
     """
     Open winetricks or protontricks for the game.
-    Auto-detects which tool to use based on the OS translator.
+    Auto-detects which tool to use based on the OS compatibility layer.
     """
     import shutil
     prefix = os.path.join(game.install_dir, "prefix")
-
-    # Check if using Proton
-    os_exec = game.get_info("os_translator_exec") or game.get_info("custom_wine")
     wine_path = get_wine_path(game)
 
-    # For Proton, try protontricks first, otherwise use winetricks with Proton's wine
+    # Set up environment with WINE and WINEPREFIX
+    env = os.environ.copy()
+    env['WINEPREFIX'] = prefix
+    env['WINE'] = wine_path
+
+    # Check if using Proton and protontricks is available
+    os_exec = game.get_info("os_translator_exec") or game.get_info("custom_wine")
     if os_exec and "proton" in os_exec.lower() and shutil.which("protontricks"):
-        # Use protontricks with custom prefix
-        # Set WINE to point to Proton's wine binary
-        env = os.environ.copy()
-        env['WINEPREFIX'] = prefix
-        env['WINE'] = wine_path
-        subprocess.Popen(['protontricks-launch', '--gui'], env=env)
+        executable_args = ['protontricks-launch', '--gui']
     else:
-        # Use winetricks (works with both Wine and Proton)
-        subprocess.Popen(['env', f'WINEPREFIX={prefix}', f'WINE={wine_path}', 'winetricks'])
+        executable_args = ['winetricks']
+
+    subprocess.Popen(executable_args, env=env)
 
 
 def start_game(game):
