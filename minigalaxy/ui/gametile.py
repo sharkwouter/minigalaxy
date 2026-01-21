@@ -64,3 +64,6 @@ class GameTile(LibraryEntry, Gtk.Box):
     def state_installed(self):
         self.menu_button.get_style_context().add_class("suggested-action")
         super().state_installed()
+
+    def state_updating(self):
+        super().state_updating()
