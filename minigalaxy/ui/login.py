@@ -1,12 +1,10 @@
-import os
 from urllib.parse import urlparse, parse_qsl
 from minigalaxy.translation import _
-from minigalaxy.paths import UI_DIR
-from minigalaxy.ui.gtk import Gtk
+from minigalaxy.ui.gtk import Gtk, load_ui
 from minigalaxy.ui.webkit import WebKit2
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "login.ui"))
+@Gtk.Template(string=load_ui("login.ui"))
 class Login(Gtk.Dialog):
     __gtype_name__ = "Login"
 

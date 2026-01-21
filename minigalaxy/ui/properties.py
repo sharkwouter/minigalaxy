@@ -1,16 +1,14 @@
-import os
 import shutil
 import subprocess
 
 from minigalaxy.config import Config
 from minigalaxy.installer import create_applications_file
-from minigalaxy.paths import UI_DIR
 from minigalaxy.translation import _
 from minigalaxy.launcher import config_game, regedit_game, winetricks_game
-from minigalaxy.ui.gtk import Gtk
+from minigalaxy.ui.gtk import Gtk, load_ui
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "properties.ui"))
+@Gtk.Template(string=load_ui("properties.ui"))
 class Properties(Gtk.Dialog):
     __gtype_name__ = "Properties"
     gogBaseUrl = "https://www.gog.com"

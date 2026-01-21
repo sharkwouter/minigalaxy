@@ -8,15 +8,15 @@ from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
 from minigalaxy.ui.about import About
 from minigalaxy.api import Api
-from minigalaxy.paths import UI_DIR, LOGO_IMAGE_PATH, THUMBNAIL_DIR, COVER_DIR, ICON_DIR
+from minigalaxy.paths import THUMBNAIL_DIR, COVER_DIR, ICON_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.library import Library
-from minigalaxy.ui.gtk import Gtk, Gdk, GdkPixbuf, Notify
+from minigalaxy.ui.gtk import Gtk, Gdk, Notify, load_ui, load_pixbuf
 from minigalaxy.config import Config
 from minigalaxy.ui.download_list import DownloadManagerList
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "application.ui"))
+@Gtk.Template(string=load_ui("application.ui"))
 class Window(Gtk.ApplicationWindow):
     __gtype_name__ = "Window"
 
@@ -60,7 +60,7 @@ class Window(Gtk.ApplicationWindow):
         self.download_list.add(DownloadManagerList(self.download_manager, self, self.config))
 
         # Set the icon
-        icon = GdkPixbuf.Pixbuf.new_from_file(LOGO_IMAGE_PATH)
+        icon = load_pixbuf("io.github.sharkwouter.Minigalaxy.png")
         self.set_default_icon_list([icon])
 
         # Set theme

@@ -2,14 +2,13 @@ import os
 import locale
 import shutil
 from minigalaxy.translation import _
-from minigalaxy.paths import UI_DIR
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES, VIEWS
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.ui.gtk import Gtk
+from minigalaxy.ui.gtk import Gtk, load_ui
 from minigalaxy.config import Config
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "preferences.ui"))
+@Gtk.Template(string=load_ui("preferences.ui"))
 class Preferences(Gtk.Dialog):
     __gtype_name__ = "Preferences"
 

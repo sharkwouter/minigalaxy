@@ -13,15 +13,17 @@ from collections import deque
 from enum import Enum, auto
 from queue import Empty
 from threading import Thread, RLock
+from importlib.resources import as_file
 
 from minigalaxy.config import Config
 from minigalaxy.constants import GAME_LANGUAGE_IDS
+from minigalaxy.data import get_data_file
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command, get_wine_path, wine_restore_game_link
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, WINE_RES_PATH, DOWNLOAD_DIR
+from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, DOWNLOAD_DIR
 
 
 INSTALL_QUEUE = None
@@ -246,9 +248,11 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
         So that it will also be disabled when patches, updates or dependencies like directx are installed
         later on by the game itself from within the prefix. Happened with UE4.
         '''
-        command = ["env", *wine_env, wine_bin, "regedit", f"{WINE_RES_PATH}/disable_menubuilder.reg"]
-        if not try_wine_command(command):
-            return _("Wineprefix creation failed.")
+        reg_file_resource = get_data_file("wine_disable_menubuilder.reg")
+        with as_file(reg_file_resource) as reg_file:
+            command = ["env", *wine_env, wine_bin, "regedit", str(reg_file.resolve())]
+            if not try_wine_command(command):
+                return _("Wineprefix creation failed.")
 
     # calculate relative link prefix/c/game to game.install_dir
     # keeping it relative makes sure that the game can be moved around without stuff breaking

@@ -13,9 +13,9 @@ from minigalaxy.installer import uninstall_game, enqueue_game_install, check_dis
     InstallerInventory, InstallResult, InstallResultType
 from minigalaxy.launcher import start_game
 from minigalaxy.logger import logger
-from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, ICON_WINE_PATH, THUMBNAIL_DIR
+from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
-from minigalaxy.ui.gtk import Gtk, GLib, Notify
+from minigalaxy.ui.gtk import Gtk, GLib, Notify, load_pixbuf
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 
@@ -73,7 +73,7 @@ class LibraryEntry:
         # Icon for Windows games
         if self.game.platform == "windows":
             self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
-            self.wine_icon.set_from_file(ICON_WINE_PATH)
+            self.wine_icon.set_from_pixbuf(load_pixbuf("winehq_logo_glass.png"))
             self.wine_icon.show()
 
     # Downloads if Minigalaxy was closed with this game downloading

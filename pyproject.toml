@@ -18,3 +18,7 @@ dynamic= [
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-data]
+"minigalaxy.data" = [ "*.css", "*.reg" ]
+"minigalaxy.ui.data" = [ "*.ui", "*.png" ]

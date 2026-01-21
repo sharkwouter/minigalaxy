@@ -9,12 +9,11 @@ from gi.overrides.GdkPixbuf import GdkPixbuf
 
 from minigalaxy.download import Download, DownloadType
 from minigalaxy.download_manager import DownloadManager, DownloadState
-from minigalaxy.paths import UI_DIR
 from minigalaxy.translation import _
-from minigalaxy.ui.gtk import GLib, Gtk
+from minigalaxy.ui.gtk import GLib, Gtk, load_ui
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "download_list.ui"))
+@Gtk.Template(string=load_ui("download_list.ui"))
 class DownloadManagerList(Gtk.ScrolledWindow):
     __gtype_name__ = "DownloadList"
 
@@ -183,7 +182,7 @@ class DownloadManagerList(Gtk.ScrolledWindow):
         self.set_size_request(-1, min([content_height, max_height]))
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "download_list_entry.ui"))
+@Gtk.Template(string=load_ui("download_list_entry.ui"))
 class OngoingDownloadListEntry(Gtk.Box):
     __gtype_name__ = "DownloadListEntry"
 
@@ -309,7 +308,7 @@ class OngoingDownloadListEntry(Gtk.Box):
     '''----- END UI utilities -----'''
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "download_action_buttons.ui"))
+@Gtk.Template(string=load_ui("download_action_buttons.ui"))
 class DownloadActionButtons(Gtk.Box):
     __gtype_name__ = "DownloadActionButtons"
 
