@@ -1,10 +1,10 @@
-# Translator Combinations Support Matrix
+# Compatibility Layer Combinations Support Matrix
 
-Minigalaxy supports flexible translator configurations for maximum compatibility across different platforms and game types.
+Minigalaxy supports flexible compatibility layer configurations for maximum compatibility across different platforms and game types.
 
 ## Supported Combinations
 
-| ISA Translator | OS Translator | Use Case | Example Command |
+| ISA Compatibility Layer | OS Compatibility Layer | Use Case | Example Command |
 |----------------|---------------|----------|-----------------|
 | ✅ FEX | ✅ Proton-GE | Windows x86 games on ARM64 | `FEX Proton-GE game.exe` |
 | ✅ FEX | ✅ Wine | Windows x86 games on ARM64 | `FEX wine game.exe` |
@@ -19,7 +19,7 @@ Minigalaxy supports flexible translator configurations for maximum compatibility
 
 The execution order is always:
 ```
-[MangoHud] → [GameMode] → [ISA Translator] → [OS Translator] → [Game]
+[MangoHud] → [GameMode] → [ISA Compatibility Layer] → [OS Compatibility Layer] → [Game]
 ```
 
 ### Example 1: Full Stack (ARM64 with Windows game)
@@ -27,12 +27,12 @@ The execution order is always:
 mangohud --dlsym gamemoderun FEXInterpreter proton game.exe
 ```
 
-### Example 2: OS Translator Only (x86_64 with Windows game)
+### Example 2: OS Compatibility Layer Only (x86_64 with Windows game)
 ```bash
 mangohud --dlsym gamemoderun wine game.exe
 ```
 
-### Example 3: ISA Translator Only (ARM64 with Linux x86 game)
+### Example 3: ISA Compatibility Layer Only (ARM64 with Linux x86 game)
 ```bash
 mangohud --dlsym gamemoderun FEXInterpreter ./game
 ```
@@ -47,36 +47,36 @@ mangohud --dlsym gamemoderun ./game
 ### ARM64 Linux (e.g., Raspberry Pi 5, Apple Silicon)
 - **Windows x86 games**: FEX + Wine/Proton
 - **Linux x86 games**: FEX only
-- **Native ARM64 games**: No translators
+- **Native ARM64 games**: No compatibility layers
 
 ### x86_64 Linux (Standard PC)
 - **Windows games**: Wine/Proton only
-- **Native Linux games**: No translators
+- **Native Linux games**: No compatibility layers
 
 ### RISC-V (Future support)
 - **Windows x86 games**: QEMU + Wine/Proton
 - **Linux x86 games**: QEMU only
-- **Native RISC-V games**: No translators
+- **Native RISC-V games**: No compatibility layers
 
 ## Configuration
 
 ### Via Properties Dialog
 1. Right-click game → Properties
-2. Set **OS Translator**: Browse to Wine/Proton executable
-3. Set **ISA Translator**: Browse to FEX/QEMU executable
+2. Set **OS Compatibility Layer**: Browse to Wine/Proton executable
+3. Set **ISA Compatibility Layer**: Browse to FEX/QEMU executable
 4. Click OK
 
 ### Supported Tools
 - **Registry Editor**: Works with Wine/Proton
-- **Configure OS Translator**: Runs winecfg
-- **OS Translator Tools**: Auto-detects Winetricks/Protontricks
+- **Configure OS Compatibility Layer**: Runs winecfg
+- **OS Compatibility Layer Tools**: Auto-detects Winetricks/Protontricks
 
 ## Reset Options
-- **Reset OS Translator**: Clears OS translator, reverts to system Wine
-- **Reset ISA Translator**: Clears ISA translator
+- **Reset OS Compatibility Layer**: Clears OS compatibility layer, reverts to system Wine
+- **Reset ISA Compatibility Layer**: Clears ISA compatibility layer
 
 ## Notes
-- Both translators are completely optional
-- Translators can be in PATH or custom paths
+- Both compatibility layers are completely optional
+- Compatibility Layers can be in PATH or custom paths
 - Custom paths are validated for existence and execute permission
 - Invalid paths are silently skipped (game may fail to launch)

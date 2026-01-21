@@ -1,13 +1,13 @@
 **1.4.2**
-- Add multi-tier translator support (ISA + OS) for cross-platform gaming on ARM64, RISC-V, and other architectures
-- Add ISA translator field for architecture translation (FEX, QEMU, Box86/Box64)
-- Consolidate Wine executable into generic OS Translator field supporting Wine, Proton, Proton-GE
+- Add multi-tier compatibility layer support (ISA + OS) for cross-platform gaming on ARM64, RISC-V, and other architectures
+- Add ISA compatibility layer field for architecture translation (FEX, QEMU, Box86/Box64)
+- Consolidate Wine executable into generic OS Compatibility Layer field supporting Wine, Proton, Proton-GE
 - Add Protontricks support with automatic detection for Proton-based games
-- Add separate reset buttons for OS and ISA translators
-- Update button labels to generic terminology (Registry Editor, Configure OS Translator, OS Translator Tools)
-- Fix custom translator path detection to support absolute paths, not just PATH executables
+- Add separate reset buttons for OS and ISA compatibility layers
+- Update button labels to generic terminology (Registry Editor, Configure OS Compatibility Layer, OS Compatibility Layer Tools)
+- Fix custom compatibility layer path detection to support absolute paths, not just PATH executables
 - Fix malformed XML tags in properties.ui causing GTK template errors
-- Add comprehensive translator combinations documentation
+- Add comprehensive compatibility layer combinations documentation
 
 **1.4.1**
 - Installations now report more intermediate steps like checksum verifications to the UI. (thanks to GB609)
@@ -254,7 +254,7 @@
 - Fixed thumbnails not being downloaded for already installed games.
 - Fixed symlinks to libraries not being created correctly upon installation.
 - Made preparations for a Flathub package.
-- Added all contributors and translators to the about window.
+- Added all contributors and compatibility layers to the about window.
 
 **0.9.3**
 - Added the following translations:

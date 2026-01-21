@@ -103,13 +103,13 @@ def is_valid_executable(path):
 
 
 def add_translators_to_command(game, exe_cmd):
-    """Add ISA and OS translators to the execution command."""
-    # ISA translator (outermost) - e.g., FEX, QEMU
+    """Add ISA and OS compatibility layers to the execution command."""
+    # ISA compatibility layer (outermost) - e.g., FEX, QEMU
     isa_exec = game.get_info("isa_translator_exec")
     if isa_exec and is_valid_executable(isa_exec):
         exe_cmd.append(isa_exec)
 
-    # OS translator (middle) - e.g., Wine, Proton-GE
+    # OS compatibility layer (middle) - e.g., Wine, Proton-GE
     os_exec = game.get_info("os_translator_exec")
     if os_exec and is_valid_executable(os_exec):
         exe_cmd.append(os_exec)
@@ -147,7 +147,7 @@ def get_execute_command(game) -> list:
     """Build the complete execution command with translators and performance tools."""
     exe_cmd = []
 
-    # Add translators (ISA and OS)
+    # Add compatibility layers (ISA and OS)
     add_translators_to_command(game, exe_cmd)
 
     # Add game executable

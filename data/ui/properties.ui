@@ -291,7 +291,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">OS Translator:</property>
+                        <property name="label" translatable="yes">OS Compatibility Layer:</property>
                         <property name="tooltip-text" translatable="yes">Set the OS-level translator executable (Wine, Proton-GE, etc.)</property>
                         <property name="justify">fill</property>
                       </object>
@@ -317,7 +317,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">ISA Translator:</property>
+                        <property name="label" translatable="yes">ISA Compatibility Layer:</property>
                         <property name="tooltip-text" translatable="yes">Set the ISA-level translator executable (FEX, QEMU, etc.)</property>
                         <property name="justify">fill</property>
                       </object>
@@ -340,10 +340,10 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button_properties_reset_os">
-                        <property name="label" translatable="yes">Reset OS translator</property>
+                        <property name="label" translatable="yes">Reset OS compatibility layer</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Reset the OS translator executable to system default</property>
+                        <property name="tooltip-text" translatable="yes">Reset the OS compatibility layer executable to system default</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_reset_os_clicked" swapped="no"/>
                       </object>
@@ -354,10 +354,10 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button_properties_reset_isa">
-                        <property name="label" translatable="yes">Reset ISA translator</property>
+                        <property name="label" translatable="yes">Reset ISA compatibility layer</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Reset the ISA translator executable</property>
+                        <property name="tooltip-text" translatable="yes">Reset the ISA compatibility layer executable</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_reset_isa_clicked" swapped="no"/>
                       </object>
