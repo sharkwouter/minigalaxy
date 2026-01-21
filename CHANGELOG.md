@@ -1,19 +1,11 @@
-**1.4.2**
-- Add multi-tier compatibility layer support (ISA + OS) for cross-platform gaming on ARM64, RISC-V, and other architectures
-- Add ISA compatibility layer field for architecture translation (FEX, QEMU, Box86/Box64)
-- Consolidate Wine executable into generic OS Compatibility Layer field supporting Wine, Proton, Proton-GE
-- Add Protontricks support with automatic detection for Proton-based games
-- Add separate reset buttons for OS and ISA compatibility layers
-- Update button labels to generic terminology (Registry Editor, Configure OS Compatibility Layer, OS Compatibility Layer Tools)
-- Fix custom compatibility layer path detection to support absolute paths, not just PATH executables
-- Fix malformed XML tags in properties.ui causing GTK template errors
-- Add comprehensive compatibility layer combinations documentation
-
 **1.4.1**
 - Installations now report more intermediate steps like checksum verifications to the UI. (thanks to GB609)
 - Fix bugs related to error handling of ongoing installations. (thanks to GB609)
 - Fix an issue where CJK characters in game library path prevents the config file from being loaded properly. (thanks to kyle-zhang-42)
 - Automatically add Weblate contributions to README and About dialog on release. (thanks to GB609)
+- Add compatibility layer support for cross-platform gaming (Wine, Proton-GE, FEX, QEMU, Box86/Box64) (thanks to mateusbentes)
+- Add per-game OS and ISA compatibility layer configuration in properties dialog (thanks to mateusbentes)
+- Add automatic Protontricks detection for Proton-based games (thanks to mateusbentes)
 
 **1.4.0**
 - Various improvements to the download manager, including a pause function (thanks to GB609)
