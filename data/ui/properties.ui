@@ -292,7 +292,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">OS Compatibility Layer:</property>
-                        <property name="tooltip-text" translatable="yes">Set the OS-level translator executable (Wine, Proton-GE, etc.)</property>
+                        <property name="tooltip-text" translatable="yes">Set the OS-level compatibility layer executable (Wine, Proton-GE, etc.)</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -305,7 +305,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="title" translatable="yes"/>
-                        <property name="tooltip-text" translatable="yes">Set the OS-level translator executable (Wine, Proton-GE, etc.)</property>
+                        <property name="tooltip-text" translatable="yes">Set the OS-level compatibility layer executable (Wine, Proton-GE, etc.)</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -318,7 +318,7 @@
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">ISA Compatibility Layer:</property>
-                        <property name="tooltip-text" translatable="yes">Set the ISA-level translator executable (FEX, QEMU, etc.)</property>
+                        <property name="tooltip-text" translatable="yes">Set the ISA-level compatibility layer executable (FEX, QEMU, etc.)</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -331,7 +331,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="title" translatable="yes"/>
-                        <property name="tooltip-text" translatable="yes">Set the ISA-level translator executable (FEX, QEMU, etc.)</property>
+                        <property name="tooltip-text" translatable="yes">Set the ISA-level compatibility layer executable (FEX, QEMU, etc.)</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
