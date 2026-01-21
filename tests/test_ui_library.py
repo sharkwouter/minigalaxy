@@ -6,6 +6,8 @@ from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch, mock_open
 import tempfile
 
+from MockGiRepository import MockGiRepository
+
 m_gtk = MagicMock()
 m_gi = MagicMock()
 m_window = MagicMock()
@@ -14,48 +16,7 @@ m_gametile = MagicMock()
 m_gametilelist = MagicMock()
 m_categoryfilters = MagicMock()
 
-
-class UnitTestGtkTemplate:
-
-    def __init__(self):
-        self.Child = m_gtk
-
-    def from_file(self, lib_file):
-        def passthrough(func):
-            def passthrough2(*args, **kwargs):
-                return func(*args, **kwargs)
-            return passthrough2
-        return passthrough
-
-
-class UnitTestGiRepository:
-
-    class Gtk:
-
-        Template = UnitTestGtkTemplate()
-        Widget = m_gtk
-
-        class Viewport:
-            pass
-
-    class Gdk:
-        pass
-
-    class GdkPixbuf:
-        pass
-
-    class Gio:
-        pass
-
-    class GLib:
-        pass
-
-    class Notify:
-        pass
-
-
-u_gi_repository = UnitTestGiRepository()
-sys.modules['gi.repository'] = u_gi_repository
+sys.modules['gi.repository'] = MockGiRepository()
 sys.modules['gi'] = m_gi
 sys.modules['minigalaxy.ui.window'] = m_window
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
