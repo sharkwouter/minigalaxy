@@ -178,6 +178,19 @@ class Game:
     def __str__(self):
         return self.name
 
+    def __repr__(self):
+        return f'''Game(
+            name="{self.name}",
+            url="{self.url}",
+            md5sum={self.md5sum},
+            game_id={self.id},
+            install_dir="{self.install_dir}",
+            image_url="{self.image_url}",
+            platform="linux",
+            dlcs={self.dlcs},
+            category="{self.category}"
+        )'''
+
     def __eq__(self, other):
         if self.id > 0 and other.id > 0:
             return self.id == other.id
