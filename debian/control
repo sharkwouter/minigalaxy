@@ -2,8 +2,8 @@ Source: minigalaxy
 Section: games
 Priority: optional
 Maintainer: Wouter Wijsman <wwijsman@live.nl>
-Build-Depends: debhelper-compat (= 12),
-               dh-sequence-python3,
+Build-Depends: debhelper-compat (= 13),
+               pybuild-plugin-pyproject,
                python3-all,
                python3-setuptools,
                python3-requests,
