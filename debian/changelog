@@ -1,3 +1,16 @@
+minigalaxy (1.4.1) noble; urgency=medium
+
+  * Installations now report more intermediate steps like checksum
+    verifications to the UI. (thanks to GB609)
+  * Fix bugs related to error handling of ongoing installations. (thanks
+    to GB609)
+  * Fix an issue where CJK characters in game library path prevents the
+    config file from being loaded properly. (thanks to kyle-zhang-42)
+  * Automatically add Weblate contributions to README and About dialog
+    on release. (thanks to GB609)
+
+ -- Wouter Wijsman <wwijsman@live.nl>  Thu, 22 Jan 2026 08:34:19 +0000
+
 minigalaxy (1.4.0) noble; urgency=medium
 
   * Various improvements to the download manager, including a pause
