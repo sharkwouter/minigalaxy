@@ -273,4 +273,3 @@ class Config:
         """Deprecated: Use remove_compatibility_layer instead."""
         self.remove_compatibility_layer(name)
 
-

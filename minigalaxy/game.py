@@ -207,8 +207,8 @@ class Game:
         Returns empty string if not set.
         """
         # Try new key first, then old key, then legacy key
-        return (self.get_info("os_compat_layer_exec") or 
-                self.get_info("os_translator_exec") or 
+        return (self.get_info("os_compat_layer_exec") or
+                self.get_info("os_translator_exec") or
                 self.get_info("custom_wine") or "")
 
     def set_os_compat_layer_exec(self, path: str) -> None:
@@ -244,5 +244,4 @@ class Game:
         # Write to both keys for backward compatibility
         self.set_info("isa_compat_layer_exec", path)
         self.set_info("isa_translator_exec", path)
-
 

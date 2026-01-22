@@ -102,7 +102,7 @@ def is_valid_executable(path):
 def get_compatibility_layers_command(game) -> list:
     """Get the compatibility layers command prefix (ISA and OS layers)."""
     cmd = []
-    
+
     # ISA compatibility layer (outermost) - e.g., FEX, QEMU
     isa_exec = game.get_isa_compat_layer_exec()
     if isa_exec and is_valid_executable(isa_exec):
@@ -112,7 +112,7 @@ def get_compatibility_layers_command(game) -> list:
     os_exec = game.get_os_compat_layer_exec()
     if os_exec and is_valid_executable(os_exec):
         cmd.append(os_exec)
-    
+
     return cmd
 
 
@@ -148,12 +148,12 @@ def get_game_command(game) -> list:
 def get_performance_tools_command(game) -> list:
     """Get the performance tools command prefix (GameMode and MangoHud)."""
     cmd = []
-    
+
     if game.get_info("use_mangohud") is True:
         cmd.extend(["mangohud", "--dlsym"])
     if game.get_info("use_gamemode") is True:
         cmd.insert(0, "gamemoderun")
-    
+
     return cmd
 
 
@@ -168,7 +168,7 @@ def get_execute_command(game) -> list:
     """Build the complete execution command with compatibility layers and performance tools."""
     # Build command in order: performance tools, compatibility layers, game executable
     exe_cmd = []
-    
+
     # Add performance tools (GameMode, MangoHud) - these wrap everything
     exe_cmd.extend(get_performance_tools_command(game))
 
