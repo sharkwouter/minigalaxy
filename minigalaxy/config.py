@@ -272,4 +272,3 @@ class Config:
     def remove_translator(self, name: str) -> None:
         """Deprecated: Use remove_compatibility_layer instead."""
         self.remove_compatibility_layer(name)
-

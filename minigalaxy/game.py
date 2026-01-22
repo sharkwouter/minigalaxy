@@ -244,4 +244,3 @@ class Game:
         # Write to both keys for backward compatibility
         self.set_info("isa_compat_layer_exec", path)
         self.set_info("isa_translator_exec", path)
-
