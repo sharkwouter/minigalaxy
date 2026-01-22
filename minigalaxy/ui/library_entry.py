@@ -706,11 +706,11 @@ class LibraryEntry:
 
         tooltip_text = "{} (update{})".format(self.game.name, ", OS Translator" if self.game.platform == "windows" else "")
         self.image.set_tooltip_text(tooltip_text)
-        # Removed wine_icon reference, use os_translator_icon if needed
-        # if self.game.platform == "windows":
-        #     self.os_translator_icon.set_margin_left(22)
+
+    def state_updating(self):
         self.set_main_button(False, _("Updating…"))
-        self.update_visible_widgets(info_buttons=True)
+        self.image.set_sensitive(False)
+        self.update_visible_widgets(self.progress_bar, self.button_cancel, info_buttons=True)
 
     def state_verifying(self):
         self.set_main_button(False, _("Verifying checksums…"))

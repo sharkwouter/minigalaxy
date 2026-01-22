@@ -200,10 +200,49 @@ class Game:
             return self.is_installed()
         return str(self) < str(other)
 
-    def get_selected_translators(self, config) -> dict:
-        """Get the selected translators for this game from config (returns dict with 'os' and 'isa')."""
-        return config.get_game_translators(self.id)
+    def get_os_compat_layer_exec(self) -> str:
+        """
+        Get the OS compatibility layer executable path (Wine, Proton, etc.).
+        Checks new key first, then falls back to old keys for backward compatibility.
+        Returns empty string if not set.
+        """
+        # Try new key first, then old key, then legacy key
+        return (self.get_info("os_compat_layer_exec") or 
+                self.get_info("os_translator_exec") or 
+                self.get_info("custom_wine") or "")
 
-    def set_selected_translators(self, config, os_translator: str = None, isa_translator: str = None) -> None:
-        """Set the selected translators for this game in config."""
-        config.set_game_translators(self.id, os_translator, isa_translator)
+    def set_os_compat_layer_exec(self, path: str) -> None:
+        """
+        Set the OS compatibility layer executable path.
+        Writes to all keys (new + old + legacy) for backward compatibility.
+        Pass empty string to clear.
+        """
+        # Normalize None to empty string
+        path = path if path else ""
+        # Write to all keys for backward compatibility
+        self.set_info("os_compat_layer_exec", path)
+        self.set_info("os_translator_exec", path)
+        self.set_info("custom_wine", path)
+
+    def get_isa_compat_layer_exec(self) -> str:
+        """
+        Get the ISA compatibility layer executable path (FEX, QEMU, etc.).
+        Checks new key first, then falls back to old key for backward compatibility.
+        Returns empty string if not set.
+        """
+        # Try new key first, then old key
+        return self.get_info("isa_compat_layer_exec") or self.get_info("isa_translator_exec") or ""
+
+    def set_isa_compat_layer_exec(self, path: str) -> None:
+        """
+        Set the ISA compatibility layer executable path.
+        Writes to both keys (new + old) for backward compatibility.
+        Pass empty string to clear.
+        """
+        # Normalize None to empty string
+        path = path if path else ""
+        # Write to both keys for backward compatibility
+        self.set_info("isa_compat_layer_exec", path)
+        self.set_info("isa_translator_exec", path)
+
+

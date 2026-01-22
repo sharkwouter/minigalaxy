@@ -1,4 +1,5 @@
 import os
+import platform
 import shutil
 import subprocess
 
@@ -32,6 +33,7 @@ class Properties(Gtk.Dialog):
     button_properties_ok = Gtk.Template.Child()
     button_properties_os_translator = Gtk.Template.Child()
     button_properties_isa_translator = Gtk.Template.Child()
+    label_os_compat_layer = Gtk.Template.Child()
     label_isa_compat_layer = Gtk.Template.Child()
 
     def __init__(self, parent_library, game, config: Config, api):
@@ -66,16 +68,15 @@ class Properties(Gtk.Dialog):
         self.entry_properties_variable.set_text(self.game.get_info("variable"))
         self.entry_properties_command.set_text(self.game.get_info("command"))
 
-        # Set OS translator (Wine, Proton, etc.)
-        # First check for custom_wine (legacy), then os_translator_exec, then default to system wine
-        os_exec = self.game.get_info("os_translator_exec") or self.game.get_info("custom_wine")
+        # Set OS compatibility layer (Wine, Proton, etc.)
+        os_exec = self.game.get_os_compat_layer_exec()
         if os_exec:
             self.button_properties_os_translator.set_filename(os_exec)
         elif shutil.which("wine"):
             self.button_properties_os_translator.set_filename(shutil.which("wine"))
 
-        # Set ISA translator (FEX, QEMU, etc.)
-        isa_exec = self.game.get_info("isa_translator_exec")
+        # Set ISA compatibility layer (FEX, QEMU, etc.)
+        isa_exec = self.game.get_isa_compat_layer_exec()
         if isa_exec:
             self.button_properties_isa_translator.set_filename(isa_exec)
 
@@ -88,13 +89,13 @@ class Properties(Gtk.Dialog):
         game_installed = self.game.is_installed()
         if game_installed:
             self.game.set_info("check_for_updates", self.switch_properties_check_for_updates.get_active())
-            # Save OS/ISA translator executable paths
+            # Save OS/ISA compatibility layer executable paths
             os_exec = self.button_properties_os_translator.get_filename()
             isa_exec = self.button_properties_isa_translator.get_filename()
-            # Save or clear OS translator
-            self.game.set_info("os_translator_exec", os_exec if os_exec else "")
-            # Save or clear ISA translator
-            self.game.set_info("isa_translator_exec", isa_exec if isa_exec else "")
+            # Save or clear OS compatibility layer (writes to all keys for backward compatibility)
+            self.game.set_os_compat_layer_exec(os_exec if os_exec else "")
+            # Save or clear ISA compatibility layer (writes to all keys for backward compatibility)
+            self.game.set_isa_compat_layer_exec(isa_exec if isa_exec else "")
             if self.switch_properties_use_gamemode.get_active() and not shutil.which("gamemoderun"):
                 self.parent_window.show_error(_("GameMode wasn't found. Using GameMode cannot be enabled."))
                 self.game.set_info("use_gamemode", False)
@@ -108,16 +109,6 @@ class Properties(Gtk.Dialog):
         self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
         self.game.set_info("command", str(self.entry_properties_command.get_text()))
         self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
-
-        # Save OS translator to both fields for backward compatibility
-        os_exec = self.button_properties_os_translator.get_filename()
-        if os_exec:
-            self.game.set_info("os_translator_exec", os_exec)
-            self.game.set_info("custom_wine", os_exec)  # Keep for backward compatibility
-        else:
-            # Clear the settings if no file selected
-            self.game.set_info("os_translator_exec", "")
-            self.game.set_info("custom_wine", "")
 
         self.parent_library.filter_library()
 
@@ -135,13 +126,12 @@ class Properties(Gtk.Dialog):
         wine_path = shutil.which("wine")
         if wine_path:
             self.button_properties_os_translator.select_filename(wine_path)
-            self.game.set_info("os_translator_exec", None)
-            self.game.set_info("custom_wine", None)
+            self.game.set_os_compat_layer_exec("")
 
     @Gtk.Template.Callback("on_button_properties_reset_isa_clicked")
     def on_menu_button_reset_isa(self, widget):
         self.button_properties_isa_translator.unselect_all()
-        self.game.set_info("isa_translator_exec", None)
+        self.game.set_isa_compat_layer_exec("")
 
     @Gtk.Template.Callback("on_button_properties_winecfg_clicked")
     def on_menu_button_winecfg(self, widget):
@@ -190,11 +180,11 @@ class Properties(Gtk.Dialog):
             self.button_properties_regedit.hide()
             self.button_properties_winecfg.hide()
             self.button_properties_winetricks.hide()
+            self.label_os_compat_layer.hide()
             self.button_properties_os_translator.hide()
             self.button_properties_reset_os.hide()
 
         # Hide ISA compatibility layer on x86/x86_64 systems (not needed)
-        import platform
         machine = platform.machine().lower()
         if machine in ['x86_64', 'amd64', 'i386', 'i686']:
             self.label_isa_compat_layer.hide()

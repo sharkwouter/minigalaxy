@@ -182,6 +182,18 @@
           </object>
         </child>
         <child type="overlay">
+          <object class="GtkImage" id="wine_icon">
+            <property name="can-focus">False</property>
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="margin-start">2</property>
+            <property name="margin-top">2</property>
+          </object>
+          <packing>
+            <property name="index">2</property>
+          </packing>
+        </child>
+        <child type="overlay">
           <object class="GtkImage" id="update_icon">
             <property name="can-focus">False</property>
             <property name="halign">start</property>

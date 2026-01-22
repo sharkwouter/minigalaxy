@@ -233,38 +233,44 @@ class Config:
             self.__write()
 
     @property
-    def translators(self) -> list:
-        """List of all available translators (built-in + custom) as dicts."""
-        return self.__config.get("translators", [])
+    def compatibility_layers(self) -> list:
+        """List of all available compatibility layers (built-in + custom) as dicts."""
+        # Try new key first, fall back to old key for backward compatibility
+        return self.__config.get("compatibility_layers", self.__config.get("translators", []))
 
-    @translators.setter
-    def translators(self, new_value: list) -> None:
+    @compatibility_layers.setter
+    def compatibility_layers(self, new_value: list) -> None:
+        # Write both keys for backward compatibility (allows downgrades)
+        self.__config["compatibility_layers"] = new_value
         self.__config["translators"] = new_value
         self.__write()
 
+    def add_compatibility_layer(self, layer_dict: dict) -> None:
+        layers = self.compatibility_layers
+        layers.append(layer_dict)
+        self.compatibility_layers = layers
+
+    def remove_compatibility_layer(self, name: str) -> None:
+        layers = [t for t in self.compatibility_layers if t.get("name") != name]
+        self.compatibility_layers = layers
+
+    # Backward compatibility aliases - deprecated, use compatibility_layers instead
+    @property
+    def translators(self) -> list:
+        """Deprecated: Use compatibility_layers instead."""
+        return self.compatibility_layers
+
+    @translators.setter
+    def translators(self, new_value: list) -> None:
+        """Deprecated: Use compatibility_layers instead."""
+        self.compatibility_layers = new_value
+
     def add_translator(self, translator_dict: dict) -> None:
-        translators = self.translators
-        translators.append(translator_dict)
-        self.translators = translators
+        """Deprecated: Use add_compatibility_layer instead."""
+        self.add_compatibility_layer(translator_dict)
 
     def remove_translator(self, name: str) -> None:
-        translators = [t for t in self.translators if t.get("name") != name]
-        self.translators = translators
+        """Deprecated: Use remove_compatibility_layer instead."""
+        self.remove_compatibility_layer(name)
 
-    @property
-    def game_translators(self) -> dict:
-        """Dict mapping game IDs to selected translators (by name or dict)."""
-        return self.__config.get("game_translators", {})
 
-    @game_translators.setter
-    def game_translators(self, new_value: dict) -> None:
-        self.__config["game_translators"] = new_value
-        self.__write()
-
-    def set_game_translators(self, game_id: int, os_translator: str = None, isa_translator: str = None) -> None:
-        game_translators = self.game_translators
-        game_translators[str(game_id)] = {"os": os_translator, "isa": isa_translator}
-        self.game_translators = game_translators
-
-    def get_game_translators(self, game_id: int) -> dict:
-        return self.game_translators.get(str(game_id), {"os": None, "isa": None})

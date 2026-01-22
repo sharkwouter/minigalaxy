@@ -14,6 +14,7 @@ class GameTile(LibraryEntry, Gtk.Box):
     button = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
     menu_button = Gtk.Template.Child()
+    wine_icon = Gtk.Template.Child()
     update_icon = Gtk.Template.Child()
     menu_button_update = Gtk.Template.Child()
     menu_button_dlc = Gtk.Template.Child()
@@ -64,6 +65,3 @@ class GameTile(LibraryEntry, Gtk.Box):
     def state_installed(self):
         self.menu_button.get_style_context().add_class("suggested-action")
         super().state_installed()
-
-    def state_updating(self):
-        super().state_updating()

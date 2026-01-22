@@ -14,14 +14,13 @@ from minigalaxy.constants import BINARY_NAMES_TO_IGNORE
 
 def get_wine_path(game):
     """
-    Get the OS translator executable path (Wine, Proton, etc.).
-    Checks os_translator_exec first, then falls back to custom_wine for backward compatibility.
+    Get the OS compatibility layer executable path (Wine, Proton, etc.).
+    Uses the game's helper method which handles backward compatibility.
     """
     binary_name = "wine"
-    # Check new field first, then legacy field
-    os_translator_path = game.get_info("os_translator_exec") or game.get_info("custom_wine")
-    if os_translator_path and os_translator_path != shutil.which(binary_name):
-        binary_name = os_translator_path
+    os_compat_layer_path = game.get_os_compat_layer_exec()
+    if os_compat_layer_path and os_compat_layer_path != shutil.which(binary_name):
+        binary_name = os_compat_layer_path
     return binary_name
 
 
@@ -38,7 +37,7 @@ def wine_restore_game_link(game):
 
 def config_game(game):
     """
-    Open configuration tool for the OS translator (winecfg for Wine/Proton).
+    Open configuration tool for the OS compatibility layer (winecfg for Wine/Proton).
     """
     prefix = os.path.join(game.install_dir, "prefix")
     wine_path = get_wine_path(game)
@@ -47,7 +46,7 @@ def config_game(game):
 
 def regedit_game(game):
     """
-    Open registry editor for the OS translator (regedit for Wine/Proton).
+    Open registry editor for the OS compatibility layer (regedit for Wine/Proton).
     """
     prefix = os.path.join(game.install_dir, "prefix")
     wine_path = get_wine_path(game)
@@ -69,7 +68,7 @@ def winetricks_game(game):
     env['WINE'] = wine_path
 
     # Check if using Proton and protontricks is available
-    os_exec = game.get_info("os_translator_exec") or game.get_info("custom_wine")
+    os_exec = game.get_os_compat_layer_exec()
     if os_exec and "proton" in os_exec.lower() and shutil.which("protontricks"):
         executable_args = ['protontricks-launch', '--gui']
     else:
@@ -97,24 +96,37 @@ def start_game(game):
 
 def is_valid_executable(path):
     """Check if path is a valid executable (in PATH or absolute path)."""
-    import shutil
     return shutil.which(path) or (os.path.isfile(path) and os.access(path, os.X_OK))
 
 
-def add_translators_to_command(game, exe_cmd):
-    """Add ISA and OS compatibility layers to the execution command."""
+def get_compatibility_layers_command(game) -> list:
+    """Get the compatibility layers command prefix (ISA and OS layers)."""
+    cmd = []
+    
     # ISA compatibility layer (outermost) - e.g., FEX, QEMU
-    isa_exec = game.get_info("isa_translator_exec")
+    isa_exec = game.get_isa_compat_layer_exec()
     if isa_exec and is_valid_executable(isa_exec):
-        exe_cmd.append(isa_exec)
+        cmd.append(isa_exec)
 
     # OS compatibility layer (middle) - e.g., Wine, Proton-GE
-    os_exec = game.get_info("os_translator_exec")
+    os_exec = game.get_os_compat_layer_exec()
     if os_exec and is_valid_executable(os_exec):
-        exe_cmd.append(os_exec)
+        cmd.append(os_exec)
+    
+    return cmd
 
 
-def get_game_command(game):
+def add_compatibility_layers_to_command(game, exe_cmd: list) -> None:
+    """Deprecated: Use get_compatibility_layers_command instead."""
+    exe_cmd.extend(get_compatibility_layers_command(game))
+
+
+def add_translators_to_command(game, exe_cmd: list) -> None:
+    """Deprecated: Use get_compatibility_layers_command instead."""
+    add_compatibility_layers_to_command(game, exe_cmd)
+
+
+def get_game_command(game) -> list:
     """Get the game executable command based on launcher type."""
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
@@ -133,28 +145,39 @@ def get_game_command(game):
     raise FileNotFoundError()
 
 
-def add_performance_tools(game, exe_cmd):
-    """Add GameMode and MangoHud to the command if enabled."""
-    if game.get_info("use_gamemode") is True:
-        exe_cmd.insert(0, "gamemoderun")
+def get_performance_tools_command(game) -> list:
+    """Get the performance tools command prefix (GameMode and MangoHud)."""
+    cmd = []
+    
     if game.get_info("use_mangohud") is True:
-        exe_cmd.insert(0, "mangohud")
-        exe_cmd.insert(1, "--dlsym")
+        cmd.extend(["mangohud", "--dlsym"])
+    if game.get_info("use_gamemode") is True:
+        cmd.insert(0, "gamemoderun")
+    
+    return cmd
+
+
+def add_performance_tools(game, exe_cmd: list) -> None:
+    """Deprecated: Use get_performance_tools_command instead."""
+    # Insert at beginning to maintain correct order
+    for item in reversed(get_performance_tools_command(game)):
+        exe_cmd.insert(0, item)
 
 
 def get_execute_command(game) -> list:
-    """Build the complete execution command with translators and performance tools."""
+    """Build the complete execution command with compatibility layers and performance tools."""
+    # Build command in order: performance tools, compatibility layers, game executable
     exe_cmd = []
+    
+    # Add performance tools (GameMode, MangoHud) - these wrap everything
+    exe_cmd.extend(get_performance_tools_command(game))
 
     # Add compatibility layers (ISA and OS)
-    add_translators_to_command(game, exe_cmd)
+    exe_cmd.extend(get_compatibility_layers_command(game))
 
     # Add game executable
     game_cmd = get_game_command(game)
     exe_cmd.extend(game_cmd)
-
-    # Add performance tools (GameMode, MangoHud)
-    add_performance_tools(game, exe_cmd)
 
     # Add variable and command flags
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
