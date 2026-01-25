@@ -17,10 +17,10 @@ from importlib.resources import as_file
 
 from minigalaxy.config import Config
 from minigalaxy.constants import GAME_LANGUAGE_IDS
-from minigalaxy.data import get_data_file
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.logger import logger
+from minigalaxy.resources import get_data_file
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command, get_wine_path, wine_restore_game_link
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, DOWNLOAD_DIR

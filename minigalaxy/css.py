@@ -1,5 +1,5 @@
-from minigalaxy.data import get_data_file
 from minigalaxy.logger import logger
+from minigalaxy.resources import get_data_file
 from minigalaxy.ui.gtk import Gtk, Gdk
 
 

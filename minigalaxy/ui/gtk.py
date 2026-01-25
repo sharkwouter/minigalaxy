@@ -1,5 +1,5 @@
 import gi
-from minigalaxy.ui.data import get_data_file as _ui_data_file
+from minigalaxy.resources import get_ui_data_file as _ui_data_file
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, Gio, GLib, GdkPixbuf  # noqa: E402,F401
