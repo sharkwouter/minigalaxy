@@ -6,12 +6,12 @@ from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.paths import UI_DIR, THUMBNAIL_DIR, COVER_DIR
+from minigalaxy.paths import THUMBNAIL_DIR, COVER_DIR
 from minigalaxy.translation import _
-from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf
+from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf, load_ui
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "information.ui"))
+@Gtk.Template(string=load_ui("information.ui"))
 class Information(Gtk.Dialog):
     __gtype_name__ = "Information"
     gogBaseUrl = "https://www.gog.com"

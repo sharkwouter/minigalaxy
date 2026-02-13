@@ -17,8 +17,8 @@ if os.path.isdir(os.path.join(LAUNCH_PATH, "../minigalaxy")):
     sys.path.insert(0, SOURCE_PATH)
     os.chdir(SOURCE_PATH)
 
-from minigalaxy.version import VERSION
-from minigalaxy.paths import CONFIG_DIR, CACHE_DIR
+from minigalaxy.version import VERSION  # noqa: E402
+from minigalaxy.paths import CONFIG_DIR, CACHE_DIR  # noqa: E402
 
 
 def conf_reset():
@@ -30,18 +30,20 @@ def cli_params():
     parser = argparse.ArgumentParser(description="A simple GOG Linux client")
 
     parser.add_argument("--reset",
-        dest="reset", action="store_true", 
-        help="reset the configuration of Minigalaxy")
+                        dest="reset", action="store_true",
+                        help="reset the configuration of Minigalaxy")
     parser.add_argument("-v", "--version",
-        action="version", version=VERSION)
+                        action="version",
+                        version=VERSION)
 
     return parser.parse_args()
+
 
 def show_installer_notification(installer_item):
     if not installer_item:
         return
 
-    from minigalaxy.ui.gtk import Gtk, Notify
+    from minigalaxy.ui.gtk import Notify
     from minigalaxy.translation import _
 
     message = _("The installation of {} will continue in the background")
@@ -50,10 +52,12 @@ def show_installer_notification(installer_item):
                                     "dialog-information")
     popup.show()
 
+
 def main():
     cli_args = cli_params()
 
-    if cli_args.reset: conf_reset()
+    if cli_args.reset:
+        conf_reset()
 
     # Disable webkit compositing, ensuring the login screen shows
     os.environ["WEBKIT_DISABLE_COMPOSITING_MODE"] = "1"
@@ -64,7 +68,7 @@ def main():
     # Import the gi module after parsing arguments
     import signal
     from minigalaxy import installer
-    from minigalaxy.ui.gtk import Gtk, GLib
+    from minigalaxy.ui.gtk import Gtk
     from minigalaxy.ui import Window
     from minigalaxy.config import Config
     from minigalaxy.api import Api
@@ -84,7 +88,7 @@ def main():
     def shutdown(*args):
         global SHUTDOWN_DONE
         if SHUTDOWN_DONE:
-          return
+            return
         SHUTDOWN_DONE = True
 
         # perform orderly shutdown and stop of download threads to prevent download being killed at random places

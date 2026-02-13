@@ -1,3 +1,9 @@
+**1.4.2**
+- Switch to using PEP 302 compliant resources, excluding translations. (thanks to EmperorArthur)
+- Allow installing Minigalaxy via pipx. (thanks to EmperorArthur)
+- Switch debian builds to using pybuild-plugin-pyproject. (thanks to EmperorArthur)
+- Set minimum Python version to 3.11. (thanks to EmperorArthur)
+
 **1.4.1**
 - Installations now report more intermediate steps like checksum verifications to the UI. (thanks to GB609)
 - Fix bugs related to error handling of ongoing installations. (thanks to GB609)

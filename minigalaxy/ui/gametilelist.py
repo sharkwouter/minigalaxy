@@ -1,13 +1,10 @@
-import os
-
 from minigalaxy.css import CSS_PROVIDER
 from minigalaxy.game import Game
-from minigalaxy.paths import UI_DIR
-from minigalaxy.ui.gtk import Gtk
+from minigalaxy.ui.gtk import Gtk, load_ui
 from minigalaxy.ui.library_entry import LibraryEntry
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "gametilelist.ui"))
+@Gtk.Template(string=load_ui("gametilelist.ui"))
 class GameTileList(LibraryEntry, Gtk.Box):
     __gtype_name__ = "GameTileList"
 

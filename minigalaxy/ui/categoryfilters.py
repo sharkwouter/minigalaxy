@@ -1,13 +1,10 @@
-import os
-
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
-from minigalaxy.paths import UI_DIR
 from minigalaxy.ui.filterswitch import FilterSwitch
-from minigalaxy.ui.gtk import Gtk
+from minigalaxy.ui.gtk import Gtk, load_ui
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "categoryfilters.ui"))
+@Gtk.Template(string=load_ui("categoryfilters.ui"))
 class CategoryFilters(Gtk.Dialog):
     __gtype_name__ = "CategoryFilters"
 

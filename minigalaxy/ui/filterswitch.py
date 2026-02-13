@@ -1,11 +1,8 @@
-import os
-
-from minigalaxy.paths import UI_DIR
-from minigalaxy.ui.gtk import Gtk
+from minigalaxy.ui.gtk import Gtk, load_ui
 from minigalaxy.translation import _
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "filterswitch.ui"))
+@Gtk.Template(string=load_ui("filterswitch.ui"))
 class FilterSwitch(Gtk.Box):
     __gtype_name__ = "FilterSwitch"
 

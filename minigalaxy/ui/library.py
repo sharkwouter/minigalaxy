@@ -10,17 +10,17 @@ from minigalaxy.download_manager import DownloadManager
 from minigalaxy.entity.state import State
 from minigalaxy.game import Game
 from minigalaxy.logger import logger
-from minigalaxy.paths import UI_DIR, CATEGORIES_FILE_PATH
+from minigalaxy.paths import CATEGORIES_FILE_PATH
 from minigalaxy.translation import _
 from minigalaxy.ui.categoryfilters import CategoryFilters
 from minigalaxy.ui.gametile import GameTile
 from minigalaxy.ui.gametilelist import GameTileList
-from minigalaxy.ui.gtk import Gtk, GLib
+from minigalaxy.ui.gtk import Gtk, GLib, load_ui
 
 from typing import List
 
 
-@Gtk.Template.from_file(os.path.join(UI_DIR, "library.ui"))
+@Gtk.Template(string=load_ui("library.ui"))
 class Library(Gtk.Viewport):
     __gtype_name__ = "Library"
 
