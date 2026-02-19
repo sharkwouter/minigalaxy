@@ -33,7 +33,8 @@ class Window(Gtk.ApplicationWindow):
 
     def __init__(self, config: Config, api: 'Api', download_manager: DownloadManager, name="Minigalaxy"):
         current_locale = config.locale
-        default_locale = locale.getdefaultlocale()[0]
+        locale.setlocale(locale.LC_ALL, '')
+        default_locale = locale.getlocale()[0]
         if current_locale == '':
             locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
         else:

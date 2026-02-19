@@ -224,15 +224,14 @@ class Api:
             response = self.session.get(url)
             if response.status_code == http.HTTPStatus.OK and len(response.text) > 0:
                 response_object = ET.fromstring(response.text)
-                if response_object and response_object.attrib:
+                if response_object is not None and response_object.attrib:
                     result = response_object.attrib
             else:
                 logger.error("Couldn't read xml data. Response with code %s received with the following content: %s",
                              response.status_code, response.text, exc_info=1)
         except requests.exceptions.RequestException:
             logger.error("Couldn't read xml data. Received RequestException", exc_info=1)
-        finally:
-            return result
+        return result
 
     def get_user_info(self) -> str:
         username = self.config.username
