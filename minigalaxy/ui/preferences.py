@@ -6,6 +6,7 @@ from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.ui.gtk import Gtk, load_ui
 from minigalaxy.config import Config
+from minigalaxy.logger import logger
 
 
 @Gtk.Template(string=load_ui("preferences.ui"))
@@ -178,31 +179,40 @@ class Preferences(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_save_clicked")
     def save_pressed(self, button):
-        self.__save_locale_choice()
-        self.__save_language_choice()
-        self.__save_view_choice()
-        self.__save_theme_choice()
-        self.config.keep_installers = self.switch_keep_installers.get_active()
-        self.config.stay_logged_in = self.switch_stay_logged_in.get_active()
-        self.config.show_hidden_games = self.switch_show_hidden_games.get_active()
-        self.config.create_applications_file = self.switch_create_applications_file.get_active()
-        self.parent.library.filter_library()
+        try:
+            self.config.start_batch_edit()
 
-        if self.switch_show_windows_games.get_active() != self.config.show_windows_games:
-            if self.switch_show_windows_games.get_active() and not shutil.which("wine"):
-                self.parent.show_error(_("Wine wasn't found. Showing Windows games cannot be enabled."))
-                self.config.show_windows_games = False
-            else:
-                self.config.show_windows_games = self.switch_show_windows_games.get_active()
-                self.parent.reset_library()
+            self.__save_locale_choice()
+            self.__save_language_choice()
+            self.__save_view_choice()
+            self.__save_theme_choice()
+            self.config.keep_installers = self.switch_keep_installers.get_active()
+            self.config.stay_logged_in = self.switch_stay_logged_in.get_active()
+            self.config.show_hidden_games = self.switch_show_hidden_games.get_active()
+            self.config.create_applications_file = self.switch_create_applications_file.get_active()
+            self.parent.library.filter_library()
 
-        # Only change the install_dir is it was actually changed
-        if self.button_file_chooser.get_filename() != self.config.install_dir:
-            if self.__save_install_dir_choice():
-                self.download_manager.cancel_all_downloads()
-                self.parent.reset_library()
-            else:
-                self.parent.show_error(_("{} isn't a usable path").format(self.button_file_chooser.get_filename()))
+            if self.switch_show_windows_games.get_active() != self.config.show_windows_games:
+                if self.switch_show_windows_games.get_active() and not shutil.which("wine"):
+                    self.parent.show_error(_("Wine wasn't found. Showing Windows games cannot be enabled."))
+                    self.config.show_windows_games = False
+                else:
+                    self.config.show_windows_games = self.switch_show_windows_games.get_active()
+                    self.parent.reset_library()
+
+            # Only change the install_dir is it was actually changed
+            if self.button_file_chooser.get_filename() != self.config.install_dir:
+                if self.__save_install_dir_choice():
+                    self.download_manager.cancel_all_downloads()
+                    self.parent.reset_library()
+                else:
+                    self.parent.show_error(_("{} isn't a usable path").format(self.button_file_chooser.get_filename()))
+        except Exception:
+            logger.error("Could not save preferences", exc_info=1)
+            self.config.cancel_batch_edit()
+        finally:
+            self.config.save()
+
         self.destroy()
 
     @Gtk.Template.Callback("on_button_cancel_clicked")

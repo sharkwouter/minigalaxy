@@ -18,6 +18,7 @@ class Config:
     __config: dict
 
     def __init__(self, config_file: str = CONFIG_FILE_PATH):
+        self.__is_batch_edit = False
         self.__config_file = config_file
         self.__config = {}
         self.__load()
@@ -40,6 +41,24 @@ class Config:
             file.write(json.dumps(self.__config, ensure_ascii=False))
         os.rename(temp_file, self.__config_file)
 
+    def start_batch_edit(self):
+        """
+        Flags config for multiple incoming changes. Normally, every change is written to file immediately.
+        This can lead to a lot redundant writes when several settings are changed in quick succession.
+        This method provides a uniform way to flag Config in a rudimentary type of 'transaction'.
+        Any setter which internally uses '__set_and_write' will honor this flag.
+        Use 'Config.save()' to finalize (remove flag and write to the file to disc).
+        """
+        self.__is_batch_edit = True
+
+    def cancel_batch_edit(self):
+        """
+        The counterpart to 'Config.start_batch_edit()'.
+        Resets the flag and reverts all changes since the last write/save.
+        """
+        self.__is_batch_edit = False
+        self.__load()
+
     def save(self) -> None:
         """
         Config will normally immediately save all changes applied to it to the configuration file automatically.
@@ -48,9 +67,19 @@ class Config:
         So it only works for direct assignments. But there are some properties which returned Lists or might
         return other none-simple types in the future. Changes made to these sub-objects would not be detected
         and thus also not be persisted automatically.
-        In these situations `Config.save`  can be used to avoid having to re-assign the same object reference.
+        In these situations `Config.save()`  can be used to avoid having to re-assign the same object reference.
+        This method is also needed when editing Config in 'batch mode' to finalize the state.
         """
         self.__write()
+        self.__is_batch_edit = False
+
+    def __set_and_write(self, property_name, new_value):
+        if self.__config.get(property_name, None) == new_value:
+            return
+
+        self.__config[property_name] = new_value
+        if not self.__is_batch_edit:
+            self.__write()
 
     @property
     def locale(self) -> str:
@@ -58,8 +87,7 @@ class Config:
 
     @locale.setter
     def locale(self, new_value: str) -> None:
-        self.__config["locale"] = new_value
-        self.__write()
+        self.__set_and_write("locale", new_value)
 
     @property
     def lang(self) -> str:
@@ -67,8 +95,7 @@ class Config:
 
     @lang.setter
     def lang(self, new_value: str) -> None:
-        self.__config["lang"] = new_value
-        self.__write()
+        self.__set_and_write("lang", new_value)
 
     @property
     def view(self) -> str:
@@ -76,8 +103,7 @@ class Config:
 
     @view.setter
     def view(self, new_value: str) -> None:
-        self.__config["view"] = new_value
-        self.__write()
+        self.__set_and_write("view", new_value)
 
     @property
     def install_dir(self) -> str:
@@ -85,8 +111,7 @@ class Config:
 
     @install_dir.setter
     def install_dir(self, new_value: str) -> None:
-        self.__config["install_dir"] = new_value
-        self.__write()
+        self.__set_and_write("install_dir", new_value)
 
     @property
     def username(self) -> str:
@@ -94,8 +119,7 @@ class Config:
 
     @username.setter
     def username(self, new_value: str) -> None:
-        self.__config["username"] = new_value
-        self.__write()
+        self.__set_and_write("username", new_value)
 
     @property
     def refresh_token(self) -> str:
@@ -103,8 +127,7 @@ class Config:
 
     @refresh_token.setter
     def refresh_token(self, new_value: str) -> None:
-        self.__config["refresh_token"] = new_value
-        self.__write()
+        self.__set_and_write("refresh_token", new_value)
 
     @property
     def keep_installers(self) -> bool:
@@ -112,8 +135,7 @@ class Config:
 
     @keep_installers.setter
     def keep_installers(self, new_value: bool) -> None:
-        self.__config["keep_installers"] = new_value
-        self.__write()
+        self.__set_and_write("keep_installers", new_value)
 
     @property
     def stay_logged_in(self) -> bool:
@@ -121,8 +143,7 @@ class Config:
 
     @stay_logged_in.setter
     def stay_logged_in(self, new_value: bool) -> None:
-        self.__config["stay_logged_in"] = new_value
-        self.__write()
+        self.__set_and_write("stay_logged_in", new_value)
 
     @property
     def use_dark_theme(self) -> bool:
@@ -130,8 +151,7 @@ class Config:
 
     @use_dark_theme.setter
     def use_dark_theme(self, new_value: bool) -> None:
-        self.__config["use_dark_theme"] = new_value
-        self.__write()
+        self.__set_and_write("use_dark_theme", new_value)
 
     @property
     def show_hidden_games(self) -> bool:
@@ -139,8 +159,7 @@ class Config:
 
     @show_hidden_games.setter
     def show_hidden_games(self, new_value: bool) -> None:
-        self.__config["show_hidden_games"] = new_value
-        self.__write()
+        self.__set_and_write("show_hidden_games", new_value)
 
     @property
     def show_windows_games(self) -> bool:
@@ -148,8 +167,7 @@ class Config:
 
     @show_windows_games.setter
     def show_windows_games(self, new_value: bool) -> None:
-        self.__config["show_windows_games"] = new_value
-        self.__write()
+        self.__set_and_write("show_windows_games", new_value)
 
     @property
     def keep_window_maximized(self) -> bool:
@@ -157,8 +175,7 @@ class Config:
 
     @keep_window_maximized.setter
     def keep_window_maximized(self, new_value: bool) -> None:
-        self.__config["keep_window_maximized"] = new_value
-        self.__write()
+        self.__set_and_write("keep_window_maximized", new_value)
 
     @property
     def installed_filter(self) -> bool:
@@ -166,8 +183,7 @@ class Config:
 
     @installed_filter.setter
     def installed_filter(self, new_value: bool) -> None:
-        self.__config["installed_filter"] = new_value
-        self.__write()
+        self.__set_and_write("installed_filter", new_value)
 
     @property
     def create_applications_file(self) -> bool:
@@ -175,8 +191,7 @@ class Config:
 
     @create_applications_file.setter
     def create_applications_file(self, new_value: bool) -> None:
-        self.__config["create_applications_file"] = new_value
-        self.__write()
+        self.__set_and_write("create_applications_file", new_value)
 
     @property
     def max_parallel_game_downloads(self) -> int:
@@ -184,17 +199,15 @@ class Config:
 
     @max_parallel_game_downloads.setter
     def max_parallel_game_downloads(self, new_value: int) -> None:
-        self.__config["max_download_workers"] = new_value
-        self.__write()
+        self.__set_and_write("max_download_workers", new_value)
 
     @property
     def current_downloads(self) -> List[int]:
         return self.__config.get("current_downloads", [])
 
     @current_downloads.setter
-    def current_downloads(self, new_value: List[int]) -> None:
-        self.__config["current_downloads"] = new_value
-        self.__write()
+    def current_downloads(self, new_value: List[int] = []) -> None:
+        self.__set_and_write("current_downloads", [*new_value])
 
     def add_ongoing_download(self, download_id):
         '''Adds the given id to the list of active downloads if not contained already. Does nothing otherwise.'''
@@ -211,23 +224,21 @@ class Config:
             self.current_downloads = current
 
     @property
-    def paused_downloads(self) -> List[int]:
+    def paused_downloads(self) -> dict[str, int]:
         return self.__config.get("paused_downloads", {})
 
     @paused_downloads.setter
-    def paused_downloads(self, new_value: {}) -> None:
-        self.__config["paused_downloads"] = new_value
-        self.__write()
+    def paused_downloads(self, new_value={}) -> None:
+        """Ongoing downloads are a dictionary of filename:progress_percentage_int. See Download.current_progress."""
+        self.__set_and_write("paused_downloads", {**new_value})
 
     def add_paused_download(self, save_location, current_progress):
         paused = self.paused_downloads
         paused[save_location] = current_progress
         self.paused_downloads = paused
-        self.__write()
 
     def remove_paused_download(self, save_location):
         paused = self.paused_downloads
         if save_location in paused:
             del paused[save_location]
             self.paused_downloads = paused
-            self.__write()
