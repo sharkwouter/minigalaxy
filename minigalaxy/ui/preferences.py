@@ -179,6 +179,7 @@ class Preferences(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_save_clicked")
     def save_pressed(self, button):
+        save_changes = True
         try:
             self.config.start_batch_edit()
 
@@ -207,10 +208,14 @@ class Preferences(Gtk.Dialog):
                     self.parent.reset_library()
                 else:
                     self.parent.show_error(_("{} isn't a usable path").format(self.button_file_chooser.get_filename()))
-        except Exception:
+
+        except Exception as e:
             logger.error("Could not save preferences", exc_info=1)
             self.config.cancel_batch_edit()
-        finally:
+            save_changes = False
+            self.parent.show_error(_("There was an error while saving preferences."), str(e))
+
+        if save_changes:
             self.config.save()
 
         self.destroy()
