@@ -207,38 +207,38 @@ class Config:
 
     @current_downloads.setter
     def current_downloads(self, new_value: List[int] = []) -> None:
-        self.__set_and_write("current_downloads", [*new_value])
+        self.__set_and_write("current_downloads", new_value)
 
     def add_ongoing_download(self, download_id):
         '''Adds the given id to the list of active downloads if not contained already. Does nothing otherwise.'''
-        current = self.current_downloads
+        current = [*self.current_downloads]
         if download_id not in current:
             current.append(download_id)
             self.current_downloads = current
 
     def remove_ongoing_download(self, download_id):
         '''Removes the given id from the list of active downloads, if contained. Does nothing otherwise.'''
-        current = self.current_downloads
+        current = [*self.current_downloads]
         if download_id in current:
             current.remove(download_id)
             self.current_downloads = current
 
     @property
-    def paused_downloads(self) -> dict[str, int]:
+    def paused_downloads(self) -> dict:
         return self.__config.get("paused_downloads", {})
 
     @paused_downloads.setter
     def paused_downloads(self, new_value={}) -> None:
         """Ongoing downloads are a dictionary of filename:progress_percentage_int. See Download.current_progress."""
-        self.__set_and_write("paused_downloads", {**new_value})
+        self.__set_and_write("paused_downloads", new_value)
 
     def add_paused_download(self, save_location, current_progress):
-        paused = self.paused_downloads
+        paused = {**self.paused_downloads}
         paused[save_location] = current_progress
         self.paused_downloads = paused
 
     def remove_paused_download(self, save_location):
-        paused = self.paused_downloads
+        paused = {**self.paused_downloads}
         if save_location in paused:
             del paused[save_location]
             self.paused_downloads = paused
