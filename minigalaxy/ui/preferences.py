@@ -107,7 +107,7 @@ class Preferences(Gtk.Dialog):
                 self.combobox_view.set_active(key)
                 break
 
-    def __save_locale_choice(self) -> None:
+    def __apply_locale_choice(self) -> None:
         new_locale = self.combobox_program_language.get_active_iter()
         if new_locale is not None:
             model = self.combobox_program_language.get_model()
@@ -124,14 +124,14 @@ class Preferences(Gtk.Dialog):
                     self.parent.show_error(_("Failed to change program language. Make sure locale is generated on "
                                              "your system."))
 
-    def __save_language_choice(self) -> None:
+    def __apply_language_choice(self) -> None:
         lang_choice = self.combobox_language.get_active_iter()
         if lang_choice is not None:
             model = self.combobox_language.get_model()
             lang, _ = model[lang_choice][:2]
             self.config.lang = lang
 
-    def __save_view_choice(self) -> None:
+    def __apply_view_choice(self) -> None:
         view_choice = self.combobox_view.get_active_iter()
         if view_choice is not None:
             model = self.combobox_view.get_model()
@@ -140,7 +140,7 @@ class Preferences(Gtk.Dialog):
                 self.parent.reset_library()
             self.config.view = view
 
-    def __save_theme_choice(self) -> None:
+    def __apply_theme_choice(self) -> None:
         settings = Gtk.Settings.get_default()
         self.config.use_dark_theme = self.switch_use_dark_theme.get_active()
         if self.config.use_dark_theme is True:
@@ -183,10 +183,10 @@ class Preferences(Gtk.Dialog):
         try:
             self.config.start_batch_edit()
 
-            self.__save_locale_choice()
-            self.__save_language_choice()
-            self.__save_view_choice()
-            self.__save_theme_choice()
+            self.__apply_locale_choice()
+            self.__apply_language_choice()
+            self.__apply_view_choice()
+            self.__apply_theme_choice()
             self.config.keep_installers = self.switch_keep_installers.get_active()
             self.config.stay_logged_in = self.switch_stay_logged_in.get_active()
             self.config.show_hidden_games = self.switch_show_hidden_games.get_active()
