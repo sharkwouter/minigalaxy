@@ -77,7 +77,12 @@ class Config:
         if self.__config.get(property_name, None) == new_value:
             return
 
-        self.__config[property_name] = new_value
+        if new_value is None:
+            del self.__config[property_name]
+            logger.warning("Config setting '%' was deleted (=reset to default)")
+        else:
+            self.__config[property_name] = new_value
+
         if not self.__is_batch_edit:
             self.__write()
 
