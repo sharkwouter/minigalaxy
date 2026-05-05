@@ -196,9 +196,9 @@ class Library(Gtk.Viewport):
 
         # try to repair a corrupted list of ongoing downloads
         # if something is considered 'installed', it shouldn't be on the download list anymore
+        self.config.start_batch_edit()
         for game in games:
-            if game.id in self.config.current_downloads:
-                self.config.current_downloads.remove(game.id)
+            self.config.remove_ongoing_download(game.id)
         self.config.save()
 
         return games

@@ -179,6 +179,7 @@ class TestLibrary(TestCase):
         game_json_data = '{ "gameId": "1207665883", "name": "Aliens vs Predator Classic 2000", "playTasks":[{}]}'
         gog_info_file = "goggame-1207665883.info"
         self.mock_config.current_downloads = [1207665883]
+        self.mock_config.remove_ongoing_download.side_effect = lambda gameid: self.mock_config.current_downloads.remove(gameid)
 
         api_mock = MagicMock()
         test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
@@ -190,6 +191,7 @@ class TestLibrary(TestCase):
                 file.write(game_json_data)
             test_library._Library__get_installed_games()
 
+        self.mock_config.remove_ongoing_download.assert_called_once()
         self.assertEqual([], self.mock_config.current_downloads)
         self.mock_config.save.assert_called_once()
 
