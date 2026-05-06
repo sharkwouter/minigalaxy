@@ -1,4 +1,5 @@
 **1.4.3**
+- Some code refactoring for more clarity and to avoid potential coding errors. (thanks to GB609)
 - Reduce unnecessary writes to the config file. (thanks to GB609)
 
 **1.4.2**
