@@ -142,6 +142,14 @@ class Config:
         self.__set_and_write("keep_installers", new_value)
 
     @property
+    def keep_installers_per_platform(self) -> bool:
+        return self.__config.get("keep_installers_per_platform", True)
+
+    @keep_installers_per_platform.setter
+    def keep_installers_per_platform(self, new_value: bool) -> None:
+        self.__set_and_write("keep_installers_per_platform", new_value)
+
+    @property
     def stay_logged_in(self) -> bool:
         return self.__config.get("stay_logged_in", True)
 
@@ -172,6 +180,22 @@ class Config:
     @show_windows_games.setter
     def show_windows_games(self, new_value: bool) -> None:
         self.__set_and_write("show_windows_games", new_value)
+
+    @property
+    def preferred_platform(self) -> str:
+        return self.__config.get("preferred_platform", "linux")
+
+    @preferred_platform.setter
+    def preferred_platform(self, new_value: str) -> None:
+        self.__set_and_write("preferred_platform", new_value)
+
+    @property
+    def game_listing_mode(self) -> str:
+        return self.__config.get("game_listing_mode", "linux")
+
+    @game_listing_mode.setter
+    def game_listing_mode(self, new_value: str) -> None:
+        self.__set_and_write("game_listing_mode", new_value)
 
     @property
     def keep_window_maximized(self) -> bool:
