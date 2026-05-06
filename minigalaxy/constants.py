@@ -79,6 +79,17 @@ VIEWS = [
     ["list", _("List")],
 ]
 
+PLATFORMS = [
+    ["linux", _("Linux")],
+    ["windows", _("Windows")]
+]
+
+GAME_LISTING_MODE = [
+    ["preferred", _("Preferred platform only")],
+    ["mixed", _("Highlight preferred")],
+    ["all", _("Show all")]
+]
+
 # Game IDs to ignore when received by the API
 IGNORE_GAME_IDS = [
     1424856371,  # Hotline Miami 2: Wrong Number - Digital Comics
