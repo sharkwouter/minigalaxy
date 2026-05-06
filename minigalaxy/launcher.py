@@ -11,6 +11,7 @@ from typing import List
 from minigalaxy.game import InfoKey
 from minigalaxy.translation import _
 from minigalaxy.constants import BINARY_NAMES_TO_IGNORE
+from minigalaxy.ui.choose_executable import ChooseExecutable
 
 
 def get_wine_path(game):
@@ -162,14 +163,20 @@ def get_windows_exe_cmd(game, files):
         logging.debug("using link file [%s] as execute command", launch_file_list[0])
 
     if not exe_cmd:
+        executables_found = []
         # Find the first executable file that is not blacklisted
         for file in files:
             if os.path.splitext(file.upper())[-1] not in [".EXE", ".LNK"]:
                 continue
             if file in BINARY_NAMES_TO_IGNORE:
                 continue
-            executable = file
-            break
+            executables_found.append(file)
+        executable = executables_found[0] if len(executables_found) == 1 else None
+        if len(executables_found) > 1:
+            dialog = ChooseExecutable(None, executables_found)
+            dialog.run()
+            executable = dialog.get_selected_executable()
+            dialog.destroy()
         exe_cmd = [get_wine_path(game), os.path.join(game.install_dir, executable)]
 
     # Backwards compatibility with windows games installed before installer fixes.

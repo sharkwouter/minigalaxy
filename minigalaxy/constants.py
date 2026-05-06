@@ -115,6 +115,6 @@ BINARY_NAMES_TO_IGNORE = [
     "BNUpdate.exe",
     "VidSize.exe",
     # FreeSpace 2 specific
-    "FRED2.exe",
-    "FS2.exe",
+    # "FRED2.exe",
+    # "FS2.exe",
 ]
