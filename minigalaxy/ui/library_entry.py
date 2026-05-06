@@ -8,7 +8,7 @@ from minigalaxy.api import NoDownloadLinkFound
 from minigalaxy.download import CombinedProgressWatcher, Download, DownloadType
 from minigalaxy.download_manager import DownloadState
 from minigalaxy.entity.state import State
-from minigalaxy.game import Game
+from minigalaxy.game import Game, InfoKey
 from minigalaxy.installer import uninstall_game, enqueue_game_install, check_diskspace, \
     InstallerInventory, InstallResult, InstallResultType
 from minigalaxy.launcher import start_game
@@ -395,7 +395,7 @@ class LibraryEntry:
             if dlc_title:
                 self.game.set_dlc_info("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title)
             else:
-                self.game.set_info("version", self.api.get_version(self.game))
+                self.game.set_info(InfoKey.VERSION, self.api.get_version(self.game))
             if on_success:
                 on_success()
             return
@@ -485,7 +485,7 @@ class LibraryEntry:
         if self.game.is_installed() and self.game.id and not self.offline:
             game_info = self.api.get_info(self.game)
             self.__download_icon(game_info=game_info)
-            if self.game.get_info("check_for_updates", True):
+            if self.game.get_info(InfoKey.CHECK_UPDATES, True):
                 game_version = self.api.get_version(self.game, gameinfo=game_info)
                 update_available = self.game.is_update_available(game_version)
                 if update_available:

@@ -2,6 +2,7 @@ import shutil
 import subprocess
 
 from minigalaxy.config import Config
+from minigalaxy.game import InfoKey
 from minigalaxy.installer import create_applications_file
 from minigalaxy.translation import _
 from minigalaxy.launcher import config_game, regedit_game, winetricks_game
@@ -44,29 +45,29 @@ class Properties(Gtk.Dialog):
         self.button_sensitive(game)
 
         # Keep switch check for updates disabled/enabled
-        self.switch_properties_check_for_updates.set_active(self.game.get_info("check_for_updates"))
+        self.switch_properties_check_for_updates.set_active(self.game.get_info(InfoKey.CHECK_UPDATES))
 
         # Retrieve custom wine path each time Properties is open
-        if self.game.get_info("custom_wine"):
-            self.button_properties_wine.set_filename(self.game.get_info("custom_wine"))
+        if self.game.get_info(InfoKey.CUSTOM_WINE):
+            self.button_properties_wine.set_filename(self.game.get_info(InfoKey.CUSTOM_WINE))
         elif shutil.which("wine"):
             self.button_properties_wine.set_filename(shutil.which("wine"))
 
         # Keep switch FPS disabled/enabled
-        self.switch_properties_show_fps.set_active(self.game.get_info("show_fps"))
+        self.switch_properties_show_fps.set_active(self.game.get_info(InfoKey.SHOW_FPS))
 
         # Keep switch game shown/hidden
-        self.switch_properties_hide_game.set_active(self.game.get_info("hide_game"))
+        self.switch_properties_hide_game.set_active(self.game.get_info(InfoKey.HIDE_GAME))
 
         # Keep switch use GameMode disabled/enabled
-        self.switch_properties_use_gamemode.set_active(self.game.get_info("use_gamemode"))
+        self.switch_properties_use_gamemode.set_active(self.game.get_info(InfoKey.GAMEMODE))
 
         # Keep switch use MangoHud disabled/enabled
-        self.switch_properties_use_mangohud.set_active(self.game.get_info("use_mangohud"))
+        self.switch_properties_use_mangohud.set_active(self.game.get_info(InfoKey.MANGOHUD))
 
         # Retrieve variable & command each time properties is open
-        self.entry_properties_variable.set_text(self.game.get_info("variable"))
-        self.entry_properties_command.set_text(self.game.get_info("command"))
+        self.entry_properties_variable.set_text(self.game.get_info(InfoKey.VARIABLES))
+        self.entry_properties_command.set_text(self.game.get_info(InfoKey.COMMAND))
 
         # Center properties window
         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
@@ -79,22 +80,22 @@ class Properties(Gtk.Dialog):
     def ok_pressed(self, button):
         game_installed = self.game.is_installed()
         if game_installed:
-            self.game.set_info("check_for_updates", self.switch_properties_check_for_updates.get_active())
-            self.game.set_info("show_fps", self.switch_properties_show_fps.get_active())
+            self.game.set_info(InfoKey.CHECK_UPDATES, self.switch_properties_check_for_updates.get_active())
+            self.game.set_info(InfoKey.SHOW_FPS, self.switch_properties_show_fps.get_active())
             if self.switch_properties_use_gamemode.get_active() and not shutil.which("gamemoderun"):
                 self.parent_window.show_error(_("GameMode wasn't found. Using GameMode cannot be enabled."))
-                self.game.set_info("use_gamemode", False)
+                self.game.set_info(InfoKey.GAMEMODE, False)
             else:
-                self.game.set_info("use_gamemode", self.switch_properties_use_gamemode.get_active())
+                self.game.set_info(InfoKey.GAMEMODE, self.switch_properties_use_gamemode.get_active())
             if self.switch_properties_use_mangohud.get_active() and not shutil.which("mangohud"):
                 self.parent_window.show_error(_("MangoHud wasn't found. Using MangoHud cannot be enabled."))
-                self.game.set_info("use_mangohud", False)
+                self.game.set_info(InfoKey.MANGOHUD, False)
             else:
-                self.game.set_info("use_mangohud", self.switch_properties_use_mangohud.get_active())
-            self.game.set_info("variable", str(self.entry_properties_variable.get_text()))
-            self.game.set_info("command", str(self.entry_properties_command.get_text()))
-        self.game.set_info("hide_game", self.switch_properties_hide_game.get_active())
-        self.game.set_info("custom_wine", str(self.button_properties_wine.get_filename()))
+                self.game.set_info(InfoKey.MANGOHUD, self.switch_properties_use_mangohud.get_active())
+            self.game.set_info(InfoKey.VARIABLES, str(self.entry_properties_variable.get_text()))
+            self.game.set_info(InfoKey.COMMAND, str(self.entry_properties_command.get_text()))
+        self.game.set_info(InfoKey.HIDE_GAME, self.switch_properties_hide_game.get_active())
+        self.game.set_info(InfoKey.CUSTOM_WINE, str(self.button_properties_wine.get_filename()))
         self.parent_library.filter_library()
 
         if game_installed and self.config.create_applications_file:
