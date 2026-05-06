@@ -8,7 +8,7 @@ from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.entity.state import State
-from minigalaxy.game import Game
+from minigalaxy.game import Game, InfoKey
 from minigalaxy.logger import logger
 from minigalaxy.paths import CATEGORIES_FILE_PATH
 from minigalaxy.translation import _
@@ -111,7 +111,7 @@ class Library(Gtk.Viewport):
             if tile.current_state in [State.DOWNLOADABLE, State.INSTALLABLE]:
                 return False
 
-        if not self.config.show_hidden_games and tile.game.get_info("hide_game"):
+        if not self.config.show_hidden_games and tile.game.get_info(InfoKey.HIDE_GAME):
             return False
 
         if len(self.category_filters) > 0:

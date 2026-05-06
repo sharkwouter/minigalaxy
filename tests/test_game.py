@@ -1,7 +1,7 @@
 import unittest
 import os
 from unittest.mock import MagicMock, mock_open, patch
-from minigalaxy.game import Game
+from minigalaxy.game import Game, InfoKey
 
 
 class TestGame(unittest.TestCase):
@@ -132,7 +132,7 @@ en-US
         json_content = '{"version": "gog-2"}'
         with patch("builtins.open", mock_open(read_data=json_content)) as m:
             game = Game("Game Name test2")
-            game.set_info("version", "gog-3")
+            game.set_info(InfoKey.VERSION, "gog-3")
         mock_c = m.mock_calls
         write_string = ""
         for kall in mock_c:

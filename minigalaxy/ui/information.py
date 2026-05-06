@@ -6,6 +6,7 @@ from minigalaxy.api import Api
 from minigalaxy.config import Config
 from minigalaxy.download import Download
 from minigalaxy.download_manager import DownloadManager
+from minigalaxy.game import InfoKey
 from minigalaxy.paths import THUMBNAIL_DIR, COVER_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, GLib, Gio, GdkPixbuf, load_ui
@@ -140,5 +141,5 @@ class Information(Gtk.Dialog):
                     genre = genre_value
             description = "{}: {}\n{}".format(_("Genre"), genre, description)
         if self.game.is_installed():
-            description = "{}: {}\n{}".format(_("Version"), self.game.get_info("version"), description)
+            description = "{}: {}\n{}".format(_("Version"), self.game.get_info(InfoKey.VERSION), description)
         GLib.idle_add(self.label_game_description.set_text, description)

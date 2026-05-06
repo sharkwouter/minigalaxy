@@ -2,7 +2,23 @@ import os
 import re
 import json
 
+from enum import Enum
 from minigalaxy.paths import CONFIG_GAMES_DIR, ICON_DIR, THUMBNAIL_DIR
+from minigalaxy.logger import logger
+
+
+class InfoKey(str, Enum):
+    """An enum representing all valid game-specific info/property keys"""
+
+    CHECK_UPDATES = "check_for_updates"
+    COMMAND = "command"
+    CUSTOM_WINE = "custom_wine"
+    HIDE_GAME = "hide_game"
+    MANGOHUD = "use_mangohud"
+    SHOW_FPS = "show_fps"
+    GAMEMODE = "use_gamemode"
+    VARIABLES = "variable"
+    VERSION = "version"
 
 
 class Game:
@@ -73,6 +89,10 @@ class Game:
     def save_minigalaxy_info_json(self, json_dict):
         if not os.path.exists(CONFIG_GAMES_DIR):
             os.makedirs(CONFIG_GAMES_DIR, mode=0o755)
+        # delete the json file if it exists and its new value would be just an empty dictionary
+        if len(json_dict) == 0 and os.path.isfile(self.status_file_path):
+            os.remove(self.status_file_path)
+            return
         with open(self.status_file_path, 'w') as status_file:
             json.dump(json_dict, status_file)
 
@@ -96,10 +116,10 @@ class Game:
         if dlc_title:
             installed_version = self.get_dlc_info("version", dlc_title)
         else:
-            installed_version = self.get_info("version")
+            installed_version = self.get_info(InfoKey.VERSION)
             if not installed_version:
                 installed_version = self.fallback_read_installed_version()
-                self.set_info("version", installed_version)
+                self.set_info(InfoKey.VERSION, installed_version)
         if installed_version and version_from_api and version_from_api != installed_version:
             update_available = True
 
@@ -117,9 +137,14 @@ class Game:
             version = "0"
         return version
 
-    def set_info(self, key, value):
+    def set_info(self, key: InfoKey, value):
+        """Set given key-value-pair for the game. Deletes the entry when None is passed as value."""
+        key = self.__info_key_from_arg(key)
         json_dict = self.load_minigalaxy_info_json()
-        json_dict[key] = value
+        if value is None:
+            del json_dict[key]
+        else:
+            json_dict[key] = value
         self.save_minigalaxy_info_json(json_dict)
 
     def set_dlc_info(self, key, value, dlc_title):
@@ -131,7 +156,8 @@ class Game:
         json_dict["dlcs"][dlc_title][key] = value
         self.save_minigalaxy_info_json(json_dict)
 
-    def get_info(self, key, default_value=""):
+    def get_info(self, key: InfoKey, default_value=""):
+        key = self.__info_key_from_arg(key)
         value = ""
         json_dict = self.load_minigalaxy_info_json()
         if key in json_dict:
@@ -175,6 +201,16 @@ class Game:
         if not self.install_dir:
             self.install_dir = os.path.join(install_dir, self.get_install_directory_name())
 
+    def __info_key_from_arg(self, key):
+        """
+        For test compatibility. Regular MG production could should use InfoKey for protection against typos etc.
+        But this method takes either str or InfoKey and returns the str value to use as json key.
+        """
+        if isinstance(key, InfoKey):
+            return key.value
+        logger.warning("An instance of game.InfoKey is expected, but %s was given!", type(key))
+        return key
+
     def __str__(self):
         return self.name
 
@@ -186,7 +222,7 @@ class Game:
             game_id={self.id},
             install_dir="{self.install_dir}",
             image_url="{self.image_url}",
-            platform="linux",
+            platform="{self.platform}",
             dlcs={self.dlcs},
             category="{self.category}"
         )'''

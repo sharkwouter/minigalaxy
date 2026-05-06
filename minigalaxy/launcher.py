@@ -7,6 +7,7 @@ import shlex
 import threading
 from typing import List
 
+from minigalaxy.game import InfoKey
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.constants import BINARY_NAMES_TO_IGNORE
@@ -14,7 +15,7 @@ from minigalaxy.constants import BINARY_NAMES_TO_IGNORE
 
 def get_wine_path(game):
     binary_name = "wine"
-    custom_wine_path = game.get_info("custom_wine")
+    custom_wine_path = game.get_info(InfoKey.CUSTOM_WINE)
     if custom_wine_path and custom_wine_path != shutil.which(binary_name):
         binary_name = custom_wine_path
     return binary_name
@@ -79,9 +80,9 @@ def get_execute_command(game) -> list:
     else:
         # If no executable was found at all, raise an error
         raise FileNotFoundError()
-    if game.get_info("use_gamemode") is True:
+    if game.get_info(InfoKey.GAMEMODE) is True:
         exe_cmd.insert(0, "gamemoderun")
-    if game.get_info("use_mangohud") is True:
+    if game.get_info(InfoKey.MANGOHUD) is True:
         exe_cmd.insert(0, "mangohud")
         exe_cmd.insert(1, "--dlsym")
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
@@ -107,8 +108,8 @@ def determine_launcher_type(files):
 
 
 def get_exe_cmd_with_var_command(game, exe_cmd):
-    var_list = shlex.split(game.get_info("variable"))
-    command_list = shlex.split(game.get_info("command"))
+    var_list = shlex.split(game.get_info(InfoKey.VARIABLES))
+    command_list = shlex.split(game.get_info(InfoKey.COMMAND))
 
     if var_list:
         if var_list[0] not in ["env"]:
@@ -222,7 +223,7 @@ def get_final_resort_exe_cmd(game, files):
 def set_fps_display(game):
     error_message = ""
     # Enable FPS Counter for Nvidia or AMD (Mesa) users
-    if game.get_info("show_fps"):
+    if game.get_info(InfoKey.SHOW_FPS):
         os.environ["__GL_SHOW_GRAPHICS_OSD"] = "1"  # For Nvidia users + OpenGL/Vulkan games
         os.environ["GALLIUM_HUD"] = "simple,fps"  # For AMDGPU users + OpenGL games
         os.environ["VK_INSTANCE_LAYERS"] = "VK_LAYER_MESA_overlay"  # For AMDGPU users + Vulkan games
