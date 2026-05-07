@@ -5,8 +5,7 @@ import uuid
 from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch, mock_open
 import tempfile
-
-from MockGiRepository import MockGiRepository
+from tests.ui import MockGiRepository
 
 m_gtk = MagicMock()
 m_gi = MagicMock()
