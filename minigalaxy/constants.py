@@ -79,15 +79,13 @@ VIEWS = [
     ["list", _("List")],
 ]
 
-PLATFORMS = [
-    ["linux", _("Linux")],
-    ["windows", _("Windows")]
-]
-
-GAME_LISTING_MODE = [
-    ["preferred", _("Preferred platform only")],
-    ["mixed", _("Highlight preferred")],
-    ["all", _("Show all")]
+# PLATFORM_MODE controls which platforms/icons are visible
+# the order of values defines priority: the first value is used as default for install (when not overridden per game)
+PLATFORM_MODE = [
+    ["linux", _("Linux only")],
+    ["linux,windows", _("Prefer Linux")],
+    ["windows,linux", _("Prefer Windows")],
+    ["windows", _("Windows only")]
 ]
 
 # Game IDs to ignore when received by the API
