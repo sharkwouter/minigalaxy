@@ -1,4 +1,4 @@
-## Logo image (data/minigalaxy.png)
+## Logo image (minigalaxy/ui/data/io.github.sharkwouter.Minigalaxy.png)
 
 **[Copyright 2014 Epic Runes](https://opengameart.org/users/epic-runes)**
 

@@ -20,16 +20,22 @@ class Config:
         self.__is_batch_edit = False
         self.__config_file = config_file
         self.__config = {}
+        # this property is cached, because its config value representation differs from the structure in code
+        self.__platform_mode = None
         self.__load()
 
     def __load(self) -> None:
-        if os.path.isfile(self.__config_file):
-            with open(self.__config_file, "r", encoding="utf-8") as file:
-                try:
-                    self.__config = json.loads(file.read())
-                except (json.decoder.JSONDecodeError, UnicodeDecodeError):
-                    logger.warning("Reading config.json failed, creating new config file.")
-                    os.remove(self.__config_file)
+        if not os.path.isfile(self.__config_file):
+            return
+
+        with open(self.__config_file, "r", encoding="utf-8") as file:
+            try:
+                self.__config = json.loads(file.read())
+            except (json.decoder.JSONDecodeError, UnicodeDecodeError):
+                logger.warning("Reading config.json failed, creating new config file.")
+                os.remove(self.__config_file)
+        # reset cached transformed properties
+        self.__platform_mode = None
 
     def __write(self) -> None:
         if not os.path.isfile(self.__config_file):
@@ -39,6 +45,13 @@ class Config:
         with open(temp_file, "w", encoding="utf-8") as file:
             file.write(json.dumps(self.__config, ensure_ascii=False))
         os.rename(temp_file, self.__config_file)
+
+    def __as_list(self, value: str):
+        return value.split(",") if str else []
+
+    def __as_csv(self, value):
+        """When value is a list, join it with comma and return, else expect it to be string and just return as is"""
+        return ",".join(value) if isinstance(value, list) else value
 
     def start_batch_edit(self):
         """
@@ -172,6 +185,24 @@ class Config:
     @show_windows_games.setter
     def show_windows_games(self, new_value: bool) -> None:
         self.__set_and_write("show_windows_games", new_value)
+
+    @property
+    def platform_mode(self) -> str:
+        """NOTE: This property is stored as string, but represented internally as list"""
+        if not self.__platform_mode:
+            # cache the splitted value for performance reasons
+            self.__platform_mode = self.__as_list(self.__config.get("platform_mode", "linux"))
+        return self.__platform_mode
+
+    @platform_mode.setter
+    def platform_mode(self, new_value) -> None:
+        """
+        Accepts str or list[str] as value, should consist of values found in 'constants.py:PLATFORM_MODE[n][0]'.
+        'platform_mode' is stored as string because it is easier to use in a ComboBox and select in preferences dialog.
+        """
+        new_value = self.__as_csv(new_value)
+        self.__set_and_write("platform_mode", new_value)
+        self.__platform_mode = None
 
     @property
     def keep_window_maximized(self) -> bool:
