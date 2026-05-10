@@ -39,6 +39,11 @@ class Game:
     def get_stripped_name(self, to_path=False):
         return Game.strip_string(self.name, to_path=to_path)
 
+    def supported_platforms(self):
+        if isinstance(self.platform, str):
+            return [self.platform]
+        return [*self.platform]
+
     def get_install_directory_name(self):
         return Game.strip_string(self.name, to_path=True)
 

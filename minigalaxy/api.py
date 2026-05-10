@@ -78,46 +78,55 @@ class Api:
             refresh_token = ""
         return refresh_token
 
-    # Get all Linux games in the library of the user. Ignore other platforms and movies
     def get_library(self):
+        """Get all Linux games in the library of the user. Ignore movies."""
         err_msg = ""
-        games = []
-        if self.active_token:
-            current_page = 1
-            all_pages_processed = False
-            url = "https://embed.gog.com/account/getFilteredProducts"
-
-            while not all_pages_processed:
-                params = {
-                    'mediaType': 1,  # 1 means game
-                    'page': current_page,
-                }
-                response = self.__request(url, params=params)
-                if "totalPages" not in response:
-                    err_msg = "Couldn't load game library"
-                    return games, err_msg
-                total_pages = response["totalPages"]
-
-                for product in response["products"]:
-                    if product["id"] not in IGNORE_GAME_IDS:
-                        # Only support Linux unless the show_windows_games setting is enabled
-                        if product["worksOn"]["Linux"]:
-                            platform = "linux"
-                        elif self.config.show_windows_games:
-                            platform = "windows"
-                        else:
-                            continue
-                        if not product["url"]:
-                            logger.warning("{} ({}) has no store page url".format(product["title"], product['id']))
-                        game = Game(name=product["title"], url=product["url"], game_id=product["id"],
-                                    image_url=product["image"], platform=platform, category=product["category"])
-                        games.append(game)
-                if current_page == total_pages:
-                    all_pages_processed = True
-                current_page += 1
-        else:
+        if not self.active_token:
             err_msg = "Couldn't connect to GOG servers"
-        return games, err_msg
+            return [], err_msg
+
+        current_page = 0
+        total_pages = 1
+        url = "https://embed.gog.com/account/getFilteredProducts"
+
+        gamesById = {}
+
+        while current_page < total_pages:
+            current_page += 1
+            params = {
+                'mediaType': 1,  # 1 means game
+                'page': current_page,
+            }
+            response = self.__request(url, params=params)
+            if "totalPages" not in response:
+                err_msg = "Couldn't load game library"
+                return [*gamesById.values()], err_msg
+            total_pages = response["totalPages"]
+            self.__parse_product_json(response["products"], gamesById)
+
+        return [*gamesById.values()], err_msg
+
+    def __parse_product_json(self, product_list, games_by_id):
+        for product in product_list:
+            if product["id"] in IGNORE_GAME_IDS:
+                continue
+
+            worksOn = product.get("worksOn", {})
+            platforms = []
+            if worksOn["Linux"]:
+                platforms.append("linux")
+            if worksOn["Windows"]:
+                platforms.append("windows")
+
+            if not platforms:
+                logger.warn("%s has no platform information - skip", product["title"])
+                continue
+
+            if not product["url"]:
+                logger.warning("%s (%s) has no store page url", product["title"], product['id'])
+            game = Game(name=product["title"], url=product["url"], game_id=product["id"],
+                        image_url=product["image"], platform=platforms, category=product["category"])
+            games_by_id[game.id] = game
 
     def get_owned_products_ids(self):
         if not self.active_token:

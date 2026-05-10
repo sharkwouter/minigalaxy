@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 -->
+<!-- Generated with glade 3.40.0 -->
 <interface domain="minigalaxy">
   <requires lib="gtk+" version="3.20"/>
   <template class="Preferences" parent="GtkDialog">
@@ -51,27 +51,12 @@
           </packing>
         </child>
         <child>
-          <!-- n-columns=3 n-rows=9 -->
+          <!-- n-columns=2 n-rows=10 -->
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="row-spacing">2</property>
             <property name="row-homogeneous">True</property>
-            <property name="column-homogeneous">True</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="language_tooltip">The preferred language on Minigalaxy start</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes" context="language" comments="The preferred language on Minigalaxy start. Has to end with &quot;: &quot;">Language: </property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">0</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkComboBox" id="combobox_program_language">
                 <property name="visible">True</property>
@@ -81,20 +66,6 @@
               <packing>
                 <property name="left-attach">1</property>
                 <property name="top-attach">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="preferred_game_language_tooltip">The preferred language for downloading games in</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes" context="preferred_game_language" comments="Preferred language for downloading games in. Has to end with &quot;: &quot;">Preferred game language: </property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">1</property>
               </packing>
             </child>
             <child>
@@ -109,20 +80,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="view_tooltip">The preferred view of game library</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes" context="view" comments="The preferred view of game library. Has to end with &quot;: &quot;">View: </property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">2</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkComboBox" id="combobox_view">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -130,20 +87,6 @@
               </object>
               <packing>
                 <property name="left-attach">1</property>
-                <property name="top-attach">2</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="install_path_tooltip">This is where games will be installed</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes" context="install_path" comments="The place directory in which games are installed. Has to end with &quot;: &quot;">Installation path: </property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
                 <property name="top-attach">3</property>
               </packing>
             </child>
@@ -158,19 +101,6 @@
               </object>
               <packing>
                 <property name="left-attach">1</property>
-                <property name="top-attach">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label_keep_installers">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes" context="keep_installer" comments="Whether installer files are kept after download. Has to end with &quot;: &quot;">Keep installers: </property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
                 <property name="top-attach">4</property>
               </packing>
             </child>
@@ -183,20 +113,6 @@
               </object>
               <packing>
                 <property name="left-attach">1</property>
-                <property name="top-attach">4</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="stay_logged_in_tooltip">When disabled you'll be asked to log in each time Minigalaxy is started</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes" context="stay_logged_in" comments="Whether the user will stay logged in after closing Minigalaxy. Has to end with &quot;: &quot;">Stay logged in:</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
                 <property name="top-attach">5</property>
               </packing>
             </child>
@@ -210,20 +126,6 @@
               </object>
               <packing>
                 <property name="left-attach">1</property>
-                <property name="top-attach">5</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="use_dark_theme_tooltip">Whether Minigalaxy should use dark theme or not</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes" context="use_dark_theme" comments="Has to end with &quot;: &quot;">Use dark theme: </property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
                 <property name="top-attach">6</property>
               </packing>
             </child>
@@ -236,51 +138,11 @@
               </object>
               <packing>
                 <property name="left-attach">1</property>
-                <property name="top-attach">6</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="show_hidden_games_tooltip">Whether hidden games are shown in the library or not</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes" context="show_hidden_games" comments="Has to end with &quot;: &quot;">Show hidden games: </property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
                 <property name="top-attach">7</property>
               </packing>
             </child>
             <child>
               <object class="GtkSwitch" id="switch_show_hidden_games">
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-              </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">7</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes" context="show_windows_games_tooltip">Whether Windows games are shown in the library or not</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="label" translatable="yes" context="show_windows_games" comments="Has to end with &quot;: &quot;">Show Windows games: </property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">8</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSwitch" id="switch_show_windows_games">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="halign">start</property>
@@ -304,6 +166,128 @@
               </packing>
             </child>
             <child>
+              <object class="GtkComboBox" id="combobox_platform_mode">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="valign">center</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="language_tooltip">The preferred language on Minigalaxy start</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes" context="language" comments="The preferred language on Minigalaxy start. Has to end with &quot;: &quot;">Language: </property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="preferred_game_language_tooltip">The preferred language for downloading games in</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes" context="preferred_game_language" comments="Preferred language for downloading games in. Has to end with &quot;: &quot;">Preferred game language: </property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="view_tooltip">The preferred view of game library</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes" context="view" comments="The preferred view of game library. Has to end with &quot;: &quot;">View: </property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="install_path_tooltip">This is where games will be installed</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes" context="install_path" comments="The place directory in which games are installed. Has to end with &quot;: &quot;">Installation path: </property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label_keep_installers">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes" context="keep_installer" comments="Whether installer files are kept after download. Has to end with &quot;: &quot;">Keep installers: </property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">5</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="stay_logged_in_tooltip">When disabled you'll be asked to log in each time Minigalaxy is started</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes" context="stay_logged_in" comments="Whether the user will stay logged in after closing Minigalaxy. Has to end with &quot;: &quot;">Stay logged in:</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">6</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="use_dark_theme_tooltip">Whether Minigalaxy should use dark theme or not</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes" context="use_dark_theme" comments="Has to end with &quot;: &quot;">Use dark theme: </property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">7</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes" context="show_hidden_games_tooltip">Whether hidden games are shown in the library or not</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes" context="show_hidden_games" comments="Has to end with &quot;: &quot;">Show hidden games: </property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">8</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -318,28 +302,18 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Which platforms to show and favor when installing games</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="label" translatable="yes">Platform support:</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">2</property>
+              </packing>
             </child>
           </object>
           <packing>
