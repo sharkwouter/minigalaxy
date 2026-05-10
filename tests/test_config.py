@@ -31,7 +31,6 @@ class TestConfig(TestCase):
                 "stay_logged_in": false,
                 "use_dark_theme": true,
                 "show_hidden_games": true,
-                "show_windows_games": true,
                 "keep_window_maximized": true,
                 "installed_filter": true,
                 "create_applications_file": true,
@@ -52,7 +51,6 @@ class TestConfig(TestCase):
         self.assertEqual(False, config.stay_logged_in)
         self.assertEqual(True, config.use_dark_theme)
         self.assertEqual(True, config.show_hidden_games)
-        self.assertEqual(True, config.show_windows_games)
         self.assertEqual(True, config.keep_window_maximized)
         self.assertEqual(True, config.installed_filter)
         self.assertEqual(True, config.create_applications_file)
@@ -74,7 +72,6 @@ class TestConfig(TestCase):
         self.assertEqual(True, config.stay_logged_in)
         self.assertEqual(False, config.use_dark_theme)
         self.assertEqual(False, config.show_hidden_games)
-        self.assertEqual(False, config.show_windows_games)
         self.assertEqual(False, config.keep_window_maximized)
         self.assertEqual(False, config.installed_filter)
         self.assertEqual(False, config.create_applications_file)
@@ -105,7 +102,6 @@ class TestConfig(TestCase):
         self.assertEqual(True, config.stay_logged_in)
         self.assertEqual(False, config.use_dark_theme)
         self.assertEqual(False, config.show_hidden_games)
-        self.assertEqual(False, config.show_windows_games)
         self.assertEqual(False, config.keep_window_maximized)
         self.assertEqual(False, config.installed_filter)
         self.assertEqual(False, config.create_applications_file)
@@ -126,7 +122,6 @@ class TestConfig(TestCase):
             ["stay_logged_in", True, False],
             ["use_dark_theme", False, True],
             ["show_hidden_games", False, True],
-            ["show_windows_games", False, True],
             # NOTE: platform_mode getter/setter work on incompatible types
             # can not be tested here with the regular simple test loop
             # ["platform_mode", ["linux"], "windows,linux"]

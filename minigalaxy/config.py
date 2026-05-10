@@ -37,6 +37,14 @@ class Config:
         # reset cached transformed properties
         self.__platform_mode = None
 
+        # property migration
+        if "show_windows_games" in self.__config and "platform_mode" not in self.__config:
+            value = self.__config["show_windows_games"]
+            del self.__config["show_windows_games"]
+            new_mode = "linux,windows" if value else "linux"
+            logger.info("Migrating 'show_windows_games=%s' to 'platform_mode=%s", value, new_mode)
+            self.platform_mode = new_mode
+
     def __write(self) -> None:
         if not os.path.isfile(self.__config_file):
             config_dir = os.path.dirname(self.__config_file)
@@ -179,19 +187,11 @@ class Config:
         self.__set_and_write("show_hidden_games", new_value)
 
     @property
-    def show_windows_games(self) -> bool:
-        return self.__config.get("show_windows_games", False)
-
-    @show_windows_games.setter
-    def show_windows_games(self, new_value: bool) -> None:
-        self.__set_and_write("show_windows_games", new_value)
-
-    @property
     def platform_mode(self) -> str:
         """NOTE: This property is stored as string, but represented internally as list"""
         if not self.__platform_mode:
             # cache the splitted value for performance reasons
-            self.__platform_mode = self.__as_list(self.__config.get("platform_mode", "linux"))
+            self.__platform_mode = self.__as_list(self._raw_platform_mode())
         return self.__platform_mode
 
     @platform_mode.setter
@@ -203,6 +203,15 @@ class Config:
         new_value = self.__as_csv(new_value)
         self.__set_and_write("platform_mode", new_value)
         self.__platform_mode = None
+
+    def _raw_platform_mode(self):
+        """To be used by preferences dialog only. Returns plain config string. Used to check for changes."""
+        return self.__config.get("platform_mode", "linux")
+
+    @property
+    def preferred_platform(self):
+        """Not a full settings - it only exists as a convenient shortcut for 'Config.platform_mode[0]'"""
+        return self.platform_mode[0]
 
     @property
     def keep_window_maximized(self) -> bool:
@@ -249,14 +258,14 @@ class Config:
         self.__set_and_write("current_downloads", new_value)
 
     def add_ongoing_download(self, download_id):
-        '''Adds the given id to the list of active downloads if not contained already. Does nothing otherwise.'''
+        """Adds the given id to the list of active downloads if not contained already. Does nothing otherwise."""
         current = self.current_downloads
         if download_id not in current:
             current.append(download_id)
             self.current_downloads = current
 
     def remove_ongoing_download(self, download_id):
-        '''Removes the given id from the list of active downloads, if contained. Does nothing otherwise.'''
+        """Removes the given id from the list of active downloads, if contained. Does nothing otherwise."""
         current = self.current_downloads
         if download_id in current:
             current.remove(download_id)
