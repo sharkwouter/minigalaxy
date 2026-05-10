@@ -1,4 +1,5 @@
 **1.4.3**
+- Introduce a global preference to pick if linux or windows game installers are preferred. (thanks to GB609)
 - Reduce unnecessary writes to the config file. (thanks to GB609)
 
 **1.4.2**
