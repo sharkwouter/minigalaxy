@@ -3,7 +3,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 from simplejson.errors import JSONDecodeError
 
-from MockGiRepository import MockGiRepository
+from tests.ui import MockGiRepository
 
 m_gtk = MagicMock()
 m_gi = MagicMock()

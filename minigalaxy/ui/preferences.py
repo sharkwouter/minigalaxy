@@ -1,12 +1,14 @@
 import os
 import locale
 import shutil
-from minigalaxy.translation import _
+
+from minigalaxy.config import Config
 from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES, VIEWS
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.ui.gtk import Gtk, load_ui
-from minigalaxy.config import Config
 from minigalaxy.logger import logger
+from minigalaxy.translation import _
+from minigalaxy.ui.gtk import Gtk, load_ui
+from minigalaxy.ui.widget_utils import populate_combobox
 
 
 @Gtk.Template(string=load_ui("preferences.ui"))
@@ -51,61 +53,19 @@ class Preferences(Gtk.Dialog):
         )
 
     def __set_locale_list(self) -> None:
-        locales = Gtk.ListStore(str, str)
-        for local in SUPPORTED_LOCALES:
-            locales.append(local)
-
-        self.combobox_program_language.set_model(locales)
-        self.combobox_program_language.set_entry_text_column(1)
-        self.renderer_text = Gtk.CellRendererText()
-        self.combobox_program_language.pack_start(self.renderer_text, False)
-        self.combobox_program_language.add_attribute(self.renderer_text, "text", 1)
-
         # Set the active option
         current_locale = self.config.locale
         default_locale = locale.getdefaultlocale()
         if current_locale is None:
             locale.setlocale(locale.LC_ALL, default_locale)
-        for key in range(len(locales)):
-            if locales[key][:1][0] == current_locale:
-                self.combobox_program_language.set_active(key)
-                break
+
+        populate_combobox(self.combobox_program_language, SUPPORTED_LOCALES, current_locale)
 
     def __set_language_list(self) -> None:
-        languages = Gtk.ListStore(str, str)
-        for lang in SUPPORTED_DOWNLOAD_LANGUAGES:
-            languages.append(lang)
-
-        self.combobox_language.set_model(languages)
-        self.combobox_language.set_entry_text_column(1)
-        self.renderer_text = Gtk.CellRendererText()
-        self.combobox_language.pack_start(self.renderer_text, False)
-        self.combobox_language.add_attribute(self.renderer_text, "text", 1)
-
-        # Set the active option
-        current_lang = self.config.lang
-        for key in range(len(languages)):
-            if languages[key][:1][0] == current_lang:
-                self.combobox_language.set_active(key)
-                break
+        populate_combobox(self.combobox_language, SUPPORTED_DOWNLOAD_LANGUAGES, self.config.lang)
 
     def __set_view_list(self) -> None:
-        views = Gtk.ListStore(str, str)
-        for view in VIEWS:
-            views.append(view)
-
-        self.combobox_view.set_model(views)
-        self.combobox_view.set_entry_text_column(1)
-        self.renderer_text = Gtk.CellRendererText()
-        self.combobox_view.pack_start(self.renderer_text, False)
-        self.combobox_view.add_attribute(self.renderer_text, "text", 1)
-
-        # Set the active option
-        current_view = self.config.view
-        for key in range(len(views)):
-            if views[key][:1][0] == current_view:
-                self.combobox_view.set_active(key)
-                break
+        populate_combobox(self.combobox_view, VIEWS, self.config.view)
 
     def __apply_locale_choice(self) -> None:
         new_locale = self.combobox_program_language.get_active_iter()
