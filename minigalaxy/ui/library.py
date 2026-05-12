@@ -144,8 +144,19 @@ class Library(Gtk.Viewport):
                 tile.load_thumbnail()
 
         for game in self.games:
-            if game not in games_with_tiles:
+            if game in games_with_tiles:
+                continue
+            if game.is_installed():
                 self.__add_gametile(game)
+            elif game.id in self.config.current_downloads:
+                self.__add_gametile(game)
+            elif game.platform in self.config.platform_mode:
+                self.__add_gametile(game)
+            else:
+                # housekeeping: API.get_library returns all owned games
+                # (useful when api-caching is introduced as the same request can be used independent of platform_mode)
+                # removing not shown games is only a small memory optimization
+                self.games.remove(game)
 
     def __add_gametile(self, game):
         view = self.config.view
