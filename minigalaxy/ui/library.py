@@ -250,17 +250,7 @@ def _update_gameinfo(local_game, api_game, game_category_dict={}):
     if len(api_game.category) > 0:  # exclude games without set category
         game_category_dict[api_game.name] = api_game.category
 
-    # this update is only necessary if local_game and api_game are 2 different object instances
-    if local_game is api_game:
-        return
-
-    if local_game.id == 0 or local_game.name != api_game.name:
-        local_game.id = api_game.id
-        local_game.name = api_game.name
-
-    local_game.image_url = api_game.image_url
-    local_game.url = api_game.url
-    local_game.category = api_game.category
+    local_game.update_from_other(api_game)
 
 
 def get_installed_windows_games(full_path, game_categories_dict=None):

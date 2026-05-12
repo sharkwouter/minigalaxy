@@ -347,14 +347,38 @@ en-US
         observed = game_get_status
         self.assertEqual(expected, observed)
 
-    def test1_get_status_file_path(self):
+    def test_get_status_file_path_default(self):
         game = Game(name="Europa Universalis 2")
         expected = os.path.expanduser("~/.config/minigalaxy/games/Europa Universalis 2.json")
         observed = game.get_status_file_path()
         self.assertEqual(expected, observed)
 
-    def test2_get_status_file_path(self):
+    def test_get_status_file_path_override_install_dir(self):
         game = Game(name="Europa Universalis 2", install_dir="/home/user/GoG Games//Europa Universalis II")
         expected = os.path.expanduser("~/.config/minigalaxy/games/Europa Universalis II.json")
         observed = game.get_status_file_path()
         self.assertEqual(expected, observed)
+
+    def test_update_from_other_different_id(self):
+        game = Game("Empty")
+        update = Game("Empty", game_id=42, image_url="file:/dev/null", url="https://www.google.com")
+
+        game.update_from_other(update)
+        # make sure 'game' has taken the values from 'update'
+        # assert doesn't use properties from update directly because these would also be
+        # fulfilled if update took the values from game instead (coding error)
+        self.assertEqual(42, game.id)
+        self.assertEqual("file:/dev/null", game.image_url)
+        self.assertEqual("https://www.google.com", game.url)
+
+    def test_update_from_other_different_name(self):
+        game = Game("Empty", game_id=42)
+        update = Game("Other Name", game_id=42, image_url="file:/dev/null", url="https://www.google.com")
+
+        game.update_from_other(update)
+        # make sure 'game' has taken the values from 'update'
+        # assert doesn't use properties from update directly because these would also be
+        # fulfilled if update took the values from game instead (coding error)
+        self.assertEqual("Other Name", game.name)
+        self.assertEqual("file:/dev/null", game.image_url)
+        self.assertEqual("https://www.google.com", game.url)
