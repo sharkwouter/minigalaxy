@@ -111,6 +111,23 @@ class TestApiGog(TestCase):
         _, obs = self.api.get_library()
         self.assertEqual(exp, obs)
 
+    def test_parse_productlist_json(self):
+        products = [
+            {"id": 2, "title": "Should not be included", "image": ""},
+            {"id": 12, "worksOn": {}, "title": "Should not be included", "image": "", "category": ""},
+            {"id": 22, "worksOn": {"Linux": True, "Windows": False}, "title": "Pure Linux Game", "image": "", "category": ""},
+            {"id": 32, "worksOn": {"Linux": False, "Windows": True}, "title": "Pure Windows Game", "image": "", "category": ""},
+            {"id": 42, "worksOn": {"Linux": True, "Windows": True}, "title": "Mixed Game", "image": "", "category": ""}
+        ]
+        expected = [
+            Game(name="Pure Linux Game", game_id=22, platform="linux"),
+            Game(name="Pure Windows Game", game_id=32, platform="window"),
+            Game(name="Mixed Game", game_id=42, platform="linux")
+        ]
+        game_list = []
+        self.api._Api__parse_productlist_json(products, game_list)
+        self.assertEqual(expected, game_list)
+
     def test_get_version(self):
         test_game = Game("Test Game", platform="linux")
         exp = "gog-2"

@@ -114,19 +114,19 @@ class Api:
 
             worksOn = product.get("worksOn", {})
             platform = None
-            if worksOn["Linux"]:
+            if worksOn.get("Linux", False):
                 platform = "linux"
-            elif worksOn["Windows"]:
+            elif worksOn.get("Windows", False):
                 platform = "windows"
 
             if not platform:
                 logger.warn("%s has no platform information - skip", product["title"])
                 continue
 
-            if not product["url"]:
+            if not product.get("url", None):
                 logger.warning("%s (%s) has no store page url", product["title"], product['id'])
 
-            game = Game(name=product["title"], url=product["url"], game_id=product["id"],
+            game = Game(name=product["title"], url=product.get("url", None), game_id=product["id"],
                         image_url=product["image"], platform=platform, category=product["category"])
             game_list.append(game)
 
