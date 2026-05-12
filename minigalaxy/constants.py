@@ -83,9 +83,9 @@ VIEWS = [
 # the order of values defines priority: the first value is used as default for install (when not overridden per game)
 PLATFORM_MODE = [
     ["linux", _("Linux only")],
-    ["linux,windows", _("Prefer Linux")],
-    ["windows,linux", _("Prefer Windows")],
-    ["windows", _("Windows only")]
+    ["linux,windows", _("Prefer Linux")]
+    # ["windows,linux", _("Prefer Windows")],
+    # ["windows", _("Windows only")]
 ]
 
 # Game IDs to ignore when received by the API
