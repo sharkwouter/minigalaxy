@@ -3,12 +3,12 @@ import locale
 import shutil
 
 from minigalaxy.config import Config
-from minigalaxy.constants import SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES, VIEWS
+from minigalaxy.constants import PLATFORM_MODE, SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES, VIEWS
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, load_ui
-from minigalaxy.ui.widget_utils import populate_combobox
+from minigalaxy.ui.widget_utils import get_combo_value, populate_combobox
 
 
 @Gtk.Template(string=load_ui("preferences.ui"))
@@ -18,12 +18,12 @@ class Preferences(Gtk.Dialog):
     combobox_program_language = Gtk.Template.Child()
     combobox_language = Gtk.Template.Child()
     combobox_view = Gtk.Template.Child()
+    combobox_platform_mode = Gtk.Template.Child()
     button_file_chooser = Gtk.Template.Child()
     label_keep_installers = Gtk.Template.Child()
     switch_keep_installers = Gtk.Template.Child()
     switch_stay_logged_in = Gtk.Template.Child()
     switch_show_hidden_games = Gtk.Template.Child()
-    switch_show_windows_games = Gtk.Template.Child()
     switch_create_applications_file = Gtk.Template.Child()
     switch_use_dark_theme = Gtk.Template.Child()
     button_cancel = Gtk.Template.Child()
@@ -38,12 +38,12 @@ class Preferences(Gtk.Dialog):
         self.__set_locale_list()
         self.__set_language_list()
         self.__set_view_list()
+        populate_combobox(self.combobox_platform_mode, PLATFORM_MODE, self.config._raw_platform_mode())
         self.button_file_chooser.set_filename(self.config.install_dir)
         self.switch_keep_installers.set_active(self.config.keep_installers)
         self.switch_stay_logged_in.set_active(self.config.stay_logged_in)
         self.switch_use_dark_theme.set_active(self.config.use_dark_theme)
         self.switch_show_hidden_games.set_active(self.config.show_hidden_games)
-        self.switch_show_windows_games.set_active(self.config.show_windows_games)
         self.switch_create_applications_file.set_active(self.config.create_applications_file)
 
         # Set tooltip for keep installers label
@@ -68,45 +68,36 @@ class Preferences(Gtk.Dialog):
         populate_combobox(self.combobox_view, VIEWS, self.config.view)
 
     def __apply_locale_choice(self) -> None:
-        new_locale = self.combobox_program_language.get_active_iter()
-        if new_locale is not None:
-            model = self.combobox_program_language.get_model()
-            locale_choice = model[new_locale][-2]
-            if locale_choice == '':
-                default_locale = locale.getdefaultlocale()[0]
-                locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
-                self.config.locale = locale_choice
-            else:
-                try:
-                    locale.setlocale(locale.LC_ALL, (locale_choice, 'UTF-8'))
-                    self.config.locale = locale_choice
-                except locale.Error:
-                    self.parent.show_error(_("Failed to change program language. Make sure locale is generated on "
-                                             "your system."))
+        locale_choice = get_combo_value(self.combobox_program_language)
+        if locale_choice == '' or not locale_choice:
+            locale_choice = locale.getdefaultlocale()[0]
 
-    def __apply_language_choice(self) -> None:
-        lang_choice = self.combobox_language.get_active_iter()
-        if lang_choice is not None:
-            model = self.combobox_language.get_model()
-            lang, _ = model[lang_choice][:2]
-            self.config.lang = lang
+        try:
+            locale.setlocale(locale.LC_ALL, (locale_choice, 'UTF-8'))
+            self.config.locale = locale_choice
+        except locale.Error:
+            self.parent.show_error(_("Failed to change program language. Make sure locale is generated on your system."))
 
     def __apply_view_choice(self) -> None:
-        view_choice = self.combobox_view.get_active_iter()
-        if view_choice is not None:
-            model = self.combobox_view.get_model()
-            view, _ = model[view_choice][:2]
-            if view != self.config.view:
-                self.parent.reset_library()
-            self.config.view = view
+        view = get_combo_value(self.combobox_view)
+        if view != self.config.view:
+            self.parent.reset_library()
+        self.config.view = view
 
     def __apply_theme_choice(self) -> None:
         settings = Gtk.Settings.get_default()
         self.config.use_dark_theme = self.switch_use_dark_theme.get_active()
-        if self.config.use_dark_theme is True:
-            settings.set_property("gtk-application-prefer-dark-theme", True)
-        else:
-            settings.set_property("gtk-application-prefer-dark-theme", False)
+        if self.config.use_dark_theme != settings.get_property("gtk-application-prefer-dark-theme"):
+            settings.set_property("gtk-application-prefer-dark-theme", self.config.use_dark_theme)
+
+    def __apply_platform_mode(self):
+        new_mode = get_combo_value(self.combobox_platform_mode)
+        if new_mode == self.config._raw_platform_mode():
+            return
+        self.config.platform_mode = new_mode
+        self.parent.reset_library()
+        if "windows" in new_mode and not shutil.which("wine"):
+            self.parent.show_error(_("Wine wasn't found. Windows games will be shown but not be installable."))
 
     def __save_install_dir_choice(self) -> bool:
         choice = self.button_file_chooser.get_filename()
@@ -144,7 +135,7 @@ class Preferences(Gtk.Dialog):
             self.config.start_batch_edit()
 
             self.__apply_locale_choice()
-            self.__apply_language_choice()
+            self.config.lang = get_combo_value(self.combobox_language)
             self.__apply_view_choice()
             self.__apply_theme_choice()
             self.config.keep_installers = self.switch_keep_installers.get_active()
@@ -153,13 +144,7 @@ class Preferences(Gtk.Dialog):
             self.config.create_applications_file = self.switch_create_applications_file.get_active()
             self.parent.library.filter_library()
 
-            if self.switch_show_windows_games.get_active() != self.config.show_windows_games:
-                if self.switch_show_windows_games.get_active() and not shutil.which("wine"):
-                    self.parent.show_error(_("Wine wasn't found. Showing Windows games cannot be enabled."))
-                    self.config.show_windows_games = False
-                else:
-                    self.config.show_windows_games = self.switch_show_windows_games.get_active()
-                    self.parent.reset_library()
+            self.__apply_platform_mode()
 
             # Only change the install_dir is it was actually changed
             if self.button_file_chooser.get_filename() != self.config.install_dir:

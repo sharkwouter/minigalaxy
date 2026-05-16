@@ -218,7 +218,7 @@ class LibraryEntry:
 
     def __download_game(self) -> None:
         finish_func = self.__install_game
-        result, download_info = self.get_download_info()
+        result, download_info = self.get_download_info(self.game.platform)
         if result:
             self._download(InstallableItem(self.game.id, self.game.name), download_info, DownloadType.GAME, finish_func)
 

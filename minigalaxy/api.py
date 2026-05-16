@@ -98,26 +98,37 @@ class Api:
                     return games, err_msg
                 total_pages = response["totalPages"]
 
-                for product in response["products"]:
-                    if product["id"] not in IGNORE_GAME_IDS:
-                        # Only support Linux unless the show_windows_games setting is enabled
-                        if product["worksOn"]["Linux"]:
-                            platform = "linux"
-                        elif self.config.show_windows_games:
-                            platform = "windows"
-                        else:
-                            continue
-                        if not product["url"]:
-                            logger.warning("{} ({}) has no store page url".format(product["title"], product['id']))
-                        game = Game(name=product["title"], url=product["url"], game_id=product["id"],
-                                    image_url=product["image"], platform=platform, category=product["category"])
-                        games.append(game)
+                self.__parse_productlist_json(response["products"], games)
+
                 if current_page == total_pages:
                     all_pages_processed = True
                 current_page += 1
         else:
             err_msg = "Couldn't connect to GOG servers"
         return games, err_msg
+
+    def __parse_productlist_json(self, product_list, game_list):
+        for product in product_list:
+            if product["id"] in IGNORE_GAME_IDS:
+                continue
+
+            worksOn = product.get("worksOn", {})
+            platform = None
+            if worksOn.get("Linux", False):
+                platform = "linux"
+            elif worksOn.get("Windows", False):
+                platform = "windows"
+
+            if not platform:
+                logger.warn("%s has no platform information - skip", product["title"])
+                continue
+
+            if not product.get("url", None):
+                logger.warning("%s (%s) has no store page url", product["title"], product['id'])
+
+            game = Game(name=product["title"], url=product.get("url", None), game_id=product["id"],
+                        image_url=product["image"], platform=platform, category=product["category"])
+            game_list.append(game)
 
     def get_owned_products_ids(self):
         if not self.active_token:

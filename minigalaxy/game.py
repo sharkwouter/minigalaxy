@@ -201,6 +201,24 @@ class Game:
         if not self.install_dir:
             self.install_dir = os.path.join(install_dir, self.get_install_directory_name())
 
+    def update_from_other(self, other_game):
+        """
+        Take a certain set of property values from the given other Game instance.
+        Useful to refresh Games created from local data with additional data from the GOG Api.
+        """
+
+        # this update is only necessary if self and other_game are 2 different object instances
+        if self is other_game:
+            return
+
+        if self.id == 0 or self.name != other_game.name:
+            self.id = other_game.id
+            self.name = other_game.name
+
+        self.image_url = other_game.image_url
+        self.url = other_game.url
+        self.category = other_game.category
+
     def __info_key_from_arg(self, key):
         """
         For test compatibility. Regular MG production could should use InfoKey for protection against typos etc.

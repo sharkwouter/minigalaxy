@@ -144,8 +144,19 @@ class Library(Gtk.Viewport):
                 tile.load_thumbnail()
 
         for game in self.games:
-            if game not in games_with_tiles:
+            if game in games_with_tiles:
+                continue
+            if game.is_installed():
                 self.__add_gametile(game)
+            elif game.id in self.config.current_downloads:
+                self.__add_gametile(game)
+            elif game.platform in self.config.platform_mode:
+                self.__add_gametile(game)
+            else:
+                # housekeeping: API.get_library returns all owned games
+                # (useful when api-caching is introduced as the same request can be used independent of platform_mode)
+                # removing not shown games is only a small memory optimization
+                self.games.remove(game)
 
     def __add_gametile(self, game):
         view = self.config.view
@@ -213,20 +224,33 @@ class Library(Gtk.Viewport):
             GLib.idle_add(self.parent_window.show_error, _("Failed to retrieve library"), _(err_msg))
         game_category_dict = {}
         for game in retrieved_games:
+            # NOTE: the 'in' check and 'list.index' function depend on the '__eq__' method of Game.
+            # 'Game.__eq__(self, other)' is a bit lenient, it ignores the property 'id' if it is zero for 'self' or 'other'.
+            # This leniency is vital in correctly detecting installed games with missing metadata.
+
+            # add game to list which is not installed
             if game not in self.games:
                 self.games.append(game)
 
             local_game = self.games[self.games.index(game)]
-            if local_game.id == 0 or local_game.name != game.name:
-                local_game.id = game.id
-                local_game.name = game.name
+            # update the local Game instance with data retrieved from remote, but only when both are not the same instance
+            _update_gameinfo(local_game, game, game_category_dict)
 
-            local_game.image_url = game.image_url
-            local_game.url = game.url
-            local_game.category = game.category
-            if len(game.category) > 0:  # exclude games without set category
-                game_category_dict[game.name] = game.category
         update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
+
+
+def _update_gameinfo(local_game, api_game, game_category_dict={}):
+    """
+    Installed games are detected first, and they will be missing some information provided by GOG.
+    This function takes a local Game and a freshly obtained Game from API and updates the local instance with
+    a select list of properties from API.
+    'game_category_dict' is used for library filters and should be passed in from the caller.
+    """
+
+    if len(api_game.category) > 0:  # exclude games without set category
+        game_category_dict[api_game.name] = api_game.category
+
+    local_game.update_from_other(api_game)
 
 
 def get_installed_windows_games(full_path, game_categories_dict=None):

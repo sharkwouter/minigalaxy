@@ -27,3 +27,14 @@ def populate_combobox(combo: Gtk.ComboBox, str_tuple_list, active_value: str):
         if data_list[key][:1][0] == active_value:
             combo.set_active(key)
             break
+
+
+def get_combo_value(combo):
+    """Return key string of the currently selected entry in ComboBox. Expects same structure as 'populate_combobox'"""
+    selected_index = combo.get_active_iter()
+    if selected_index is None:
+        return None
+
+    model = combo.get_model()
+    result, _ = model[selected_index][:2]
+    return result
