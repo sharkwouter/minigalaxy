@@ -9,9 +9,9 @@ import threading
 from typing import List
 
 from minigalaxy.game import InfoKey
+from minigalaxy.launch_command import LaunchCommand
 from minigalaxy.translation import _
 from minigalaxy.constants import BINARY_NAMES_TO_IGNORE
-from minigalaxy.ui.choose_executable import ChooseExecutable
 
 
 def get_wine_path(game):
@@ -48,13 +48,15 @@ def winetricks_game(game):
     subprocess.Popen(['env', f'WINEPREFIX={prefix}', 'winetricks'])
 
 
-def start_game(game):
+def start_game(game, execute_command: LaunchCommand) -> str:
     error_message = ""
     process = None
+    if not execute_command:
+        error_message = "Cannot launch game, because no command to execute was specified"
     if not error_message:
         error_message = set_fps_display(game)
     if not error_message:
-        error_message, process = run_game_subprocess(game)
+        error_message, process = run_game_subprocess(game=game, execute_command=execute_command)
     if not error_message:
         error_message = check_if_game_started_correctly(process, game)
     if not error_message:
@@ -65,30 +67,34 @@ def start_game(game):
     return error_message
 
 
-def get_execute_command(game) -> list:
+def get_execute_commands(game) -> list[LaunchCommand]:
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
     if launcher_type in ["start_script", "wine"]:
-        exe_cmd = get_start_script_exe_cmd(game)
+        launch_commands = get_start_script_exe_cmd(game)
     elif launcher_type == "windows":
-        exe_cmd = get_windows_exe_cmd(game, files)
+        launch_commands = get_windows_exe_cmd(game, files)
     elif launcher_type == "dosbox":
-        exe_cmd = get_dosbox_exe_cmd(game, files)
+        launch_commands = get_dosbox_exe_cmd(game, files)
     elif launcher_type == "scummvm":
-        exe_cmd = get_scummvm_exe_cmd(game, files)
+        launch_commands = get_scummvm_exe_cmd(game, files)
     elif launcher_type == "final_resort":
-        exe_cmd = get_final_resort_exe_cmd(game, files)
+        launch_commands = get_final_resort_exe_cmd(game, files)
     else:
         # If no executable was found at all, raise an error
         raise FileNotFoundError()
-    if game.get_info(InfoKey.GAMEMODE) is True:
-        exe_cmd.insert(0, "gamemoderun")
-    if game.get_info(InfoKey.MANGOHUD) is True:
-        exe_cmd.insert(0, "mangohud")
-        exe_cmd.insert(1, "--dlsym")
-    exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
-    logging.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
-    return exe_cmd
+    # if game.get_info(InfoKey.GAMEMODE) is True:
+    #     launch_commands.insert(0, "gamemoderun")
+    # if game.get_info(InfoKey.MANGOHUD) is True:
+    #     launch_commands.insert(0, "mangohud")
+    #     launch_commands.insert(1, "--dlsym")
+    launch_commands = append_user_defined_variables_to_launch_commands(game=game, launch_commands=launch_commands)
+    logging.info("Launch commands for %s:", game.name)
+    logging.info(f"{launch_commands}")
+    for launch_command in launch_commands:
+        logging.info("Launch commands for %s: %s", game.name, launch_command.name)
+
+    return launch_commands
 
 
 def determine_launcher_type(files):
@@ -108,18 +114,19 @@ def determine_launcher_type(files):
     return launcher_type
 
 
-def get_exe_cmd_with_var_command(game, exe_cmd):
+def append_user_defined_variables_to_launch_commands(game, launch_commands: list[LaunchCommand]) -> list[LaunchCommand]:
     var_list = shlex.split(game.get_info(InfoKey.VARIABLES))
     command_list = shlex.split(game.get_info(InfoKey.COMMAND))
 
-    if var_list:
-        if var_list[0] not in ["env"]:
-            var_list.insert(0, "env")
-        if 'env' == exe_cmd[0]:
-            exe_cmd = exe_cmd[1:]
+    for launch_command in launch_commands:
+        if var_list:
+            if var_list[0] not in ["env"]:
+                var_list.insert(0, "env")
+            if 'env' == launch_command.command[0]:
+                launch_command.command = launch_command.command[1:]
 
-    exe_cmd = var_list + exe_cmd + command_list
-    return exe_cmd
+        launch_command.command = var_list + launch_command.command + command_list
+    return launch_commands
 
 
 def get_windows_exe_cmd_from_goggame_info(game, file: str) -> List[str]:
@@ -146,45 +153,56 @@ def get_windows_exe_cmd_from_goggame_info(game, file: str) -> List[str]:
     return exe_cmd
 
 
-def get_windows_exe_cmd(game, files):
+def get_windows_exe_cmd(game, files) -> list[LaunchCommand]:
     '''Find game executable file'''
 
-    exe_cmd = []
+    launch_commands = []
     prefix = os.path.join(game.install_dir, "prefix")
 
     # Get the execute command from the goggame info file
     goggame_file = os.path.join(game.install_dir, f'goggame-{game.id}.info')
     if os.path.exists(goggame_file):
-        exe_cmd = get_windows_exe_cmd_from_goggame_info(game, goggame_file)
+        launch_commands.append(LaunchCommand(command=get_windows_exe_cmd_from_goggame_info(game, goggame_file), name="goginfo"))
 
-    if not exe_cmd and (launch_file_list := [file for file in files if re.match(r"^Launch .*\.lnk$", file)]):
+    if not launch_commands and (launch_file_list := [file for file in files if re.match(r"^Launch .*\.lnk$", file)]):
         # Set Launch Game.lnk as executable
-        exe_cmd = [get_wine_path(game), os.path.join(game.install_dir, launch_file_list[0])]
+        launch_commands.append(LaunchCommand(
+            command=[get_wine_path(game), os.path.join(game.install_dir, launch_file_list[0])],
+            name=launch_file_list[0]
+        ))
         logging.debug("using link file [%s] as execute command", launch_file_list[0])
 
-    if not exe_cmd:
+    if not launch_commands:
         executables_found = []
-        # Find the first executable file that is not blacklisted
+        # Find the executable files that are not blacklisted
         for file in files:
             if os.path.splitext(file.upper())[-1] not in [".EXE", ".LNK"]:
                 continue
             if file in BINARY_NAMES_TO_IGNORE:
                 continue
             executables_found.append(file)
-        executable = executables_found[0] if len(executables_found) == 1 else None
-        if len(executables_found) > 1:
-            dialog = ChooseExecutable(None, executables_found)
-            dialog.run()
-            executable = dialog.get_selected_executable()
-            dialog.destroy()
-        exe_cmd = [get_wine_path(game), os.path.join(game.install_dir, executable)]
+        for executable in executables_found:
+            launch_commands.append(
+                LaunchCommand(
+                    command=[
+                        get_wine_path(game), os.path.join(game.install_dir, executable)
+                    ],
+                    name=executable
+                )
+            )
+
+    # Add the wine prefix to every found command
+    for launch_command in launch_commands:
+        launch_command.command = ['env', f'WINEPREFIX={prefix}'] + launch_command.command
 
     # Backwards compatibility with windows games installed before installer fixes.
     # Will not fix games requiring registry keys, since the paths will already
     # be borked through the old installer.
     wine_restore_game_link(game)
 
-    return ['env', f'WINEPREFIX={prefix}'] + exe_cmd
+    logging.warning(f"{launch_commands}")
+
+    return launch_commands
 
 
 def get_dosbox_exe_cmd(game, files):
@@ -241,10 +259,10 @@ def set_fps_display(game):
     return error_message
 
 
-def run_game_subprocess(game):
+def run_game_subprocess(game, execute_command: LaunchCommand) -> tuple[str, subprocess.Popen]:
     try:
         process = subprocess.Popen(
-            get_execute_command(game),
+            execute_command.command,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             bufsize=0,
@@ -253,7 +271,7 @@ def run_game_subprocess(game):
         error_message = ""
     except FileNotFoundError:
         process = None
-        error_message = _("No executable was found in {}").format(game.install_dir)
+        error_message = _("No executable {} was found in {}").format(execute_command.name, game.install_dir)
 
     return error_message, process
 

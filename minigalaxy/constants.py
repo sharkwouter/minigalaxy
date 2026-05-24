@@ -109,11 +109,11 @@ BINARY_NAMES_TO_IGNORE = [
     "unins000.exe",
     # Common extra binaries
     "UnityCrashHandler64.exe",
-    "nglide_config.exe",
+    # "nglide_config.exe",
     # Diablo 2 specific
-    "ipxconfig.exe",
-    "BNUpdate.exe",
-    "VidSize.exe",
+    # "ipxconfig.exe",
+    # "BNUpdate.exe",
+    # "VidSize.exe",
     # FreeSpace 2 specific
     # "FRED2.exe",
     # "FS2.exe",

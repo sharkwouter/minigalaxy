@@ -1,3 +1,5 @@
+from minigalaxy.launch_command import LaunchCommand
+from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, load_ui
 
 
@@ -8,15 +10,14 @@ class ChooseExecutable(Gtk.Dialog):
     radio_button_box = Gtk.Template.Child()
     remember_check_button = Gtk.Template.Child()
 
-    def __init__(self, parent, executable_list: list[str]):
+    def __init__(self, parent, launch_command_list: list[LaunchCommand]):
         Gtk.Dialog.__init__(self, title=_("Choose Executable"), parent=parent, modal=True)
-        self.executable_list = executable_list
-        self.__selected_executable = None
+        self.__selected_launch_command = None
 
         last_button = None
-        for idx, executable in enumerate(self.executable_list):
-            last_button = Gtk.RadioButton.new_with_label_from_widget(last_button, executable)
-            last_button.connect("toggled", self.on_radio_button_toggle, executable)
+        for launch_command in launch_command_list:
+            last_button = Gtk.RadioButton.new_with_label_from_widget(last_button, launch_command.name)
+            last_button.connect("toggled", self.on_radio_button_toggle, launch_command)
             self.radio_button_box.add(last_button)
 
         # self.__selected_executable = self.radio_button_group[0].name
@@ -26,11 +27,11 @@ class ChooseExecutable(Gtk.Dialog):
         self.show_all()
 
     def on_radio_button_toggle(self, button, executable):
-        self.__selected_executable = executable
+        self.__selected_launch_command = executable
         print(f"Executable {executable} selected")
 
     def get_selected_executable(self):
-        return self.__selected_executable
+        return self.__selected_launch_command
 
     @Gtk.Template.Callback("on_button_choose_executable_launch_clicked")
     def on_launch_clicked(self, button):
@@ -38,7 +39,7 @@ class ChooseExecutable(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_choose_executable_cancel_clicked")
     def on_cancel_clicked(self, button):
-        self.__selected_executable = None
+        self.__selected_launch_command = None
         self.hide()
     #
     # @Gtk.Template.Callback("on_button_category_filters_reset_clicked")

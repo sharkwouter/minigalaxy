@@ -12,9 +12,10 @@ from minigalaxy.entity.state import State
 from minigalaxy.game import Game, InfoKey
 from minigalaxy.installer import uninstall_game, enqueue_game_install, check_diskspace, \
     InstallerInventory, InstallResult, InstallResultType
-from minigalaxy.launcher import start_game
+from minigalaxy.launcher import start_game, get_execute_commands
 from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
+from minigalaxy.ui.choose_executable import ChooseExecutable
 from minigalaxy.ui.gtk import Gtk, GLib, Notify, load_pixbuf
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
@@ -116,7 +117,7 @@ class LibraryEntry:
         if self.current_state in dont_act_in_states:
             pass
         elif self.current_state in [State.INSTALLED, State.UPDATABLE]:
-            err_msg = start_game(self.game)
+            err_msg = self.launch_game()
         elif self.current_state == State.INSTALLABLE:
             install_thread = threading.Thread(target=self.__install_game, args=(self.get_keep_executable_path(),))
             install_thread.start()
@@ -125,6 +126,21 @@ class LibraryEntry:
             download_thread.start()
         if err_msg:
             self.parent_window.show_error(_("Failed to start {}:").format(self.game.name), err_msg)
+
+    def launch_game(self) -> str:
+        error_message = ""
+        launch_commands = get_execute_commands(game=self.game)
+        if not launch_commands:
+            error_message = f"Failed to get execute command for game {self.game.name}"
+        elif len(launch_commands) == 1:
+            start_game(game=self.game, execute_command=launch_commands[0])
+        else:
+            dialog = ChooseExecutable(parent=self.parent_window, launch_command_list=launch_commands)
+            dialog.run()
+            launch_command = dialog.get_selected_executable()
+            dialog.destroy()
+            start_game(game=self.game, execute_command=launch_command)
+        return error_message
 
     def confirm_and_cancel_download(self, widget=None, gog_item=None, download_list=None):
         """
