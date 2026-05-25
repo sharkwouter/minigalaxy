@@ -1,6 +1,5 @@
 import http
 import logging
-import os
 import time
 from urllib.parse import urlencode
 import requests
@@ -238,7 +237,7 @@ class Api:
                     result = response_object.attrib
             else:
                 logging.error("Couldn't read xml data. Response with code %s received with the following content: %s",
-                             response.status_code, response.text, exc_info=1)
+                              response.status_code, response.text, exc_info=1)
         except requests.exceptions.RequestException:
             logging.error("Couldn't read xml data. Received RequestException", exc_info=1)
         finally:
