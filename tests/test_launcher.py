@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, mock_open
 
 from minigalaxy import launcher
 from minigalaxy.game import Game
+from minigalaxy.launch_command import LaunchCommand
 
 
 class Test(TestCase):
@@ -43,7 +44,7 @@ class Test(TestCase):
 
     @mock.patch("minigalaxy.launcher.get_wine_path")
     @mock.patch("minigalaxy.launcher.wine_restore_game_link", MagicMock)
-    def test1_get_windows_exe_cmd(self, mock_get_wine_path: MagicMock):
+    def test1_get_windows_launch_commands(self, mock_get_wine_path: MagicMock):
         mock_get_wine_path.return_value = "/usr/bin/wine"
         files = [
             "thumbnail.jpg",
@@ -62,33 +63,42 @@ class Test(TestCase):
             "start.exe",
         ]
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/start.exe"]
-        obs = launcher.get_windows_launch_commands(game, files)
-        self.assertEqual(exp, obs)
-
-    @mock.patch("minigalaxy.launcher.get_wine_path")
-    @mock.patch("minigalaxy.launcher.wine_restore_game_link", MagicMock)
-    def test1_get_windows_exe_cmd_prioritize_launch_lnk(self, mock_get_wine_path: MagicMock):
-        mock_get_wine_path.return_value = "/usr/bin/wine"
-        files = [
-            "thumbnail.jpg",
-            "docs",
-            "support",
-            "game",
-            "minigalaxy-dlc.json",
-            "run.exe",
-            "DOOM.exe",
-            "start.exe",
-            "Launch DOOM.lnk"
+        exp = [
+            LaunchCommand(
+                name="nglide_config.exe",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/nglide_config.exe"]
+            ),
+            LaunchCommand(
+                name="ipxconfig.exe",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/ipxconfig.exe"]
+            ),
+            LaunchCommand(
+                name="BNUpdate.exe",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/BNUpdate.exe"]
+            ),
+            LaunchCommand(
+                name="VidSize.exe",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/VidSize.exe"]
+            ),
+            LaunchCommand(
+                name="FRED2.exe",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/FRED2.exe"]
+            ),
+            LaunchCommand(
+                name="FS2.exe",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/FS2.exe"]
+            ),
+            LaunchCommand(
+                name="start.exe",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/start.exe"]
+            ),
         ]
-        game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/Launch DOOM.lnk"]
         obs = launcher.get_windows_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
     @mock.patch("minigalaxy.launcher.get_wine_path")
     @mock.patch("minigalaxy.launcher.wine_restore_game_link", MagicMock)
-    def test1_get_windows_exe_cmd_can_choose_lnk(self, mock_get_wine_path: MagicMock):
+    def test1_get_windows_launch_commands_can_choose_lnk(self, mock_get_wine_path: MagicMock):
         mock_get_wine_path.return_value = "/usr/bin/wine"
         files = [
             "thumbnail.jpg",
@@ -98,17 +108,20 @@ class Test(TestCase):
             "minigalaxy-dlc.json",
             "unins000.exe",
             "UnityCrashHandler64.exe",
-            "nglide_config.exe",
-            "ipxconfig.exe",
-            "BNUpdate.exe",
-            "VidSize.exe",
-            "FRED2.exe",
-            "FS2.exe",
             "start.lnk",
             "start.exe",
         ]
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/start.lnk"]
+        exp = [
+            LaunchCommand(
+                name="start.lnk",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/start.lnk"]
+            ),
+            LaunchCommand(
+                name="start.exe",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/start.exe"]
+            )
+        ]
         obs = launcher.get_windows_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
@@ -117,7 +130,7 @@ class Test(TestCase):
     @mock.patch('builtins.open', new_callable=mock_open, read_data="")
     @mock.patch('os.chdir')
     @mock.patch("minigalaxy.launcher.wine_restore_game_link", MagicMock)
-    def test2_get_windows_exe_cmd(self, mock_os_chdir, mo, mock_exists, mock_get_wine_path):
+    def test2_get_windows_launch_commands(self, mock_os_chdir, mo, mock_exists, mock_get_wine_path):
         mock_get_wine_path.return_value = "wine"
         goggame_1414471894_info_content = """{
         "buildId": "53350324452482937",
@@ -179,8 +192,13 @@ class Test(TestCase):
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'minigalaxy-dlc.json', 'MetroExodus.exe', 'unins000.exe',
                  'goggame-1407287452.info', 'goggame-1414471894.info']
         game = Game("Test Game", install_dir="/test/install/dir", game_id=1407287452)
-        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', 'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\.',
+        exp = [
+            LaunchCommand(
+                name="goginfo",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix', 'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\.',
                'c:\\game\\MetroExodus.exe']
+            )
+        ]
         obs = launcher.get_windows_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
@@ -189,7 +207,7 @@ class Test(TestCase):
     @mock.patch('builtins.open', new_callable=mock_open, read_data="")
     @mock.patch('os.chdir')
     @mock.patch("minigalaxy.launcher.wine_restore_game_link", MagicMock)
-    def test3_get_windows_exe_cmd(self, mock_os_chdir, mo, mock_exists, mock_wine_path):
+    def test3_get_windows_launch_commands(self, mock_os_chdir, mo, mock_exists, mock_wine_path):
         mock_wine_path.return_value = "wine"
         goggame_1207658919_info_content = """{
         "buildId": "52095557858882770",
@@ -265,53 +283,79 @@ class Test(TestCase):
                  'goggame-1207658919.ico', 'goglog.ini', 'Launch Rayman Forever.lnk', 'cloud_saves',
                  'thumbnail_196.jpg']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ['env', 'WINEPREFIX=/test/install/dir/prefix',
+        exp = [
+            LaunchCommand(
+                name="goginfo",
+                command=['env', 'WINEPREFIX=/test/install/dir/prefix',
                'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\DOSBOX', 'c:\\game\\DOSBOX\\dosbox.exe', '-conf', '..\\dosboxRayman.conf',
                '-conf', '..\\dosboxRayman_single.conf', '-noconsole', '-c', 'exit']
+            )
+        ]
         obs = launcher.get_windows_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
-    def test_get_dosbox_exe_cmd(self):
+    def test_get_dosbox_launch_commands(self):
         files = ['thumbnail.jpg', 'docs', 'support', 'dosbox_bbb_single.conf', 'dosbox_aaa.conf', 'dosbox']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ["dosbox", "-conf", "dosbox_aaa.conf", "-conf", "dosbox_bbb_single.conf", "-no-console", "-c", "exit"]
+        exp = [
+            LaunchCommand(
+                name="dosbox",
+                command=["dosbox", "-conf", "dosbox_aaa.conf", "-conf", "dosbox_bbb_single.conf", "-no-console", "-c", "exit"]
+            )
+        ]
         obs = launcher.get_dosbox_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
-    def test_get_scummvm_exe_cmd(self):
+    def test_get_scummvm_launch_commands(self):
         files = ['thumbnail.jpg', 'data', 'docs', 'support', 'beneath.ini', 'scummvm', 'start.sh', 'gameinfo']
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ["scummvm", "-c", "beneath.ini"]
+        exp = [
+            LaunchCommand(
+                name="scummvm",
+                command=["scummvm", "-c", "beneath.ini"]
+            )
+        ]
         obs = launcher.get_scummvm_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
-    def test_get_start_script_exe_cmd(self):
+    def test_get_start_script_launch_commands(self):
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ["/test/install/dir/start.sh"]
+        exp = [
+            LaunchCommand(
+                name="start.sh",
+                command=["/test/install/dir/start.sh"]
+            )
+        ]
         obs = launcher.get_start_script_launch_commands(game)
         self.assertEqual(exp, obs)
 
     @mock.patch('os.getcwd')
     @mock.patch('os.chdir')
     @mock.patch('subprocess.Popen')
-    @mock.patch('minigalaxy.launcher.get_execute_command')
-    def test1_run_game_subprocess(self, launcher_mock, mock_popen, mock_os_chdir, mock_os_getcwd):
+    def test1_run_game_subprocess(self, mock_popen, mock_os_chdir, mock_os_getcwd):
         mock_process = "Mock Process"
         mock_popen.return_value = mock_process
         game = Game("Test Game", install_dir="/test/install/dir")
+        launch_command = LaunchCommand(
+            name="test",
+            command=["/test/install/dir/start.sh"]
+        )
         exp = ("", mock_process)
-        obs = launcher.run_game_subprocess(game)
+        obs = launcher.run_game_subprocess(game, launch_command=launch_command)
         self.assertEqual(exp, obs)
 
     @mock.patch('os.getcwd')
     @mock.patch('os.chdir')
     @mock.patch('subprocess.Popen')
-    @mock.patch('minigalaxy.launcher.get_execute_command')
-    def test2_run_game_subprocess(self, launcher_mock, mock_popen, mock_os_chdir, mock_os_getcwd):
+    def test2_run_game_subprocess(self, mock_popen, mock_os_chdir, mock_os_getcwd):
         mock_popen.side_effect = FileNotFoundError()
         game = Game("Test Game", install_dir="/test/install/dir")
-        exp = ('No executable was found in /test/install/dir', None)
-        obs = launcher.run_game_subprocess(game)
+        launch_command = LaunchCommand(
+            name="test",
+            command=["/test/install/dir/start.sh"]
+        )
+        exp = ('No executable test was found in /test/install/dir', None)
+        obs = launcher.run_game_subprocess(game, launch_command=launch_command)
         self.assertEqual(exp, obs)
 
     @mock.patch('minigalaxy.launcher.check_if_game_start_process_spawned_final_process')

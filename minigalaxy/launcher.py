@@ -56,7 +56,7 @@ def start_game(game, execute_command: LaunchCommand) -> str:
     if not error_message:
         error_message = set_fps_display(game)
     if not error_message:
-        error_message, process = run_game_subprocess(game=game, execute_command=execute_command)
+        error_message, process = run_game_subprocess(game=game, launch_command=execute_command)
     if not error_message:
         error_message = check_if_game_started_correctly(process, game)
     if not error_message:
@@ -201,8 +201,6 @@ def get_windows_launch_commands(game, files) -> list[LaunchCommand]:
     # be borked through the old installer.
     wine_restore_game_link(game)
 
-    logging.warning(f"{launch_commands}")
-
     return launch_commands
 
 
@@ -278,10 +276,10 @@ def set_fps_display(game):
     return error_message
 
 
-def run_game_subprocess(game, execute_command: LaunchCommand) -> tuple[str, subprocess.Popen]:
+def run_game_subprocess(game, launch_command: LaunchCommand) -> tuple[str, subprocess.Popen]:
     try:
         process = subprocess.Popen(
-            execute_command.command,
+            launch_command.command,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             bufsize=0,
@@ -290,7 +288,7 @@ def run_game_subprocess(game, execute_command: LaunchCommand) -> tuple[str, subp
         error_message = ""
     except FileNotFoundError:
         process = None
-        error_message = _("No executable {} was found in {}").format(execute_command.name, game.install_dir)
+        error_message = _("No executable {} was found in {}").format(launch_command.name, game.install_dir)
 
     return error_message, process
 
