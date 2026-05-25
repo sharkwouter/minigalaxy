@@ -10,7 +10,8 @@ CONFIG_GAMES_DIR = os.path.join(CONFIG_DIR, "games")
 CONFIG_FILE_PATH = os.path.join(CONFIG_DIR, "config.json")
 CACHE_DIR = os.path.join(os.getenv('XDG_CACHE_HOME', os.path.expanduser('~/.cache')), "minigalaxy")
 DOWNLOAD_DIR = os.path.join(os.getenv('MINIGALAXY_DOWNLOAD_DIR', CACHE_DIR), "download")
-LOG_FILE_PATH = os.path.join(CACHE_DIR, "minigalaxy.log")
+LOG_DIR = CACHE_DIR
+LOG_FILE_PATH = os.path.join(LOG_DIR, "minigalaxy.log")
 
 THUMBNAIL_DIR = os.path.join(CACHE_DIR, "thumbnails")
 COVER_DIR = os.path.join(CACHE_DIR, "covers")

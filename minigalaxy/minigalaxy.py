@@ -55,11 +55,10 @@ def show_installer_notification(installer_item):
 
 
 def setup_logging():
-    from minigalaxy.paths import LOG_FILE_PATH
+    from minigalaxy.paths import LOG_FILE_PATH, LOG_DIR
 
-    log_directory = os.path.dirname(LOG_FILE_PATH)
-    if not os.path.exists(log_directory):
-        os.makedirs(log_directory)
+    if not os.path.exists(LOG_DIR):
+        os.makedirs(LOG_DIR)
 
     logging_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
