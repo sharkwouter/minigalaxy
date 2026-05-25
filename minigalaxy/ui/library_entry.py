@@ -15,7 +15,7 @@ from minigalaxy.installer import uninstall_game, enqueue_game_install, check_dis
 from minigalaxy.launcher import start_game, get_execute_commands
 from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
-from minigalaxy.ui.choose_executable import ChooseExecutable
+from minigalaxy.ui.chooselauchoption import ChooseLaunchOption
 from minigalaxy.ui.gtk import Gtk, GLib, Notify, load_pixbuf
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
@@ -135,11 +135,15 @@ class LibraryEntry:
         elif len(launch_commands) == 1:
             error_message = start_game(game=self.game, execute_command=launch_commands[0])
         else:
-            dialog = ChooseExecutable(parent=self.parent_window, launch_command_list=launch_commands)
+            dialog = ChooseLaunchOption(parent=self.parent_window, launch_command_list=launch_commands)
             dialog.run()
-            launch_command = dialog.get_selected_executable()
+            launch_command = dialog.selection
+            dialog_cancelled = dialog.cancelled
             dialog.destroy()
-            error_message = start_game(game=self.game, execute_command=launch_command)
+            if launch_command:
+                error_message = start_game(game=self.game, execute_command=launch_command)
+            elif not dialog_cancelled:
+                error_message = "No launch option selected"
         return error_message
 
     def confirm_and_cancel_download(self, widget=None, gog_item=None, download_list=None):
