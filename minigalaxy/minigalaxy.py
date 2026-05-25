@@ -57,6 +57,10 @@ def show_installer_notification(installer_item):
 def setup_logging():
     from minigalaxy.paths import LOG_FILE_PATH
 
+    log_directory = os.path.dirname(LOG_FILE_PATH)
+    if not os.path.exists(log_directory):
+        os.makedirs(log_directory)
+
     logging_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
     log_level = logging.INFO
