@@ -142,7 +142,8 @@ class Game:
         key = self.__info_key_from_arg(key)
         json_dict = self.load_minigalaxy_info_json()
         if value is None:
-            del json_dict[key]
+            if key in json_dict:
+                del json_dict[key]
         else:
             json_dict[key] = value
         self.save_minigalaxy_info_json(json_dict)
