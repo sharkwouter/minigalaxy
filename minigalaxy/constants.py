@@ -107,14 +107,6 @@ MINIMUM_RESUME_SIZE = 20 * 1024**2  # 20 MB
 BINARY_NAMES_TO_IGNORE = [
     # Standard uninstaller
     "unins000.exe",
-    # Common extra binaries
+    # Common extra binaries that the user wouldn't want to use
     "UnityCrashHandler64.exe",
-    # "nglide_config.exe",
-    # Diablo 2 specific
-    # "ipxconfig.exe",
-    # "BNUpdate.exe",
-    # "VidSize.exe",
-    # FreeSpace 2 specific
-    # "FRED2.exe",
-    # "FS2.exe",
 ]
