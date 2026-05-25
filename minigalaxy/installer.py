@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import os
 import re
 import shlex
@@ -19,7 +20,6 @@ from minigalaxy.config import Config
 from minigalaxy.constants import GAME_LANGUAGE_IDS
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
-from minigalaxy.logger import logger
 from minigalaxy.resources import get_data_file
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_command, get_wine_path, wine_restore_game_link
@@ -82,7 +82,7 @@ def install_game(  # noqa: C901
     error_message = ""
     error = None
     tmp_dir = ""
-    logger.info("Installing {}".format(game.name))
+    logging.info("Installing {}".format(game.name))
 
     try:
         if not installer_inventory:
@@ -122,8 +122,8 @@ def install_game(  # noqa: C901
         error_message = error.message
 
     if error_message:
-        logger.error("Error installing game '%s'", game.name, exc_info=error)
-        logger.error(error_message)
+        logging.error("Error installing game '%s'", game.name, exc_info=error)
+        logging.error(error_message)
 
     if error_message and raise_error:
         if not error:
@@ -160,7 +160,7 @@ def verify_installer_integrity(game, installer_inventory, progress_callback=None
             error_message = _("{} failed to download.").format(installer_file_name)
 
         if not installer_inventory.has_checksum(installer_file_name):
-            logger.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
+            logging.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
             continue
 
         hash_md5 = hashlib.md5()
@@ -170,7 +170,7 @@ def verify_installer_integrity(game, installer_inventory, progress_callback=None
         calculated_checksum = hash_md5.hexdigest()
 
         if installer_inventory.verify_checksum(installer_file_name, calculated_checksum):
-            logger.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
+            logging.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
             progress_callback(InstallResultType.VERIFY_PROGRESS, installer_file_name, calculated_checksum)
         else:
             error_message.append(_("{} was corrupted. Please download it again.").format(installer_file_name))
@@ -226,7 +226,7 @@ def extract_windows(game: Game, installer: str, language: str):
     if not os.path.exists(game.install_dir):
         os.makedirs(game.install_dir)
     game_lang = match_game_lang_to_installer(installer, language, languageLog)
-    logger.info(f'use {game_lang} for installer')
+    logging.info(f'use {game_lang} for installer')
 
     return extract_by_wine(game, installer, game_lang), False
 
@@ -280,7 +280,7 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
         # some games will reject the /SILENT flag
         # because they require the user to accept EULA at the beginning
         # Open normal installer as fallback and hope for the best
-        print('Unattended install failed. Try install with wizard dialog.', file=sys.stderr)
+        logging.error('Unattended install failed. Try install with wizard dialog.')
         success = try_wine_command(installer_cmd_basic)
 
     if not success:
@@ -290,10 +290,10 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
 
 
 def try_wine_command(command_arr):
-    print('trying to run wine command:', shlex.join(command_arr))
+    logging.debug('trying to run wine command:', shlex.join(command_arr))
     stdout, stderr, exitcode = _exe_cmd(command_arr, True)
     if exitcode not in [0]:
-        print(stderr, file=sys.stderr)
+        logging.error(stderr)
         return False
 
     return True
@@ -309,7 +309,7 @@ def move_and_overwrite(game, temp_dir, installed_to_tmp):
     if installed_to_tmp:
         _mv(source_dir, target_dir)
     else:
-        logger.info(f'installation of {game.name} did not use temporary directory - nothing to move')
+        logging.info(f'installation of {game.name} did not use temporary directory - nothing to move')
 
     # Remove the temporary directory
     shutil.rmtree(temp_dir, ignore_errors=True)
@@ -432,7 +432,7 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
     if not inventory:
         inventory = InstallerInventory.from_file_system(installer)
 
-    logger.info("Cleaning [%s] - keep_installers:%s", installer_dir, keep_installers)
+    logging.info("Cleaning [%s] - keep_installers:%s", installer_dir, keep_installers)
 
     try:
         inventory.delete_others()
@@ -443,7 +443,7 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
         # this is just maintenance to prevent aggregating empty directories in cache
         remove_empty_dirs_upwards(installer_dir, installer_root_dirs)
     except Exception as e:
-        logger.error("Error while removing installer", exc_info=e)
+        logging.error("Error while removing installer", exc_info=e)
         return str(e)
 
     return ""
@@ -451,7 +451,7 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
 
 def safe_delete(file_list):
     """Tries to delete the given files without throwing exceptions where possible."""
-    logger.info("Trying to safely delete: %s", file_list)
+    logging.info("Trying to safely delete: %s", file_list)
     for f in file_list:
         if is_empty_dir(f):
             os.rmdir(f)
@@ -466,7 +466,7 @@ def is_empty_dir(path):
 def remove_empty_dirs_upwards(start_dir, stop_dirs):
     file_dir = start_dir
     while is_empty_dir(file_dir):
-        logger.info("Remove now empty sub-directory [%s]", file_dir)
+        logging.info("Remove now empty sub-directory [%s]", file_dir)
         os.rmdir(file_dir)
         file_dir = os.path.dirname(file_dir)
         if file_dir in stop_dirs:
@@ -555,7 +555,7 @@ def match_game_lang_to_installer(installer: str, language: str, outputLogFile=No
 
     stdout, stderr, ret_code = _exe_cmd(["innoextract", installer, "--list-languages"])
     if ret_code not in [0]:
-        logger.error(stderr)
+        logging.error(stderr)
         return "en-US"
 
     lang_keys = GAME_LANGUAGE_IDS.get(language, [])
@@ -564,7 +564,7 @@ def match_game_lang_to_installer(installer: str, language: str, outputLogFile=No
     lang_name_regex = re.compile('(\\w+)\\s*:\\s*.*')
 
     if outputLogFile is not None:
-        logger.info('write setup language data: %s', outputLogFile)
+        logging.info('write setup language data: %s', outputLogFile)
         with open(outputLogFile, "w") as text_file:
             text_file.write(stdout)
 
@@ -808,7 +808,7 @@ class InstallTask:
             install_game(*self.arg_array, **self.named_args, raise_error=True, progress_callback=self.notifyStep)
             self.notifyStep(InstallResultType.SUCCESS, self.game.install_dir, None)
         except InstallException as e:
-            logger.error("Error installing item %s: %s", self.installer_id, e.message, exc_info=1)
+            logging.error("Error installing item %s: %s", self.installer_id, e.message, exc_info=1)
             self.notifyStep(e.fail_type, e.message, e.data)
 
     def notifyStep(self, result_type: InstallResultType, reason='', details=None):
@@ -816,7 +816,7 @@ class InstallTask:
         try:
             self.callback(InstallResult(self.installer_id, result_type, reason, details))
         except Exception:
-            logger.error("Installation callback handler threw an error:", exc_info=1)
+            logging.error("Installation callback handler threw an error:", exc_info=1)
 
     def __eq__(self, other):
         if not isinstance(other, InstallTask):
@@ -875,7 +875,7 @@ class InstallerQueue:
         with self.state_lock:
             if self.active_item == item or item in self.queue:
                 return False
-            logger.debug("Queuing: %s", item)
+            logging.debug("Queuing: %s", item)
             self.queue.append(item)
             if not self.worker or not self.worker.is_alive():
                 self.worker = Thread(name="InstallerQueue worker", target=self.__install_queued_items)
@@ -904,7 +904,7 @@ class InstallerQueue:
             return self.active_item
 
     def __install_queued_items(self):
-        logger.debug("Starting installer thread")
+        logging.debug("Starting installer thread")
         is_empty = self.is_empty()
         try:
             while not is_empty:
@@ -920,4 +920,4 @@ class InstallerQueue:
         with self.state_lock:
             self.active_item = None
             self.worker = None
-        logger.debug("Stopping installer thread")
+        logging.debug("Stopping installer thread")

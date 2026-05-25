@@ -1,10 +1,10 @@
+import logging
 import os
 import re
 import json
 
 from enum import Enum
 from minigalaxy.paths import CONFIG_GAMES_DIR, ICON_DIR, THUMBNAIL_DIR
-from minigalaxy.logger import logger
 
 
 class InfoKey(str, Enum):
@@ -227,7 +227,7 @@ class Game:
         """
         if isinstance(key, InfoKey):
             return key.value
-        logger.warning("An instance of game.InfoKey is expected, but %s was given!", type(key))
+        logging.warning("An instance of game.InfoKey is expected, but %s was given!", type(key))
         return key
 
     def __str__(self):

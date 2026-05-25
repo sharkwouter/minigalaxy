@@ -22,8 +22,6 @@ import time
 import threading
 import queue
 
-import minigalaxy.logger  # noqa: F401
-
 from concurrent.futures.thread import ThreadPoolExecutor
 from enum import Enum
 from minigalaxy.config import Config, UI_DOWNLOAD_THREADS

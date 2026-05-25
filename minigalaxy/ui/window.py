@@ -1,8 +1,8 @@
+import logging
 import os
 import locale
 
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.logger import logger
 from minigalaxy.ui.categoryfilters import CategoryFilters
 from minigalaxy.ui.login import Login
 from minigalaxy.ui.preferences import Preferences
@@ -85,17 +85,17 @@ class Window(Gtk.ApplicationWindow):
         Otherwise, the application will freeze.
         """
         # Interact with the API
-        logger.debug("Checking API connectivity...")
+        logging.debug("Checking API connectivity...")
         self.offline = not self.api.can_connect()
-        logger.debug("Done checking API connectivity, status: %s", "offline" if self.offline else "online")
+        logging.debug("Done checking API connectivity, status: %s", "offline" if self.offline else "online")
         if not self.offline:
             try:
-                logger.debug("Authenticating...")
+                logging.debug("Authenticating...")
                 self.__authenticate()
-                logger.debug("Authenticated as: %s", self.api.get_user_info())
+                logging.debug("Authenticated as: %s", self.api.get_user_info())
                 self.HeaderBar.set_subtitle(self.api.get_user_info())
             except Exception:
-                logger.warning("Starting in offline mode after receiving exception", exc_info=1)
+                logging.warning("Starting in offline mode after receiving exception", exc_info=1)
                 self.offline = True
         self.sync_library()
 

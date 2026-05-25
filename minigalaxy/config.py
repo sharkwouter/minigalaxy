@@ -1,7 +1,7 @@
+import logging
 import os
 import json
 
-from minigalaxy.logger import logger
 from minigalaxy.paths import CONFIG_FILE_PATH, DEFAULT_INSTALL_DIR
 
 # Moved from constants.py to here because of circular import between translations, config and constants
@@ -32,7 +32,7 @@ class Config:
             try:
                 self.__config = json.loads(file.read())
             except (json.decoder.JSONDecodeError, UnicodeDecodeError):
-                logger.warning("Reading config.json failed, creating new config file.")
+                logging.warning("Reading config.json failed, creating new config file.")
                 os.remove(self.__config_file)
         # reset cached transformed properties
         self.__platform_mode = None
@@ -42,7 +42,7 @@ class Config:
             value = self.__config["show_windows_games"]
             del self.__config["show_windows_games"]
             new_mode = "linux,windows" if value else "linux"
-            logger.info("Migrating 'show_windows_games=%s' to 'platform_mode=%s", value, new_mode)
+            logging.info("Migrating 'show_windows_games=%s' to 'platform_mode=%s", value, new_mode)
             self.platform_mode = new_mode
 
     def __write(self) -> None:
@@ -99,7 +99,7 @@ class Config:
 
         if new_value is None:
             del self.__config[property_name]
-            logger.warning("Config setting '%' was deleted (=reset to default)")
+            logging.warning("Config setting '%' was deleted (=reset to default)")
         else:
             self.__config[property_name] = new_value
 

@@ -4,6 +4,7 @@ import sys
 import os
 import argparse
 import shutil
+import logging
 from os.path import realpath, dirname, normpath
 
 import requests
@@ -53,11 +54,37 @@ def show_installer_notification(installer_item):
     popup.show()
 
 
+def setup_logging():
+    from minigalaxy.paths import LOG_FILE_PATH
+
+    logging_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+    log_level = logging.INFO
+    if os.environ.get("MG_DEBUG"):
+        log_level = logging.DEBUG
+
+    logging.basicConfig(
+        filename=LOG_FILE_PATH,
+        filemode="w",
+        level=log_level,
+        format=logging_format,
+        encoding="utf-8",
+        force=True
+    )
+
+    # Also log to stdout
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setFormatter(logging.Formatter(logging_format))
+    logging.getLogger().addHandler(stdout_handler)
+
+
 def main():
     cli_args = cli_params()
 
     if cli_args.reset:
         conf_reset()
+
+    setup_logging()
 
     # Disable webkit compositing, ensuring the login screen shows
     os.environ["WEBKIT_DISABLE_COMPOSITING_MODE"] = "1"

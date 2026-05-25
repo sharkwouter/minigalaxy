@@ -3,8 +3,6 @@ import os
 import shutil
 import subprocess
 
-import minigalaxy.logger  # noqa: F401
-
 from gi.overrides.GdkPixbuf import GdkPixbuf
 
 from minigalaxy.download import Download, DownloadType
