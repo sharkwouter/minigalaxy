@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 import tempfile
@@ -124,9 +125,9 @@ class TestDownloadManager(TestCase):
     def test_cancel_download(self):
         progress_func = MagicMock()
         finish_func = MagicMock()
-        finish_func.side_effect = lambda: print("download finished")
+        finish_func.side_effect = lambda: logging.info("download finished")
         cancel_func = MagicMock()
-        cancel_func.side_effect = lambda: print(str(time.time()) + " download cancel received")
+        cancel_func.side_effect = lambda: logging.info(str(time.time()) + " download cancel received")
 
         temp_file = tempfile.mktemp()
         download = Download("example.com", temp_file, DownloadType.GAME, finish_func, progress_func, cancel_func)

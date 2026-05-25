@@ -1,3 +1,4 @@
+import logging
 import os
 import locale
 import shutil
@@ -5,7 +6,6 @@ import shutil
 from minigalaxy.config import Config
 from minigalaxy.constants import PLATFORM_MODE, SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES, VIEWS
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, load_ui
 from minigalaxy.ui.widget_utils import get_combo_value, populate_combobox
@@ -155,7 +155,7 @@ class Preferences(Gtk.Dialog):
                     self.parent.show_error(_("{} isn't a usable path").format(self.button_file_chooser.get_filename()))
 
         except Exception as e:
-            logger.error("Could not save preferences", exc_info=1)
+            logging.error("Could not save preferences", exc_info=1)
             self.config.cancel_batch_edit()
             save_changes = False
             self.parent.show_error(_("There was an error while saving preferences."), str(e))

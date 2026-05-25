@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import shutil
@@ -12,7 +13,6 @@ from minigalaxy.game import Game, InfoKey
 from minigalaxy.installer import uninstall_game, enqueue_game_install, check_diskspace, \
     InstallerInventory, InstallResult, InstallResultType
 from minigalaxy.launcher import start_game
-from minigalaxy.logger import logger
 from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, GLib, Notify, load_pixbuf
@@ -206,7 +206,7 @@ class LibraryEntry:
             download_info = self.api.get_download_info(self.game, platform)
             result = True
         except NoDownloadLinkFound as e:
-            logger.error("No download link found", exc_info=1)
+            logging.error("No download link found", exc_info=1)
             self.config.remove_ongoing_download(self.game.id)
             GLib.idle_add(self.parent_window.show_error, _("Download error"),
                           _("There was an error when trying to fetch the download link!\n{}".format(e)))
@@ -280,7 +280,7 @@ class LibraryEntry:
             try:
                 download_url = self.api.get_real_download_link(file_info["downlink"])
             except ValueError as e:
-                logger.error("Error getting download URL from file_info downlink: %s", file_info["downlink"], exc_info=1)
+                logging.error("Error getting download URL from file_info downlink: %s", file_info["downlink"], exc_info=1)
                 GLib.idle_add(self.parent_window.show_error, _("Download error"), _(str(e)))
                 download_success = False
                 break
@@ -380,7 +380,7 @@ class LibraryEntry:
         """
 
         item_name = dlc_title if dlc_title else self.game.name
-        logger.info("Received install step notification for %s: %s", item_name, result)
+        logging.info("Received install step notification for %s: %s", item_name, result)
 
         if result.installation_terminated:
             # Regardless of whether the installation succeeds or fails, we should stop trying to restart the install

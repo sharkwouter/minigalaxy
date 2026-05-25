@@ -1,5 +1,5 @@
 import http
-import os
+import logging
 import time
 from urllib.parse import urlencode
 import requests
@@ -12,7 +12,6 @@ from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.constants import IGNORE_GAME_IDS
 from minigalaxy.config import Config
-from minigalaxy.logger import logger
 
 
 class NoDownloadLinkFound(BaseException):
@@ -27,7 +26,6 @@ class Api:
         self.redirect_uri = "https://embed.gog.com/on_login_success?origin=client"
         self.client_id = "46899977096215655"
         self.client_secret = "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
-        self.debug = os.environ.get("MG_DEBUG")
         self.active_token = False
         self.active_token_expiration_time = time.time()
         self.conn_check_thpool = ThreadPoolExecutor(max_workers=2)
@@ -120,11 +118,11 @@ class Api:
                 platform = "windows"
 
             if not platform:
-                logger.warn("%s has no platform information - skip", product["title"])
+                logging.warn("%s has no platform information - skip", product["title"])
                 continue
 
             if not product.get("url", None):
-                logger.warning("%s (%s) has no store page url", product["title"], product['id'])
+                logging.warning("%s (%s) has no store page url", product["title"], product['id'])
 
             game = Game(name=product["title"], url=product.get("url", None), game_id=product["id"],
                         image_url=product["image"], platform=platform, category=product["category"])
@@ -138,7 +136,7 @@ class Api:
         if "owned" in response2:
             return response2["owned"]
 
-        logger.error("Could not load owned games")
+        logging.error("Could not load owned games")
         return []
 
     # Generate the URL for the login page for GOG
@@ -219,13 +217,13 @@ class Api:
                 if "total_size" in xml_data.keys() and len(xml_data["total_size"]) > 0:
                     file_info.size = int(xml_data["total_size"])
         except requests.exceptions.RequestException:
-            logger.error("Couldn't retrieve file info. Encountered HTTP exception: {}", exc_info=1)
+            logging.error("Couldn't retrieve file info. Encountered HTTP exception: {}", exc_info=1)
 
         if not file_info.md5:
-            logger.warning("Couldn't find md5 in xml checksum data")
+            logging.warning("Couldn't find md5 in xml checksum data")
 
         if not file_info.size:
-            logger.warning("Couldn't find file size in xml checksum data")
+            logging.warning("Couldn't find file size in xml checksum data")
 
         return file_info
 
@@ -238,10 +236,10 @@ class Api:
                 if response_object and response_object.attrib:
                     result = response_object.attrib
             else:
-                logger.error("Couldn't read xml data. Response with code %s received with the following content: %s",
-                             response.status_code, response.text, exc_info=1)
+                logging.error("Couldn't read xml data. Response with code %s received with the following content: %s",
+                              response.status_code, response.text, exc_info=1)
         except requests.exceptions.RequestException:
-            logger.error("Couldn't read xml data. Received RequestException", exc_info=1)
+            logging.error("Couldn't read xml data. Received RequestException", exc_info=1)
         finally:
             return result
 
@@ -301,7 +299,7 @@ class Api:
     def __request(self, url: str = None, params: dict = None) -> dict:
         # Refresh the token if needed
         if self.active_token_expiration_time < time.time():
-            logger.debug("Refreshing token")
+            logging.debug("Refreshing token")
             refresh_token = self.config.refresh_token
             self.config.refresh_token = self.__refresh_token(refresh_token)
 
@@ -312,12 +310,11 @@ class Api:
         result = {}
         try:
             response = self.session.get(url, headers=headers, params=params)
-            if self.debug:
-                logger.debug("Request %s, return code %s, response body %s", url, response.status_code, response.text)
+            logging.debug("Request %s, return code %s, response body %s", url, response.status_code, response.text)
             if response.status_code < 300:
                 result = response.json()
         except requests.exceptions.RequestException:
-            logger.error("Encountered exception while making HTTP request. Request: %s", url, exc_info=1)
+            logging.error("Encountered exception while making HTTP request. Request: %s", url, exc_info=1)
         return result
 
     def __request_gamesdb(self, game: Game):
@@ -326,7 +323,7 @@ class Api:
             response = self.session.get(request_url)
             response_dict = response.json()
         except (requests.exceptions.ConnectionError, ValueError):
-            logger.error("Error retrieving game info for gamesdb", exc_info=1)
+            logging.error("Error retrieving game info for gamesdb", exc_info=1)
             response_dict = {}
         return response_dict
 

@@ -1,4 +1,5 @@
-from minigalaxy.logger import logger
+import logging
+
 from minigalaxy.translation import _
 from minigalaxy.ui.filterswitch import FilterSwitch
 from minigalaxy.ui.gtk import Gtk, load_ui
@@ -41,7 +42,7 @@ class CategoryFilters(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_category_filters_apply_clicked")
     def on_apply_clicked(self, button):
-        logger.debug("Filtering library according to category filter dict: %s", self.filter_dict)
+        logging.debug("Filtering library according to category filter dict: %s", self.filter_dict)
         self.library.filter_library(self)
         self.destroy()
 
@@ -51,7 +52,7 @@ class CategoryFilters(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_category_filters_reset_clicked")
     def on_reset_clicked(self, button):
-        logger.debug("Resetting category filters")
+        logging.debug("Resetting category filters")
         for child in self.genre_filtering_grid.get_children():
             child.switch_category_filter.set_active(False)
         self.library.filter_library(self)

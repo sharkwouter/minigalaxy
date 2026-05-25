@@ -1,5 +1,6 @@
 import json
 import locale
+import logging
 import os
 import re
 import threading
@@ -9,7 +10,6 @@ from minigalaxy.config import Config
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.entity.state import State
 from minigalaxy.game import Game, InfoKey
-from minigalaxy.logger import logger
 from minigalaxy.paths import CATEGORIES_FILE_PATH
 from minigalaxy.translation import _
 from minigalaxy.ui.categoryfilters import CategoryFilters
@@ -220,7 +220,7 @@ class Library(Gtk.Viewport):
             self.offline = False
         else:
             self.offline = True
-            logger.info("Client is offline, showing installed games only")
+            logging.info("Client is offline, showing installed games only")
             GLib.idle_add(self.parent_window.show_error, _("Failed to retrieve library"), _(err_msg))
         game_category_dict = {}
         for game in retrieved_games:

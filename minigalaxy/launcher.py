@@ -1,3 +1,4 @@
+import logging
 import os
 import subprocess
 import shutil
@@ -8,7 +9,6 @@ import threading
 from typing import List
 
 from minigalaxy.game import InfoKey
-from minigalaxy.logger import logger
 from minigalaxy.translation import _
 from minigalaxy.constants import BINARY_NAMES_TO_IGNORE
 
@@ -59,8 +59,8 @@ def start_game(game):
     if not error_message:
         send_game_output_to_stdout(process)
     if error_message:
-        logger.error(_("Failed to start {}:").format(game.name), exc_info=1)
-        logger.error("Cause of error: %s", error_message)
+        logging.error(_("Failed to start {}:").format(game.name), exc_info=1)
+        logging.error("Cause of error: %s", error_message)
     return error_message
 
 
@@ -86,7 +86,7 @@ def get_execute_command(game) -> list:
         exe_cmd.insert(0, "mangohud")
         exe_cmd.insert(1, "--dlsym")
     exe_cmd = get_exe_cmd_with_var_command(game, exe_cmd)
-    logger.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
+    logging.info("Launch command for %s: %s", game.name, " ".join(exe_cmd))
     return exe_cmd
 
 
@@ -141,7 +141,7 @@ def get_windows_exe_cmd_from_goggame_info(game, file: str) -> List[str]:
                     exe_cmd += shlex.split(task["arguments"])
                 break
 
-    logger.debug("%s contains execute command [%s]", file, ' '.join(exe_cmd))
+    logging.debug("%s contains execute command [%s]", file, ' '.join(exe_cmd))
     return exe_cmd
 
 
@@ -159,7 +159,7 @@ def get_windows_exe_cmd(game, files):
     if not exe_cmd and (launch_file_list := [file for file in files if re.match(r"^Launch .*\.lnk$", file)]):
         # Set Launch Game.lnk as executable
         exe_cmd = [get_wine_path(game), os.path.join(game.install_dir, launch_file_list[0])]
-        logger.debug("using link file [%s] as execute command", launch_file_list[0])
+        logging.debug("using link file [%s] as execute command", launch_file_list[0])
 
     if not exe_cmd:
         # Find the first executable file that is not blacklisted
@@ -188,7 +188,7 @@ def get_dosbox_exe_cmd(game, files):
             dosbox_config = file
         if re.match(r'^dosbox_?([a-z]|[A-Z]|\d)+_single\.conf$', file):
             dosbox_config_single = file
-    logger.info("Using system's dosbox to launch %s", game.name)
+    logging.info("Using system's dosbox to launch %s", game.name)
     return ["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
 
 
@@ -198,7 +198,7 @@ def get_scummvm_exe_cmd(game, files):
         if re.match(r'^.*\.ini$', file):
             scummvm_config = file
             break
-    logger.info("Using system's scrummvm to launch %s", game.name)
+    logging.info("Using system's scrummvm to launch %s", game.name)
     return ["scummvm", "-c", scummvm_config]
 
 
