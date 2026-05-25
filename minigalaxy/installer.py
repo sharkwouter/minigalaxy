@@ -6,7 +6,6 @@ import re
 import shlex
 import subprocess
 import shutil
-import sys
 import textwrap
 import time
 
