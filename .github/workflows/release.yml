@@ -34,7 +34,7 @@ jobs:
         git commit -m "Add new release"
         git push
     - name: Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         tag_name: ${{ steps.tag.outputs.VERSION }}
         name: Minigalaxy version ${{ steps.tag.outputs.VERSION }}
