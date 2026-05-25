@@ -273,3 +273,11 @@ Special thanks goes out to all contributors:
 - koraynilay for translating to Italian
 - heidiwenger and jonnelafin for translating to Finnish
 - jakbuz23 for translating to Czech
+- Dan for translating to Ukrainian
+- nexal for translating to Italian
+- GB609 for translating to German
+- Eryk Michalak for translating to Polish
+- Ἥλιος for translating to French
+- Akin Yildiz for translating to German
+- Maksim_220 Кабанов for translating to Russian
+- AnanaSeek4Jam for translating to Russian

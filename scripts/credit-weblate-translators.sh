@@ -75,7 +75,7 @@ function patchAbout {
 
     echo "$REPLY"
 
-  done <"$_REPO_ROOT/data/ui/about.ui"
+  done <"$_REPO_ROOT/minigalaxy/ui/data/about.ui"
 }
 
 function patchReadme {
@@ -113,8 +113,8 @@ source <(git log --no-merges --sparse --committer=weblate --author='^(?!Wouter W
   | createTranslationCredits)
 
 # 2. patch into about
-patchAbout > "$_REPO_ROOT/data/ui/about.ui.tmp"
-mv -f "$_REPO_ROOT/data/ui/about.ui.tmp" "$_REPO_ROOT/data/ui/about.ui"
+patchAbout > "$_REPO_ROOT/minigalaxy/ui/data/about.ui.tmp"
+mv -f "$_REPO_ROOT/minigalaxy/ui/data/about.ui.tmp" "$_REPO_ROOT/minigalaxy/ui/data/about.ui"
 
 # 3. patch into readme
 patchReadme > "$_REPO_ROOT/README.md.tmp"
