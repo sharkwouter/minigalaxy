@@ -126,9 +126,11 @@ en-US
             observed = game.fallback_read_installed_version()
         self.assertEqual(expected, observed)
 
+    @unittest.mock.patch('os.path.isfile')
     @unittest.mock.patch('os.path.exists')
-    def test1_set_info(self, mock_exists):
+    def test1_set_info(self, mock_exists, mock_isfile):
         mock_exists.return_value = True
+        mock_isfile.return_value = True
         json_content = '{"version": "gog-2"}'
         with patch("builtins.open", mock_open(read_data=json_content)) as m:
             game = Game("Game Name test2")
@@ -142,6 +144,57 @@ en-US
         expected = '{"version": "gog-3"}'
         observed = write_string
         self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    @unittest.mock.patch('os.path.exists')
+    def test2_set_info(self, mock_exists, mock_isfile):
+        mock_exists.return_value = True
+        mock_isfile.return_value = True
+        json_content = '{"version": "gog-2", "show_fps": true}'
+        with patch("builtins.open", mock_open(read_data=json_content)) as m:
+            game = Game("Game Name test2")
+            game.set_info(InfoKey.VERSION, None)
+        mock_c = m.mock_calls
+        write_string = ""
+        for kall in mock_c:
+            name, args, kwargs = kall
+            if name == "().write":
+                write_string = "{}{}".format(write_string, args[0])
+        expected = '{"show_fps": true}'
+        observed = write_string
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.path.isfile')
+    @unittest.mock.patch('os.path.exists')
+    def test3_set_info(self, mock_exists, mock_isfile):
+        mock_exists.return_value = True
+        mock_isfile.return_value = True
+        json_content = '{"show_fps": true}'
+        with patch("builtins.open", mock_open(read_data=json_content)) as m:
+            game = Game("Game Name test2")
+            game.set_info(InfoKey.VERSION, None)
+        mock_c = m.mock_calls
+        write_string = ""
+        for kall in mock_c:
+            name, args, kwargs = kall
+            if name == "().write":
+                write_string = "{}{}".format(write_string, args[0])
+        expected = '{"show_fps": true}'
+        observed = write_string
+        self.assertEqual(expected, observed)
+
+    @unittest.mock.patch('os.remove')
+    @unittest.mock.patch('os.path.isfile')
+    @unittest.mock.patch('os.path.exists')
+    def test4_set_info(self, mock_exists, mock_isfile, mock_remove: MagicMock):
+        mock_exists.return_value = True
+        mock_isfile.return_value = True
+        json_content = '{"version": "gog-2"}'
+        with patch("builtins.open", mock_open(read_data=json_content)) as m:
+            game = Game("Game Name test2")
+            game.set_info(InfoKey.VERSION, None)
+        self.assertEqual(1, m.call_count)
+        self.assertEqual(1, mock_remove.call_count)
 
     @unittest.mock.patch('os.path.exists')
     @unittest.mock.patch('os.makedirs')
