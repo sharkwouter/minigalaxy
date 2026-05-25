@@ -78,6 +78,7 @@ def setup_logging():
     # Also log to stdout
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setFormatter(logging.Formatter(logging_format))
+    stdout_handler.setLevel(logging.WARNING)
     logging.getLogger().addHandler(stdout_handler)
 
 
