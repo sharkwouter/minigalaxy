@@ -196,7 +196,7 @@ class Test(TestCase):
             LaunchCommand(
                 name="goginfo",
                 command=['env', 'WINEPREFIX=/test/install/dir/prefix', 'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\.',
-               'c:\\game\\MetroExodus.exe']
+                         'c:\\game\\MetroExodus.exe']
             )
         ]
         obs = launcher.get_windows_launch_commands(game, files)
@@ -287,8 +287,9 @@ class Test(TestCase):
             LaunchCommand(
                 name="goginfo",
                 command=['env', 'WINEPREFIX=/test/install/dir/prefix',
-               'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\DOSBOX', 'c:\\game\\DOSBOX\\dosbox.exe', '-conf', '..\\dosboxRayman.conf',
-               '-conf', '..\\dosboxRayman_single.conf', '-noconsole', '-c', 'exit']
+                         'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\DOSBOX',
+                         'c:\\game\\DOSBOX\\dosbox.exe', '-conf', '..\\dosboxRayman.conf',
+                         '-conf', '..\\dosboxRayman_single.conf', '-noconsole', '-c', 'exit']
             )
         ]
         obs = launcher.get_windows_launch_commands(game, files)

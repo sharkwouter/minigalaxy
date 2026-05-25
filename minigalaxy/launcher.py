@@ -163,7 +163,9 @@ def get_windows_launch_commands(game, files) -> list[LaunchCommand]:
     # Get the execute command from the goggame info file
     goggame_file = os.path.join(game.install_dir, f'goggame-{game.id}.info')
     if os.path.exists(goggame_file):
-        launch_commands.append(LaunchCommand(command=get_windows_exe_cmd_from_goggame_info(game, goggame_file), name="goginfo"))
+        launch_commands.append(
+            LaunchCommand(command=get_windows_exe_cmd_from_goggame_info(game, goggame_file), name="goginfo")
+        )
 
     if not launch_commands and (launch_file_list := [file for file in files if re.match(r"^Launch .*\.lnk$", file)]):
         # Set Launch Game.lnk as executable
