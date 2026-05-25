@@ -815,8 +815,8 @@ class InstallTask:
         '''Small proxy method to be passed to install_game for intermediate progress report'''
         try:
             self.callback(InstallResult(self.installer_id, result_type, reason, details))
-        except Exception as e:
-            logger.error("Installation callback handler threw an error: %s", e.message, exc_info=1)
+        except Exception:
+            logger.error("Installation callback handler threw an error:", exc_info=1)
 
     def __eq__(self, other):
         if not isinstance(other, InstallTask):
