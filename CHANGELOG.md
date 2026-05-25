@@ -2,6 +2,7 @@
 - Reduce unnecessary writes to the config file. (thanks to GB609)
 - Fix a possible exception during game installation not being handled correctly.
 - Logs are now also written to `~/.cache/minigalaxy/minigalaxy.log`.
+- Ask the user which binary to launch if Minigalaxy is unsure.
 
 **1.4.2**
 - Switch to using PEP 302 compliant resources, excluding translations. (thanks to EmperorArthur)
