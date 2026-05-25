@@ -133,13 +133,13 @@ class LibraryEntry:
         if not launch_commands:
             error_message = f"Failed to get execute command for game {self.game.name}"
         elif len(launch_commands) == 1:
-            start_game(game=self.game, execute_command=launch_commands[0])
+            error_message = start_game(game=self.game, execute_command=launch_commands[0])
         else:
             dialog = ChooseExecutable(parent=self.parent_window, launch_command_list=launch_commands)
             dialog.run()
             launch_command = dialog.get_selected_executable()
             dialog.destroy()
-            start_game(game=self.game, execute_command=launch_command)
+            error_message = start_game(game=self.game, execute_command=launch_command)
         return error_message
 
     def confirm_and_cancel_download(self, widget=None, gog_item=None, download_list=None):

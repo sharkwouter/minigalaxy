@@ -71,23 +71,24 @@ def get_execute_commands(game) -> list[LaunchCommand]:
     files = os.listdir(game.install_dir)
     launcher_type = determine_launcher_type(files)
     if launcher_type in ["start_script", "wine"]:
-        launch_commands = get_start_script_exe_cmd(game)
+        launch_commands = get_start_script_launch_commands(game)
     elif launcher_type == "windows":
-        launch_commands = get_windows_exe_cmd(game, files)
+        launch_commands = get_windows_launch_commands(game, files)
     elif launcher_type == "dosbox":
-        launch_commands = get_dosbox_exe_cmd(game, files)
+        launch_commands = get_dosbox_launch_commands(game, files)
     elif launcher_type == "scummvm":
-        launch_commands = get_scummvm_exe_cmd(game, files)
+        launch_commands = get_scummvm_launch_commands(game, files)
     elif launcher_type == "final_resort":
-        launch_commands = get_final_resort_exe_cmd(game, files)
+        launch_commands = get_final_resort_launch_commands(game, files)
     else:
         # If no executable was found at all, raise an error
         raise FileNotFoundError()
-    # if game.get_info(InfoKey.GAMEMODE) is True:
-    #     launch_commands.insert(0, "gamemoderun")
-    # if game.get_info(InfoKey.MANGOHUD) is True:
-    #     launch_commands.insert(0, "mangohud")
-    #     launch_commands.insert(1, "--dlsym")
+    for launch_command in launch_commands:
+        if game.get_info(InfoKey.GAMEMODE) is True:
+            launch_command.command.insert(0, "gamemoderun")
+        if game.get_info(InfoKey.MANGOHUD) is True:
+            launch_command.command.insert(0, "mangohud")
+            launch_command.command.insert(1, "--dlsym")
     launch_commands = append_user_defined_variables_to_launch_commands(game=game, launch_commands=launch_commands)
     logging.info("Launch commands for %s:", game.name)
     logging.info(f"{launch_commands}")
@@ -153,7 +154,7 @@ def get_windows_exe_cmd_from_goggame_info(game, file: str) -> List[str]:
     return exe_cmd
 
 
-def get_windows_exe_cmd(game, files) -> list[LaunchCommand]:
+def get_windows_launch_commands(game, files) -> list[LaunchCommand]:
     '''Find game executable file'''
 
     launch_commands = []
@@ -205,7 +206,7 @@ def get_windows_exe_cmd(game, files) -> list[LaunchCommand]:
     return launch_commands
 
 
-def get_dosbox_exe_cmd(game, files):
+def get_dosbox_launch_commands(game, files) -> list[LaunchCommand]:
     dosbox_config = ""
     dosbox_config_single = ""
     for file in files:
@@ -214,26 +215,41 @@ def get_dosbox_exe_cmd(game, files):
         if re.match(r'^dosbox_?([a-z]|[A-Z]|\d)+_single\.conf$', file):
             dosbox_config_single = file
     logging.info("Using system's dosbox to launch %s", game.name)
-    return ["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"]
+    return [
+        LaunchCommand(
+            command=["dosbox", "-conf", dosbox_config, "-conf", dosbox_config_single, "-no-console", "-c", "exit"],
+            name="dosbox"
+        )
+    ]
 
 
-def get_scummvm_exe_cmd(game, files):
+def get_scummvm_launch_commands(game, files):
     scummvm_config = ""
     for file in files:
         if re.match(r'^.*\.ini$', file):
             scummvm_config = file
             break
     logging.info("Using system's scrummvm to launch %s", game.name)
-    return ["scummvm", "-c", scummvm_config]
+    return [
+        LaunchCommand(
+            command=["scummvm", "-c", scummvm_config],
+            name="scummvm"
+        )
+    ]
 
 
-def get_start_script_exe_cmd(game):
-    return [os.path.join(game.install_dir, "start.sh")]
+def get_start_script_launch_commands(game):
+    return [
+        LaunchCommand(
+            command=[os.path.join(game.install_dir, "start.sh")],
+            name="start.sh"
+        )
+    ]
 
 
-def get_final_resort_exe_cmd(game, files):
+def get_final_resort_launch_commands(game, files):
     # This is the final resort, applies to FTL
-    exe_cmd = [""]
+    launch_commands = []
     game_dir = "game"
     game_files = os.listdir(os.path.join(game.install_dir, game_dir)) if game_dir in files else []
     for file in game_files:
@@ -241,8 +257,11 @@ def get_final_resort_exe_cmd(game, files):
             os.chdir(os.path.join(game.install_dir, game_dir))
             with open(file, 'r') as info_file:
                 info = json.loads(info_file.read())
-                exe_cmd = ["./{}".format(info["playTasks"][0]["path"])]
-    return exe_cmd
+                launch_commands.append(LaunchCommand(
+                    command=["./{}".format(info["playTasks"][0]["path"])],
+                    name=info["playTasks"][0]["name"]
+                ))
+    return launch_commands
 
 
 def set_fps_display(game):

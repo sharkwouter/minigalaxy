@@ -63,7 +63,7 @@ class Test(TestCase):
         ]
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/start.exe"]
-        obs = launcher.get_windows_exe_cmd(game, files)
+        obs = launcher.get_windows_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
     @mock.patch("minigalaxy.launcher.get_wine_path")
@@ -83,7 +83,7 @@ class Test(TestCase):
         ]
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/Launch DOOM.lnk"]
-        obs = launcher.get_windows_exe_cmd(game, files)
+        obs = launcher.get_windows_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
     @mock.patch("minigalaxy.launcher.get_wine_path")
@@ -109,7 +109,7 @@ class Test(TestCase):
         ]
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', "/usr/bin/wine", "/test/install/dir/start.lnk"]
-        obs = launcher.get_windows_exe_cmd(game, files)
+        obs = launcher.get_windows_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
     @mock.patch("minigalaxy.launcher.get_wine_path")
@@ -181,7 +181,7 @@ class Test(TestCase):
         game = Game("Test Game", install_dir="/test/install/dir", game_id=1407287452)
         exp = ['env', 'WINEPREFIX=/test/install/dir/prefix', 'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\.',
                'c:\\game\\MetroExodus.exe']
-        obs = launcher.get_windows_exe_cmd(game, files)
+        obs = launcher.get_windows_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
     @mock.patch("minigalaxy.launcher.get_wine_path")
@@ -268,27 +268,27 @@ class Test(TestCase):
         exp = ['env', 'WINEPREFIX=/test/install/dir/prefix',
                'wine', 'start', '/b', '/wait', '/d', 'c:\\game\\DOSBOX', 'c:\\game\\DOSBOX\\dosbox.exe', '-conf', '..\\dosboxRayman.conf',
                '-conf', '..\\dosboxRayman_single.conf', '-noconsole', '-c', 'exit']
-        obs = launcher.get_windows_exe_cmd(game, files)
+        obs = launcher.get_windows_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
     def test_get_dosbox_exe_cmd(self):
         files = ['thumbnail.jpg', 'docs', 'support', 'dosbox_bbb_single.conf', 'dosbox_aaa.conf', 'dosbox']
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ["dosbox", "-conf", "dosbox_aaa.conf", "-conf", "dosbox_bbb_single.conf", "-no-console", "-c", "exit"]
-        obs = launcher.get_dosbox_exe_cmd(game, files)
+        obs = launcher.get_dosbox_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
     def test_get_scummvm_exe_cmd(self):
         files = ['thumbnail.jpg', 'data', 'docs', 'support', 'beneath.ini', 'scummvm', 'start.sh', 'gameinfo']
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ["scummvm", "-c", "beneath.ini"]
-        obs = launcher.get_scummvm_exe_cmd(game, files)
+        obs = launcher.get_scummvm_launch_commands(game, files)
         self.assertEqual(exp, obs)
 
     def test_get_start_script_exe_cmd(self):
         game = Game("Test Game", install_dir="/test/install/dir")
         exp = ["/test/install/dir/start.sh"]
-        obs = launcher.get_start_script_exe_cmd(game)
+        obs = launcher.get_start_script_launch_commands(game)
         self.assertEqual(exp, obs)
 
     @mock.patch('os.getcwd')
