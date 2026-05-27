@@ -176,21 +176,18 @@ def get_windows_launch_commands(game, files) -> list[LaunchCommand]:
         logging.debug("using link file [%s] as execute command", launch_file_list[0])
 
     if not launch_commands:
-        executables_found = []
         # Find the executable files that are not blacklisted
         for file in files:
             if os.path.splitext(file.upper())[-1] not in [".EXE", ".LNK"]:
                 continue
             if file in BINARY_NAMES_TO_IGNORE:
                 continue
-            executables_found.append(file)
-        for executable in executables_found:
             launch_commands.append(
                 LaunchCommand(
                     command=[
-                        get_wine_path(game), os.path.join(game.install_dir, executable)
+                        get_wine_path(game), os.path.join(game.install_dir, file)
                     ],
-                    name=executable
+                    name=file
                 )
             )
 
