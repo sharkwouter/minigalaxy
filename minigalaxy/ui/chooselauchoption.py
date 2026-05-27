@@ -13,7 +13,6 @@ class ChooseLaunchOption(Gtk.Dialog):
     def __init__(self, parent, launch_command_list: list[LaunchCommand]):
         Gtk.Dialog.__init__(self, title=_("Choose Launch Option"), parent=parent, modal=True)
         self.launch_command_list = launch_command_list
-        self.cancelled = True
         self.selection = None
 
         shown_option = None
@@ -38,7 +37,6 @@ class ChooseLaunchOption(Gtk.Dialog):
             print(chosen_name)
             if launch_command.name == chosen_name:
                 self.selection = launch_command
-                self.cancelled = False
         self.hide()
 
     @Gtk.Template.Callback("on_button_choose_executable_cancel_clicked")
