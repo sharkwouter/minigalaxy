@@ -335,9 +335,9 @@ def get_exec_line(game):
     See https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html for details"""
     chars_to_quote = re.compile(r'(["$`\\])', re.ASCII)  # double-qoute, dollar and backtick
     replace_pattern = r'\\\1'
-    launch_command_list = get_execute_commands(game)
-    for i in range(len(launch_command_list[0].command)):
-        entry = launch_command_list[0].command[i]
+    exe_cmd_list = get_execute_commands(game)[0].command
+    for i in range(len(exe_cmd_list)):
+        entry = exe_cmd_list[i]
         if chars_to_quote.search(entry) is not None:
             entry = f'"{chars_to_quote.sub(replace_pattern, entry)}"'
             """backslashes in quotes nightmare: double backslash is one literal
@@ -350,8 +350,8 @@ def get_exec_line(game):
         elif ' ' in entry:  # only need to treat blanks by quoting if not quoted because of special characters anyway
             entry = f'"{entry}"'
 
-        launch_command_list[0].command[i] = entry
-    return " ".join(launch_command_list[0].command)
+        exe_cmd_list[i] = entry
+    return " ".join(exe_cmd_list)
 
 
 def create_applications_file(game, override=False):
