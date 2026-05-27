@@ -45,3 +45,12 @@ class ChooseLaunchOption(Gtk.Dialog):
     def on_cancel_clicked(self, button):
         self.selection = None
         self.hide()
+
+    @staticmethod
+    def ask_for_launch_command(parent, launch_command_list: list[LaunchCommand]):
+        dialog = ChooseLaunchOption(parent=parent, launch_command_list=launch_command_list)
+        dialog.run()
+        launch_command = dialog.selection
+        dialog.destroy()
+
+        return launch_command

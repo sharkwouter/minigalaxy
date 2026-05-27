@@ -135,15 +135,12 @@ class LibraryEntry:
         elif len(launch_commands) == 1:
             error_message = start_game(game=self.game, execute_command=launch_commands[0])
         else:
-            dialog = ChooseLaunchOption(parent=self.parent_window, launch_command_list=launch_commands)
-            dialog.run()
-            launch_command = dialog.selection
-            dialog_cancelled = dialog.cancelled
-            dialog.destroy()
+            launch_command = ChooseLaunchOption.ask_for_launch_command(
+                parent=self.parent_window,
+                launch_command_list=launch_commands
+            )
             if launch_command:
                 error_message = start_game(game=self.game, execute_command=launch_command)
-            elif not dialog_cancelled:
-                error_message = "No launch option selected"
         return error_message
 
     def confirm_and_cancel_download(self, widget=None, gog_item=None, download_list=None):
