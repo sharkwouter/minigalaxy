@@ -20,3 +20,18 @@
 #gametile .progress-bar * {
   border-radius: 0px;
 }
+
+.platform-icon-bar image {
+	margin: 1pt;
+	border: 2pt solid transparent;
+	border-radius: 2pt;
+	padding: 1pt;
+}
+
+.platform-icon-bar image.active-platform {
+  border-color: @theme_text_color;
+}
+
+.platform-icon-bar image.icon-highlight {
+	border-color: @theme_selected_bg_color;
+}

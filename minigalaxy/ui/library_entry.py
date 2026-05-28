@@ -16,9 +16,10 @@ from minigalaxy.launcher import start_game, get_execute_commands
 from minigalaxy.paths import CACHE_DIR, DOWNLOAD_DIR, THUMBNAIL_DIR
 from minigalaxy.translation import _
 from minigalaxy.ui.chooselauchoption import ChooseLaunchOption
-from minigalaxy.ui.gtk import Gtk, GLib, Notify, load_pixbuf
+from minigalaxy.ui.gtk import Gtk, GLib, Notify
 from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
+from minigalaxy.ui.game_icon_bar import GameIconBar
 
 
 class LibraryEntry:
@@ -65,17 +66,14 @@ class LibraryEntry:
         self.thumbnail_loaded = False
 
     def init_ui_elements(self):
+        self.icon_bar = GameIconBar(self, self.game)
+        self.platform_icon_bar_placeholder.pack_start(self.icon_bar, False, False, 0)
+
         self.image.set_tooltip_text(self.game.name)
-        self.menu_button.set_tooltip_text(_("Show game options menu"))
+
         self.reload_state()
         load_thumbnail_thread = threading.Thread(target=self.load_thumbnail)
         load_thumbnail_thread.start()
-
-        # Icon for Windows games
-        if self.game.platform == "windows":
-            self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
-            self.wine_icon.set_from_pixbuf(load_pixbuf("winehq_logo_glass.png"))
-            self.wine_icon.show()
 
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):
@@ -699,7 +697,6 @@ class LibraryEntry:
 
         self.image.set_sensitive(True)
         self.update_visible_widgets(self.menu_button_uninstall, info_buttons=True)
-        self.update_icon.hide()
 
         self.game.set_install_dir(self.config.install_dir)
 
@@ -716,15 +713,10 @@ class LibraryEntry:
     def state_updatable(self):
         self.set_main_button(True, _("Play"))
 
-        self.update_icon.show()
-        self.update_icon.set_from_icon_name("emblem-synchronizing", Gtk.IconSize.LARGE_TOOLBAR)
-
         self.update_visible_widgets(self.menu_button_update, self.menu_button_uninstall, info_buttons=True)
 
         tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == "windows" else "")
         self.image.set_tooltip_text(tooltip_text)
-        if self.game.platform == "windows":
-            self.wine_icon.set_margin_left(22)
 
     def state_updating(self):
         self.set_main_button(False, _("Updating…"))
@@ -738,6 +730,7 @@ class LibraryEntry:
         self.current_state = state
         if state in self.STATE_UPDATE_HANDLERS:
             GLib.idle_add(self.STATE_UPDATE_HANDLERS[state])
+        GLib.idle_add(self.icon_bar.update_icon_state, self.current_state)
 
     def update_to_state_if_idle(self, state):
         """Move to the given state, but only when there is no more ongoing download/install"""
