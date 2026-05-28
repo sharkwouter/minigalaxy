@@ -42,7 +42,7 @@ class TestWidgetUtils(TestCase):
         self.assertEqual(self.test_data, self.list_store_instance)
         combo.set_active.assert_not_called()
 
-    def test_opulate_combo_with_preselect(self):
+    def test_populate_combo_with_preselect(self):
         from minigalaxy.ui.widget_utils import populate_combobox
 
         combo = MagicMock()

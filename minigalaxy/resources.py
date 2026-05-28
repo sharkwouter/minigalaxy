@@ -14,3 +14,10 @@ def get_ui_data_file(file_name: str) -> Traversable:
     A UI data file, as recommended by https://setuptools.pypa.io/en/latest/userguide/datafiles.html
     """
     return files("minigalaxy.ui.data").joinpath(file_name)
+
+
+def platform_name_to_icon_file(name: str):
+    if name == "windows":
+        return "icon_wine.png"
+
+    return "icon_linux.png" 
