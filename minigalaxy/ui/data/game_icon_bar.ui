@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.40.0 -->
+<interface domain="minigalaxy">
+  <requires lib="gtk+" version="3.20"/>
+  <template class="GameIconBar" parent="GtkBox">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="opacity">0.69999999999999996</property>
+    <property name="halign">start</property>
+    <property name="valign">start</property>
+    <property name="baseline-position">top</property>
+    <child>
+      <object class="GtkImage" id="update_icon">
+        <property name="can-focus">False</property>
+        <property name="halign">start</property>
+        <property name="valign">start</property>
+        <property name="icon-name">emblem-synchronizing</property>
+        <property name="icon_size">2</property>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEventBox" id="eb_lx">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="halign">start</property>
+        <property name="valign">start</property>
+        <property name="visible-window">False</property>
+        <signal name="button-press-event" handler="platform_icon_bar_clicked" object="lnx_icon" swapped="no"/>
+        <signal name="enter-notify-event" handler="toggle_image_highlight" object="lnx_icon" swapped="no"/>
+        <signal name="leave-notify-event" handler="toggle_image_highlight" object="lnx_icon" swapped="no"/>
+        <child>
+          <object class="GtkImage" id="lnx_icon">
+            <property name="name">linux</property>
+            <property name="can-focus">True</property>
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="icon_size">2</property>
+            <signal name="button-press-event" handler="platform_icon_bar_clicked" swapped="no"/>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkEventBox" id="eb_wn">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="halign">start</property>
+        <property name="valign">start</property>
+        <property name="visible-window">False</property>
+        <signal name="button-press-event" handler="platform_icon_bar_clicked" object="wine_icon" swapped="no"/>
+        <signal name="enter-notify-event" handler="toggle_image_highlight" object="wine_icon" swapped="no"/>
+        <signal name="leave-notify-event" handler="toggle_image_highlight" object="wine_icon" swapped="no"/>
+        <child>
+          <object class="GtkImage" id="wine_icon">
+            <property name="name">windows</property>
+            <property name="can-focus">True</property>
+            <property name="halign">start</property>
+            <property name="valign">start</property>
+            <property name="icon_size">2</property>
+          </object>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">2</property>
+      </packing>
+    </child>
+    <style>
+      <class name="platform-icon-bar"/>
+      <class name="background"/>
+    </style>
+  </template>
+</interface>
