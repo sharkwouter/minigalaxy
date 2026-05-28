@@ -20,4 +20,4 @@ def platform_name_to_icon_file(name: str):
     if name == "windows":
         return "icon_wine.png"
 
-    return "icon_linux.png" 
+    return "icon_linux.png"

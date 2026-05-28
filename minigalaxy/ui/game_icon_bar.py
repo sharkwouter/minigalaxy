@@ -1,4 +1,4 @@
-from gi.overrides.Gdk import Gdk
+from gi.repository import Gdk
 from minigalaxy.entity.state import State
 from minigalaxy.game import Game
 from minigalaxy.resources import platform_name_to_icon_file
@@ -93,4 +93,3 @@ class GameIconBar(Gtk.Box):
         icon_file = platform_name_to_icon_file(platform)
         pixbuf = load_scaled_pixbuf(icon_file, Gtk.IconSize.lookup(Gtk.IconSize.SMALL_TOOLBAR)[1])
         icon_holder.set_from_pixbuf(pixbuf)
-

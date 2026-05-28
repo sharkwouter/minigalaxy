@@ -1,30 +1,36 @@
 import os
 import sys
 
-from minigalaxy.ui import gtk
-
 from tests.ui import MockGiRepository
 
 from unittest import TestCase
 from unittest.mock import MagicMock
+
+gi_repo = MockGiRepository()
+sys.modules['gi'] = MagicMock()
+sys.modules['gi.repository'] = gi_repo
+sys.modules['minigalaxy.ui.window'] = MagicMock()
+sys.modules['minigalaxy.ui.preferences'] = MagicMock()
+sys.modules['minigalaxy.ui.gametile'] = MagicMock()
+pixbuf_loader = MagicMock()
+gi_repo.GdkPixbuf.PixbufLoader = pixbuf_loader
+pixbuf_loader.return_value = pixbuf_loader
+
+if "minigalaxy.ui.gtk" in sys.modules:
+    del sys.modules["minigalaxy.ui.gtk"]
+from minigalaxy.ui import gtk  # noqa: E402
 
 
 class TestGtk(TestCase):
 
     def setUp(self):
         super().setUp()
-        self.gi_repo = MockGiRepository()
-        sys.modules['gi.repository'] = self.gi_repo
-        self.pixbuf_loader = MagicMock()
-        self.gi_repo.GdkPixbuf.PixbufLoader = self.pixbuf_loader
-        self.pixbuf_loader.return_value = self.pixbuf_loader
-
         # make sure that no other test file has left the cache unclean
+        pixbuf_loader.reset_mock()
         gtk.PIXBUF_CACHE.clear()
 
     def tearDown(self):
         gtk.PIXBUF_CACHE.clear()
-        del sys.modules['gi.repository']
         super().tearDown()
 
     def test_load_pixbuf_nocache(self):
@@ -38,25 +44,25 @@ class TestGtk(TestCase):
         self.assertIs(loaded, gtk.PIXBUF_CACHE.get("icon_linux.png"))
 
     def __verify_load_pixbuf(self, use_cache):
-        self.pixbuf_loader.get_pixbuf.return_value = "LOADED_DATA"
+        pixbuf_loader.get_pixbuf.return_value = "LOADED_DATA"
 
         loaded = gtk.load_pixbuf("icon_linux.png", use_cache)
         self.assertEqual("LOADED_DATA", loaded)
 
-        self.pixbuf_loader.write.assert_called_once()
-        self.pixbuf_loader.close.assert_called_once()
-        self.pixbuf_loader.get_pixbuf.assert_called_once()
+        pixbuf_loader.write.assert_called_once()
+        pixbuf_loader.close.assert_called_once()
+        pixbuf_loader.get_pixbuf.assert_called_once()
 
         return loaded
 
     def test_load_pixbuf_cached(self):
         cached = "SOME CACHED DATA"
         gtk.PIXBUF_CACHE["cached_pseudo_image"] = cached
-        self.pixbuf_loader.get_pixbuf.return_value = "should not reload a cached image!"
+        pixbuf_loader.get_pixbuf.return_value = "should not reload a cached image!"
         loaded = gtk.load_pixbuf("cached_pseudo_image")
 
         self.assertIs(cached, loaded)
-        self.pixbuf_loader.get_pixbuf.assert_not_called()
+        pixbuf_loader.get_pixbuf.assert_not_called()
 
     def test_load_scaled_pixbuf_nocache(self):
         self.__verify_load_scaled_pixbuf(36, False)
@@ -71,34 +77,34 @@ class TestGtk(TestCase):
         pixbuf = MagicMock()
         scaled = "SCALED"
         pixbuf.scale_simple.return_value = scaled
-        self.pixbuf_loader.get_pixbuf.return_value = "should not reload a cached image!"
+        pixbuf_loader.get_pixbuf.return_value = "should not reload a cached image!"
 
         gtk.PIXBUF_CACHE["unscaled_cached"] = pixbuf
         loaded = gtk.load_scaled_pixbuf("unscaled_cached", 16)
 
         self.assertIs(scaled, loaded)
-        self.pixbuf_loader.get_pixbuf.assert_not_called()
+        pixbuf_loader.get_pixbuf.assert_not_called()
         pixbuf.scale_simple.assert_called_once_with(16, 16, gtk.GdkPixbuf.InterpType.BILINEAR)
 
     def test_load_scaled_pixbuf_both_cached(self):
         pixbuf = MagicMock()
         scaled = "SCALED"
         pixbuf.scale_simple.return_value = scaled
-        self.pixbuf_loader.get_pixbuf.return_value = "should not reload a cached image!"
+        pixbuf_loader.get_pixbuf.return_value = "should not reload a cached image!"
 
         gtk.PIXBUF_CACHE["unscaled_cached"] = pixbuf
         gtk.PIXBUF_CACHE["unscaled_cached_16x16"] = scaled
         loaded = gtk.load_scaled_pixbuf("unscaled_cached", 16)
 
         self.assertIs(scaled, loaded)
-        self.pixbuf_loader.get_pixbuf.assert_not_called()
+        pixbuf_loader.get_pixbuf.assert_not_called()
         pixbuf.scale_simple.assert_not_called()
 
     def __verify_load_scaled_pixbuf(self, size, use_cache):
         expected_scaled_value = f"SCALED:{size}x{size}"
         pixbuf = MagicMock()
         pixbuf.scale_simple.side_effect = lambda w, h, scale_type: f"SCALED:{w}x{h}"
-        self.pixbuf_loader.get_pixbuf.return_value = pixbuf
+        pixbuf_loader.get_pixbuf.return_value = pixbuf
 
         scaled = gtk.load_scaled_pixbuf("icon_linux.png", size, use_cache)
         self.assertEqual(expected_scaled_value, scaled)
@@ -126,3 +132,10 @@ class TestGtk(TestCase):
         pixbuf = MagicMock()
         gtk.scale_pixbuf(pixbuf, 24)
         pixbuf.scale_simple.assert_called_once_with(24, 24, gtk.GdkPixbuf.InterpType.BILINEAR)
+
+
+del sys.modules['gi']
+del sys.modules['gi.repository']
+del sys.modules['minigalaxy.ui.window']
+del sys.modules['minigalaxy.ui.preferences']
+del sys.modules['minigalaxy.ui.gametile']
