@@ -73,7 +73,7 @@ class LibraryEntry:
         # Icon for Windows games
         if self.game.platform == "windows":
             self.image.set_tooltip_text("{} (Wine)".format(self.game.name))
-            self.wine_icon.set_from_pixbuf(load_pixbuf("winehq_logo_glass.png"))
+            self.wine_icon.set_from_pixbuf(load_pixbuf("icon_wine.png"))
             self.wine_icon.show()
 
     # Downloads if Minigalaxy was closed with this game downloading
