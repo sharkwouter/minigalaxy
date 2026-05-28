@@ -94,6 +94,7 @@ class Properties(Gtk.Dialog):
                 self.game.set_info(InfoKey.MANGOHUD, self.switch_properties_use_mangohud.get_active())
             self.game.set_info(InfoKey.VARIABLES, str(self.entry_properties_variable.get_text()))
             self.game.set_info(InfoKey.COMMAND, str(self.entry_properties_command.get_text()))
+
         self.game.set_info(InfoKey.HIDE_GAME, self.switch_properties_hide_game.get_active())
         self.game.set_info(InfoKey.CUSTOM_WINE, str(self.button_properties_wine.get_filename()))
         self.parent_library.filter_library()
@@ -129,8 +130,6 @@ class Properties(Gtk.Dialog):
     def button_sensitive(self, game):
         if not game.is_installed():
             self.button_properties_open_files.set_sensitive(False)
-            self.button_properties_wine.set_sensitive(False)
-            self.button_properties_reset.set_sensitive(False)
             self.button_properties_regedit.set_sensitive(False)
             self.button_properties_winecfg.set_sensitive(False)
             self.button_properties_winetricks.set_sensitive(False)
@@ -149,3 +148,6 @@ class Properties(Gtk.Dialog):
             self.button_properties_wine.hide()
             self.button_properties_reset.hide()
             self.label_wine_custom.hide()
+        elif game.platform == 'windows':
+            self.button_properties_wine.set_sensitive(True)
+            self.button_properties_reset.set_sensitive(True)
