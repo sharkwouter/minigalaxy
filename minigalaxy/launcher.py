@@ -83,13 +83,11 @@ def get_execute_commands(game) -> list[LaunchCommand]:
     else:
         # If no executable was found at all, raise an error
         raise FileNotFoundError()
+
+    # Add additions to the launch command from the game config
     for launch_command in launch_commands:
-        if game.get_info(InfoKey.GAMEMODE) is True:
-            launch_command.command.insert(0, "gamemoderun")
-        if game.get_info(InfoKey.MANGOHUD) is True:
-            launch_command.command.insert(0, "mangohud")
-            launch_command.command.insert(1, "--dlsym")
-    launch_commands = append_user_defined_variables_to_launch_commands(game=game, launch_commands=launch_commands)
+        launch_command.apply_game_launch_config(game=game)
+
     logging.info("Launch commands for %s:", game.name)
     logging.info(f"{launch_commands}")
     for launch_command in launch_commands:
@@ -113,21 +111,6 @@ def determine_launcher_type(files):
     elif "game" in files:
         launcher_type = "final_resort"
     return launcher_type
-
-
-def append_user_defined_variables_to_launch_commands(game, launch_commands: list[LaunchCommand]) -> list[LaunchCommand]:
-    var_list = shlex.split(game.get_info(InfoKey.VARIABLES))
-    command_list = shlex.split(game.get_info(InfoKey.COMMAND))
-
-    for launch_command in launch_commands:
-        if var_list:
-            if var_list[0] not in ["env"]:
-                var_list.insert(0, "env")
-            if 'env' == launch_command.command[0]:
-                launch_command.command = launch_command.command[1:]
-
-        launch_command.command = var_list + launch_command.command + command_list
-    return launch_commands
 
 
 def get_windows_exe_cmd_from_goggame_info(game, file: str) -> List[str]:
