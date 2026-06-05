@@ -21,7 +21,7 @@ from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.resources import get_data_file
 from minigalaxy.translation import _
-from minigalaxy.launcher import get_execute_command, get_wine_path, wine_restore_game_link
+from minigalaxy.launcher import get_execute_commands, get_wine_path, wine_restore_game_link
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, DOWNLOAD_DIR
 
 
@@ -335,7 +335,7 @@ def get_exec_line(game):
     See https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html for details"""
     chars_to_quote = re.compile(r'(["$`\\])', re.ASCII)  # double-qoute, dollar and backtick
     replace_pattern = r'\\\1'
-    exe_cmd_list = get_execute_command(game)
+    exe_cmd_list = get_execute_commands(game)[0].command
     for i in range(len(exe_cmd_list)):
         entry = exe_cmd_list[i]
         if chars_to_quote.search(entry) is not None:

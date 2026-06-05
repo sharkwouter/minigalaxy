@@ -2,6 +2,7 @@
 - Reduce unnecessary writes to the config file. (thanks to GB609)
 - Fix a possible exception during game installation not being handled correctly.
 - Logs are now also written to `~/.cache/minigalaxy/minigalaxy.log`.
+- Ask the user which binary to launch if Minigalaxy is unsure.
 - The `wine` executable can now also be changed before a game is installed (thanks to GB609).
 
 **1.4.2**
