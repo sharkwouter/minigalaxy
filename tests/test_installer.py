@@ -199,7 +199,8 @@ class Test(TestCase):
         """[scenario: linux installer, unpack success]"""
         mock_is_file.return_value = True
         mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readlines.return_value = ["\n"]
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_subprocess().stderr.readline.return_value = ""
         mock_listdir.return_value = ["object1", "object2"]
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
@@ -215,7 +216,8 @@ class Test(TestCase):
         """[scenario: linux installer, unpack failed]"""
         mock_is_file.return_value = True
         mock_subprocess().poll.return_value = 2
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_subprocess().stderr.readline.return_value = ""
         mock_listdir.return_value = ["object1", "object2"]
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
@@ -230,7 +232,8 @@ class Test(TestCase):
     def test_extract_linux(self, mock_subprocess, mock_listdir, mock_is_file):
         mock_is_file.return_value = True
         mock_subprocess().poll.return_value = 1
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "(attempting to process anyway)"]
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_subprocess().stderr.readline.return_value = ""
         mock_listdir.return_value = ["object1", "object2"]
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1207658695"
@@ -294,7 +297,8 @@ class Test(TestCase):
         """[scenario: success]"""
         mock_path_exists.return_value = True
         mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_subprocess().stderr.readline.return_value = ""
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
@@ -310,7 +314,8 @@ class Test(TestCase):
         """[scenario: install failed]"""
         mock_path_exists.return_value = True
         mock_subprocess().poll.return_value = 1
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_subprocess().stderr.readline.return_value = ""
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform="windows")
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
@@ -323,7 +328,8 @@ class Test(TestCase):
     def test1_postinstaller(self, mock_path_isfile, mock_subprocess):
         mock_path_isfile.return_value = False
         mock_subprocess().poll.return_value = 1
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_subprocess().stderr.readline.return_value = ""
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
         exp = ""
         obs = installer.postinstaller(game)
@@ -335,7 +341,8 @@ class Test(TestCase):
     def test2_postinstaller(self, mock_chmod, mock_path_isfile, mock_subprocess):
         mock_path_isfile.return_value = True
         mock_subprocess().poll.return_value = 0
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_subprocess().stderr.readline.return_value = ""
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
         exp = ""
         obs = installer.postinstaller(game)
@@ -347,7 +354,8 @@ class Test(TestCase):
     def test3_postinstaller(self, mock_chmod, mock_path_isfile, mock_subprocess):
         mock_path_isfile.return_value = True
         mock_subprocess().poll.return_value = 1
-        mock_subprocess().stdout.readlines.return_value = ["stdout", "stderr"]
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_subprocess().stderr.readline.return_value = ""
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift")
         exp = "Postinstallation script failed: /home/makson/GOG Games/Absolute Drift/support/postinst.sh"
         obs = installer.postinstaller(game)
