@@ -176,6 +176,7 @@ class TestApiGog(TestCase):
         self.api._Api__request.return_value = {"checksum": "url"}
         self.session.get.side_effect = MagicMock()
         self.session.get().status_code = http.HTTPStatus.NOT_FOUND
+        self.session.get().text = ""
 
         exp = ""
         obs = self.api.get_download_file_info("url").md5
@@ -232,6 +233,7 @@ class TestApiGog(TestCase):
         self.api._Api__request.return_value = {"checksum": "url"}
         session.get.side_effect = MagicMock()
         session.get().status_code = http.HTTPStatus.NOT_FOUND
+        session.get().text = ""
 
         exp = 0
         obs = self.api.get_download_file_info("url").size
