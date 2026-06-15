@@ -55,7 +55,7 @@ class Preferences(Gtk.Dialog):
     def __set_locale_list(self) -> None:
         # Set the active option
         current_locale = self.config.locale
-        default_locale = locale.getdefaultlocale()
+        default_locale = locale.getlocale()
         if current_locale is None:
             locale.setlocale(locale.LC_ALL, default_locale)
 
@@ -70,7 +70,7 @@ class Preferences(Gtk.Dialog):
     def __apply_locale_choice(self) -> None:
         locale_choice = get_combo_value(self.combobox_program_language)
         if locale_choice == '' or not locale_choice:
-            locale_choice = locale.getdefaultlocale()[0]
+            locale_choice = locale.getlocale()[0]
 
         try:
             locale.setlocale(locale.LC_ALL, (locale_choice, 'UTF-8'))
