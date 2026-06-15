@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: minigalaxy 0.9.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-15 17:57+0200\n"
-"PO-Revision-Date: 2025-03-13 17:01+0000\n"
+"PO-Revision-Date: 2026-06-16 17:01+0000\n"
 "Last-Translator: Wouter Wijsman <wwijsman@live.nl>\n"
 "Language-Team: Dutch <https://hosted.weblate.org/projects/minigalaxy/"
 "minigalaxy/nl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.11-dev\n"
+"X-Generator: Weblate 2026.7.dev0\n"
 
 #. A short description of what Minigalaxy is
 #: minigalaxy/ui/data/about.ui:10
@@ -52,7 +52,7 @@ msgstr ""
 
 #: minigalaxy/ui/data/choose_executable_dialog.ui:84
 msgid "Always launch the chosen option"
-msgstr ""
+msgstr "Kies altijd deze optie"
 
 #: minigalaxy/ui/data/categoryfilters.ui:72
 msgid "Apply"
