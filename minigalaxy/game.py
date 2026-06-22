@@ -19,6 +19,7 @@ class InfoKey(str, Enum):
     GAMEMODE = "use_gamemode"
     VARIABLES = "variable"
     VERSION = "version"
+    LAST_LAUNCH_OPTION = "last_launch_option"
 
 
 class Game:

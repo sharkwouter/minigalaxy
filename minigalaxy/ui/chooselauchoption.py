@@ -1,3 +1,4 @@
+from minigalaxy.game import Game, InfoKey
 from minigalaxy.launch_command import LaunchCommand
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, load_ui
@@ -10,9 +11,10 @@ class ChooseLaunchOption(Gtk.Dialog):
 
     choices_combobox = Gtk.Template.Child()
 
-    def __init__(self, parent, launch_command_list: list[LaunchCommand]):
+    def __init__(self, parent, launch_command_list: list[LaunchCommand], game: Game):
         Gtk.Dialog.__init__(self, title=_("Choose Launch Option"), parent=parent, modal=True)
         self.launch_command_list = launch_command_list
+        self.game = game
         self.selection = None
 
         shown_option = None
@@ -21,7 +23,7 @@ class ChooseLaunchOption(Gtk.Dialog):
             combobox_options.append(
                 [launch_command.name, launch_command.name]
             )
-            if shown_option is None:
+            if shown_option is None or self.game.get_info(InfoKey.LAST_LAUNCH_OPTION) == launch_command.name:
                 shown_option = launch_command.name
 
         populate_combobox(self.choices_combobox, combobox_options, shown_option)
@@ -37,6 +39,7 @@ class ChooseLaunchOption(Gtk.Dialog):
             print(chosen_name)
             if launch_command.name == chosen_name:
                 self.selection = launch_command
+                self.game.set_info(InfoKey.LAST_LAUNCH_OPTION, launch_command.name)
         self.hide()
 
     @Gtk.Template.Callback("on_button_choose_executable_cancel_clicked")
@@ -45,8 +48,8 @@ class ChooseLaunchOption(Gtk.Dialog):
         self.hide()
 
     @staticmethod
-    def ask_for_launch_command(parent, launch_command_list: list[LaunchCommand]):
-        dialog = ChooseLaunchOption(parent=parent, launch_command_list=launch_command_list)
+    def ask_for_launch_command(parent, launch_command_list: list[LaunchCommand], game: Game):
+        dialog = ChooseLaunchOption(parent=parent, launch_command_list=launch_command_list, game=game)
         dialog.run()
         launch_command = dialog.selection
         dialog.destroy()

@@ -135,7 +135,8 @@ class LibraryEntry:
         else:
             launch_command = ChooseLaunchOption.ask_for_launch_command(
                 parent=self.parent_window,
-                launch_command_list=launch_commands
+                launch_command_list=launch_commands,
+                game=self.game,
             )
             if launch_command:
                 error_message = start_game(game=self.game, execute_command=launch_command)
