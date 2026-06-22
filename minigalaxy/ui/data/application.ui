@@ -61,7 +61,7 @@
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <property name="text" translatable="yes" context="about" comments="Opens about dialog">About</property>
+            <property name="text" translatable="yes" comments="Opens about dialog">About</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="on_menu_about_clicked" swapped="no"/>
           </object>
@@ -141,7 +141,7 @@
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">False</property>
-            <property name="tooltip-text" translatable="yes" context="category_filter" comments="Tooltip for category filter button">Category filters</property>
+            <property name="tooltip-text" translatable="yes" comments="Tooltip for category filter button">Category filters</property>
             <property name="valign">center</property>
             <signal name="clicked" handler="on_menu_category_filter_clicked" swapped="no"/>
             <child>

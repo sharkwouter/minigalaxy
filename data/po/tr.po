@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 17:57+0200\n"
+"POT-Creation-Date: 2026-06-22 11:31+0200\n"
 "PO-Revision-Date: 2021-09-30 11:22+0300\n"
 "Last-Translator: Hüseyin Fahri Uzun <mail@fahriuzun.com>\n"
 "Language-Team: \n"
@@ -24,13 +24,8 @@ msgctxt "short_description"
 msgid "A simple GOG client for Linux"
 msgstr "Linux için basit bir GOG uygulaması"
 
-#: minigalaxy/ui/about.py:11
-msgid "About"
-msgstr "Hakkında"
-
 #. Opens about dialog
-#: minigalaxy/ui/data/application.ui:64
-msgctxt "about"
+#: minigalaxy/ui/about.py:11 minigalaxy/ui/data/application.ui:64
 msgid "About"
 msgstr "Hakkında"
 
@@ -46,10 +41,6 @@ msgstr "Oyun çalıştırılırken kullanılacak olan komutun sonuna eklendi"
 #: minigalaxy/ui/data/properties.ui:243 minigalaxy/ui/data/properties.ui:255
 msgid "Added in front of the command used to launch the game"
 msgstr "Oyun çalıştırılırken kullanılacak olan komutun başına eklendi"
-
-#: minigalaxy/ui/data/choose_executable_dialog.ui:84
-msgid "Always launch the chosen option"
-msgstr ""
 
 #: minigalaxy/ui/data/categoryfilters.ui:72
 msgid "Apply"
@@ -73,14 +64,8 @@ msgid "Brazilian Portuguese"
 msgstr "Brezilya Portekizçesi"
 
 #: minigalaxy/ui/data/categoryfilters.ui:58
-#: minigalaxy/ui/data/choose_executable_dialog.ui:19
 #: minigalaxy/ui/data/chooselaunchoption.ui:19
-#: minigalaxy/ui/data/properties.ui:355
-msgid "Cancel"
-msgstr "İptal"
-
-#: minigalaxy/ui/data/preferences.ui:20
-msgctxt "cancel"
+#: minigalaxy/ui/data/preferences.ui:20 minigalaxy/ui/data/properties.ui:355
 msgid "Cancel"
 msgstr "İptal"
 
@@ -90,7 +75,6 @@ msgstr ""
 
 #. Tooltip for category filter button
 #: minigalaxy/ui/data/application.ui:144
-msgctxt "category_filter"
 msgid "Category filters"
 msgstr ""
 
@@ -115,10 +99,6 @@ msgstr "Çince"
 
 #: minigalaxy/ui/chooselauchoption.py:14
 msgid "Choose Launch Option"
-msgstr ""
-
-#: minigalaxy/ui/data/choose_executable_dialog.ui:59
-msgid "Choose what to launch"
 msgstr ""
 
 #: minigalaxy/ui/data/properties.ui:268
@@ -371,7 +351,6 @@ msgctxt "language"
 msgid "Language: "
 msgstr "Dil:  "
 
-#: minigalaxy/ui/data/choose_executable_dialog.ui:32
 #: minigalaxy/ui/data/chooselaunchoption.ui:33
 msgid "Launch"
 msgstr ""
@@ -480,10 +459,6 @@ msgstr ""
 #: minigalaxy/ui/data/application.ui:122
 msgctxt "menu"
 msgid "Options menu"
-msgstr ""
-
-#: minigalaxy/ui/data/download_list.ui:69
-msgid "P"
 msgstr ""
 
 #. Tooltip of icon button to pause a download
@@ -600,10 +575,6 @@ msgstr ""
 #: minigalaxy/constants.py:19 minigalaxy/constants.py:65
 msgid "Russian"
 msgstr "Rusça"
-
-#: minigalaxy/ui/data/download_list.ui:70
-msgid "S"
-msgstr ""
 
 #. Saves the preferences
 #: minigalaxy/ui/data/preferences.ui:34
@@ -878,6 +849,14 @@ msgstr "{} kullanılabilinir bir yol değil"
 #: minigalaxy/installer.py:175
 msgid "{} was corrupted. Please download it again."
 msgstr "{} bozuk. Lütfen yeniden indirin."
+
+#~ msgctxt "about"
+#~ msgid "About"
+#~ msgstr "Hakkında"
+
+#~ msgctxt "cancel"
+#~ msgid "Cancel"
+#~ msgstr "İptal"
 
 #~ msgid "No executable was found in {}"
 #~ msgstr "{} burada başlatma dosyası bulunamadı"

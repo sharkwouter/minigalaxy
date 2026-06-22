@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 17:57+0200\n"
+"POT-Creation-Date: 2026-06-22 11:31+0200\n"
 "PO-Revision-Date: 2026-01-23 17:01+0000\n"
 "Last-Translator: Ἥλιος <mu6mj1y62@mozmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/minigalaxy/"
@@ -25,13 +25,8 @@ msgctxt "short_description"
 msgid "A simple GOG client for Linux"
 msgstr "Une interface GOG simple pour GNU/Linux"
 
-#: minigalaxy/ui/about.py:11
-msgid "About"
-msgstr "À propos"
-
 #. Opens about dialog
-#: minigalaxy/ui/data/application.ui:64
-msgctxt "about"
+#: minigalaxy/ui/about.py:11 minigalaxy/ui/data/application.ui:64
 msgid "About"
 msgstr "À propos"
 
@@ -47,10 +42,6 @@ msgstr "Ajouté à la fin de la commande utilisée pour lancer le jeu"
 #: minigalaxy/ui/data/properties.ui:243 minigalaxy/ui/data/properties.ui:255
 msgid "Added in front of the command used to launch the game"
 msgstr "Ajouté devant la commande utilisée pour lancer le jeu"
-
-#: minigalaxy/ui/data/choose_executable_dialog.ui:84
-msgid "Always launch the chosen option"
-msgstr ""
 
 #: minigalaxy/ui/data/categoryfilters.ui:72
 msgid "Apply"
@@ -74,14 +65,8 @@ msgid "Brazilian Portuguese"
 msgstr "Portugais Brésilien"
 
 #: minigalaxy/ui/data/categoryfilters.ui:58
-#: minigalaxy/ui/data/choose_executable_dialog.ui:19
 #: minigalaxy/ui/data/chooselaunchoption.ui:19
-#: minigalaxy/ui/data/properties.ui:355
-msgid "Cancel"
-msgstr "Annuler"
-
-#: minigalaxy/ui/data/preferences.ui:20
-msgctxt "cancel"
+#: minigalaxy/ui/data/preferences.ui:20 minigalaxy/ui/data/properties.ui:355
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -91,9 +76,8 @@ msgstr "Filtres de catégorie"
 
 #. Tooltip for category filter button
 #: minigalaxy/ui/data/application.ui:144
-msgctxt "category_filter"
 msgid "Category filters"
-msgstr "Filtrer par catégorie"
+msgstr ""
 
 #: minigalaxy/ui/data/download_list.ui:56
 msgctxt "download_configuration"
@@ -116,10 +100,6 @@ msgstr "Chinois"
 
 #: minigalaxy/ui/chooselauchoption.py:14
 msgid "Choose Launch Option"
-msgstr ""
-
-#: minigalaxy/ui/data/choose_executable_dialog.ui:59
-msgid "Choose what to launch"
 msgstr ""
 
 #: minigalaxy/ui/data/properties.ui:268
@@ -374,7 +354,6 @@ msgctxt "language"
 msgid "Language: "
 msgstr "Langue : "
 
-#: minigalaxy/ui/data/choose_executable_dialog.ui:32
 #: minigalaxy/ui/data/chooselaunchoption.ui:33
 msgid "Launch"
 msgstr ""
@@ -486,10 +465,6 @@ msgstr "Parcourir le dossier d'installation du jeu"
 msgctxt "menu"
 msgid "Options menu"
 msgstr "Menu des options"
-
-#: minigalaxy/ui/data/download_list.ui:69
-msgid "P"
-msgstr ""
 
 #. Tooltip of icon button to pause a download
 #: minigalaxy/ui/download_list.py:321
@@ -605,10 +580,6 @@ msgstr "Roumain"
 #: minigalaxy/constants.py:19 minigalaxy/constants.py:65
 msgid "Russian"
 msgstr "Russe"
-
-#: minigalaxy/ui/data/download_list.ui:70
-msgid "S"
-msgstr ""
 
 #. Saves the preferences
 #: minigalaxy/ui/data/preferences.ui:34
@@ -881,6 +852,18 @@ msgstr "{} n'est pas un chemin utilisable"
 #: minigalaxy/installer.py:175
 msgid "{} was corrupted. Please download it again."
 msgstr "{} a été corrompu. Veuillez le télécharger à nouveau."
+
+#~ msgctxt "category_filter"
+#~ msgid "Category filters"
+#~ msgstr "Filtrer par catégorie"
+
+#~ msgctxt "about"
+#~ msgid "About"
+#~ msgstr "À propos"
+
+#~ msgctxt "cancel"
+#~ msgid "Cancel"
+#~ msgstr "Annuler"
 
 #~ msgid "No executable was found in {}"
 #~ msgstr "Aucun exécutable n'a été trouvé dans {}"

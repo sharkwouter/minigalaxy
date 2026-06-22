@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 17:57+0200\n"
+"POT-Creation-Date: 2026-06-22 11:31+0200\n"
 "PO-Revision-Date: 2021-11-06 23:37+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -24,13 +24,8 @@ msgctxt "short_description"
 msgid "A simple GOG client for Linux"
 msgstr "用于 Linux 的简易 GOG 客户端"
 
-#: minigalaxy/ui/about.py:11
-msgid "About"
-msgstr "关于"
-
 #. Opens about dialog
-#: minigalaxy/ui/data/application.ui:64
-msgctxt "about"
+#: minigalaxy/ui/about.py:11 minigalaxy/ui/data/application.ui:64
 msgid "About"
 msgstr "关于"
 
@@ -46,10 +41,6 @@ msgstr "已添加至游戏启动命令末尾处"
 #: minigalaxy/ui/data/properties.ui:243 minigalaxy/ui/data/properties.ui:255
 msgid "Added in front of the command used to launch the game"
 msgstr "已添加至游戏启动命令开头处"
-
-#: minigalaxy/ui/data/choose_executable_dialog.ui:84
-msgid "Always launch the chosen option"
-msgstr ""
 
 #: minigalaxy/ui/data/categoryfilters.ui:72
 msgid "Apply"
@@ -73,14 +64,8 @@ msgid "Brazilian Portuguese"
 msgstr "巴西葡萄牙语"
 
 #: minigalaxy/ui/data/categoryfilters.ui:58
-#: minigalaxy/ui/data/choose_executable_dialog.ui:19
 #: minigalaxy/ui/data/chooselaunchoption.ui:19
-#: minigalaxy/ui/data/properties.ui:355
-msgid "Cancel"
-msgstr "取消"
-
-#: minigalaxy/ui/data/preferences.ui:20
-msgctxt "cancel"
+#: minigalaxy/ui/data/preferences.ui:20 minigalaxy/ui/data/properties.ui:355
 msgid "Cancel"
 msgstr "取消"
 
@@ -90,7 +75,6 @@ msgstr ""
 
 #. Tooltip for category filter button
 #: minigalaxy/ui/data/application.ui:144
-msgctxt "category_filter"
 msgid "Category filters"
 msgstr ""
 
@@ -115,10 +99,6 @@ msgstr "汉语"
 
 #: minigalaxy/ui/chooselauchoption.py:14
 msgid "Choose Launch Option"
-msgstr ""
-
-#: minigalaxy/ui/data/choose_executable_dialog.ui:59
-msgid "Choose what to launch"
 msgstr ""
 
 #: minigalaxy/ui/data/properties.ui:268
@@ -369,7 +349,6 @@ msgctxt "language"
 msgid "Language: "
 msgstr "语言"
 
-#: minigalaxy/ui/data/choose_executable_dialog.ui:32
 #: minigalaxy/ui/data/chooselaunchoption.ui:33
 msgid "Launch"
 msgstr ""
@@ -478,10 +457,6 @@ msgstr ""
 #: minigalaxy/ui/data/application.ui:122
 msgctxt "menu"
 msgid "Options menu"
-msgstr ""
-
-#: minigalaxy/ui/data/download_list.ui:69
-msgid "P"
 msgstr ""
 
 #. Tooltip of icon button to pause a download
@@ -598,10 +573,6 @@ msgstr ""
 #: minigalaxy/constants.py:19 minigalaxy/constants.py:65
 msgid "Russian"
 msgstr "俄语"
-
-#: minigalaxy/ui/data/download_list.ui:70
-msgid "S"
-msgstr ""
 
 #. Saves the preferences
 #: minigalaxy/ui/data/preferences.ui:34
@@ -878,6 +849,14 @@ msgstr "{} 路径不可用"
 #: minigalaxy/installer.py:175
 msgid "{} was corrupted. Please download it again."
 msgstr "{} 已损坏，请重新下载。"
+
+#~ msgctxt "about"
+#~ msgid "About"
+#~ msgstr "关于"
+
+#~ msgctxt "cancel"
+#~ msgid "Cancel"
+#~ msgstr "取消"
 
 #~ msgid "No executable was found in {}"
 #~ msgstr "在 {} 内未找到可执行文件"

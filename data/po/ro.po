@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 17:57+0200\n"
+"POT-Creation-Date: 2026-06-22 11:31+0200\n"
 "PO-Revision-Date: 2021-09-29 19:02+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -25,13 +25,8 @@ msgctxt "short_description"
 msgid "A simple GOG client for Linux"
 msgstr "Un client simplu GOG pentru Linux"
 
-#: minigalaxy/ui/about.py:11
-msgid "About"
-msgstr "Despre"
-
 #. Opens about dialog
-#: minigalaxy/ui/data/application.ui:64
-msgctxt "about"
+#: minigalaxy/ui/about.py:11 minigalaxy/ui/data/application.ui:64
 msgid "About"
 msgstr "Despre"
 
@@ -47,10 +42,6 @@ msgstr "Adăugat la sfârșitul comenzii folosită pentru pornirea jocului"
 #: minigalaxy/ui/data/properties.ui:243 minigalaxy/ui/data/properties.ui:255
 msgid "Added in front of the command used to launch the game"
 msgstr "Adăugat în fața comenzii folosită pentru pornirea jocului"
-
-#: minigalaxy/ui/data/choose_executable_dialog.ui:84
-msgid "Always launch the chosen option"
-msgstr ""
 
 #: minigalaxy/ui/data/categoryfilters.ui:72
 msgid "Apply"
@@ -74,14 +65,8 @@ msgid "Brazilian Portuguese"
 msgstr "Portugheză Braziliană"
 
 #: minigalaxy/ui/data/categoryfilters.ui:58
-#: minigalaxy/ui/data/choose_executable_dialog.ui:19
 #: minigalaxy/ui/data/chooselaunchoption.ui:19
-#: minigalaxy/ui/data/properties.ui:355
-msgid "Cancel"
-msgstr "Anulează"
-
-#: minigalaxy/ui/data/preferences.ui:20
-msgctxt "cancel"
+#: minigalaxy/ui/data/preferences.ui:20 minigalaxy/ui/data/properties.ui:355
 msgid "Cancel"
 msgstr "Anulează"
 
@@ -91,7 +76,6 @@ msgstr ""
 
 #. Tooltip for category filter button
 #: minigalaxy/ui/data/application.ui:144
-msgctxt "category_filter"
 msgid "Category filters"
 msgstr ""
 
@@ -116,10 +100,6 @@ msgstr "Chineză"
 
 #: minigalaxy/ui/chooselauchoption.py:14
 msgid "Choose Launch Option"
-msgstr ""
-
-#: minigalaxy/ui/data/choose_executable_dialog.ui:59
-msgid "Choose what to launch"
 msgstr ""
 
 #: minigalaxy/ui/data/properties.ui:268
@@ -374,7 +354,6 @@ msgctxt "language"
 msgid "Language: "
 msgstr "Limbă: "
 
-#: minigalaxy/ui/data/choose_executable_dialog.ui:32
 #: minigalaxy/ui/data/chooselaunchoption.ui:33
 msgid "Launch"
 msgstr ""
@@ -484,10 +463,6 @@ msgstr ""
 #: minigalaxy/ui/data/application.ui:122
 msgctxt "menu"
 msgid "Options menu"
-msgstr ""
-
-#: minigalaxy/ui/data/download_list.ui:69
-msgid "P"
 msgstr ""
 
 #. Tooltip of icon button to pause a download
@@ -604,10 +579,6 @@ msgstr "Română"
 #: minigalaxy/constants.py:19 minigalaxy/constants.py:65
 msgid "Russian"
 msgstr "Rusă"
-
-#: minigalaxy/ui/data/download_list.ui:70
-msgid "S"
-msgstr ""
 
 #. Saves the preferences
 #: minigalaxy/ui/data/preferences.ui:34
@@ -886,6 +857,14 @@ msgstr "{} nu este o locație validă"
 #: minigalaxy/installer.py:175
 msgid "{} was corrupted. Please download it again."
 msgstr "{} este corupt. Te rog descarcă din nou."
+
+#~ msgctxt "about"
+#~ msgid "About"
+#~ msgstr "Despre"
+
+#~ msgctxt "cancel"
+#~ msgid "Cancel"
+#~ msgstr "Anulează"
 
 #~ msgid "No executable was found in {}"
 #~ msgstr "Nici-un executabil nu a fost găsit în {}"
