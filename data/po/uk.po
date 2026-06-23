@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-22 11:31+0200\n"
-"PO-Revision-Date: 2026-06-16 17:01+0000\n"
+"PO-Revision-Date: 2026-06-24 12:01+0000\n"
 "Last-Translator: Dan <jonweblin2205@protonmail.com>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/minigalaxy/"
 "minigalaxy/uk/>\n"
@@ -78,7 +78,7 @@ msgstr "Фільтри категорій"
 #. Tooltip for category filter button
 #: minigalaxy/ui/data/application.ui:144
 msgid "Category filters"
-msgstr ""
+msgstr "Фільтри за категоріями"
 
 #: minigalaxy/ui/data/download_list.ui:56
 msgctxt "download_configuration"
