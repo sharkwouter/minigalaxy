@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import os
 import shlex
 
 from minigalaxy.game import Game
@@ -17,8 +18,8 @@ class LaunchCommand:
             self.command.insert(0, "mangohud")
             self.command.insert(1, "--dlsym")
 
-        var_list = shlex.split(game.get_info(InfoKey.VARIABLES))
-        command_list = shlex.split(game.get_info(InfoKey.COMMAND))
+        var_list = self._safe_split(game.get_info(InfoKey.VARIABLES))
+        command_list = self._safe_split(game.get_info(InfoKey.COMMAND))
 
         if var_list:
             if var_list[0] not in ["env"]:
@@ -27,3 +28,13 @@ class LaunchCommand:
                 self.command = self.command[1:]
 
         self.command = var_list + self.command + command_list
+
+    @staticmethod
+    def _safe_split(value: str) -> list[str]:
+        if not value or not isinstance(value, str):
+            return []
+        try:
+            result = shlex.split(value)
+            return result
+        except ValueError:
+            return []
