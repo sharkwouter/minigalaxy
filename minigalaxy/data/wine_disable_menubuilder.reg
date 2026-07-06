@@ -2,4 +2,5 @@ REGEDIT4
 
 [HKEY_CURRENT_USER\Software\Wine\DllOverrides]
 "winemenubuilder.exe"="d"
-
+"mscoree"="d"
+"mshtml"="d"
