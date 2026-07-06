@@ -235,7 +235,7 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
     prefix_dir = os.path.join(game.install_dir, "prefix")
     wine_env = [
         f"WINEPREFIX={prefix_dir}",
-        "WINEDLLOVERRIDES=winemenubuilder.exe=d"
+        "WINEDLLOVERRIDES=winemenubuilder.exe=d,mscoree=d,mshtml=d"
     ]
     wine_bin = get_wine_path(game)
 
