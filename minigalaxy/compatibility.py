@@ -234,3 +234,148 @@ def find_steam_proton_tools(
             str(tool.path),
         ),
     )
+
+
+# ---------------------------------------------------------------------------
+# User-facing compatibility choices
+# ---------------------------------------------------------------------------
+
+SYSTEM_WINE_CHOICE_ID = "wine:system"
+CUSTOM_WINE_CHOICE_ID = "wine:custom"
+PROTON_CHOICE_PREFIX = "proton:"
+
+
+@dataclass(frozen=True)
+class CompatibilityChoice:
+    """
+    One compatibility option presented by the per-game Properties dialog.
+
+    ``kind`` is one of:
+        wine-system
+        wine-custom
+        proton
+
+    Proton choices preserve the full canonical compatibility-tool path so the
+    exact selected Steam/GE Proton installation can be persisted per game.
+    """
+
+    choice_id: str
+    kind: str
+    name: str
+    path: str = ""
+    source: str = ""
+    available: bool = True
+
+
+def _make_proton_choice(
+    path: Path,
+    name: str,
+    source: str,
+    available: bool = True,
+) -> CompatibilityChoice:
+    canonical_path = str(_canonical_path(Path(path)))
+
+    return CompatibilityChoice(
+        choice_id=f"{PROTON_CHOICE_PREFIX}{canonical_path}",
+        kind="proton",
+        name=name,
+        path=canonical_path,
+        source=source,
+        available=available,
+    )
+
+
+def build_compatibility_choices(
+    proton_tools: Iterable[ProtonTool] | None = None,
+    selected_runner: str = "",
+    selected_proton_path: str = "",
+) -> list[CompatibilityChoice]:
+    """
+    Build the choices displayed in the per-game compatibility selector.
+
+    System Wine and Custom Wine always remain available.
+
+    All discovered Proton compatibility tools follow those entries.
+
+    If a game already references a Proton installation which has since been
+    removed, retain a non-available entry. This prevents the GUI from silently
+    replacing the user's configured Proton version with Wine.
+    """
+    if proton_tools is None:
+        proton_tools = find_steam_proton_tools()
+
+    choices = [
+        CompatibilityChoice(
+            choice_id=SYSTEM_WINE_CHOICE_ID,
+            kind="wine-system",
+            name="System Wine",
+        ),
+        CompatibilityChoice(
+            choice_id=CUSTOM_WINE_CHOICE_ID,
+            kind="wine-custom",
+            name="Custom Wine",
+        ),
+    ]
+
+    seen_proton_paths = set()
+
+    for tool in proton_tools:
+        choice = _make_proton_choice(
+            path=tool.path,
+            name=tool.name,
+            source=tool.source,
+        )
+
+        if choice.path in seen_proton_paths:
+            continue
+
+        seen_proton_paths.add(choice.path)
+        choices.append(choice)
+
+    if selected_runner == "proton" and selected_proton_path:
+        selected_path = str(
+            _canonical_path(Path(selected_proton_path))
+        )
+
+        if selected_path not in seen_proton_paths:
+            selected_name = Path(selected_path).name or selected_path
+
+            choices.append(
+                _make_proton_choice(
+                    path=Path(selected_path),
+                    name=selected_name,
+                    source="missing",
+                    available=False,
+                )
+            )
+
+    return choices
+
+
+def selected_compatibility_choice_id(
+    selected_runner: str,
+    selected_proton_path: str,
+    custom_wine_path: str,
+    system_wine_path: str,
+) -> str:
+    """
+    Convert existing per-game metadata into a compatibility selector ID.
+
+    Legacy games which have no runner metadata continue to resolve to Wine.
+    An old custom Wine executable remains Custom Wine unless it is simply the
+    current system Wine executable.
+    """
+    if selected_runner == "proton" and selected_proton_path:
+        selected_path = str(
+            _canonical_path(Path(selected_proton_path))
+        )
+
+        return f"{PROTON_CHOICE_PREFIX}{selected_path}"
+
+    if (
+        custom_wine_path
+        and custom_wine_path != system_wine_path
+    ):
+        return CUSTOM_WINE_CHOICE_ID
+
+    return SYSTEM_WINE_CHOICE_ID

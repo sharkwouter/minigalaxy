@@ -35,7 +35,7 @@
                 <property name="spacing">6</property>
                 <property name="homogeneous">True</property>
                 <child>
-                  <!-- n-columns=2 n-rows=11 -->
+                  <!-- n-columns=2 n-rows=14 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -287,6 +287,75 @@
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkLabel" id="label_properties_compatibility_tool">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Compatibility tool:</property>
+                        <property name="tooltip-text" translatable="yes">Select the Wine or Proton compatibility tool used for this game</property>
+                        <property name="justify">fill</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">9</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBoxText" id="combo_properties_compatibility">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="hexpand">True</property>
+                        <property name="tooltip-text" translatable="yes">Select the Wine or Proton compatibility tool used for this game</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">9</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_properties_compatibility_path_title">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Compatibility path:</property>
+                        <property name="tooltip-text" translatable="yes">Filesystem path of the selected compatibility tool</property>
+                        <property name="justify">fill</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">10</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_properties_compatibility_path">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="hexpand">True</property>
+                        <property name="xalign">0</property>
+                        <property name="selectable">True</property>
+                        <property name="max-width-chars">45</property>
+                        <property name="ellipsize">middle</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">10</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button_properties_compatibility_refresh">
+                        <property name="label" translatable="yes">Refresh compatibility tools</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Scan Steam libraries again for installed Proton compatibility tools</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">11</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkButton" id="button_properties_reset">
                         <property name="label" translatable="yes">Reset wine executable</property>
                         <property name="visible">True</property>
@@ -297,7 +366,7 @@
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">10</property>
+                        <property name="top-attach">13</property>
                       </packing>
                     </child>
                     <child>
@@ -311,7 +380,7 @@
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">9</property>
+                        <property name="top-attach">12</property>
                       </packing>
                     </child>
                     <child>
@@ -323,7 +392,7 @@
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">9</property>
+                        <property name="top-attach">12</property>
                       </packing>
                     </child>
                     <child>
