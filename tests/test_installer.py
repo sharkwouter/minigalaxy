@@ -6,7 +6,7 @@ from unittest import TestCase, mock
 from unittest.mock import patch, mock_open, MagicMock, call
 
 from minigalaxy.file_info import FileInfo
-from minigalaxy.game import Game
+from minigalaxy.game import Game, InfoKey
 from minigalaxy import installer
 from minigalaxy.translation import _
 
@@ -322,6 +322,239 @@ class Test(TestCase):
         exp = "Wine extraction failed."
         obs = installer.extract_by_wine(game, installer_path, temp_dir)
         self.assertEqual(exp, obs)
+
+    @mock.patch("minigalaxy.installer.wine_restore_game_link")
+    @mock.patch("minigalaxy.installer.try_wine_command", return_value=True)
+    @mock.patch("os.path.exists", return_value=True)
+    def test_extract_by_wine_preserves_wine_command(
+        self,
+        mock_exists,
+        mock_try_command,
+        mock_restore_link,
+    ):
+        """
+        The default Wine path must produce the same installer command as before
+        Proton support was introduced.
+        """
+        game = Game(
+            "Absolute Drift",
+            install_dir="/home/makson/GOG Games/Absolute Drift",
+            platform="windows",
+        )
+        installer_path = (
+            "/home/makson/.cache/minigalaxy/download/Absolute Drift/"
+            "setup_absolute_drift_1.0f_(64bit)_(47863).exe"
+        )
+
+        observed = installer.extract_by_wine(
+            game,
+            installer_path,
+            "en-US",
+        )
+
+        expected_command = [
+            "env",
+            "WINEPREFIX=/home/makson/GOG Games/Absolute Drift/prefix",
+            "WINEDLLOVERRIDES=winemenubuilder.exe=d",
+            "wine",
+            installer_path,
+            "/DIR=c:\\game",
+            "/LANG=en-US",
+            "/LOG=c:\\install.log",
+            "/SAVEINF=c:\\setup.inf",
+            "/SP-",
+            "/SILENT",
+            "/NORESTART",
+            "/SUPPRESSMSGBOXES",
+        ]
+
+        self.assertEqual("", observed)
+        mock_try_command.assert_called_once_with(expected_command)
+        mock_restore_link.assert_called_once_with(game)
+
+    @mock.patch("minigalaxy.installer.wine_restore_game_link")
+    @mock.patch("minigalaxy.installer.try_wine_command", return_value=True)
+    @mock.patch(
+        "minigalaxy.launcher.shutil.which",
+        return_value="/usr/bin/umu-run",
+    )
+    @mock.patch("os.path.exists", return_value=True)
+    def test_extract_by_wine_uses_umu_for_existing_proton_prefix(
+        self,
+        mock_exists,
+        mock_which,
+        mock_try_command,
+        mock_restore_link,
+    ):
+        """An existing Proton prefix should install directly through UMU."""
+        game = Game(
+            "Absolute Drift",
+            install_dir="/home/makson/GOG Games/Absolute Drift",
+            platform="windows",
+        )
+        installer_path = (
+            "/home/makson/.cache/minigalaxy/download/Absolute Drift/"
+            "setup_absolute_drift_1.0f_(64bit)_(47863).exe"
+        )
+
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ):
+            observed = installer.extract_by_wine(
+                game,
+                installer_path,
+                "en-US",
+            )
+
+        expected_command = [
+            "env",
+            "WINEPREFIX=/home/makson/GOG Games/Absolute Drift/prefix",
+            "PROTONPATH=/steam/Proton - Experimental",
+            "STORE=gog",
+            "GAMEID=0",
+            "WINEDLLOVERRIDES=winemenubuilder.exe=d",
+            "/usr/bin/umu-run",
+            installer_path,
+            "/DIR=c:\\game",
+            "/LANG=en-US",
+            "/LOG=c:\\install.log",
+            "/SAVEINF=c:\\setup.inf",
+            "/SP-",
+            "/SILENT",
+            "/NORESTART",
+            "/SUPPRESSMSGBOXES",
+        ]
+
+        self.assertEqual("", observed)
+        mock_try_command.assert_called_once_with(expected_command)
+        mock_restore_link.assert_called_once_with(game)
+
+    @mock.patch("minigalaxy.installer.as_file")
+    @mock.patch("minigalaxy.installer.get_data_file")
+    @mock.patch("minigalaxy.installer.wine_restore_game_link")
+    @mock.patch("minigalaxy.installer.try_wine_command", return_value=True)
+    @mock.patch(
+        "minigalaxy.launcher.shutil.which",
+        return_value="/usr/bin/umu-run",
+    )
+    @mock.patch("os.makedirs")
+    @mock.patch("os.path.exists", return_value=False)
+    def test_extract_by_wine_initializes_new_proton_prefix(
+        self,
+        mock_exists,
+        mock_makedirs,
+        mock_which,
+        mock_try_command,
+        mock_restore_link,
+        mock_get_data_file,
+        mock_as_file,
+    ):
+        """
+        A new Proton prefix should be initialized by UMU before regedit and
+        the GOG installer are executed.
+        """
+        game = Game(
+            "Absolute Drift",
+            install_dir="/home/makson/GOG Games/Absolute Drift",
+            platform="windows",
+        )
+        installer_path = (
+            "/home/makson/.cache/minigalaxy/download/Absolute Drift/"
+            "setup_absolute_drift_1.0f_(64bit)_(47863).exe"
+        )
+        prefix = "/home/makson/GOG Games/Absolute Drift/prefix"
+
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        fake_resource = MagicMock()
+        fake_reg_file = MagicMock()
+        fake_reg_file.resolve.return_value = (
+            "/test/wine_disable_menubuilder.reg"
+        )
+
+        mock_get_data_file.return_value = fake_resource
+        mock_as_file.return_value.__enter__.return_value = fake_reg_file
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ):
+            observed = installer.extract_by_wine(
+                game,
+                installer_path,
+                "en-US",
+            )
+
+        expected_prefix_command = [
+            "env",
+            f"WINEPREFIX={prefix}",
+            "PROTONPATH=/steam/Proton - Experimental",
+            "STORE=gog",
+            "GAMEID=0",
+            "/usr/bin/umu-run",
+            "",
+        ]
+
+        expected_regedit_command = [
+            "env",
+            f"WINEPREFIX={prefix}",
+            "PROTONPATH=/steam/Proton - Experimental",
+            "STORE=gog",
+            "GAMEID=0",
+            "WINEDLLOVERRIDES=winemenubuilder.exe=d",
+            "PROTON_VERB=runinprefix",
+            "/usr/bin/umu-run",
+            "regedit",
+            "/test/wine_disable_menubuilder.reg",
+        ]
+
+        expected_installer_command = [
+            "env",
+            f"WINEPREFIX={prefix}",
+            "PROTONPATH=/steam/Proton - Experimental",
+            "STORE=gog",
+            "GAMEID=0",
+            "WINEDLLOVERRIDES=winemenubuilder.exe=d",
+            "/usr/bin/umu-run",
+            installer_path,
+            "/DIR=c:\\game",
+            "/LANG=en-US",
+            "/LOG=c:\\install.log",
+            "/SAVEINF=c:\\setup.inf",
+            "/SP-",
+            "/SILENT",
+            "/NORESTART",
+            "/SUPPRESSMSGBOXES",
+        ]
+
+        self.assertEqual("", observed)
+
+        mock_try_command.assert_has_calls([
+            call(expected_prefix_command),
+            call(expected_regedit_command),
+            call(expected_installer_command),
+        ])
+        self.assertEqual(3, mock_try_command.call_count)
+
+        mock_makedirs.assert_called_once_with(prefix, mode=0o755)
+        mock_restore_link.assert_called_once_with(game)
 
     @mock.patch('subprocess.Popen')
     @mock.patch("os.path.isfile")

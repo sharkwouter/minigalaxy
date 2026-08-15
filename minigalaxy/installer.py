@@ -21,7 +21,13 @@ from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.resources import get_data_file
 from minigalaxy.translation import _
-from minigalaxy.launcher import get_execute_commands, get_wine_path, wine_restore_game_link
+from minigalaxy.launcher import (
+    get_execute_commands,
+    get_windows_environment,
+    get_windows_runner,
+    uses_proton,
+    wine_restore_game_link,
+)
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, DOWNLOAD_DIR
 
 
@@ -231,13 +237,11 @@ def extract_windows(game: Game, installer: str, language: str):
 
 
 def extract_by_wine(game, installer, game_lang, config=Config()):
-    # Set the prefix for Windows games
+    # Set the prefix and compatibility environment for Windows games.
     prefix_dir = os.path.join(game.install_dir, "prefix")
-    wine_env = [
-        f"WINEPREFIX={prefix_dir}",
-        "WINEDLLOVERRIDES=winemenubuilder.exe=d"
-    ]
-    wine_bin = get_wine_path(game)
+    windows_env = get_windows_environment(game)
+    windows_env.append("WINEDLLOVERRIDES=winemenubuilder.exe=d")
+    windows_runner = get_windows_runner(game)
 
     if not os.path.exists(prefix_dir):
         os.makedirs(prefix_dir, mode=0o755)
@@ -247,9 +251,30 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
         So that it will also be disabled when patches, updates or dependencies like directx are installed
         later on by the game itself from within the prefix. Happened with UE4.
         '''
+        if uses_proton(game):
+            prefix_environment = get_windows_environment(game)
+            prefix_command = [
+                "env",
+                *prefix_environment,
+                windows_runner,
+                "",
+            ]
+            if not try_wine_command(prefix_command):
+                return _("Wineprefix creation failed.")
+
+        reg_environment = list(windows_env)
+        if uses_proton(game):
+            reg_environment.append("PROTON_VERB=runinprefix")
+
         reg_file_resource = get_data_file("wine_disable_menubuilder.reg")
         with as_file(reg_file_resource) as reg_file:
-            command = ["env", *wine_env, wine_bin, "regedit", str(reg_file.resolve())]
+            command = [
+                "env",
+                *reg_environment,
+                windows_runner,
+                "regedit",
+                str(reg_file.resolve()),
+            ]
             if not try_wine_command(command):
                 return _("Wineprefix creation failed.")
 
@@ -258,7 +283,7 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
     wine_restore_game_link(game)
     # It's possible to set install dir as argument before installation
     installer_cmd_basic = [
-        'env', *wine_env, wine_bin, installer,
+        'env', *windows_env, windows_runner, installer,
         # use hard-coded directory name within wine, its just a backlink to game.install_dir
         # this avoids issues with varying path and spaces
         "/DIR=c:\\game",
