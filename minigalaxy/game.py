@@ -14,6 +14,8 @@ class InfoKey(str, Enum):
     CHECK_UPDATES = "check_for_updates"
     COMMAND = "command"
     CUSTOM_WINE = "custom_wine"
+    PROTON_PATH = "proton_path"
+    WINDOWS_RUNNER = "windows_runner"
     HIDE_GAME = "hide_game"
     MANGOHUD = "use_mangohud"
     SHOW_FPS = "show_fps"
