@@ -715,31 +715,71 @@ makson   12866  1378  0 18:09 pts/4    00:00:00 /bin/sh /home/makson/.paradoxlau
         ), mock.patch(
             "minigalaxy.launcher.find_umu_run",
             return_value="",
+        ), mock.patch(
+            "minigalaxy.launcher.get_umu_status",
+            return_value=None,
         ):
             observed = launcher.validate_windows_compatibility(game)
 
         self.assertEqual(
-            "UMU Launcher (umu-run) is required to install and run games "
-            "with Proton through the Steam Linux Runtime, but it was not found.",
+            "UMU Launcher (umu-run) version 1.4.4 or newer is required to "
+            "install and run games with Proton through the Steam Linux Runtime, "
+            "but it was not found.",
             observed,
         )
 
-    def test_find_umu_run_uses_user_local_bin_when_path_omits_it(self):
-        expected = launcher.os.path.expanduser("~/.local/bin/umu-run")
+    def test_find_umu_run_uses_compatible_discovered_umu(self):
+        installation = MagicMock()
+        installation.path = "/home/test/.local/bin/umu-run"
 
         with mock.patch(
-            "minigalaxy.launcher.shutil.which",
-            return_value=None,
+            "minigalaxy.launcher.find_compatible_umu",
+            return_value=installation,
+        ):
+            observed = launcher.find_umu_run()
+
+        self.assertEqual(
+            "/home/test/.local/bin/umu-run",
+            observed,
+        )
+
+    def test_validate_proton_rejects_old_umu_version(self):
+        game = Game(
+            "Test Game",
+            install_dir="/test/install/dir",
+            platform="windows",
+        )
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+        status = MagicMock()
+        status.version_text = "1.4.3"
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
         ), mock.patch(
             "minigalaxy.launcher.os.path.isfile",
             return_value=True,
         ), mock.patch(
-            "minigalaxy.launcher.os.access",
-            return_value=True,
+            "minigalaxy.launcher.find_umu_run",
+            return_value="",
+        ), mock.patch(
+            "minigalaxy.launcher.get_umu_status",
+            return_value=status,
         ):
-            observed = launcher.find_umu_run()
+            observed = launcher.validate_windows_compatibility(game)
 
-        self.assertEqual(expected, observed)
+        self.assertEqual(
+            "UMU Launcher 1.4.3 is installed, but version 1.4.4 or newer "
+            "is required for Proton support.",
+            observed,
+        )
 
     def test_config_game_proton_uses_runinprefix(self):
         game = Game(

@@ -12,6 +12,11 @@ from minigalaxy.game import InfoKey
 from minigalaxy.launch_command import LaunchCommand
 from minigalaxy.translation import _
 from minigalaxy.constants import BINARY_NAMES_TO_IGNORE
+from minigalaxy.umu import (
+    MINIMUM_UMU_VERSION_TEXT,
+    find_compatible_umu,
+    get_umu_status,
+)
 
 
 def get_wine_path(game):
@@ -28,23 +33,11 @@ def uses_proton(game):
 
 
 def find_umu_run():
-    """
-    Return the UMU launcher executable without relying only on desktop PATH.
+    """Return a compatible UMU launcher, including MiniGalaxy's managed copy."""
+    installation = find_compatible_umu()
 
-    User installations of umu-launcher are officially placed in
-    ~/.local/bin/umu-run, which is not guaranteed to be present in the PATH of
-    a desktop-launched MiniGalaxy process.
-    """
-    umu_path = shutil.which("umu-run")
-    if umu_path:
-        return umu_path
-
-    user_umu_path = os.path.expanduser("~/.local/bin/umu-run")
-    if (
-        os.path.isfile(user_umu_path)
-        and os.access(user_umu_path, os.X_OK)
-    ):
-        return user_umu_path
+    if installation:
+        return installation.path
 
     return ""
 
@@ -74,10 +67,22 @@ def validate_windows_compatibility(game):
         ).format(proton_path)
 
     if not find_umu_run():
+        umu_status = get_umu_status()
+
+        if umu_status:
+            return _(
+                "UMU Launcher {} is installed, but version {} or newer "
+                "is required for Proton support."
+            ).format(
+                umu_status.version_text,
+                MINIMUM_UMU_VERSION_TEXT,
+            )
+
         return _(
-            "UMU Launcher (umu-run) is required to install and run games "
-            "with Proton through the Steam Linux Runtime, but it was not found."
-        )
+            "UMU Launcher (umu-run) version {} or newer is required to "
+            "install and run games with Proton through the Steam Linux "
+            "Runtime, but it was not found."
+        ).format(MINIMUM_UMU_VERSION_TEXT)
 
     return ""
 

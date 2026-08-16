@@ -13,6 +13,12 @@ from minigalaxy.game import InfoKey
 from minigalaxy.installer import create_applications_file
 from minigalaxy.translation import _
 from minigalaxy.launcher import config_game, regedit_game, winetricks_game
+from minigalaxy.umu import (
+    MINIMUM_UMU_VERSION_TEXT,
+    UmuInstallError,
+    get_umu_status,
+    install_managed_umu,
+)
 from minigalaxy.ui.gtk import Gtk, load_ui
 
 
@@ -42,6 +48,9 @@ class Properties(Gtk.Dialog):
     label_properties_compatibility_path_title = Gtk.Template.Child()
     label_properties_compatibility_path = Gtk.Template.Child()
     button_properties_compatibility_refresh = Gtk.Template.Child()
+    label_properties_umu_runtime_title = Gtk.Template.Child()
+    label_properties_umu_runtime = Gtk.Template.Child()
+    button_properties_umu_install = Gtk.Template.Child()
 
     def __init__(self, parent_library, game, config: Config, api):
         Gtk.Dialog.__init__(self, title=_("Properties of {}").format(game.name), parent=parent_library.parent_window,
@@ -60,6 +69,10 @@ class Properties(Gtk.Dialog):
         self.button_properties_compatibility_refresh.connect(
             "clicked",
             self._on_compatibility_refresh,
+        )
+        self.button_properties_umu_install.connect(
+            "clicked",
+            self._on_umu_install,
         )
         self.button_properties_wine.connect(
             "file-set",
@@ -193,6 +206,8 @@ class Properties(Gtk.Dialog):
             and is_custom_wine
         )
 
+        self._update_umu_controls(is_proton)
+
         # Proton is a peer backend, not a wrapper around the host Wine binary.
         # Do not leave Custom Wine controls visible while Proton is selected.
         self.label_wine_custom.set_visible(show_custom_wine)
@@ -251,6 +266,95 @@ class Properties(Gtk.Dialog):
             tooltip_text
         )
 
+    def _update_umu_controls(self, is_proton):
+        """Show UMU runtime status only for Proton compatibility backends."""
+        show_runtime = (
+            self.game.platform == "windows"
+            and is_proton
+        )
+
+        self.label_properties_umu_runtime_title.set_visible(
+            show_runtime
+        )
+        self.label_properties_umu_runtime.set_visible(
+            show_runtime
+        )
+
+        if not show_runtime:
+            self.button_properties_umu_install.hide()
+            return
+
+        status = get_umu_status()
+
+        if status and status.compatible:
+            runtime_text = _(
+                "UMU Launcher {} ✓"
+            ).format(status.version_text)
+            tooltip_text = _(
+                "Using {}\nUMU {} or newer is required for Proton."
+            ).format(
+                status.path,
+                MINIMUM_UMU_VERSION_TEXT,
+            )
+            self.button_properties_umu_install.hide()
+
+        elif status:
+            runtime_text = _(
+                "UMU Launcher {} — update required"
+            ).format(status.version_text)
+            tooltip_text = _(
+                "{}\nMiniGalaxy requires UMU {} or newer for Proton."
+            ).format(
+                status.path,
+                MINIMUM_UMU_VERSION_TEXT,
+            )
+            self.button_properties_umu_install.set_label(
+                _("Update UMU")
+            )
+            self.button_properties_umu_install.show()
+
+        else:
+            runtime_text = _(
+                "UMU Launcher not installed"
+            )
+            tooltip_text = _(
+                "MiniGalaxy requires UMU {} or newer for Proton and can "
+                "install a verified user-level copy automatically."
+            ).format(MINIMUM_UMU_VERSION_TEXT)
+            self.button_properties_umu_install.set_label(
+                _("Install UMU")
+            )
+            self.button_properties_umu_install.show()
+
+        self.label_properties_umu_runtime.set_text(
+            runtime_text
+        )
+        self.label_properties_umu_runtime.set_tooltip_text(
+            tooltip_text
+        )
+
+    def _ensure_umu_available(self):
+        """
+        Ensure Proton has a compatible UMU runtime before saving selection.
+
+        This is intentionally user-level and distro-independent: MiniGalaxy
+        downloads its pinned, checksum-verified upstream standalone zipapp.
+        """
+        status = get_umu_status()
+
+        if status and status.compatible:
+            return True
+
+        try:
+            install_managed_umu()
+        except UmuInstallError as error:
+            self.parent_window.show_error(str(error))
+            self._update_umu_controls(True)
+            return False
+
+        self._update_umu_controls(True)
+        return True
+
     def _save_compatibility_selection(self):
         """
         Persist the selected Windows compatibility tool for this game.
@@ -300,6 +404,9 @@ class Properties(Gtk.Dialog):
             return True
 
         if choice.choice_id.startswith(PROTON_CHOICE_PREFIX):
+            if not self._ensure_umu_available():
+                return False
+
             self.game.set_info(
                 InfoKey.WINDOWS_RUNNER,
                 "proton",
@@ -331,6 +438,9 @@ class Properties(Gtk.Dialog):
         self._populate_compatibility_tools(
             preferred_choice_id=current_choice_id,
         )
+
+    def _on_umu_install(self, button):
+        self._ensure_umu_available()
 
     def _on_custom_wine_file_set(self, button):
         if (
@@ -429,6 +539,9 @@ class Properties(Gtk.Dialog):
             self.label_properties_compatibility_path_title.hide()
             self.label_properties_compatibility_path.hide()
             self.button_properties_compatibility_refresh.hide()
+            self.label_properties_umu_runtime_title.hide()
+            self.label_properties_umu_runtime.hide()
+            self.button_properties_umu_install.hide()
             self.button_properties_regedit.hide()
             self.button_properties_winecfg.hide()
             self.button_properties_winetricks.hide()

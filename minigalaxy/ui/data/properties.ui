@@ -35,7 +35,7 @@
                 <property name="spacing">6</property>
                 <property name="homogeneous">True</property>
                 <child>
-                  <!-- n-columns=2 n-rows=14 -->
+                  <!-- n-columns=2 n-rows=16 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -343,6 +343,49 @@
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkLabel" id="label_properties_umu_runtime_title">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Runtime:</property>
+                        <property name="tooltip-text" translatable="yes">UMU Launcher runtime used to run Proton outside Steam</property>
+                        <property name="justify">fill</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">11</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_properties_umu_runtime">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="hexpand">True</property>
+                        <property name="xalign">0</property>
+                        <property name="selectable">True</property>
+                        <property name="max-width-chars">45</property>
+                        <property name="ellipsize">middle</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">11</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="button_properties_umu_install">
+                        <property name="label" translatable="yes">Install UMU</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Install or update MiniGalaxy's verified user-level UMU Launcher runtime</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">12</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkButton" id="button_properties_compatibility_refresh">
                         <property name="label" translatable="yes">Refresh compatibility tools</property>
                         <property name="visible">True</property>
@@ -352,7 +395,7 @@
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">11</property>
+                        <property name="top-attach">13</property>
                       </packing>
                     </child>
                     <child>
@@ -366,7 +409,7 @@
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">13</property>
+                        <property name="top-attach">15</property>
                       </packing>
                     </child>
                     <child>
@@ -380,7 +423,7 @@
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">12</property>
+                        <property name="top-attach">14</property>
                       </packing>
                     </child>
                     <child>
@@ -392,7 +435,7 @@
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">12</property>
+                        <property name="top-attach">14</property>
                       </packing>
                     </child>
                     <child>
