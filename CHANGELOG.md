@@ -1,4 +1,5 @@
 **1.4.3**
+- Add per-game Steam Proton support through UMU, including Proton discovery, installation/launch support, and managed UMU provisioning (thanks to adamjvr)
 - Releases will now include a basic AppImage (experimental) (thanks to GB609)
 - Releases now target Ubuntu 26.04
 - Mangohud dlsym enabled by default (thanks to RoGreat)
