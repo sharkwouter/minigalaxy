@@ -409,6 +409,12 @@ class Test(TestCase):
                 key,
                 default_value,
             ),
+        ), mock.patch(
+            "minigalaxy.installer.validate_windows_compatibility",
+            return_value="",
+        ), mock.patch(
+            "os.path.isfile",
+            return_value=True,
         ):
             observed = installer.extract_by_wine(
                 game,
@@ -495,6 +501,9 @@ class Test(TestCase):
                 key,
                 default_value,
             ),
+        ), mock.patch(
+            "minigalaxy.installer.validate_windows_compatibility",
+            return_value="",
         ):
             observed = installer.extract_by_wine(
                 game,
@@ -509,7 +518,7 @@ class Test(TestCase):
             "STORE=gog",
             "GAMEID=0",
             "/usr/bin/umu-run",
-            "",
+            "createprefix",
         ]
 
         expected_regedit_command = [
@@ -553,7 +562,8 @@ class Test(TestCase):
         ])
         self.assertEqual(3, mock_try_command.call_count)
 
-        mock_makedirs.assert_called_once_with(prefix, mode=0o755)
+        # UMU/Proton owns creation of a Proton prefix directory.
+        mock_makedirs.assert_not_called()
         mock_restore_link.assert_called_once_with(game)
 
     @mock.patch('subprocess.Popen')
@@ -837,3 +847,140 @@ class Test(TestCase):
         mock_isempty.side_effect = lambda path: mock_isdir(path) and len(file_structure.get(path)) == 0
         mock_rmdir.side_effect = rmdir_fake
         mock_remove.side_effect = remove_fake
+
+    def test_extract_by_wine_stops_on_proton_validation_error(self):
+        game = Game(
+            "Test Game",
+            install_dir="/home/test/GOG Games/Test Game",
+            platform="windows",
+        )
+        expected = (
+            "UMU Launcher (umu-run) is required to install and run games "
+            "with Proton through the Steam Linux Runtime, but it was not found."
+        )
+
+        with mock.patch(
+            "minigalaxy.installer.validate_windows_compatibility",
+            return_value=expected,
+        ), mock.patch(
+            "minigalaxy.installer.try_wine_command",
+        ) as mock_try_command, mock.patch(
+            "os.makedirs",
+        ) as mock_makedirs:
+            observed = installer.extract_by_wine(
+                game,
+                "/cache/setup.exe",
+                "en-US",
+            )
+
+        self.assertEqual(expected, observed)
+        mock_try_command.assert_not_called()
+        mock_makedirs.assert_not_called()
+
+    def test_extract_by_wine_recovers_empty_existing_proton_prefix(self):
+        game = Game(
+            "Test Game",
+            install_dir="/home/test/GOG Games/Test Game",
+            platform="windows",
+        )
+        prefix = "/home/test/GOG Games/Test Game/prefix"
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ), mock.patch(
+            "minigalaxy.installer.validate_windows_compatibility",
+            return_value="",
+        ), mock.patch(
+            "minigalaxy.launcher.find_umu_run",
+            return_value="/usr/bin/umu-run",
+        ), mock.patch(
+            "os.path.exists",
+            return_value=True,
+        ), mock.patch(
+            "os.path.isfile",
+            return_value=False,
+        ), mock.patch(
+            "os.path.isdir",
+            return_value=True,
+        ), mock.patch(
+            "os.listdir",
+            return_value=[],
+        ), mock.patch(
+            "os.rmdir",
+        ) as mock_rmdir, mock.patch(
+            "minigalaxy.installer.try_wine_command",
+            return_value=False,
+        ) as mock_try_command:
+            observed = installer.extract_by_wine(
+                game,
+                "/cache/setup.exe",
+                "en-US",
+            )
+
+        expected_prefix_command = [
+            "env",
+            f"WINEPREFIX={prefix}",
+            "PROTONPATH=/steam/Proton - Experimental",
+            "STORE=gog",
+            "GAMEID=0",
+            "/usr/bin/umu-run",
+            "createprefix",
+        ]
+
+        self.assertEqual("Proton prefix creation failed.", observed)
+        mock_rmdir.assert_called_once_with(prefix)
+        mock_try_command.assert_called_once_with(expected_prefix_command)
+
+    def test_extract_by_wine_proton_does_not_require_host_wine(self):
+        game = Game(
+            "Test Game",
+            install_dir="/home/test/GOG Games/Test Game",
+            platform="windows",
+        )
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ), mock.patch(
+            "minigalaxy.installer.validate_windows_compatibility",
+            return_value="",
+        ), mock.patch(
+            "minigalaxy.launcher.find_umu_run",
+            return_value="/usr/bin/umu-run",
+        ), mock.patch(
+            "minigalaxy.launcher.get_wine_path",
+        ) as mock_get_wine_path, mock.patch(
+            "os.path.exists",
+            return_value=False,
+        ), mock.patch(
+            "os.path.isfile",
+            return_value=False,
+        ), mock.patch(
+            "minigalaxy.installer.try_wine_command",
+            return_value=False,
+        ):
+            observed = installer.extract_by_wine(
+                game,
+                "/cache/setup.exe",
+                "en-US",
+            )
+
+        self.assertEqual("Proton prefix creation failed.", observed)
+        mock_get_wine_path.assert_not_called()

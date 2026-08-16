@@ -23,22 +23,74 @@ def get_wine_path(game):
 
 
 def uses_proton(game):
-    """Return True when the game is configured to use a specific Proton build."""
-    return (
-        game.get_info(InfoKey.WINDOWS_RUNNER) == "proton"
-        and bool(game.get_info(InfoKey.PROTON_PATH))
-    )
+    """Return True whenever Proton is explicitly selected for the game."""
+    return game.get_info(InfoKey.WINDOWS_RUNNER) == "proton"
+
+
+def find_umu_run():
+    """
+    Return the UMU launcher executable without relying only on desktop PATH.
+
+    User installations of umu-launcher are officially placed in
+    ~/.local/bin/umu-run, which is not guaranteed to be present in the PATH of
+    a desktop-launched MiniGalaxy process.
+    """
+    umu_path = shutil.which("umu-run")
+    if umu_path:
+        return umu_path
+
+    user_umu_path = os.path.expanduser("~/.local/bin/umu-run")
+    if (
+        os.path.isfile(user_umu_path)
+        and os.access(user_umu_path, os.X_OK)
+    ):
+        return user_umu_path
+
+    return ""
+
+
+def validate_windows_compatibility(game):
+    """
+    Validate the requirements of an explicitly selected compatibility backend.
+
+    Existing Wine behavior is intentionally unchanged. Proton is different:
+    selecting it is an explicit request that must never silently become Wine.
+    """
+    if not uses_proton(game):
+        return ""
+
+    proton_path = game.get_info(InfoKey.PROTON_PATH)
+
+    if not proton_path:
+        return _(
+            "Proton is selected for this game, but no Proton "
+            "compatibility tool is configured."
+        )
+
+    proton_launcher = os.path.join(proton_path, "proton")
+    if not os.path.isfile(proton_launcher):
+        return _(
+            "The selected Proton compatibility tool is unavailable: {}"
+        ).format(proton_path)
+
+    if not find_umu_run():
+        return _(
+            "UMU Launcher (umu-run) is required to install and run games "
+            "with Proton through the Steam Linux Runtime, but it was not found."
+        )
+
+    return ""
 
 
 def get_windows_runner(game):
     """
     Return the executable used to launch Windows programs for the game.
 
-    Wine remains the default. When Proton is explicitly selected, UMU is used
-    as the launcher and PROTONPATH selects the desired Proton installation.
+    Wine remains the default backend. Proton is a peer backend: when Proton is
+    selected, MiniGalaxy uses UMU and never falls back to host Wine.
     """
     if uses_proton(game):
-        return shutil.which("umu-run") or "umu-run"
+        return find_umu_run() or "umu-run"
 
     return get_wine_path(game)
 
@@ -74,16 +126,48 @@ def wine_restore_game_link(game):
         os.symlink(relative, game_dir)
 
 
+def get_windows_helper_environment(game):
+    """Return the compatibility environment for prefix maintenance tools."""
+    environment = get_windows_environment(game)
+
+    if uses_proton(game):
+        environment.append("PROTON_VERB=runinprefix")
+
+    return environment
+
+
 def config_game(game):
+    error_message = validate_windows_compatibility(game)
+    if error_message:
+        return error_message
+
     subprocess.Popen(
-        ['env', *get_windows_environment(game), get_windows_runner(game), 'winecfg']
+        [
+            "env",
+            *get_windows_helper_environment(game),
+            get_windows_runner(game),
+            "winecfg",
+        ]
     )
+
+    return ""
 
 
 def regedit_game(game):
+    error_message = validate_windows_compatibility(game)
+    if error_message:
+        return error_message
+
     subprocess.Popen(
-        ['env', *get_windows_environment(game), get_windows_runner(game), 'regedit']
+        [
+            "env",
+            *get_windows_helper_environment(game),
+            get_windows_runner(game),
+            "regedit",
+        ]
     )
+
+    return ""
 
 
 def winetricks_game(game):
@@ -96,6 +180,8 @@ def start_game(game, execute_command: LaunchCommand) -> str:
     process = None
     if not execute_command:
         error_message = "Cannot launch game, because no command to execute was specified"
+    if not error_message and game.platform == "windows":
+        error_message = validate_windows_compatibility(game)
     if not error_message:
         error_message = set_fps_display(game)
     if not error_message:

@@ -357,10 +357,10 @@
                     </child>
                     <child>
                       <object class="GtkButton" id="button_properties_reset">
-                        <property name="label" translatable="yes">Reset wine executable</property>
+                        <property name="label" translatable="yes">Use System Wine</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">Reset the wine executable for this game</property>
+                        <property name="tooltip-text" translatable="yes">Switch this game back to the system Wine backend</property>
                         <property name="receives-default">True</property>
                         <signal name="clicked" handler="on_button_properties_reset_clicked" swapped="no"/>
                       </object>
@@ -374,8 +374,8 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">Wine executable:</property>
-                        <property name="tooltip-text" translatable="yes">Set Wine executable</property>
+                        <property name="label" translatable="yes">Custom Wine executable:</property>
+                        <property name="tooltip-text" translatable="yes">Select the executable used by the Custom Wine backend</property>
                         <property name="justify">fill</property>
                       </object>
                       <packing>
@@ -388,7 +388,7 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="title" translatable="yes"/>
-                        <property name="tooltip-text" translatable="yes">Set Wine executable</property>
+                        <property name="tooltip-text" translatable="yes">Select the executable used by the Custom Wine backend</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>

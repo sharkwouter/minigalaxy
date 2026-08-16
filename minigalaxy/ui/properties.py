@@ -174,7 +174,8 @@ class Properties(Gtk.Dialog):
 
     def _update_compatibility_controls(self):
         """
-        Update the path display and Wine-specific controls for the selection.
+        Update compatibility status and show only controls relevant to the
+        selected backend.
         """
         choice = self._selected_compatibility_choice()
 
@@ -187,25 +188,30 @@ class Properties(Gtk.Dialog):
         is_proton = choice.choice_id.startswith(
             PROTON_CHOICE_PREFIX
         )
+        show_custom_wine = (
+            self.game.platform == "windows"
+            and is_custom_wine
+        )
 
-        self.button_properties_wine.set_sensitive(
-            self.game.platform == "windows"
-            and is_custom_wine
-        )
-        self.button_properties_reset.set_sensitive(
-            self.game.platform == "windows"
-            and is_custom_wine
-        )
+        # Proton is a peer backend, not a wrapper around the host Wine binary.
+        # Do not leave Custom Wine controls visible while Proton is selected.
+        self.label_wine_custom.set_visible(show_custom_wine)
+        self.button_properties_wine.set_visible(show_custom_wine)
+        self.button_properties_reset.set_visible(show_custom_wine)
+        self.button_properties_wine.set_sensitive(show_custom_wine)
+        self.button_properties_reset.set_sensitive(show_custom_wine)
 
         # The existing Winetricks button invokes the host winetricks binary
-        # directly and is not Proton-aware. Do not allow it to accidentally
-        # modify a Proton-selected game until proper integration is added.
+        # directly and is not Proton-aware.
         if self.game.is_installed():
             self.button_properties_winetricks.set_sensitive(
                 not is_proton
             )
 
         if is_proton:
+            self.label_properties_compatibility_path_title.set_text(
+                _("Proton path:")
+            )
             display_path = choice.path
 
             if not choice.available:
@@ -213,23 +219,36 @@ class Properties(Gtk.Dialog):
                     choice.path
                 )
 
+            tooltip_text = _(
+                "{}\nThis Proton build is used through UMU and the "
+                "Steam Linux Runtime for both installation and launch."
+            ).format(display_path)
+
         elif is_custom_wine:
+            self.label_properties_compatibility_path_title.set_text(
+                _("Wine path:")
+            )
             display_path = (
                 self.button_properties_wine.get_filename()
                 or _("No Wine executable selected")
             )
+            tooltip_text = display_path
 
         else:
+            self.label_properties_compatibility_path_title.set_text(
+                _("Wine path:")
+            )
             display_path = (
                 shutil.which("wine")
                 or _("System Wine executable not found")
             )
+            tooltip_text = display_path
 
         self.label_properties_compatibility_path.set_text(
             display_path
         )
         self.label_properties_compatibility_path.set_tooltip_text(
-            display_path
+            tooltip_text
         )
 
     def _save_compatibility_selection(self):
@@ -357,7 +376,9 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_regedit_clicked")
     def on_menu_button_regedit(self, widget):
-        regedit_game(self.game)
+        error_message = regedit_game(self.game)
+        if error_message:
+            self.parent_window.show_error(error_message)
 
     @Gtk.Template.Callback("on_button_properties_reset_clicked")
     def on_menu_button_reset(self, widget):
@@ -373,7 +394,9 @@ class Properties(Gtk.Dialog):
 
     @Gtk.Template.Callback("on_button_properties_winecfg_clicked")
     def on_menu_button_winecfg(self, widget):
-        config_game(self.game)
+        error_message = config_game(self.game)
+        if error_message:
+            self.parent_window.show_error(error_message)
 
     @Gtk.Template.Callback("on_button_properties_winetricks_clicked")
     def on_menu_button_winetricks(self, widget):
