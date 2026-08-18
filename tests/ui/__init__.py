@@ -21,6 +21,12 @@ class MockGiRepository:
         class Dialog:
             pass
 
+        class Switch:
+            pass
+
+        class SearchEntry:
+            pass
+
         class Template:
             def __init__(self, string=None):
                 pass
@@ -52,6 +58,9 @@ class MockGiRepository:
         pass
 
     class GLib:
-        pass
+        @staticmethod
+        def idle_add(callback, *args):
+            callback(*args)
+            return 0
 
     Notify = MagicMock()

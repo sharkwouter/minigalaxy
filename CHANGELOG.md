@@ -1,4 +1,5 @@
 **1.4.3**
+- Fix not-installed Linux games missing from the library (thanks to slowsage)
 - Releases will now include a basic AppImage (experimental) (thanks to GB609)
 - Releases now target Ubuntu 26.04
 - Mangohud dlsym enabled by default (thanks to RoGreat)
