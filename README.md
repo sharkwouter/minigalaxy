@@ -23,7 +23,7 @@ In addition to that, Minigalaxy also allows you to:
 - View the error message if a game fails to launch
 - Enable displaying the FPS in games
 - Use the system's ScummVM or DOSBox installation
-- Install Windows games using Wine
+- Install Windows games using Wine or a per-game Steam Proton compatibility tool
 
 ### **Important:** GOG compatibility
 GOG has changed some of their API responses around May-July 2026 (exact point in time not known).
@@ -98,6 +98,7 @@ Other Linux distributions may work as well. Minigalaxy requires the following de
 - Webkit2gtk with API version 4.0 support
 - Python Requests
 - gettext
+- UMU Launcher 1.4.4+ when using Proton (MiniGalaxy can install a verified user-level copy automatically)
 
 ## Installation
 

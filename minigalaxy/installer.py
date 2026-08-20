@@ -21,7 +21,14 @@ from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.resources import get_data_file
 from minigalaxy.translation import _
-from minigalaxy.launcher import get_execute_commands, get_wine_path, wine_restore_game_link
+from minigalaxy.launcher import (
+    get_execute_commands,
+    get_windows_environment,
+    get_windows_runner,
+    uses_proton,
+    validate_windows_compatibility,
+    wine_restore_game_link,
+)
 from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, DOWNLOAD_DIR
 
 
@@ -230,27 +237,72 @@ def extract_windows(game: Game, installer: str, language: str):
     return extract_by_wine(game, installer, game_lang), False
 
 
-def extract_by_wine(game, installer, game_lang, config=Config()):
-    # Set the prefix for Windows games
-    prefix_dir = os.path.join(game.install_dir, "prefix")
-    wine_env = [
-        f"WINEPREFIX={prefix_dir}",
-        "WINEDLLOVERRIDES=winemenubuilder.exe=d"
-    ]
-    wine_bin = get_wine_path(game)
+def extract_by_wine(game, installer, game_lang, config=Config()):  # noqa: C901
+    # Validate the selected backend before touching the game or prefix.
+    compatibility_error = validate_windows_compatibility(game)
+    if compatibility_error:
+        return compatibility_error
 
-    if not os.path.exists(prefix_dir):
-        os.makedirs(prefix_dir, mode=0o755)
-        '''
-        Creating the prefix before modifying dosdevices
-        Use regedit import as first command and try to disable the menubuilder for good
-        So that it will also be disabled when patches, updates or dependencies like directx are installed
-        later on by the game itself from within the prefix. Happened with UE4.
-        '''
+    # Set the prefix and compatibility environment for Windows games.
+    prefix_dir = os.path.join(game.install_dir, "prefix")
+    windows_env = get_windows_environment(game)
+    windows_env.append("WINEDLLOVERRIDES=winemenubuilder.exe=d")
+    windows_runner = get_windows_runner(game)
+
+    prefix_exists = os.path.exists(prefix_dir)
+    prefix_initialized = prefix_exists
+
+    if uses_proton(game):
+        # Both Wine and Proton prefixes contain user.reg after successful
+        # initialization. Merely having an empty prefix directory is not
+        # enough, and may be residue from an interrupted earlier attempt.
+        prefix_initialized = os.path.isfile(
+            os.path.join(prefix_dir, "user.reg")
+        )
+
+    if not prefix_initialized:
+        if uses_proton(game):
+            # UMU/Proton owns Proton-prefix creation. Do not pre-create the
+            # prefix directory as if it were a normal Wine prefix.
+            if prefix_exists and os.path.isdir(prefix_dir):
+                try:
+                    if not os.listdir(prefix_dir):
+                        os.rmdir(prefix_dir)
+                except OSError:
+                    pass
+
+            prefix_environment = get_windows_environment(game)
+            prefix_command = [
+                "env",
+                *prefix_environment,
+                windows_runner,
+                "createprefix",
+            ]
+            if not try_wine_command(prefix_command):
+                return _("Proton prefix creation failed.")
+        elif not prefix_exists:
+            # Preserve MiniGalaxy's existing system/custom Wine behavior.
+            os.makedirs(prefix_dir, mode=0o755)
+
+        # Use regedit import as the first prefix-maintenance command and disable
+        # the menubuilder so it stays disabled when patches or dependencies are
+        # installed later by the game itself.
+        reg_environment = list(windows_env)
+        if uses_proton(game):
+            reg_environment.append("PROTON_VERB=runinprefix")
+
         reg_file_resource = get_data_file("wine_disable_menubuilder.reg")
         with as_file(reg_file_resource) as reg_file:
-            command = ["env", *wine_env, wine_bin, "regedit", str(reg_file.resolve())]
+            command = [
+                "env",
+                *reg_environment,
+                windows_runner,
+                "regedit",
+                str(reg_file.resolve()),
+            ]
             if not try_wine_command(command):
+                if uses_proton(game):
+                    return _("Proton prefix configuration failed.")
                 return _("Wineprefix creation failed.")
 
     # calculate relative link prefix/c/game to game.install_dir
@@ -258,7 +310,7 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
     wine_restore_game_link(game)
     # It's possible to set install dir as argument before installation
     installer_cmd_basic = [
-        'env', *wine_env, wine_bin, installer,
+        'env', *windows_env, windows_runner, installer,
         # use hard-coded directory name within wine, its just a backlink to game.install_dir
         # this avoids issues with varying path and spaces
         "/DIR=c:\\game",

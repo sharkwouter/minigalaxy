@@ -12,6 +12,11 @@ from minigalaxy.game import InfoKey
 from minigalaxy.launch_command import LaunchCommand
 from minigalaxy.translation import _
 from minigalaxy.constants import BINARY_NAMES_TO_IGNORE
+from minigalaxy.umu import (
+    MINIMUM_UMU_VERSION_TEXT,
+    find_compatible_umu,
+    get_umu_status,
+)
 
 
 def get_wine_path(game):
@@ -20,6 +25,99 @@ def get_wine_path(game):
     if custom_wine_path and custom_wine_path != shutil.which(binary_name):
         binary_name = custom_wine_path
     return binary_name
+
+
+def uses_proton(game):
+    """Return True whenever Proton is explicitly selected for the game."""
+    return game.get_info(InfoKey.WINDOWS_RUNNER) == "proton"
+
+
+def find_umu_run():
+    """Return a compatible UMU launcher, including MiniGalaxy's managed copy."""
+    installation = find_compatible_umu()
+
+    if installation:
+        return installation.path
+
+    return ""
+
+
+def validate_windows_compatibility(game):
+    """
+    Validate the requirements of an explicitly selected compatibility backend.
+
+    Existing Wine behavior is intentionally unchanged. Proton is different:
+    selecting it is an explicit request that must never silently become Wine.
+    """
+    if not uses_proton(game):
+        return ""
+
+    proton_path = game.get_info(InfoKey.PROTON_PATH)
+
+    if not proton_path:
+        return _(
+            "Proton is selected for this game, but no Proton "
+            "compatibility tool is configured."
+        )
+
+    proton_launcher = os.path.join(proton_path, "proton")
+    if not os.path.isfile(proton_launcher):
+        return _(
+            "The selected Proton compatibility tool is unavailable: {}"
+        ).format(proton_path)
+
+    if not find_umu_run():
+        umu_status = get_umu_status()
+
+        if umu_status:
+            return _(
+                "UMU Launcher {} is installed, but version {} or newer "
+                "is required for Proton support."
+            ).format(
+                umu_status.version_text,
+                MINIMUM_UMU_VERSION_TEXT,
+            )
+
+        return _(
+            "UMU Launcher (umu-run) version {} or newer is required to "
+            "install and run games with Proton through the Steam Linux "
+            "Runtime, but it was not found."
+        ).format(MINIMUM_UMU_VERSION_TEXT)
+
+    return ""
+
+
+def get_windows_runner(game):
+    """
+    Return the executable used to launch Windows programs for the game.
+
+    Wine remains the default backend. Proton is a peer backend: when Proton is
+    selected, MiniGalaxy uses UMU and never falls back to host Wine.
+    """
+    if uses_proton(game):
+        return find_umu_run() or "umu-run"
+
+    return get_wine_path(game)
+
+
+def get_windows_environment(game):
+    """
+    Return environment assignments required by the selected Windows runner.
+
+    Keeping WINEPREFIX first preserves MiniGalaxy's existing Wine command
+    layout exactly. Proton adds the variables required by UMU after it.
+    """
+    prefix = os.path.join(game.install_dir, "prefix")
+    environment = [f"WINEPREFIX={prefix}"]
+
+    if uses_proton(game):
+        environment.extend([
+            f"PROTONPATH={game.get_info(InfoKey.PROTON_PATH)}",
+            "STORE=gog",
+            "GAMEID=0",
+        ])
+
+    return environment
 
 
 # should go into a separate file or into installer, but not possible ATM because
@@ -33,14 +131,48 @@ def wine_restore_game_link(game):
         os.symlink(relative, game_dir)
 
 
+def get_windows_helper_environment(game):
+    """Return the compatibility environment for prefix maintenance tools."""
+    environment = get_windows_environment(game)
+
+    if uses_proton(game):
+        environment.append("PROTON_VERB=runinprefix")
+
+    return environment
+
+
 def config_game(game):
-    prefix = os.path.join(game.install_dir, "prefix")
-    subprocess.Popen(['env', f'WINEPREFIX={prefix}', get_wine_path(game), 'winecfg'])
+    error_message = validate_windows_compatibility(game)
+    if error_message:
+        return error_message
+
+    subprocess.Popen(
+        [
+            "env",
+            *get_windows_helper_environment(game),
+            get_windows_runner(game),
+            "winecfg",
+        ]
+    )
+
+    return ""
 
 
 def regedit_game(game):
-    prefix = os.path.join(game.install_dir, "prefix")
-    subprocess.Popen(['env', f'WINEPREFIX={prefix}', get_wine_path(game), 'regedit'])
+    error_message = validate_windows_compatibility(game)
+    if error_message:
+        return error_message
+
+    subprocess.Popen(
+        [
+            "env",
+            *get_windows_helper_environment(game),
+            get_windows_runner(game),
+            "regedit",
+        ]
+    )
+
+    return ""
 
 
 def winetricks_game(game):
@@ -53,6 +185,8 @@ def start_game(game, execute_command: LaunchCommand) -> str:
     process = None
     if not execute_command:
         error_message = "Cannot launch game, because no command to execute was specified"
+    if not error_message and game.platform == "windows":
+        error_message = validate_windows_compatibility(game)
     if not error_message:
         error_message = set_fps_display(game)
     if not error_message:
@@ -126,7 +260,7 @@ def get_windows_exe_cmd_from_goggame_info(game, file: str) -> List[str]:
             if "path" in task:
                 working_dir = task.get("workingDir", ".")
                 path = task["path"]
-                exe_cmd = [get_wine_path(game), "start", "/b", "/wait",
+                exe_cmd = [get_windows_runner(game), "start", "/b", "/wait",
                            "/d", f'c:\\game\\{working_dir}',
                            f'c:\\game\\{path}']
                 if "arguments" in task:
@@ -141,7 +275,6 @@ def get_windows_launch_commands(game, files) -> list[LaunchCommand]:
     '''Find game executable file'''
 
     launch_commands = []
-    prefix = os.path.join(game.install_dir, "prefix")
 
     # Get the execute command from the goggame info file
     goggame_file = os.path.join(game.install_dir, f'goggame-{game.id}.info')
@@ -153,7 +286,7 @@ def get_windows_launch_commands(game, files) -> list[LaunchCommand]:
     if not launch_commands and (launch_file_list := [file for file in files if re.match(r"^Launch .*\.lnk$", file)]):
         # Set Launch Game.lnk as executable
         launch_commands.append(LaunchCommand(
-            command=[get_wine_path(game), os.path.join(game.install_dir, launch_file_list[0])],
+            command=[get_windows_runner(game), os.path.join(game.install_dir, launch_file_list[0])],
             name=launch_file_list[0]
         ))
         logging.debug("using link file [%s] as execute command", launch_file_list[0])
@@ -168,15 +301,16 @@ def get_windows_launch_commands(game, files) -> list[LaunchCommand]:
             launch_commands.append(
                 LaunchCommand(
                     command=[
-                        get_wine_path(game), os.path.join(game.install_dir, file)
+                        get_windows_runner(game), os.path.join(game.install_dir, file)
                     ],
                     name=file
                 )
             )
 
-    # Add the wine prefix to every found command
+    # Add the compatibility environment to every found command.
+    environment = get_windows_environment(game)
     for launch_command in launch_commands:
-        launch_command.command = ['env', f'WINEPREFIX={prefix}'] + launch_command.command
+        launch_command.command = ['env', *environment] + launch_command.command
 
     # Backwards compatibility with windows games installed before installer fixes.
     # Will not fix games requiring registry keys, since the paths will already

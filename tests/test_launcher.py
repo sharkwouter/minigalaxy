@@ -3,7 +3,7 @@ from unittest import TestCase, mock
 from unittest.mock import MagicMock, mock_open
 
 from minigalaxy import launcher
-from minigalaxy.game import Game
+from minigalaxy.game import Game, InfoKey
 from minigalaxy.launch_command import LaunchCommand
 
 
@@ -431,3 +431,416 @@ makson   12866  1378  0 18:09 pts/4    00:00:00 /bin/sh /home/makson/.paradoxlau
         exp = ""
         obs = launcher.check_if_game_start_process_spawned_final_process(err_msg, game)
         self.assertEqual(exp, obs)
+
+    def test_get_windows_environment_defaults_to_wine(self):
+        game = Game("Test Game", install_dir="/test/install/dir")
+
+        with mock.patch.object(game, "get_info", return_value=""):
+            observed = launcher.get_windows_environment(game)
+
+        expected = [
+            "WINEPREFIX=/test/install/dir/prefix",
+        ]
+
+        self.assertEqual(expected, observed)
+
+    def test_get_windows_environment_proton(self):
+        game = Game("Test Game", install_dir="/test/install/dir")
+
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(key, default_value),
+        ):
+            observed = launcher.get_windows_environment(game)
+
+        expected = [
+            "WINEPREFIX=/test/install/dir/prefix",
+            "PROTONPATH=/steam/Proton - Experimental",
+            "STORE=gog",
+            "GAMEID=0",
+        ]
+
+        self.assertEqual(expected, observed)
+
+    def test_get_windows_runner_uses_umu_for_proton(self):
+        game = Game("Test Game", install_dir="/test/install/dir")
+
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(key, default_value),
+        ), mock.patch(
+            "minigalaxy.launcher.shutil.which",
+            return_value="/usr/bin/umu-run",
+        ):
+            observed = launcher.get_windows_runner(game)
+
+        self.assertEqual("/usr/bin/umu-run", observed)
+
+    def test_get_windows_launch_commands_proton(self):
+        files = [
+            "unins000.exe",
+            "start.exe",
+        ]
+
+        game = Game("Test Game", install_dir="/test/install/dir")
+
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(key, default_value),
+        ), mock.patch(
+            "minigalaxy.launcher.shutil.which",
+            return_value="/usr/bin/umu-run",
+        ), mock.patch(
+            "minigalaxy.launcher.wine_restore_game_link"
+        ):
+            observed = launcher.get_windows_launch_commands(game, files)
+
+        expected = [
+            LaunchCommand(
+                name="start.exe",
+                command=[
+                    "env",
+                    "WINEPREFIX=/test/install/dir/prefix",
+                    "PROTONPATH=/steam/Proton - Experimental",
+                    "STORE=gog",
+                    "GAMEID=0",
+                    "/usr/bin/umu-run",
+                    "/test/install/dir/start.exe",
+                ],
+            )
+        ]
+
+        self.assertEqual(expected, observed)
+
+    def test_get_windows_exe_cmd_from_goggame_info_proton(self):
+        game = Game("Test Game", install_dir="/test/install/dir")
+
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        goggame_info = """{
+            "playTasks": [
+                {
+                    "isPrimary": true,
+                    "workingDir": "bin",
+                    "path": "game.exe",
+                    "arguments": "--foo bar"
+                }
+            ]
+        }"""
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(key, default_value),
+        ), mock.patch(
+            "minigalaxy.launcher.shutil.which",
+            return_value="/usr/bin/umu-run",
+        ), mock.patch(
+            "minigalaxy.launcher.os.chdir"
+        ), mock.patch(
+            "builtins.open",
+            mock_open(read_data=goggame_info),
+        ):
+            observed = launcher.get_windows_exe_cmd_from_goggame_info(
+                game,
+                "/test/install/dir/goggame-0.info",
+            )
+
+        expected = [
+            "/usr/bin/umu-run",
+            "start",
+            "/b",
+            "/wait",
+            "/d",
+            "c:\\game\\bin",
+            "c:\\game\\game.exe",
+            "--foo",
+            "bar",
+        ]
+
+        self.assertEqual(expected, observed)
+
+    def test_uses_proton_even_when_proton_path_is_empty(self):
+        game = Game(
+            "Test Game",
+            install_dir="/test/install/dir",
+            platform="windows",
+        )
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ):
+            self.assertTrue(launcher.uses_proton(game))
+
+    def test_get_windows_runner_proton_never_calls_wine(self):
+        game = Game(
+            "Test Game",
+            install_dir="/test/install/dir",
+            platform="windows",
+        )
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ), mock.patch(
+            "minigalaxy.launcher.find_umu_run",
+            return_value="/home/test/.local/bin/umu-run",
+        ), mock.patch(
+            "minigalaxy.launcher.get_wine_path",
+        ) as mock_get_wine_path:
+            observed = launcher.get_windows_runner(game)
+
+        self.assertEqual(
+            "/home/test/.local/bin/umu-run",
+            observed,
+        )
+        mock_get_wine_path.assert_not_called()
+
+    def test_validate_proton_requires_configured_path(self):
+        game = Game(
+            "Test Game",
+            install_dir="/test/install/dir",
+            platform="windows",
+        )
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ):
+            observed = launcher.validate_windows_compatibility(game)
+
+        self.assertEqual(
+            "Proton is selected for this game, but no Proton "
+            "compatibility tool is configured.",
+            observed,
+        )
+
+    def test_validate_proton_requires_selected_tool(self):
+        game = Game(
+            "Test Game",
+            install_dir="/test/install/dir",
+            platform="windows",
+        )
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Missing Proton",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ), mock.patch(
+            "minigalaxy.launcher.os.path.isfile",
+            return_value=False,
+        ):
+            observed = launcher.validate_windows_compatibility(game)
+
+        self.assertEqual(
+            "The selected Proton compatibility tool is unavailable: "
+            "/steam/Missing Proton",
+            observed,
+        )
+
+    def test_validate_proton_requires_umu(self):
+        game = Game(
+            "Test Game",
+            install_dir="/test/install/dir",
+            platform="windows",
+        )
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ), mock.patch(
+            "minigalaxy.launcher.os.path.isfile",
+            return_value=True,
+        ), mock.patch(
+            "minigalaxy.launcher.find_umu_run",
+            return_value="",
+        ), mock.patch(
+            "minigalaxy.launcher.get_umu_status",
+            return_value=None,
+        ):
+            observed = launcher.validate_windows_compatibility(game)
+
+        self.assertEqual(
+            "UMU Launcher (umu-run) version 1.4.4 or newer is required to "
+            "install and run games with Proton through the Steam Linux Runtime, "
+            "but it was not found.",
+            observed,
+        )
+
+    def test_find_umu_run_uses_compatible_discovered_umu(self):
+        installation = MagicMock()
+        installation.path = "/home/test/.local/bin/umu-run"
+
+        with mock.patch(
+            "minigalaxy.launcher.find_compatible_umu",
+            return_value=installation,
+        ):
+            observed = launcher.find_umu_run()
+
+        self.assertEqual(
+            "/home/test/.local/bin/umu-run",
+            observed,
+        )
+
+    def test_validate_proton_rejects_old_umu_version(self):
+        game = Game(
+            "Test Game",
+            install_dir="/test/install/dir",
+            platform="windows",
+        )
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+        status = MagicMock()
+        status.version_text = "1.4.3"
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ), mock.patch(
+            "minigalaxy.launcher.os.path.isfile",
+            return_value=True,
+        ), mock.patch(
+            "minigalaxy.launcher.find_umu_run",
+            return_value="",
+        ), mock.patch(
+            "minigalaxy.launcher.get_umu_status",
+            return_value=status,
+        ):
+            observed = launcher.validate_windows_compatibility(game)
+
+        self.assertEqual(
+            "UMU Launcher 1.4.3 is installed, but version 1.4.4 or newer "
+            "is required for Proton support.",
+            observed,
+        )
+
+    def test_config_game_proton_uses_runinprefix(self):
+        game = Game(
+            "Test Game",
+            install_dir="/test/install/dir",
+            platform="windows",
+        )
+        values = {
+            InfoKey.WINDOWS_RUNNER: "proton",
+            InfoKey.PROTON_PATH: "/steam/Proton - Experimental",
+        }
+
+        with mock.patch.object(
+            game,
+            "get_info",
+            side_effect=lambda key, default_value="": values.get(
+                key,
+                default_value,
+            ),
+        ), mock.patch(
+            "minigalaxy.launcher.validate_windows_compatibility",
+            return_value="",
+        ), mock.patch(
+            "minigalaxy.launcher.find_umu_run",
+            return_value="/usr/bin/umu-run",
+        ), mock.patch(
+            "minigalaxy.launcher.subprocess.Popen",
+        ) as mock_popen:
+            observed = launcher.config_game(game)
+
+        self.assertEqual("", observed)
+        mock_popen.assert_called_once_with([
+            "env",
+            "WINEPREFIX=/test/install/dir/prefix",
+            "PROTONPATH=/steam/Proton - Experimental",
+            "STORE=gog",
+            "GAMEID=0",
+            "PROTON_VERB=runinprefix",
+            "/usr/bin/umu-run",
+            "winecfg",
+        ])
+
+    def test_start_game_returns_proton_validation_error_before_spawn(self):
+        game = Game(
+            "Test Game",
+            install_dir="/test/install/dir",
+            platform="windows",
+        )
+        command = LaunchCommand(
+            name="game.exe",
+            command=["umu-run", "game.exe"],
+        )
+        expected = "UMU Launcher is required."
+
+        with mock.patch(
+            "minigalaxy.launcher.validate_windows_compatibility",
+            return_value=expected,
+        ), mock.patch(
+            "minigalaxy.launcher.run_game_subprocess",
+        ) as mock_run:
+            observed = launcher.start_game(game, command)
+
+        self.assertEqual(expected, observed)
+        mock_run.assert_not_called()
