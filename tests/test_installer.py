@@ -309,9 +309,7 @@ class Test(TestCase):
 
     @mock.patch('subprocess.Popen')
     @mock.patch("os.path.exists")
-    @mock.patch("os.unlink")
-    @mock.patch("os.symlink")
-    def test2_extract_by_wine(self, mock_symlink, mock_unlink, mock_path_exists, mock_subprocess):
+    def test2_extract_by_wine(self, mock_path_exists, mock_subprocess):
         """[scenario: install failed]"""
         mock_path_exists.return_value = True
         mock_subprocess().poll.return_value = 1
@@ -321,6 +319,20 @@ class Test(TestCase):
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = "Wine extraction failed."
+        obs = installer.extract_by_wine(game, installer_path, temp_dir)
+        self.assertEqual(exp, obs)
+
+    @mock.patch('subprocess.Popen')
+    @mock.patch("os.path.exists")
+    def test_extract_by_wine_user_cancelled(self, mock_path_exists, mock_subprocess):
+        mock_path_exists.return_value = True
+        mock_subprocess().poll.return_value = 2
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_subprocess().stderr.readline.return_value = ""
+        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform=Platform.WINDOWS)
+        installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
+        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
+        exp = "Installation canceled by user."
         obs = installer.extract_by_wine(game, installer_path, temp_dir)
         self.assertEqual(exp, obs)
 
