@@ -44,6 +44,36 @@ The windows installer in wine now uses a 2-step attempt to install games.
 2. In case this fails, the regular installation wizard will open. **Please do not change** the  
 install directory 'c:\game' given in the wizard as this an elementary part of the wine fix.
 
+### Game launch options
+
+The game properties dialog provides two fields for adding options to a launch
+command:
+
+- **Variable flags** are environment variable assignments placed before the
+  executable. For example, `DXVK_HUD=fps` produces a command beginning with
+  `env DXVK_HUD=fps ...`. Quote a complete assignment when its value contains
+  spaces, such as `MY_GAME_OPTION="value with spaces"`.
+- **Command flags** are arguments appended after the game executable. For
+  example, `--fullscreen --width 1920` passes those two options to the game.
+  Quote an individual argument when it contains spaces.
+
+For a native game, the resulting order is:
+
+```text
+env <variable flags> <game executable> <command flags>
+```
+
+For a Windows game, Minigalaxy also inserts its Wine prefix and Wine launcher:
+
+```text
+env <variable flags> WINEPREFIX=<prefix> <wine executable> ... <game executable> <command flags>
+```
+
+The fields cannot insert Wine-specific arguments between the Wine executable
+and the game executable. In particular, Wine's `explorer /desktop=...` mode
+cannot be configured through these fields; use `winecfg` to enable a virtual
+desktop for the game's prefix instead.
+
 ## Supported languages
 
 Currently, Minigalaxy can be displayed in the following languages:
