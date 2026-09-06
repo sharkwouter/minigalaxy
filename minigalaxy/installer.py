@@ -71,14 +71,16 @@ def enqueue_game_install(install_id, result_callback, *args, **kwargs):
 def install_game(  # noqa: C901
         game: Game,
         installer: str,
-        language: str,
-        install_dir: str,
-        keep_installers: bool,
-        create_desktop_file: bool,
+        config: Config,
         installer_inventory=None,
         raise_error=False,
         progress_callback=None
 ):
+    language = config.lang,
+    install_dir = config.install_dir,
+    keep_installers = config.keep_installers
+    create_desktop_file = config.create_applications_file
+
     error_message = ""
     error = None
     tmp_dir = ""
