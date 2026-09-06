@@ -82,8 +82,8 @@ class Preferences(Gtk.Dialog):
     def __apply_view_choice(self) -> None:
         view = get_combo_value(self.combobox_view)
         if view != self.config.view:
-            self.parent.reset_library()
-        self.config.view = view
+            self.config.view = view
+            self.parent.reset_library(rebuild=True)
 
     def __apply_theme_choice(self) -> None:
         settings = Gtk.Settings.get_default()

@@ -65,11 +65,12 @@ class Library(Gtk.Viewport):
         for thunk in queue:
             GLib.idle_add(thunk)
 
-    def reset(self):
-        self.games = []
-        for child in self.flowbox.get_children():
-            self.flowbox.remove(child)
-        self.flowbox.show_all()
+    def reset(self, rebuild=False):
+        """Refresh the library, preserving tiles unless their view must change."""
+        if rebuild:
+            self.games = []
+            for child in self.flowbox.get_children():
+                self.flowbox.remove(child)
         self.update_library()
 
     def update_library(self) -> None:
@@ -81,13 +82,24 @@ class Library(Gtk.Viewport):
         GLib.idle_add(self.__load_tile_states)
         self.owned_products_ids = self.api.get_owned_products_ids()
         # Get already installed games first
+        previous_games = self.games
         self.games = self.__get_installed_games()
+        for game in previous_games:
+            if game.id in self.config.current_downloads and game not in self.games:
+                self.games.append(game)
         self.__create_gametiles_iteratively(5)
 
         # Get games from the API
         self.__add_games_from_api()
         self.__create_gametiles_iteratively(5)
+        GLib.idle_add(self.__remove_stale_gametiles)
         GLib.idle_add(self.filter_library)
+
+    def __remove_stale_gametiles(self):
+        for child in self.flowbox.get_children():
+            tile = child.get_children()[0]
+            if tile.game not in self.games:
+                self.flowbox.remove(child)
 
     def __create_gametiles_iteratively(self, step_width=5):
         if len(self.games) < step_width*2:

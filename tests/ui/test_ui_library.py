@@ -46,6 +46,65 @@ class TestLibrary(TestCase):
     mock_config = MagicMock()
     mock_config.locale = "en"
 
+    def test_reset_preserves_existing_tiles(self):
+        test_library = Library(MagicMock(), self.mock_config, MagicMock(), MagicMock())
+        game = Game(name="Active download", game_id=1)
+        child = MagicMock()
+        child.get_children.return_value = [MagicMock(game=game)]
+        test_library.games = [game]
+        test_library.flowbox.reset_mock()
+        test_library.flowbox.get_children.return_value = [child]
+        test_library.update_library = MagicMock()
+
+        test_library.reset()
+
+        self.assertEqual([game], test_library.games)
+        test_library.flowbox.remove.assert_not_called()
+        test_library.update_library.assert_called_once()
+
+    def test_reset_rebuilds_tiles_when_requested(self):
+        test_library = Library(MagicMock(), self.mock_config, MagicMock(), MagicMock())
+        game = Game(name="Existing game", game_id=1)
+        child = MagicMock()
+        test_library.games = [game]
+        test_library.flowbox.reset_mock()
+        test_library.flowbox.get_children.return_value = [child]
+        test_library.update_library = MagicMock()
+
+        test_library.reset(rebuild=True)
+
+        self.assertEqual([], test_library.games)
+        test_library.flowbox.remove.assert_called_once_with(child)
+        test_library.update_library.assert_called_once()
+
+    def test_stale_tiles_are_removed_after_refresh(self):
+        test_library = Library(MagicMock(), self.mock_config, MagicMock(), MagicMock())
+        retained_game = Game(name="Retained game", game_id=1)
+        stale_game = Game(name="Stale game", game_id=2)
+        retained_child = MagicMock()
+        retained_child.get_children.return_value = [MagicMock(game=retained_game)]
+        stale_child = MagicMock()
+        stale_child.get_children.return_value = [MagicMock(game=stale_game)]
+        test_library.games = [retained_game]
+        test_library.flowbox.reset_mock()
+        test_library.flowbox.get_children.return_value = [retained_child, stale_child]
+
+        test_library._Library__remove_stale_gametiles()
+
+        test_library.flowbox.remove.assert_called_once_with(stale_child)
+
+    def test_refresh_keeps_active_download_when_api_is_offline(self):
+        active_download = Game(name="Active download", game_id=1)
+        active_download.library_tile = MagicMock()
+        test_library = self._tile_library([], [], err_msg="offline")
+        test_library.games = [active_download]
+        test_library.config.current_downloads = [active_download.id]
+
+        test_library._Library__update_library()
+
+        self.assertIn(active_download, test_library.games)
+        self.assertEqual([], GameTile.call_args_list)
+
     def test1_add_games_from_api(self):
         self_games = []
         for game in SELF_GAMES:

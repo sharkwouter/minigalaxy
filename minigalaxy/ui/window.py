@@ -162,8 +162,8 @@ class Window(Gtk.ApplicationWindow):
         if not os.path.exists(ICON_DIR):
             os.makedirs(ICON_DIR, mode=0o755)
 
-    def reset_library(self):
-        self.library.reset()
+    def reset_library(self, rebuild=False):
+        self.library.reset(rebuild=rebuild)
 
     def update_library(self):
         self.library.update_library()
