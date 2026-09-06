@@ -1,4 +1,5 @@
 **1.4.3**
+- Canceling an automatic windows game installation will not retry with the fallback any longer (thanks to GB609)
 - Fix not-installed Linux games missing from the library (thanks to slowsage)
 - Releases will now include a basic AppImage (experimental) (thanks to GB609)
 - Releases now target Ubuntu 26.04
