@@ -71,14 +71,16 @@ def enqueue_game_install(install_id, result_callback, *args, **kwargs):
 def install_game(  # noqa: C901
         game: Game,
         installer: str,
-        language: str,
-        install_dir: str,
-        keep_installers: bool,
-        create_desktop_file: bool,
+        config: Config,
         installer_inventory=None,
         raise_error=False,
         progress_callback=None
 ):
+    language = config.lang,
+    install_dir = config.install_dir,
+    keep_installers = config.keep_installers
+    create_desktop_file = config.create_applications_file
+
     error_message = ""
     error = None
     tmp_dir = ""
@@ -236,7 +238,8 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
     prefix_dir = os.path.join(game.install_dir, "prefix")
     wine_env = [
         f"WINEPREFIX={prefix_dir}",
-        "WINEDLLOVERRIDES=winemenubuilder.exe=d"
+        "WINEDLLOVERRIDES=winemenubuilder.exe=d",
+        "WINEDEBUG=fixme-all"  # disable a few misleading wine log statements
     ]
     wine_bin = get_wine_path(game)
 
@@ -251,7 +254,8 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
         reg_file_resource = get_data_file("wine_disable_menubuilder.reg")
         with as_file(reg_file_resource) as reg_file:
             command = ["env", *wine_env, wine_bin, "regedit", str(reg_file.resolve())]
-            if not try_wine_command(command):
+            success, code = try_wine_command(command)
+            if not success:
                 return _("Wineprefix creation failed.")
 
     # calculate relative link prefix/c/game to game.install_dir
@@ -275,13 +279,17 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
     ]
 
     # first, try full unattended install.
-    success = try_wine_command(installer_cmd_basic + installer_args_full)
+    success, code = try_wine_command(installer_cmd_basic + installer_args_full)
     if not success:
+        # look at the exit codes and runtime behaviour to determine if the second try is needed
+        # see https://jrsoftware.org/ishelp/index.php?topic=setupexitcodes
+        if code in [2, 5]:  # user decided to cancel
+            return _("Installation canceled by user.")
         # some games will reject the /SILENT flag
         # because they require the user to accept EULA at the beginning
         # Open normal installer as fallback and hope for the best
         logging.error('Unattended install failed. Try install with wizard dialog.')
-        success = try_wine_command(installer_cmd_basic)
+        success, code = try_wine_command(installer_cmd_basic)
 
     if not success:
         return _("Wine extraction failed.")
@@ -293,10 +301,11 @@ def try_wine_command(command_arr):
     logging.debug('trying to run wine command:[%s]', shlex.join(command_arr))
     stdout, stderr, exitcode = _exe_cmd(command_arr, True)
     if exitcode not in [0]:
+        logging.error("Wine install failed with exit code: %d", exitcode)
         logging.error(stderr)
-        return False
+        return False, exitcode
 
-    return True
+    return True, 0
 
 
 def move_and_overwrite(game, temp_dir, installed_to_tmp):

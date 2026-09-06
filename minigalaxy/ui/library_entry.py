@@ -468,10 +468,7 @@ class LibraryEntry:
             install_finished,
             self.game,
             save_location,
-            self.config.lang,
-            self.config.install_dir,
-            self.config.keep_installers,
-            self.config.create_applications_file,
+            self.config,
             installer_inventory=inventory
         )
 

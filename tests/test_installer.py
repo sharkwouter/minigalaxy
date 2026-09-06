@@ -6,13 +6,27 @@ from unittest import TestCase, mock
 from unittest.mock import patch, mock_open, MagicMock, call
 
 from minigalaxy import Platform
+from minigalaxy.config import Config
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy import installer
 from minigalaxy.translation import _
 
 
-class Test(TestCase):
+class TestInstaller(TestCase):
+
+    def setUp(self):
+        """
+        Simple tests of methods contained in here don't have to care about the file.
+        They can just use a prepared real instance of Config in "batch_mode" to prevent writes.
+        """
+        self.config = Config("/no/writes/because/batch/mode")
+        self.config.start_batch_edit()
+        # initialize with empty defaults
+        self.config.lang = ""
+        self.config.install_dir = ""
+        self.config.keep_installers = False
+        self.config.create_applications_file = True
 
     @mock.patch('os.listdir')
     @mock.patch('os.path.exists')
@@ -20,9 +34,9 @@ class Test(TestCase):
         """[scenario: unhandled error]"""
         mock_exists.side_effect = FileNotFoundError("Testing unhandled errors during install")
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform=Platform.WINDOWS)
-        exp = "Unhandled error."
-        obs = installer.install_game(game, installer="", language="", install_dir="", keep_installers=False, create_desktop_file=True)
-        self.assertEqual(exp, obs)
+
+        obs = installer.install_game(game, installer="", config=self.config)
+        self.assertEqual("Unhandled error.", obs)
 
     @mock.patch('minigalaxy.installer.verify_installer_integrity')
     def test_install_game_with_checksum_exception(self, mock_checksum):
@@ -34,8 +48,7 @@ class Test(TestCase):
         inventory = self.prepare_inventory("/cache/adrift_setup.exe", "", 0)
         inventory.add_file("/cache/adrift_setup-1.bin", FileInfo("", 0))
         with self.assertRaises(installer.InstallException) as result:
-            installer.install_game(game, installer="", language="", install_dir="",
-                                   keep_installers=False, create_desktop_file=True,
+            installer.install_game(game, installer="", config=self.config,
                                    installer_inventory=inventory, raise_error=True)
 
         self.assertEqual(installer.InstallResultType.CHECKSUM_ERROR, result.exception.fail_type, result.exception.message)
@@ -54,8 +67,7 @@ class Test(TestCase):
         inventory = self.prepare_inventory("/cache/adrift_setup.exe", "", 0)
         inventory.add_file("/cache/adrift_setup-1.bin", FileInfo("", 0))
         with self.assertRaises(installer.InstallException) as result:
-            installer.install_game(game, installer="", language="", install_dir="",
-                                   keep_installers=False, create_desktop_file=True,
+            installer.install_game(game, installer="", config=self.config,
                                    installer_inventory=inventory, raise_error=True,
                                    progress_callback=progress_callback)
 
@@ -140,8 +152,7 @@ class Test(TestCase):
         game = Game("Absolute Drift", install_dir=install_dir, platform=Platform.WINDOWS)
 
         with self.assertRaises(installer.InstallException):
-            installer.install_game(game, installer="", language="", install_dir=install_dir,
-                                   keep_installers=False, create_desktop_file=True,
+            installer.install_game(game, installer="", config=self.config,
                                    installer_inventory=inventory, raise_error=True)
 
         mock_remove.assert_called_once_with(failed_file_list)
@@ -309,9 +320,7 @@ class Test(TestCase):
 
     @mock.patch('subprocess.Popen')
     @mock.patch("os.path.exists")
-    @mock.patch("os.unlink")
-    @mock.patch("os.symlink")
-    def test2_extract_by_wine(self, mock_symlink, mock_unlink, mock_path_exists, mock_subprocess):
+    def test2_extract_by_wine(self, mock_path_exists, mock_subprocess):
         """[scenario: install failed]"""
         mock_path_exists.return_value = True
         mock_subprocess().poll.return_value = 1
@@ -321,6 +330,20 @@ class Test(TestCase):
         installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
         exp = "Wine extraction failed."
+        obs = installer.extract_by_wine(game, installer_path, temp_dir)
+        self.assertEqual(exp, obs)
+
+    @mock.patch('subprocess.Popen')
+    @mock.patch("os.path.exists")
+    def test_extract_by_wine_user_cancelled(self, mock_path_exists, mock_subprocess):
+        mock_path_exists.return_value = True
+        mock_subprocess().poll.return_value = 2
+        mock_subprocess().stdout.readline.return_value = ""
+        mock_subprocess().stderr.readline.return_value = ""
+        game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform=Platform.WINDOWS)
+        installer_path = "/home/makson/.cache/minigalaxy/download/Absolute Drift/setup_absolute_drift_1.0f_(64bit)_(47863).exe"
+        temp_dir = "/home/makson/.cache/minigalaxy/extract/1136126792"
+        exp = "Installation canceled by user."
         obs = installer.extract_by_wine(game, installer_path, temp_dir)
         self.assertEqual(exp, obs)
 
