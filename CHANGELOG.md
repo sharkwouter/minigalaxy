@@ -1,4 +1,5 @@
 **1.4.3**
+- Use the system message locale for the interface and preserve formatting locales when changing language (thanks to be-student).
 - Fix not-installed Linux games missing from the library (thanks to slowsage)
 - Releases will now include a basic AppImage (experimental) (thanks to GB609)
 - Releases now target Ubuntu 26.04

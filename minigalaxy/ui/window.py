@@ -1,6 +1,5 @@
 import logging
 import os
-import locale
 
 from minigalaxy.download_manager import DownloadManager
 from minigalaxy.ui.categoryfilters import CategoryFilters
@@ -32,15 +31,6 @@ class Window(Gtk.ApplicationWindow):
     download_list = Gtk.Template.Child()
 
     def __init__(self, config: Config, api: 'Api', download_manager: DownloadManager, name="Minigalaxy"):
-        current_locale = config.locale
-        default_locale = locale.getlocale()[0]
-        if current_locale == '':
-            locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
-        else:
-            try:
-                locale.setlocale(locale.LC_ALL, (current_locale, 'UTF-8'))
-            except NameError:
-                locale.setlocale(locale.LC_ALL, (default_locale, 'UTF-8'))
         Gtk.ApplicationWindow.__init__(self, title=name)
 
         self.api = api

@@ -46,6 +46,13 @@ install directory 'c:\game' given in the wizard as this an elementary part of th
 
 ## Supported languages
 
+By default, the interface follows the system message locale (`LC_MESSAGES`),
+independently of keyboard and formatting locales. The program language setting
+overrides the interface language; selecting the system default restores the
+startup message locale. Language selection is initialized centrally in
+`minigalaxy/translation.py`, and does not change numeric, date, or character
+locale categories. `LANG` remains available to launched games.
+
 Currently, Minigalaxy can be displayed in the following languages:
 
 - Brazilian Portuguese

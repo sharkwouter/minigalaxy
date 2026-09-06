@@ -7,7 +7,7 @@ from minigalaxy import Platform
 from minigalaxy.config import Config
 from minigalaxy.constants import PLATFORM_MODE, SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES, VIEWS
 from minigalaxy.download_manager import DownloadManager
-from minigalaxy.translation import _
+from minigalaxy.translation import _, set_message_locale
 from minigalaxy.ui.gtk import Gtk, load_ui
 from minigalaxy.ui.widget_utils import get_combo_value, populate_combobox
 
@@ -56,9 +56,6 @@ class Preferences(Gtk.Dialog):
     def __set_locale_list(self) -> None:
         # Set the active option
         current_locale = self.config.locale
-        default_locale = locale.getlocale()
-        if current_locale is None:
-            locale.setlocale(locale.LC_ALL, default_locale)
 
         populate_combobox(self.combobox_program_language, SUPPORTED_LOCALES, current_locale)
 
@@ -70,11 +67,10 @@ class Preferences(Gtk.Dialog):
 
     def __apply_locale_choice(self) -> None:
         locale_choice = get_combo_value(self.combobox_program_language)
-        if locale_choice == '' or not locale_choice:
-            locale_choice = locale.getlocale()[0]
+        locale_choice = locale_choice or ''
 
         try:
-            locale.setlocale(locale.LC_ALL, (locale_choice, 'UTF-8'))
+            set_message_locale(locale_choice)
             self.config.locale = locale_choice
         except locale.Error:
             self.parent.show_error(_("Failed to change program language. Make sure locale is generated on your system."))
