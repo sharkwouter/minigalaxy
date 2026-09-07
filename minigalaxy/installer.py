@@ -875,7 +875,7 @@ class InstallException(Exception):
 
 class InstallTask:
     def __init__(self, install_id=None, result_callback=None, *args, **kwargs):
-        self.game = InstallTask.__locate_game_in_args(*args, **kwargs)
+        self.game = InstallTask._locate_type_in_args(Game, *args, **kwargs)
         if not install_id:
             install_id = self.game.id
         if not result_callback or not callable(result_callback):
@@ -911,11 +911,11 @@ class InstallTask:
         return f"InstallTask(id={self.installer_id}, args={self.arg_array}, kwargs={str(self.named_args)})"
 
     @staticmethod
-    def __locate_game_in_args(*args, **kwargs):
+    def _locate_type_in_args(class_type, *args, **kwargs):
         for a in [*args, *kwargs.values()]:
-            if isinstance(a, Game):
+            if isinstance(a, class_type):
                 return a
-        raise ValueError("No instance of Game in InstallTask constructor arguments")
+        raise ValueError(f"No instance of {class_type.__name__} in InstallTask constructor arguments")
 
     @staticmethod
     def get_title_for_id(game: Game, item_id):
