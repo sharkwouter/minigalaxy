@@ -404,6 +404,24 @@ class TestLibrary(TestCase):
 
 
 class TestLibraryEntry(TestCase):
+    def test_failsafe_callback_ignores_exception(self):
+        callback = MagicMock()
+        callback.side_effect = ValueError("Should not be thrown")
+        LibraryEntry._failsafe_callback(callback)
+        callback.assert_called_once()
+
+    def test_failsafe_callback_ignores_None(self):
+        LibraryEntry._failsafe_callback(None)
+        # no assertion needed - it just shouldn't do anything at all
+
+    def test_filename_from_url(self):
+        test_urls = {
+            "en1installer1": "https://api.gog.com/products/1207666633/downlink/installer/en1installer1",
+            "#with blank.sh": "https://api.gog.com/products/downlink/installer/%23with%20blank.sh",
+        }
+
+        for data in test_urls.items():
+            self.assertEqual(data[0], LibraryEntry._filename_from_url(data[1]))
 
     def test_update_inventory_id_unchanged(self):
         inventory = InstallerInventory()

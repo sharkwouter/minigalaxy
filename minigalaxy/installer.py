@@ -600,7 +600,8 @@ class InstallerInventory:
 
         The inventory will contain all files names matching the base name of the installer (without extension).
         Only files in the SAME directory are checked. No recursion.
-        It works with different game version, but result and behaviour are unspecified for mixed platform directories.
+        The directory can contain multiple inventories with different names for several versions,
+        but result and behaviour are unspecified for mixed platform directories.
 
         This is a fallback for games that have been downloaded before InstallerInventory was introduced.
         Files added like this won't have checksums and the is_complete check makes little sense.
@@ -863,6 +864,7 @@ class InstallResultType(Enum):
 
 
 class InstallResult:
+
     def __init__(self, install_id, result_type: InstallResultType, reason, details=None):
         """Data class that will be passed to result_callback of InstallTask
         reason is a type-dependent string:
@@ -899,6 +901,7 @@ class InstallResult:
 
 
 class InstallException(Exception):
+
     def __init__(self, message, fail_type=InstallResultType.FAILURE, data=None):
         self.fail_type = fail_type
         self.message = message
@@ -906,6 +909,7 @@ class InstallException(Exception):
 
 
 class InstallTask:
+
     def __init__(self, result_callback=None, *args, **kwargs):
         self.game = InstallTask._locate_type_in_args(Game, *args, **kwargs)
         self.installer = InstallTask._locate_type_in_args(InstallerInventory, *args, **kwargs)

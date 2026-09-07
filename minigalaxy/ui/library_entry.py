@@ -309,7 +309,7 @@ class LibraryEntry:
                 break
 
             info = self.api.get_download_file_info(file_info["downlink"])
-            filename = self.__filename_from_url(download_url)
+            filename = self._filename_from_url(download_url)
             download_path = os.path.join(target_download_dir, filename)
             # assumption: first file is installer executable
             download_inventory.set_path_once(download_path)
@@ -343,7 +343,8 @@ class LibraryEntry:
 
         return download_success
 
-    def __filename_from_url(self, url):
+    @staticmethod
+    def _filename_from_url(url):
         filename = urllib.parse.unquote(urllib.parse.urlsplit(url).path)
         return filename.split("/")[-1]
 
@@ -419,19 +420,27 @@ class LibraryEntry:
                 self.game.set_dlc_info("version", self.api.get_version(self.game, dlc_name=dlc_title), dlc_title)
             else:
                 self.game.set_info(InfoKey.VERSION, self.api.get_version(self.game))
-            if on_success:
-                on_success()
+            self._failsafe_callback(on_success)
             return
 
         if result.installation_terminated:
             item_name = dlc_title if dlc_title else self.game.name
             GLib.idle_add(self.parent_window.show_error, _("Failed to install {}").format(item_name), result.reason)
             self.reset_to_idle_state_if_possible()
-            if on_failure:
-                on_failure()
+            self._failsafe_callback(on_failure)
             return
 
         self.__handle_install_state_update(result)
+
+    @staticmethod
+    def _failsafe_callback(callback):
+        """Make sure no install callback will ever crash important threads."""
+        if not callback:
+            return
+        try:
+            callback()
+        except Exception as e:
+            logging.error("Ignore unexpected exception from callback function", exc_info=e)
 
     def __handle_install_state_update(self, result: InstallResult):
         if result.type is InstallResultType.VERIFY_START:
@@ -486,6 +495,10 @@ class LibraryEntry:
         Old inventory might be available locally which were saved before the meta 'item_id' was introduced.
         These aren't re-downloaded but still need to correctly supply the id.
         """
+        if not inventory:
+            # happened during tests, when an installer was deleted via file browser (MG still had the "installable" state)
+            return _("The installer files could not be found (did you delete them outside of minigalaxy?)")
+
         if not inventory.item_id:
             if dlc_title:
                 found_dlc = LibraryEntry._get_dlc_by_title(api, game, dlc_title)
