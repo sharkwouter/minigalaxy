@@ -53,7 +53,8 @@ class TestInventory(TestCase):
             },
             "%META%": {
                 "gogid": 20150,
-                "platform": Platform.LINUX.value
+                "platform": Platform.LINUX.value,
+                "exe": self.installer_path
             }
         }
 

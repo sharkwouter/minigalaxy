@@ -118,11 +118,7 @@ class LibraryEntry:
         elif self.current_state in [State.INSTALLED, State.UPDATABLE]:
             err_msg = self.launch_game()
         elif self.current_state == State.INSTALLABLE:
-            exe_path = self.get_keep_executable_path()
-            inventory = InstallerInventory.from_file_system(exe_path)
-            install_thread = threading.Thread(target=self.__install_game,
-                                              args=(exe_path,),
-                                              kwargs={"inventory": inventory})
+            install_thread = threading.Thread(target=self.__install_game, args=(self.get_keep_executable_path(),))
             install_thread.start()
         elif self.current_state == State.DOWNLOADABLE:
             download_thread = threading.Thread(target=self.__download_game)
@@ -199,24 +195,27 @@ class LibraryEntry:
         download_thread.start()
 
     def get_keep_executable_path(self):
-        keep_path = ""
+        if not os.path.isdir(self.keep_path):
+            return None
+
         exes_by_creation_date = {}
-        if os.path.isdir(self.keep_path):
-            for dir_content in os.listdir(self.keep_path):
-                kept_file = os.path.join(self.keep_path, dir_content)
-                if LibraryEntry.is_executable(kept_file):
-                    exes_by_creation_date[int(os.path.getmtime(kept_file))] = kept_file
+        for dir_content in os.listdir(self.keep_path):
+            kept_file = os.path.join(self.keep_path, dir_content)
+            if LibraryEntry.is_executable(kept_file):
+                exes_by_creation_date[int(os.path.getmtime(kept_file))] = kept_file
 
-        if exes_by_creation_date:
-            ctimes_sorted = [*exes_by_creation_date.keys()]
-            ctimes_sorted.sort()
-            for creation_time in ctimes_sorted:
-                installer = exes_by_creation_date[creation_time]
-                inventory = InstallerInventory(installer)
-                if inventory.is_complete():
-                    return installer
+        if not exes_by_creation_date:
+            return None
 
-        return keep_path
+        ctimes_sorted = [*exes_by_creation_date.keys()]
+        ctimes_sorted.sort()
+        for creation_time in ctimes_sorted:
+            installer = exes_by_creation_date[creation_time]
+            inventory = InstallerInventory.from_file_system(installer)
+            if inventory.is_complete():
+                return inventory
+
+        return None
 
     @staticmethod
     def is_executable(file):
@@ -365,7 +364,7 @@ class LibraryEntry:
 
     '''----- INSTALL ACTIONS -----'''
 
-    def __install_game(self, save_location, inventory=None):
+    def __install_game(self, inventory: InstallerInventory):
         self.game.set_install_dir(self.config.install_dir)
 
         def on_success():
@@ -374,9 +373,9 @@ class LibraryEntry:
             popup.show()
             self.__check_for_dlc(self.api.get_info(self.game))
 
-        self._install(self.game.id, save_location, inventory=inventory, on_success=on_success)
+        self._install(inventory=inventory, on_success=on_success)
 
-    def __install_update(self, save_location, inventory=None):
+    def __install_update(self, inventory: InstallerInventory):
 
         def on_success():
             image_tooltip = self.game.name
@@ -390,7 +389,7 @@ class LibraryEntry:
                 if dlc.is_update_available():
                     dlc.download()
 
-        self._install(self.game.id, save_location, update=True, inventory=inventory, on_success=on_success)
+        self._install(inventory=inventory, on_success=on_success, update=True)
 
     def __install_step_callback(self, result: InstallResult, on_success=None, on_failure=None, dlc_title=""):
         """
@@ -454,8 +453,8 @@ class LibraryEntry:
         if result.type is InstallResultType.INSTALL_START:
             self.update_to_state_if_idle(State.INSTALLING)
 
-    def _install(self, gog_item_id, save_location, update=False, dlc_title="",
-                 inventory=None, on_success=None, on_failure=None):
+    def _install(self, inventory: InstallerInventory, dlc_title="", update=False,
+                 on_success=None, on_failure=None):
 
         error_message = self._update_inventory_item_id(self.api, inventory, self.game, dlc_title)
         if error_message:
@@ -475,12 +474,10 @@ class LibraryEntry:
             self.__install_step_callback(result, on_success, on_failure, dlc_title)
 
         enqueue_game_install(
-            gog_item_id,
-            install_finished,
-            self.game,
-            save_location,
-            self.config,
-            installer_inventory=inventory
+            result_callback=install_finished,
+            game=self.game,
+            installer_inventory=inventory,
+            config=self.config
         )
 
     @staticmethod
@@ -826,7 +823,7 @@ class CallbackFuncWrapper:
         for d in self.download_files:
             save_locations.append(d.save_location)
 
-        self.callback_finish(self.download_files[0].save_location, inventory=self.inventory)
+        self.callback_finish(inventory=self.inventory)
 
     def cancel_func(self, trigger):
         if self.item.id not in self.lib_entry.config.current_downloads:
@@ -937,12 +934,10 @@ class DlcListEntry(Gtk.Box):
         self.__set_button_state(False)
         threading.Thread(target=self.__run_download).start()
 
-    def install(self, save_location, inventory=None):
+    def install(self, inventory: InstallerInventory):
         self.parent_entry._install(
-            self.dlc_id,
-            save_location,
-            dlc_title=self.title,
             inventory=inventory,
+            dlc_title=self.title,
             on_success=self.parent_entry._check_for_update_dlc)
 
     def is_update_available(self):
@@ -956,7 +951,8 @@ class DlcListEntry(Gtk.Box):
         if not info:
             info = self.api.get_dlc_info(self.game, self.dlc_id)
         self.dlc_info = info
-        self.dlc_installer = self.api.get_download_info(self.game, dlc_installers=info["downloads"]["installers"])
+        self.dlc_installer = self.api.get_download_info(self.game, operating_system=self.game.platform,
+                                                        dlc_installers=info["downloads"]["installers"])
 
     def __run_download(self):
         self.parent_entry._download(InstallableItem(self.dlc_id, self.title),

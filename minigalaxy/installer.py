@@ -59,23 +59,23 @@ def check_diskspace(required_size, location):
     return diskspace_available >= installed_game_size
 
 
-def enqueue_game_install(install_id, result_callback, *args, **kwargs):
+def enqueue_game_install(result_callback, *args, **kwargs):
     global INSTALL_QUEUE
     if not INSTALL_QUEUE:
         INSTALL_QUEUE = InstallerQueue()
 
-    task = InstallTask(install_id, result_callback, *args, **kwargs)
+    task = InstallTask(result_callback, *args, **kwargs)
     INSTALL_QUEUE.put(task)
 
 
 def install_game(  # noqa: C901
         game: Game,
-        installer: str,
         config: Config,
         installer_inventory=None,
         raise_error=False,
         progress_callback=None
 ):
+    installer = installer_inventory.installer_executable
     language = config.lang,
     install_dir = config.install_dir,
     keep_installers = config.keep_installers
@@ -84,12 +84,9 @@ def install_game(  # noqa: C901
     error_message = ""
     error = None
     tmp_dir = ""
-    logging.info("Installing {}".format(game.name))
+    logging.info("Installing %d: %s (%s)", installer_inventory.item_id, game.name, installer)
 
     try:
-        if not installer_inventory:
-            installer_inventory = InstallerInventory.from_file_system(installer)
-
         verify_installer_integrity(game, installer_inventory, progress_callback)
 
         progress_callback(InstallResultType.INSTALL_START, game.name)
@@ -97,7 +94,7 @@ def install_game(  # noqa: C901
 
         tmp_dir, = fail_on_error(make_tmp_dir(game))
 
-        installed_to_tmp, = fail_on_error(extract_installer(game, installer, tmp_dir, language))
+        installed_to_tmp, = fail_on_error(extract_installer(game, installer_inventory, tmp_dir, language))
 
         fail_on_error(move_and_overwrite(game, tmp_dir, installed_to_tmp))
         fail_on_error(copy_thumbnail(game))
@@ -203,9 +200,10 @@ def make_tmp_dir(game):
     return error_message, temp_dir
 
 
-def extract_installer(game: Game, installer: str, temp_dir: str, language: str):
+def extract_installer(game: Game, inventory, temp_dir: str, language: str):
+    installer = inventory.installer_executable
     # Extract the installer
-    if game.platform in [Platform.LINUX]:
+    if inventory.target_platform in [Platform.LINUX]:
         return extract_linux(installer, temp_dir)
     else:
         return extract_windows(game, installer, language)
@@ -581,6 +579,7 @@ class InstallerInventory:
 
         ID = "gogid"
         PLATFORM = "platform"
+        EXECUTABLE = "exe"
 
     def __init__(self, installer_path=None):
         self.inventory_file = None
@@ -627,6 +626,18 @@ class InstallerInventory:
         return os.stat(file).st_size
 
     @property
+    def installer_executable(self):
+        if not self.meta.get(InstallerInventory.MetaKey.EXECUTABLE, None):
+            executable = self.__search_executable()
+            if executable:
+                self.meta[InstallerInventory.MetaKey.EXECUTABLE] = executable
+        return self.meta.get(InstallerInventory.MetaKey.EXECUTABLE, None)
+
+    @installer_executable.setter
+    def installer_executable(self, new_value: str) -> None:
+        self.meta[InstallerInventory.MetaKey.EXECUTABLE] = new_value
+
+    @property
     def item_id(self):
         return self.meta.get(InstallerInventory.MetaKey.ID, 0)
 
@@ -666,6 +677,8 @@ class InstallerInventory:
         if not self.target_platform:
             # try to init target_platform from the installer path alone if the inventory doesn't have a file list
             self.target_platform = self.__detect_platform_type([installer_path])
+        if not self.installer_executable:
+            self.installer_executable = self.__search_executable([installer_path])
 
     def load(self):
         """Try to read the inventory from file. This function applies a rudimentary merge between meta data from file
@@ -711,6 +724,11 @@ class InstallerInventory:
 
     def add_file(self, name, file_info):
         self.data[os.path.basename(name)] = file_info.as_dict()
+        if self.meta.get(InstallerInventory.MetaKey.EXECUTABLE, None):
+            return
+        executable = self.__search_executable(files=[name])
+        if executable:
+            self.meta[InstallerInventory.MetaKey.EXECUTABLE] = executable
 
     def has_checksum(self, file_name):
         return not self.data.get(file_name, {}).get("md5", None) is None
@@ -801,8 +819,22 @@ class InstallerInventory:
 
         return None
 
+    def __search_executable(self, files=[]):
+        """Search the actual installer executable in the list of inventory files.
+        @param files: optional. Uses the files contained in the installer by default.
+               Can be used in situations where the installer itself doesn't contain any files (yet).
+        """
+        if not files:
+            files = self.contained_files()
+        if len(files) == 1:
+            return files[0]  # small performance improvement for sh installers
+        for f in files:
+            if f.endswith(".exe") or f.endswith(".sh"):
+                return f
+        return None
+
     def __str__(self):
-        return f"InstallerInventory(id={self.item_id}, plf={self.target_platform})"
+        return f"InstallerInventory(id={self.item_id}, plf={self.target_platform}, exe={self.installer_executable})"
 
     def __repr__(self):
         return self.__str__()
@@ -874,14 +906,13 @@ class InstallException(Exception):
 
 
 class InstallTask:
-    def __init__(self, install_id=None, result_callback=None, *args, **kwargs):
+    def __init__(self, result_callback=None, *args, **kwargs):
         self.game = InstallTask._locate_type_in_args(Game, *args, **kwargs)
-        if not install_id:
-            install_id = self.game.id
+        self.installer = InstallTask._locate_type_in_args(InstallerInventory, *args, **kwargs)
         if not result_callback or not callable(result_callback):
             raise ValueError("result_callback is required")
-        self.installer_id = install_id
-        self.title = InstallTask.get_title_for_id(self.game, install_id)
+        self.installer_id = self.installer.item_id
+        self.title = InstallTask.get_title_for_id(self.game, self.installer_id)
         self.callback = result_callback
         self.arg_array = args
         self.named_args = kwargs
