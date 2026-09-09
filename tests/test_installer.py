@@ -13,6 +13,15 @@ from minigalaxy import installer
 from minigalaxy.translation import _
 
 
+def prepare_inventory(installer_name, md5, size):
+    """Helper tool to construct instances of InstallerInventory for tests.
+    Takes data for a single file.
+    """
+    inventory = installer.InstallerInventory(installer_name)
+    inventory.add_file(installer_name, FileInfo(md5, size))
+    return inventory
+
+
 class TestInstaller(TestCase):
 
     def setUp(self):
@@ -45,7 +54,7 @@ class TestInstaller(TestCase):
         mock_checksum.side_effect = installer.InstallException("Checksum Error", installer.InstallResultType.CHECKSUM_ERROR, failed_file_list)
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform=Platform.WINDOWS)
 
-        inventory = self.prepare_inventory("/cache/adrift_setup.exe", "", 0)
+        inventory = prepare_inventory("/cache/adrift_setup.exe", "", 0)
         inventory.add_file("/cache/adrift_setup-1.bin", FileInfo("", 0))
         with self.assertRaises(installer.InstallException) as result:
             installer.install_game(game, installer="", config=self.config,
@@ -64,7 +73,7 @@ class TestInstaller(TestCase):
 
         progress_callback = MagicMock()
 
-        inventory = self.prepare_inventory("/cache/adrift_setup.exe", "", 0)
+        inventory = prepare_inventory("/cache/adrift_setup.exe", "", 0)
         inventory.add_file("/cache/adrift_setup-1.bin", FileInfo("", 0))
         with self.assertRaises(installer.InstallException) as result:
             installer.install_game(game, installer="", config=self.config,
@@ -169,7 +178,7 @@ class TestInstaller(TestCase):
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
         installer_path = "/home/user/.cache/minigalaxy/download/" \
                          "Beneath a Steel Sky/{}".format(installer_name)
-        inventory = self.prepare_inventory(installer_path, md5_sum, 0)
+        inventory = prepare_inventory(installer_path, md5_sum, 0)
 
         progress_callback = MagicMock()
 
@@ -194,7 +203,7 @@ class TestInstaller(TestCase):
                     md5sum={installer_name: md5_sum})
         installer_path = "/home/user/.cache/minigalaxy/download/" \
                          "Beneath a Steel Sky/{}".format(installer_name)
-        inventory = self.prepare_inventory(installer_path, md5_sum, 0)
+        inventory = prepare_inventory(installer_path, md5_sum, 0)
         exp = _("{} was corrupted. Please download it again.").format(installer_name)
 
         progress_callback = MagicMock()
@@ -560,15 +569,6 @@ class TestInstaller(TestCase):
         assert not mock_remove.called
         self.assertEqual(obs, "")
 
-    def prepare_inventory(self, installer_name, md5, size):
-        '''
-        Helper tool to construct instances of InstallerInventory for tests.
-        Takes data for a single file.
-        '''
-        inventory = installer.InstallerInventory(installer_name)
-        inventory.add_file(installer_name, FileInfo(md5, size))
-        return inventory
-
     def setup_os_mocks(self, file_structure, mock_listdir, mock_rmdir, mock_isfile, mock_remove, mock_isempty, mock_isdir):
 
         def rmdir_fake(path):
@@ -595,3 +595,20 @@ class TestInstaller(TestCase):
         mock_isempty.side_effect = lambda path: mock_isdir(path) and len(file_structure.get(path)) == 0
         mock_rmdir.side_effect = rmdir_fake
         mock_remove.side_effect = remove_fake
+
+
+class TestInventory(TestCase):
+
+    def setUp(self):
+        md5_sum = "5cc68247b61ba31e37e842fd04409d98"
+        installer_name = "beneath_a_steel_sky_en_gog_2_20150.sh"
+        self.game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
+        self.installer_path = f"/home/user/.cache/minigalaxy/download/Beneath a Steel Sky/{installer_name}"
+        self.inventory = prepare_inventory(self.installer_path, md5_sum, 0)
+
+    def test_as_keep_files_list_include_json(self):
+        inventory_files = self.inventory.as_keep_files_list()
+        json_file_name = self.installer_path.replace('.sh', '.json')
+
+        self.assertEqual(2, len(inventory_files))
+        self.assertIn(json_file_name, inventory_files)

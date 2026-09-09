@@ -152,14 +152,14 @@ def fail_on_error(message_to_test, fail_type=None, data=None):
 
 
 def verify_installer_integrity(game, installer_inventory, progress_callback=None):
-    error_message = []
+    error_messages = []
     invalid_files = {}
 
     progress_callback(InstallResultType.VERIFY_START, game.name, installer_inventory)
-    for installer in installer_inventory.as_keep_files_list():
+    for installer in installer_inventory.contained_files():
         installer_file_name = os.path.basename(installer)
         if not os.path.exists(installer):
-            error_message = _("{} failed to download.").format(installer_file_name)
+            error_messages.append(_("{} failed to download.").format(installer_file_name))
 
         if not installer_inventory.has_checksum(installer_file_name):
             logging.warning("Warning. No info about correct %s MD5 checksum", installer_file_name)
@@ -175,11 +175,11 @@ def verify_installer_integrity(game, installer_inventory, progress_callback=None
             logging.info("%s integrity is preserved. MD5 is: %s", installer_file_name, calculated_checksum)
             progress_callback(InstallResultType.VERIFY_PROGRESS, installer_file_name, calculated_checksum)
         else:
-            error_message.append(_("{} was corrupted. Please download it again.").format(installer_file_name))
+            error_messages.append(_("{} was corrupted. Please download it again.").format(installer_file_name))
             invalid_files[installer] = calculated_checksum
 
-    if error_message:
-        raise InstallException('\n'.join(error_message), InstallResultType.CHECKSUM_ERROR, invalid_files)
+    if error_messages:
+        raise InstallException('\n'.join(error_messages), InstallResultType.CHECKSUM_ERROR, invalid_files)
 
 
 def verify_disk_space(game, installer):
@@ -280,17 +280,17 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
 
     # first, try full unattended install.
     success, code = try_wine_command(installer_cmd_basic + installer_args_full)
-    if not success:
-        # look at the exit codes and runtime behaviour to determine if the second try is needed
-        # see https://jrsoftware.org/ishelp/index.php?topic=setupexitcodes
-        if code in [2, 5]:  # user decided to cancel
-            return _("Installation canceled by user.")
+    # look at the exit codes and runtime behaviour to determine if the second try is needed
+    # see https://jrsoftware.org/ishelp/index.php?topic=setupexitcodes
+    if not success and code not in [2, 5]:
         # some games will reject the /SILENT flag
         # because they require the user to accept EULA at the beginning
         # Open normal installer as fallback and hope for the best
         logging.error('Unattended install failed. Try install with wizard dialog.')
         success, code = try_wine_command(installer_cmd_basic)
 
+    if code in [2, 5]:  # user decided to cancel
+        return _("Installation canceled by user.")
     if not success:
         return _("Wine extraction failed.")
 
@@ -636,7 +636,7 @@ class InstallerInventory:
             os.makedirs(self.directory, mode=0o755)
 
         with open(self.inventory_file, 'w') as inventory_file:
-            json.dump(self.data, inventory_file)
+            json.dump(self.data, inventory_file, indent=2)
 
     def add_file(self, name, file_info):
         self.data[os.path.basename(name)] = file_info.as_dict()
