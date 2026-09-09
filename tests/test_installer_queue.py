@@ -5,7 +5,10 @@ from unittest.mock import MagicMock
 from threading import RLock, Thread
 
 from minigalaxy import installer, Platform
+from minigalaxy.config import Config
+from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
+from minigalaxy.installer import InstallTask
 
 
 class Test(TestCase):
@@ -138,3 +141,25 @@ class Test(TestCase):
 
         # counter-test: pass game as part of kwargs, it should not raise an exception
         installer.InstallTask(815, callback, game=game)
+
+    def test_locate_argument_byType(self):
+        test_args = [self, Config()]
+        test_kwargs = {
+            "callable": MagicMock(),
+            "file_info": FileInfo("", 0)
+        }
+
+        self.assertIs(test_args[1], InstallTask._locate_type_in_args(Config, *test_args, **test_kwargs))
+        self.assertIs(test_kwargs["callable"], InstallTask._locate_type_in_args(MagicMock, *test_args, **test_kwargs))
+
+    def test_locate_argument_byType_fails(self):
+        test_args = [self, Config()]
+        test_kwargs = {
+            "callable": MagicMock(),
+            "file_info": FileInfo("", 0)
+        }
+
+        with self.assertRaises(ValueError) as error:
+            InstallTask._locate_type_in_args(Game, *test_args, **test_kwargs)
+
+        self.assertEqual("No instance of Game in InstallTask constructor arguments", str(error.exception))

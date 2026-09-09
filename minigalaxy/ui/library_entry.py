@@ -118,7 +118,11 @@ class LibraryEntry:
         elif self.current_state in [State.INSTALLED, State.UPDATABLE]:
             err_msg = self.launch_game()
         elif self.current_state == State.INSTALLABLE:
-            install_thread = threading.Thread(target=self.__install_game, args=(self.get_keep_executable_path(),))
+            exe_path = self.get_keep_executable_path()
+            inventory = InstallerInventory.from_file_system(exe_path)
+            install_thread = threading.Thread(target=self.__install_game,
+                                              args=(self.get_keep_executable_path(),),
+                                              kwargs={"inventory": inventory})
             install_thread.start()
         elif self.current_state == State.DOWNLOADABLE:
             download_thread = threading.Thread(target=self.__download_game)
@@ -286,6 +290,9 @@ class LibraryEntry:
         download_files = []
 
         download_inventory = InstallerInventory()
+        # make sure to init the new meta data
+        download_inventory.item_id = gog_item.id
+        download_inventory.target_platform = download_info.get('os', self.game.platform)
         callback_factory = CallbackFuncWrapper(gog_item,
                                                finish_func,
                                                self.__cancel,
@@ -449,15 +456,19 @@ class LibraryEntry:
 
     def _install(self, gog_item_id, save_location, update=False, dlc_title="",
                  inventory=None, on_success=None, on_failure=None):
+
+        error_message = self._update_inventory_item_id(self.api, inventory, self.game, dlc_title)
+        if error_message:
+            GLib.idle_add(self.parent_window.show_error,
+                          _("Failed to install {}").format(dlc_title),
+                          error_message)
+            return
+
         if not self.predownload_state:
             # when started from predownloaded local files
             self.predownload_state = self.current_state
 
-        if update:
-            processing_state = State.UPDATING
-        else:
-            processing_state = State.INSTALLING
-
+        processing_state = State.UPDATING if update else State.INSTALLING
         self.update_to_state_if_idle(processing_state)
 
         def install_finished(result):
@@ -471,6 +482,32 @@ class LibraryEntry:
             self.config,
             installer_inventory=inventory
         )
+
+    @staticmethod
+    def _update_inventory_item_id(api, inventory: InstallerInventory, game: Game, dlc_title=""):
+        """This function  is a temporary measure until the generalization of Game and Dlc info as 'GogItem' is done:
+        Old inventory might be available locally which were saved before the meta 'item_id' was introduced.
+        These aren't re-downloaded but still need to correctly supply the id.
+        """
+        if not inventory.item_id:
+            if dlc_title:
+                found_dlc = LibraryEntry._get_dlc_by_title(api, game, dlc_title)
+                # this could happen when MG has gone offline since its start and any game info caches have timed out
+                if not found_dlc:
+                    return _("You need to be online to install this DLC")
+                real_id = found_dlc.get('id')
+            else:
+                real_id = game.id
+            inventory.item_id = real_id
+            inventory.save()
+        return None
+
+    @staticmethod
+    def _get_dlc_by_title(api, game, dlc_title):
+        product_info = api.get_info(game)
+        found_dlc = list(filter(lambda dlc: dlc.get("title", "") == dlc_title,
+                                product_info.get("expanded_dlcs", [])))
+        return found_dlc[0] if len(found_dlc) == 1 else None
 
     def __uninstall_game(self):
         self.update_to_state(State.UNINSTALLING)
