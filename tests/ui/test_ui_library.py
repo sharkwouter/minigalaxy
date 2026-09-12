@@ -1,3 +1,4 @@
+import ast
 import json
 import os
 import sys
@@ -89,9 +90,27 @@ class TestLibrary(TestCase):
         test_library.flowbox.reset_mock()
         test_library.flowbox.get_children.return_value = [retained_child, stale_child]
 
-        test_library._Library__remove_stale_gametiles()
+        test_library.config.current_downloads = [retained_game.id]
+        test_library._Library__create_gametiles(prune_stale=True)
 
         test_library.flowbox.remove.assert_called_once_with(stale_child)
+
+    def test_existing_tile_is_dropped_when_platform_becomes_hidden(self):
+        game = Game(name="Windows only", game_id=55, platform=Platform.WINDOWS)
+        library = self._tile_library([], [game])
+        library.games = [game]
+        tile = MagicMock(game=game)
+        child = MagicMock()
+        child.get_children.return_value = [tile]
+        tile.get_parent.return_value = child
+        game.library_tile = tile
+        library.flowbox.get_children.return_value = [child]
+
+        library._Library__create_gametiles([game])
+
+        library.flowbox.remove.assert_called_once_with(child)
+        self.assertIsNone(game.library_tile)
+        self.assertNotIn(game, library.games)
 
     def test_refresh_keeps_active_download_when_api_is_offline(self):
         active_download = Game(name="Active download", game_id=1)
@@ -99,6 +118,9 @@ class TestLibrary(TestCase):
         test_library = self._tile_library([], [], err_msg="offline")
         test_library.games = [active_download]
         test_library.config.current_downloads = [active_download.id]
+        child = MagicMock()
+        child.get_children.return_value = [MagicMock(game=active_download)]
+        test_library.flowbox.get_children.return_value = [child]
 
         test_library._Library__update_library()
 
@@ -461,3 +483,27 @@ del sys.modules['minigalaxy.ui.preferences']
 del sys.modules['minigalaxy.ui.gametile']
 del sys.modules['minigalaxy.ui.gametilelist']
 del sys.modules['minigalaxy.ui.categoryfilters']
+
+
+def test_view_change_stops_downloads_before_rebuilding_tiles():
+    from types import SimpleNamespace
+    from minigalaxy.download_manager import DownloadState
+    from pathlib import Path
+
+    source = Path(__file__).parents[2] / "minigalaxy/ui/preferences.py"
+    tree = ast.parse(source.read_text())
+    preferences = next(node for node in tree.body if isinstance(node, ast.ClassDef))
+    method = next(node for node in preferences.body if isinstance(node, ast.FunctionDef)
+                  and node.name == "__apply_view_choice")
+    namespace = {"get_combo_value": lambda _: "list", "DownloadState": DownloadState}
+    exec(compile(ast.Module(body=[method], type_ignores=[]), str(source), "exec"), namespace)
+    events = []
+    state = SimpleNamespace(
+        combobox_view=None, config=SimpleNamespace(view="grid"),
+        download_manager=SimpleNamespace(cancel_all_downloads=lambda **kw: events.append(("stop", kw))),
+        parent=SimpleNamespace(reset_library=lambda **kw: events.append(("reset", kw))),
+    )
+    namespace["__apply_view_choice"](state)
+    assert events == [("stop", {"cancel_state": DownloadState.STOPPED}), ("reset", {"rebuild": True})]
+    namespace["__apply_view_choice"](state)
+    assert len(events) == 2

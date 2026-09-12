@@ -1,5 +1,5 @@
 **1.4.3**
-- Preserve active download progress when refreshing the library after preference changes (thanks to be-student)
+- Preserve active downloads across library refreshes; stop and resume them when changing the tile view (thanks to be-student)
 - Canceling an automatic windows game installation will not retry with the fallback any longer (thanks to GB609)
 - Fix not-installed Linux games missing from the library (thanks to slowsage)
 - Releases will now include a basic AppImage (experimental) (thanks to GB609)

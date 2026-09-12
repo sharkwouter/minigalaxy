@@ -6,7 +6,7 @@ import shutil
 from minigalaxy import Platform
 from minigalaxy.config import Config
 from minigalaxy.constants import PLATFORM_MODE, SUPPORTED_DOWNLOAD_LANGUAGES, SUPPORTED_LOCALES, VIEWS
-from minigalaxy.download_manager import DownloadManager
+from minigalaxy.download_manager import DownloadManager, DownloadState
 from minigalaxy.translation import _
 from minigalaxy.ui.gtk import Gtk, load_ui
 from minigalaxy.ui.widget_utils import get_combo_value, populate_combobox
@@ -83,6 +83,7 @@ class Preferences(Gtk.Dialog):
         view = get_combo_value(self.combobox_view)
         if view != self.config.view:
             self.config.view = view
+            self.download_manager.cancel_all_downloads(cancel_state=DownloadState.STOPPED)
             self.parent.reset_library(rebuild=True)
 
     def __apply_theme_choice(self) -> None:

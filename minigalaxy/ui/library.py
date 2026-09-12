@@ -82,28 +82,17 @@ class Library(Gtk.Viewport):
         GLib.idle_add(self.__load_tile_states)
         self.owned_products_ids = self.api.get_owned_products_ids()
         # Get already installed games first
-        previous_games = self.games
         self.games = self.__get_installed_games()
-        for game in previous_games:
-            if game.id in self.config.current_downloads and game not in self.games:
-                self.games.append(game)
         self.__create_gametiles_iteratively(5)
 
         # Get games from the API
         self.__add_games_from_api()
-        self.__create_gametiles_iteratively(5)
-        GLib.idle_add(self.__remove_stale_gametiles)
+        self.__create_gametiles_iteratively(5, prune_stale=True)
         GLib.idle_add(self.filter_library)
 
-    def __remove_stale_gametiles(self):
-        for child in self.flowbox.get_children():
-            tile = child.get_children()[0]
-            if tile.game not in self.games:
-                self.flowbox.remove(child)
-
-    def __create_gametiles_iteratively(self, step_width=5):
+    def __create_gametiles_iteratively(self, step_width=5, prune_stale=False):
         if len(self.games) < step_width*2:
-            GLib.idle_add(self.__create_gametiles, [*self.games])
+            GLib.idle_add(self.__create_gametiles, [*self.games], prune_stale)
             # wait until the update is done to make sure there's a consistent state before going on
             time.sleep(0.1)
             return
@@ -113,7 +102,7 @@ class Library(Gtk.Viewport):
         index = 0
         while index < len(games_to_add):
             games_chunk = games_to_add[index:index+step_width]
-            GLib.idle_add(self.__create_gametiles, games_chunk)
+            GLib.idle_add(self.__create_gametiles, games_chunk, prune_stale)
             index += step_width
             time.sleep(0.1)
 
@@ -158,7 +147,7 @@ class Library(Gtk.Viewport):
         tile2 = child2.get_children()[0].game
         return tile2 < tile1
 
-    def __create_gametiles(self, games_to_add=None) -> None:
+    def __create_gametiles(self, games_to_add=None, prune_stale=False) -> None:
         """Gets called twice: Once for installed, once for not installed games."""
 
         if not games_to_add:
@@ -168,6 +157,12 @@ class Library(Gtk.Viewport):
 
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
+            if prune_stale and tile.game.id in self.config.current_downloads and tile.game not in self.games:
+                self.games.append(tile.game)
+            if prune_stale and tile.game not in self.games:
+                self.flowbox.remove(child)
+                tile.game.library_tile = None
+                continue
             if tile.game in games_to_add:
                 logging.debug("Update existing tile for [%s] with new game instance", tile.game.name)
                 new_game = games_to_add[games_to_add.index(tile.game)]
@@ -175,24 +170,25 @@ class Library(Gtk.Viewport):
                 tile.game = new_game
 
         for game in games_to_add:
-            if game.library_tile:
-                # the game already has a visible entry in the library
-                # request to load the thumbnail, if there is a url for it and it hasnt been loaded before
-                game.library_tile.load_thumbnail()
-                continue
-            if game.is_installed():
-                self.__add_gametile(game)
-            elif game.id in self.config.current_downloads:
-                self.__add_gametile(game)
-            elif game.platform in self.config.platform_mode:
+            if self.__should_show_game(game):
                 self.__add_gametile(game)
             elif game in self.games:
                 # housekeeping: API.get_library returns all owned games
                 # (useful when api-caching is introduced as the same request can be used independent of platform_mode)
                 # removing not shown games is only a small memory optimization
+                if game.library_tile:
+                    self.flowbox.remove(game.library_tile.get_parent())
+                    game.library_tile = None
                 self.games.remove(game)
 
+    def __should_show_game(self, game):
+        return (game.is_installed() or game.id in self.config.current_downloads
+                or game.platform in self.config.platform_mode)
+
     def __add_gametile(self, game):
+        if game.library_tile:
+            game.library_tile.load_thumbnail()
+            return
         view = self.config.view
         if view == "grid":
             game_tile = GameTile(self, game)
