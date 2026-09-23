@@ -121,7 +121,7 @@ class LibraryEntry:
             exe_path = self.get_keep_executable_path()
             inventory = InstallerInventory.from_file_system(exe_path)
             install_thread = threading.Thread(target=self.__install_game,
-                                              args=(self.get_keep_executable_path(),),
+                                              args=(exe_path,),
                                               kwargs={"inventory": inventory})
             install_thread.start()
         elif self.current_state == State.DOWNLOADABLE:
