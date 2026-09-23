@@ -2,11 +2,14 @@ import json
 import os
 import sys
 import uuid
+import tempfile
+
 from unittest import TestCase, mock
 from unittest.mock import MagicMock, patch, mock_open
-import tempfile
 from tests.ui import MockGiRepository
 from minigalaxy import Platform
+from minigalaxy.installer import InstallerInventory
+from minigalaxy.translation import _
 
 m_gtk = MagicMock()
 m_gi = MagicMock()
@@ -15,19 +18,24 @@ m_preferences = MagicMock()
 m_gametile = MagicMock()
 m_gametilelist = MagicMock()
 m_categoryfilters = MagicMock()
+m_launchoption = MagicMock()
+m_iconbar = MagicMock()
 
 sys.modules['gi.repository'] = MockGiRepository()
 sys.modules['gi'] = m_gi
 sys.modules['minigalaxy.ui.window'] = m_window
 sys.modules['minigalaxy.ui.preferences'] = m_preferences
+sys.modules['minigalaxy.ui.game_icon_bar'] = m_iconbar
 sys.modules['minigalaxy.ui.gametile'] = m_gametile
 sys.modules['minigalaxy.ui.gametilelist'] = m_gametilelist
 sys.modules['minigalaxy.ui.categoryfilters'] = m_categoryfilters
+sys.modules['minigalaxy.ui.chooselauchoption'] = m_launchoption
 from minigalaxy.game import Game           # noqa: E402
 from minigalaxy.ui.gametile import GameTile  # noqa: E402
 from minigalaxy.ui import library as library_module  # noqa: E402
 from minigalaxy.ui.library import Library, get_installed_windows_games, read_game_categories_file, \
     update_game_categories_file  # noqa: E402
+from minigalaxy.ui.library_entry import LibraryEntry  # noqa: E402
 
 SELF_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath A Steel Sky": "1207658695",
               "Stellaris (English)": "1508702879"}
@@ -271,7 +279,7 @@ class TestLibrary(TestCase):
         return library
 
     def _flush_idle(self, queue, count=1):
-        for _ in range(count):
+        for r in range(count):
             func, args = queue.pop(0)
             func(*args)
 
@@ -395,10 +403,61 @@ class TestLibrary(TestCase):
                 self.assertEqual([], idle_queue)
 
 
+class TestLibraryEntry(TestCase):
+
+    def test_update_inventory_id_unchanged(self):
+        inventory = InstallerInventory()
+        inventory.item_id = 12
+        game = MagicMock()
+        game.id = 808
+
+        self.assertIsNone(LibraryEntry._update_inventory_item_id(MagicMock(), inventory, game),
+                          "Should not return any failure message")
+        self.assertEqual(12, inventory.item_id, "Update must not change existing item_ids")
+
+    def test_update_inventory_id_game(self):
+        inventory = InstallerInventory()
+        inventory.save = MagicMock()  # patch out save to prevent writes
+        game = MagicMock()
+        game.id = 808
+
+        self.assertIsNone(LibraryEntry._update_inventory_item_id(MagicMock(), inventory, game),
+                          "Should not return any failure message")
+        self.assertEqual(808, inventory.item_id, "Update should take ID from Game")
+        inventory.save.assert_called_once()
+
+    def test_update_inventory_id_dlc_ok(self):
+        inventory = InstallerInventory()
+        inventory.save = MagicMock()  # patch out save to prevent writes
+        game = MagicMock()
+        api = MagicMock()
+        api.get_info.return_value = {
+            "expanded_dlcs": [
+                {"id": 42, "title": "This is a funky DLC"},
+                {"id": 9, "title": "another-dlc"}
+            ]
+        }
+        self.assertIsNone(LibraryEntry._update_inventory_item_id(api, inventory, game, "another-dlc"),
+                          "Should not return any failure message")
+        self.assertEqual(9, inventory.item_id, "Update should take ID from DLC with title 'another-dlc")
+        inventory.save.assert_called_once()
+
+    def test_update_inventory_id_dlc_offline_error(self):
+        inventory = InstallerInventory()
+        inventory.save = MagicMock()  # patch out save to prevent writes
+        game = MagicMock()
+        api = MagicMock()
+        self.assertEqual(_("You need to be online to install this DLC"),
+                         LibraryEntry._update_inventory_item_id(api, inventory, game, "another-dlc"))
+        inventory.save.assert_not_called()
+
+
 del sys.modules['gi']
 del sys.modules['gi.repository']
 del sys.modules['minigalaxy.ui.window']
 del sys.modules['minigalaxy.ui.preferences']
+del sys.modules['minigalaxy.ui.game_icon_bar']
 del sys.modules['minigalaxy.ui.gametile']
 del sys.modules['minigalaxy.ui.gametilelist']
 del sys.modules['minigalaxy.ui.categoryfilters']
+del sys.modules['minigalaxy.ui.chooselauchoption']
