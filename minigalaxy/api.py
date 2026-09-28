@@ -102,24 +102,6 @@ class Api:
 
         return games, err_msg, page == total_pages
 
-    # Get all Linux games in the library of the user. Ignore other platforms and movies
-    def get_library(self):
-        err_msg = ""
-        games = []
-        if not self.active_token:
-            return [], "Couldn't connect to GOG servers"
-
-        current_page = 1
-        all_pages_processed = False
-
-        while not all_pages_processed:
-            received_games, err_msg, all_pages_processed = self.get_library_page(page=current_page)
-            if err_msg:
-                return games, err_msg
-            games += received_games
-            
-        return games, err_msg
-
     def __parse_productlist_json(self, product_list, game_list):
         for product in product_list:
             if product["id"] in IGNORE_GAME_IDS:

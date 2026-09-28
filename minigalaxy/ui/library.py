@@ -242,7 +242,7 @@ class Library(Gtk.Viewport):
         current_page = 1
         last_page_processed = False
         while not last_page_processed:
-            retrieved_games, err_msg, last_page_processed = self.api.get_library_page(current_page)
+            retrieved_games, err_msg, last_page_processed = self.api.get_library_page(page=current_page)
             current_page += 1
             if not err_msg:
                 self.offline = False
