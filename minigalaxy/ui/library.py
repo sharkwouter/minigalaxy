@@ -86,7 +86,6 @@ class Library(Gtk.Viewport):
 
         # Get games from the API
         self.__add_games_from_api()
-        self.__create_gametiles_iteratively(5)
         GLib.idle_add(self.filter_library)
 
     def __create_gametiles_iteratively(self, step_width=5):
@@ -239,27 +238,33 @@ class Library(Gtk.Viewport):
 
     def __add_games_from_api(self):
         logging.info("Start retrieving owned games from the api...")
-        retrieved_games, err_msg = self.api.get_library()
-        if not err_msg:
-            self.offline = False
-        else:
-            self.offline = True
-            logging.info("Client is offline, showing installed games only")
-            GLib.idle_add(self.parent_window.show_error, _("Failed to retrieve library"), _(err_msg))
         game_category_dict = {}
-        logging.info("Create or update the game list with %s games", len(retrieved_games))
-        for game in retrieved_games:
-            # NOTE: the 'in' check and 'list.index' function depend on the '__eq__' method of Game.
-            # 'Game.__eq__(self, other)' is a bit lenient, it ignores the property 'id' if it is zero for 'self' or 'other'.
-            # This leniency is vital in correctly detecting installed games with missing metadata.
+        current_page = 1
+        last_page_processed = False
+        while not last_page_processed:
+            retrieved_games, err_msg, last_page_processed = self.api.get_library_page(current_page)
+            current_page += 1
+            if not err_msg:
+                self.offline = False
+            else:
+                self.offline = True
+                logging.info("Client is offline, showing installed games only")
+                GLib.idle_add(self.parent_window.show_error, _("Failed to retrieve library"), _(err_msg))
+                return
+            logging.info("Create or update the game list with %s games", len(retrieved_games))
+            for game in retrieved_games:
+                # NOTE: the 'in' check and 'list.index' function depend on the '__eq__' method of Game.
+                # 'Game.__eq__(self, other)' is a bit lenient, it ignores the property 'id' if it is zero for 'self' or 'other'.
+                # This leniency is vital in correctly detecting installed games with missing metadata.
 
-            # add game to list which is not installed
-            if game not in self.games:
-                self.games.append(game)
+                # add game to list which is not installed
+                if game not in self.games:
+                    self.games.append(game)
 
-            local_game = self.games[self.games.index(game)]
-            # update the local Game instance with data retrieved from remote, but only when both are not the same instance
-            _update_gameinfo(local_game, game, game_category_dict)
+                local_game = self.games[self.games.index(game)]
+                # update the local Game instance with data retrieved from remote, but only when both are not the same instance
+                _update_gameinfo(local_game, game, game_category_dict)
+                GLib.idle_add(self.__create_gametiles, [game])
 
         update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
 
