@@ -254,7 +254,7 @@ class Library(Gtk.Viewport):
             logging.info("Create or update the game list with %s games", len(retrieved_games))
             for game in retrieved_games:
                 # NOTE: the 'in' check and 'list.index' function depend on the '__eq__' method of Game.
-                # 'Game.__eq__(self, other)' is a bit lenient, it ignores the property 'id' if it is zero for 'self' or 'other'.
+                # 'Game.__eq__(self, other)' is a bit lenient, it ignores the property 'id' if it is zero for 'self' or 'other'
                 # This leniency is vital in correctly detecting installed games with missing metadata.
 
                 # add game to list which is not installed

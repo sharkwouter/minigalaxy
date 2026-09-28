@@ -114,7 +114,7 @@ class TestApiGog(TestCase):
         response_mock.json.return_value = {}
         self.session.get.return_value = response_mock
         exp = "Couldn't connect to GOG servers"
-        _, obs,_ = self.api.get_library_page(page=1)
+        _, obs, _ = self.api.get_library_page(page=1)
         self.assertEqual(exp, obs)
 
     def test_parse_productlist_json(self):
