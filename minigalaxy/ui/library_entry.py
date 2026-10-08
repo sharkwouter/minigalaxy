@@ -194,7 +194,7 @@ class LibraryEntry:
         download_thread = threading.Thread(target=self.__download_update)
         download_thread.start()
 
-    def get_keep_executable_path(self):
+    def get_keep_executable_path(self) -> InstallerInventory | None:
         if not os.path.isdir(self.keep_path):
             return None
 
@@ -344,7 +344,7 @@ class LibraryEntry:
         return download_success
 
     @staticmethod
-    def _filename_from_url(url):
+    def _filename_from_url(url) -> str:
         filename = urllib.parse.unquote(urllib.parse.urlsplit(url).path)
         return filename.split("/")[-1]
 
