@@ -82,7 +82,7 @@ class Api:
         err_msg = ""
         games = []
         if not self.active_token:
-            return [], "Couldn't connect to GOG servers"
+            return [], "Couldn't connect to GOG servers", True
 
         url = "https://embed.gog.com/account/getFilteredProducts"
 

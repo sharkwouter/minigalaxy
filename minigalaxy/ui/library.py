@@ -267,9 +267,11 @@ class Library(Gtk.Viewport):
                 local_game = self.games[self.games.index(game)]
                 # update the local Game instance with data retrieved from remote, but only when both are not the same instance
                 _update_gameinfo(local_game, game, game_category_dict)
-                GLib.idle_add(self.__create_gametiles, [game])
+                GLib.idle_add(self.__create_gametiles, [local_game])
 
         update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
+
+        return self.games
 
 
 def _check_all_updates(games: List[Game] | []):
