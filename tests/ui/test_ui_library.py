@@ -373,7 +373,7 @@ class TestLibrary(TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             installed, api_games, expected_linux, windows = self._mixed_library_games(tmpdir)
             library = self._tile_library(installed, api_games)
-            library.api.get_library_page.side_effect = lambda: (events.append("api"), (api_games, "", True))[1]
+            library.api.get_library_page.side_effect = lambda page: (events.append("api"), (api_games, "", True))[1]
             apply_installed = library._Library__create_gametiles
             with patch.object(library_module.GLib, "idle_add", side_effect=queue_idle):
                 library._Library__update_library()
