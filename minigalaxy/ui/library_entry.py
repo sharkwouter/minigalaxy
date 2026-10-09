@@ -22,6 +22,8 @@ from minigalaxy.ui.information import Information
 from minigalaxy.ui.properties import Properties
 from minigalaxy.ui.game_icon_bar import GameIconBar
 
+from types import FunctionType
+
 
 class LibraryEntry:
     '''encapsulates all actions that can be taken for an individual game'''
@@ -344,7 +346,7 @@ class LibraryEntry:
         return download_success
 
     @staticmethod
-    def _filename_from_url(url) -> str:
+    def _filename_from_url(url: str) -> str:
         filename = urllib.parse.unquote(urllib.parse.urlsplit(url).path)
         return filename.split("/")[-1]
 
@@ -433,8 +435,8 @@ class LibraryEntry:
         self.__handle_install_state_update(result)
 
     @staticmethod
-    def _failsafe_callback(callback):
-        """Make sure no install callback will ever crash important threads."""
+    def _failsafe_callback(callback: FunctionType | None):
+        """Wrap 'callback' into try-catch to prevent crashes. 'None' parameters are skipped (for optional callbacks)."""
         if not callback:
             return
         try:
@@ -463,7 +465,7 @@ class LibraryEntry:
             self.update_to_state_if_idle(State.INSTALLING)
 
     def _install(self, inventory: InstallerInventory, dlc_title="", update=False,
-                 on_success=None, on_failure=None):
+                 on_success: FunctionType | None = None, on_failure: FunctionType | None = None):
 
         error_message = self._update_inventory_item_id(self.api, inventory, self.game, dlc_title)
         if error_message:

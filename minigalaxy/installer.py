@@ -11,9 +11,10 @@ import time
 
 from collections import deque
 from enum import Enum, StrEnum, auto
+from importlib.resources import as_file
 from queue import Empty
 from threading import Thread, RLock
-from importlib.resources import as_file
+from typing import Callable
 
 from minigalaxy import Platform
 from minigalaxy.config import Config
@@ -59,6 +60,8 @@ def check_diskspace(required_size, location):
     return diskspace_available >= installed_game_size
 
 
+# result_callback should be 'result_callback: Callable[InstallResult]',
+# but that is not yet possible due to the file structure
 def enqueue_game_install(result_callback, *args, **kwargs):
     global INSTALL_QUEUE
     if not INSTALL_QUEUE:
@@ -627,7 +630,7 @@ class InstallerInventory:
         return os.stat(file).st_size
 
     @property
-    def installer_executable(self):
+    def installer_executable(self) -> str | None:
         if not self.meta.get(InstallerInventory.MetaKey.EXECUTABLE, None):
             executable = self.__search_executable()
             if executable:
@@ -723,7 +726,7 @@ class InstallerInventory:
             payload['%META%'] = self.meta.copy()
             json.dump(payload, inventory_file, indent=2)
 
-    def add_file(self, name, file_info):
+    def add_file(self, name: str, file_info: FileInfo):
         self.data[os.path.basename(name)] = file_info.as_dict()
         if self.meta.get(InstallerInventory.MetaKey.EXECUTABLE, None):
             return
@@ -909,8 +912,15 @@ class InstallException(Exception):
 
 
 class InstallTask:
+    """Encapsulates all pieces of information needed to call 'install_game'"""
 
-    def __init__(self, result_callback=None, *args, **kwargs):
+    def __init__(self, result_callback: Callable[[InstallResult], None] | None = None, *args, **kwargs):
+        """The first argument to this constructor must be a progress/result callback for the (async) installation.
+        All further arguments are kept in their '*args' / '**kwargs' form to be passed to 'install_game' later.
+        InstallTask itself requires the related 'Game' and 'InstallerInventory' instances passed on as well.
+        To not make assumptions over the method signature of 'install_game' and the position of these arguments,
+        this constructor searched the required instances flexibly in '*args' and '**kwargs'.
+        """
         self.game = InstallTask._locate_type_in_args(Game, *args, **kwargs)
         self.installer = InstallTask._locate_type_in_args(InstallerInventory, *args, **kwargs)
         if not result_callback or not callable(result_callback):
