@@ -82,6 +82,7 @@ class Library(Gtk.Viewport):
         self.owned_products_ids = self.api.get_owned_products_ids()
         # Get already installed games first
         self.games = self.__get_installed_games()
+        self.games.sort()
         self.__create_gametiles_iteratively(5)
 
         # Get games from the API
