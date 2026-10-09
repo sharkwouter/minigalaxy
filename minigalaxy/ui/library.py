@@ -269,6 +269,18 @@ class Library(Gtk.Viewport):
                 _update_gameinfo(local_game, game, game_category_dict)
                 GLib.idle_add(self.__create_gametiles, [local_game])
 
+                time.sleep(0.01)
+            # position and length of sleep will specify when the fetcher thread pauses to allow the ui work on its queue.
+            # sleep in the inner loop: insert and show each loaded game immediately
+            # sleep in the while loop: render once a page was added
+            # no sleep at all: the fetcher will fill up the ui run queue with ALL games, then die,
+            # which hands control back to the UI. It will then render one big, ugly batch at the end.
+            # This can be considerable lengthy time for users with several hundreds of games.
+            # So there should be a sleep at least once per iteration of `while not last_page_processed`
+            # However, i think that more 'immediate' feedback game-per-game might maybe be a bit less performant,
+            # but lead to a better feedback to the user about whats going on
+            # we always have to remember: not everyone has a fast pc or connection
+
         update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
 
         return self.games
