@@ -73,8 +73,7 @@ class LibraryEntry:
         self.image.set_tooltip_text(self.game.name)
 
         self.reload_state()
-        load_thumbnail_thread = threading.Thread(target=self.load_thumbnail)
-        load_thumbnail_thread.start()
+        self.load_thumbnail()
 
     # Downloads if Minigalaxy was closed with this game downloading
     def resume_download_if_expected(self):
@@ -609,7 +608,7 @@ class LibraryEntry:
         # Download the thumbnail
         image_url = "https:{}_196.jpg".format(self.game.image_url)
         download = Download(image_url, thumbnail_file, DownloadType.THUMBNAIL, finish_func=self.__set_image)
-        self.download_manager.download_now(download)
+        self.download_manager.download(download)
 
         return
 

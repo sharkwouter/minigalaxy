@@ -167,7 +167,7 @@ class Library(Gtk.Viewport):
             if game.library_tile:
                 # the game already has a visible entry in the library
                 # request to load the thumbnail, if there is a url for it and it hasnt been loaded before
-                game.library_tile.load_thumbnail()
+                GLib.idle_add(game.library_tile.load_thumbnail)
                 continue
             if game.is_installed():
                 self.__add_gametile(game)
