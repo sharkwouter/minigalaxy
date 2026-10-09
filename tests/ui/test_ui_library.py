@@ -51,19 +51,24 @@ API_GAMES = {"Neverwinter Nights: Enhanced Edition": "1097893768", "Beneath a St
 
 class TestLibrary(TestCase):
 
-    mock_config = MagicMock()
-    mock_config.locale = "en"
+    def setUp(self):
+        config = MagicMock()
+        config.locale = "en"
+        config.platform_mode = [Platform.LINUX]
+        config.view = "grid"
+        self.mock_config = config
 
     def test1_add_games_from_api(self):
         self_games = []
         for game in SELF_GAMES:
-            self_games.append(Game(name=game, game_id=int(SELF_GAMES[game]),))
+            self_games.append(Game(name=game, game_id=int(SELF_GAMES[game]), ))
         api_games = []
         for game in API_GAMES:
-            api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
+            api_games.append(Game(name=game, game_id=int(API_GAMES[game]), ))
         err_msg = ""
         api_mock = MagicMock()
-        api_mock.get_library.return_value = api_games, err_msg
+        api_mock.get_library_page.return_value = api_games, err_msg, True
+
         test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
@@ -80,7 +85,7 @@ class TestLibrary(TestCase):
             api_games.append(Game(name=game, game_id=int(API_GAMES[game]),))
         err_msg = ""
         api_mock = MagicMock()
-        api_mock.get_library.return_value = api_games, err_msg
+        api_mock.get_library_page.return_value = api_games, err_msg, True
         test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
@@ -100,7 +105,7 @@ class TestLibrary(TestCase):
         api_games.append(api_gmae_with_id)
         err_msg = ""
         api_mock = MagicMock()
-        api_mock.get_library.return_value = api_games, err_msg
+        api_mock.get_library_page.return_value = api_games, err_msg, True
         test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
@@ -122,7 +127,7 @@ class TestLibrary(TestCase):
             url_nr += 1
         err_msg = ""
         api_mock = MagicMock()
-        api_mock.get_library.return_value = api_games, err_msg
+        api_mock.get_library_page.return_value = api_games, err_msg, True
         test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
@@ -139,7 +144,7 @@ class TestLibrary(TestCase):
             api_games.append(Game(name=game, game_id=int(API_GAMES[game])))
         err_msg = ""
         api_mock = MagicMock()
-        api_mock.get_library.return_value = api_games, err_msg
+        api_mock.get_library_page.return_value = api_games, err_msg, True
         test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
@@ -152,7 +157,7 @@ class TestLibrary(TestCase):
         api_games = [Game(name="Torchlight II", game_id=1958228073)]
         err_msg = ""
         api_mock = MagicMock()
-        api_mock.get_library.return_value = api_games, err_msg
+        api_mock.get_library_page.return_value = api_games, err_msg, True
         test_library = Library(MagicMock(), self.mock_config, api_mock, MagicMock())
         test_library.games = self_games
         test_library._Library__add_games_from_api()
@@ -267,7 +272,7 @@ class TestLibrary(TestCase):
         config.show_hidden_games = True
         api = MagicMock()
         api.get_owned_products_ids.return_value = []
-        api.get_library.return_value = [*api_games], err_msg
+        api.get_library_page.return_value = [*api_games], err_msg, True
         library = Library(MagicMock(), config, api, MagicMock())
         library.flowbox.get_children.return_value = []
         # the list returned by this mock must be a copy, or its not possible to assert with it
@@ -373,7 +378,7 @@ class TestLibrary(TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             installed, api_games, expected_linux, windows = self._mixed_library_games(tmpdir)
             library = self._tile_library(installed, api_games)
-            library.api.get_library.side_effect = lambda: (events.append("api"), (api_games, ""))[1]
+            library.api.get_library_page.side_effect = lambda page: (events.append("api"), (api_games, "", True))[1]
             apply_installed = library._Library__create_gametiles
             with patch.object(library_module.GLib, "idle_add", side_effect=queue_idle):
                 library._Library__update_library()

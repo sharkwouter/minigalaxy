@@ -78,37 +78,29 @@ class Api:
             refresh_token = ""
         return refresh_token
 
-    # Get all Linux games in the library of the user. Ignore other platforms and movies
-    def get_library(self):
+    def get_library_page(self, page: int):
         err_msg = ""
         games = []
         if not self.active_token:
-            return [], "Couldn't connect to GOG servers"
+            return [], "Couldn't connect to GOG servers", True
 
-        current_page = 1
-        all_pages_processed = False
         url = "https://embed.gog.com/account/getFilteredProducts"
 
-        while not all_pages_processed:
-            params = {
-                'mediaType': 1,  # 1 means game
-                'page': current_page,
-            }
-            response = self.__request(url, params=params)
-            if "totalPages" not in response:
-                err_msg = "Couldn't load game library"
-                return games, err_msg
-            total_pages = response["totalPages"]
+        params = {
+            'mediaType': 1,  # 1 means game
+            'page': page,
+        }
+        response = self.__request(url, params=params)
+        if "totalPages" not in response:
+            err_msg = "Couldn't load game library"
+            return games, err_msg, True
+        total_pages = response["totalPages"]
 
-            self.__parse_productlist_json(response["products"], games)
-
-            if current_page == total_pages:
-                all_pages_processed = True
-            current_page += 1
+        self.__parse_productlist_json(response["products"], games)
 
         games = self.__filter_games_with_valid_platforms(games)
 
-        return games, err_msg
+        return games, err_msg, page == total_pages
 
     def __parse_productlist_json(self, product_list, game_list):
         for product in product_list:

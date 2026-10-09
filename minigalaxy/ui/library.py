@@ -82,12 +82,15 @@ class Library(Gtk.Viewport):
         self.owned_products_ids = self.api.get_owned_products_ids()
         # Get already installed games first
         self.games = self.__get_installed_games()
+        self.games.sort()
         self.__create_gametiles_iteratively(5)
 
         # Get games from the API
         self.__add_games_from_api()
-        self.__create_gametiles_iteratively(5)
         GLib.idle_add(self.filter_library)
+
+        GLib.idle_add(_check_all_updates, [*self.games])
+        GLib.idle_add(_resume_all_downloads, [*self.games])
 
     def __create_gametiles_iteratively(self, step_width=5):
         if len(self.games) < step_width*2:
@@ -108,7 +111,7 @@ class Library(Gtk.Viewport):
     def __load_tile_states(self):
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
-            tile.reload_state()
+            tile.reload_state(False)
 
     def filter_library(self, widget: Gtk.Widget = None):
         if isinstance(widget, Gtk.Switch):
@@ -161,12 +164,13 @@ class Library(Gtk.Viewport):
                 new_game = games_to_add[games_to_add.index(tile.game)]
                 new_game.library_tile = tile
                 tile.game = new_game
+                tile.reload_state(check_for_updates=False)
 
         for game in games_to_add:
             if game.library_tile:
                 # the game already has a visible entry in the library
                 # request to load the thumbnail, if there is a url for it and it hasnt been loaded before
-                game.library_tile.load_thumbnail()
+                GLib.idle_add(game.library_tile.load_thumbnail)
                 continue
             if game.is_installed():
                 self.__add_gametile(game)
@@ -188,8 +192,6 @@ class Library(Gtk.Viewport):
             game_tile = GameTileList(self, game)
         game.library_tile = game_tile
 
-        # Start download if Minigalaxy was closed while downloading this game
-        game_tile.resume_download_if_expected()
         self.flowbox.add(game_tile)
         '''
         using flowbox.show_all at this point would overrule any state-based
@@ -239,29 +241,63 @@ class Library(Gtk.Viewport):
 
     def __add_games_from_api(self):
         logging.info("Start retrieving owned games from the api...")
-        retrieved_games, err_msg = self.api.get_library()
-        if not err_msg:
-            self.offline = False
-        else:
-            self.offline = True
-            logging.info("Client is offline, showing installed games only")
-            GLib.idle_add(self.parent_window.show_error, _("Failed to retrieve library"), _(err_msg))
         game_category_dict = {}
-        logging.info("Create or update the game list with %s games", len(retrieved_games))
-        for game in retrieved_games:
-            # NOTE: the 'in' check and 'list.index' function depend on the '__eq__' method of Game.
-            # 'Game.__eq__(self, other)' is a bit lenient, it ignores the property 'id' if it is zero for 'self' or 'other'.
-            # This leniency is vital in correctly detecting installed games with missing metadata.
+        current_page = 1
+        last_page_processed = False
+        while not last_page_processed:
+            retrieved_games, err_msg, last_page_processed = self.api.get_library_page(page=current_page)
+            current_page += 1
+            if not err_msg:
+                self.offline = False
+            else:
+                self.offline = True
+                logging.info("Client is offline, showing installed games only")
+                GLib.idle_add(self.parent_window.show_error, _("Failed to retrieve library"), _(err_msg))
+                return
+            logging.info("Create or update the game list with %s games", len(retrieved_games))
+            for game in retrieved_games:
+                # NOTE: the 'in' check and 'list.index' function depend on the '__eq__' method of Game.
+                # 'Game.__eq__(self, other)' is a bit lenient, it ignores the property 'id' if it is zero for 'self' or 'other'
+                # This leniency is vital in correctly detecting installed games with missing metadata.
 
-            # add game to list which is not installed
-            if game not in self.games:
-                self.games.append(game)
+                # add game to list which is not installed
+                if game not in self.games:
+                    self.games.append(game)
 
-            local_game = self.games[self.games.index(game)]
-            # update the local Game instance with data retrieved from remote, but only when both are not the same instance
-            _update_gameinfo(local_game, game, game_category_dict)
+                local_game = self.games[self.games.index(game)]
+                # update the local Game instance with data retrieved from remote, but only when both are not the same instance
+                _update_gameinfo(local_game, game, game_category_dict)
+                GLib.idle_add(self.__create_gametiles, [local_game])
+
+                time.sleep(0.01)
+            # position and length of sleep will specify when the fetcher thread pauses to allow the ui work on its queue.
+            # sleep in the inner loop: insert and show each loaded game immediately
+            # sleep in the while loop: render once a page was added
+            # no sleep at all: the fetcher will fill up the ui run queue with ALL games, then die,
+            # which hands control back to the UI. It will then render one big, ugly batch at the end.
+            # This can be considerable lengthy time for users with several hundreds of games.
+            # So there should be a sleep at least once per iteration of `while not last_page_processed`
+            # However, i think that more 'immediate' feedback game-per-game might maybe be a bit less performant,
+            # but lead to a better feedback to the user about whats going on
+            # we always have to remember: not everyone has a fast pc or connection
 
         update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
+
+        return self.games
+
+
+def _check_all_updates(games: List[Game] | []):
+    for g in games:
+        if not g.library_tile:
+            continue
+        g.library_tile.run_update_check()
+
+
+def _resume_all_downloads(games: List[Game] | []):
+    for g in games:
+        if not g.library_tile:
+            continue
+        g.library_tile.resume_download_if_expected()
 
 
 def _update_gameinfo(local_game, api_game, game_category_dict={}):
