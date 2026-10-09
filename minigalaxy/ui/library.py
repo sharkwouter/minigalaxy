@@ -111,7 +111,7 @@ class Library(Gtk.Viewport):
     def __load_tile_states(self):
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
-            tile.reload_state()
+            tile.reload_state(False)
 
     def filter_library(self, widget: Gtk.Widget = None):
         if isinstance(widget, Gtk.Switch):
@@ -164,6 +164,7 @@ class Library(Gtk.Viewport):
                 new_game = games_to_add[games_to_add.index(tile.game)]
                 new_game.library_tile = tile
                 tile.game = new_game
+                tile.reload_state(check_for_updates=False)
 
         for game in games_to_add:
             if game.library_tile:
