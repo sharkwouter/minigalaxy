@@ -72,7 +72,7 @@ class LibraryEntry:
 
         self.image.set_tooltip_text(self.game.name)
 
-        self.reload_state()
+        self.reload_state(check_for_updates=False)
         self.load_thumbnail()
 
     # Downloads if Minigalaxy was closed with this game downloading
@@ -81,6 +81,12 @@ class LibraryEntry:
         if self.game.id in download_ids:
             download_thread = threading.Thread(target=self.__download_game)
             download_thread.start()
+
+    def run_update_check(self):
+        if self.current_state != State.INSTALLED:
+            return
+        check_update_thread = threading.Thread(target=self._check_for_update_dlc)
+        check_update_thread.start()
 
     # Do not restart the download if Minigalaxy is restarted
     def prevent_resume_on_startup(self, item_id=None):
@@ -639,7 +645,7 @@ class LibraryEntry:
             GLib.idle_add(self.progress_bar.set_fraction, percentage / 100)
             GLib.idle_add(self.progress_bar.set_tooltip_text, "{}%".format(percentage))
 
-    def reload_state(self):
+    def reload_state(self, check_for_updates=True):
         self.game.set_install_dir(self.config.install_dir)
         dont_act_in_states = [State.QUEUED, State.DOWNLOADING, State.INSTALLING, State.UNINSTALLING,
                               State.UPDATING]
@@ -647,8 +653,7 @@ class LibraryEntry:
             return
         if self.game.is_installed():
             self.update_to_state(State.INSTALLED)
-            check_update_thread = threading.Thread(target=self._check_for_update_dlc)
-            check_update_thread.start()
+            self.run_update_check()
         elif self.get_keep_executable_path():
             self.update_to_state(State.INSTALLABLE)
         else:

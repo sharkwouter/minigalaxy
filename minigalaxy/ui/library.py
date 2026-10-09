@@ -88,7 +88,8 @@ class Library(Gtk.Viewport):
         self.__add_games_from_api()
         GLib.idle_add(self.filter_library)
 
-        GLib.idle_add(_resume_all_downloads, args=[*self.games])
+        GLib.idle_add(_check_all_updates, [*self.games])
+        GLib.idle_add(_resume_all_downloads, [*self.games])
 
     def __create_gametiles_iteratively(self, step_width=5):
         if len(self.games) < step_width*2:
@@ -267,6 +268,13 @@ class Library(Gtk.Viewport):
                 GLib.idle_add(self.__create_gametiles, [game])
 
         update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
+
+
+def _check_all_updates(games: List[Game] | []):
+    for g in games:
+        if not g.library_tile:
+            continue
+        g.library_tile.run_update_check()
 
 
 def _resume_all_downloads(games: List[Game] | []):
