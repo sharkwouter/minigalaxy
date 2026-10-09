@@ -5,11 +5,11 @@ import os
 from unittest import TestCase, mock
 from unittest.mock import patch, mock_open, MagicMock, call
 
-from minigalaxy import Platform
+from minigalaxy import installer, Platform
 from minigalaxy.config import Config
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
-from minigalaxy import installer
+from minigalaxy.installer import InstallerInventory
 from minigalaxy.translation import _
 
 
@@ -44,7 +44,7 @@ class TestInstaller(TestCase):
         mock_exists.side_effect = FileNotFoundError("Testing unhandled errors during install")
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform=Platform.WINDOWS)
 
-        obs = installer.install_game(game, installer="", config=self.config)
+        obs = installer.install_game(game, installer_inventory=MagicMock(), config=self.config)
         self.assertEqual("Unhandled error.", obs)
 
     @mock.patch('minigalaxy.installer.verify_installer_integrity')
@@ -57,8 +57,7 @@ class TestInstaller(TestCase):
         inventory = prepare_inventory("/cache/adrift_setup.exe", "", 0)
         inventory.add_file("/cache/adrift_setup-1.bin", FileInfo("", 0))
         with self.assertRaises(installer.InstallException) as result:
-            installer.install_game(game, installer="", config=self.config,
-                                   installer_inventory=inventory, raise_error=True)
+            installer.install_game(game, config=self.config, installer_inventory=inventory, raise_error=True)
 
         self.assertEqual(installer.InstallResultType.CHECKSUM_ERROR, result.exception.fail_type, result.exception.message)
         self.assertIs(failed_file_list, result.exception.data)
@@ -76,7 +75,7 @@ class TestInstaller(TestCase):
         inventory = prepare_inventory("/cache/adrift_setup.exe", "", 0)
         inventory.add_file("/cache/adrift_setup-1.bin", FileInfo("", 0))
         with self.assertRaises(installer.InstallException) as result:
-            installer.install_game(game, installer="", config=self.config,
+            installer.install_game(game, config=self.config,
                                    installer_inventory=inventory, raise_error=True,
                                    progress_callback=progress_callback)
 
@@ -161,7 +160,7 @@ class TestInstaller(TestCase):
         game = Game("Absolute Drift", install_dir=install_dir, platform=Platform.WINDOWS)
 
         with self.assertRaises(installer.InstallException):
-            installer.install_game(game, installer="", config=self.config,
+            installer.install_game(game, config=self.config,
                                    installer_inventory=inventory, raise_error=True)
 
         mock_remove.assert_called_once_with(failed_file_list)
@@ -225,10 +224,10 @@ class TestInstaller(TestCase):
         mock_listdir.return_value = ["object1", "object2"]
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
+        inventory = InstallerInventory.from_file_system(installer_path)
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1207658695"
-        exp = ""
-        obs, use_temp = installer.extract_installer(game, installer_path, temp_dir, "en")
-        self.assertEqual(exp, obs)
+        obs, use_temp = installer.extract_installer(game, inventory, temp_dir, "en")
+        self.assertEqual("", obs)
 
     @mock.patch('os.path.exists')
     @mock.patch('os.listdir')
@@ -242,10 +241,10 @@ class TestInstaller(TestCase):
         mock_listdir.return_value = ["object1", "object2"]
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
         installer_path = "/home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh"
+        inventory = InstallerInventory.from_file_system(installer_path)
         temp_dir = "/home/makson/.cache/minigalaxy/extract/1207658695"
-        exp = "The installation of /home/makson/.cache/minigalaxy/download/Beneath a Steel Sky/beneath_a_steel_sky_en_gog_2_20150.sh failed. Please try again."
-        obs, use_temp = installer.extract_installer(game, installer_path, temp_dir, "en")
-        self.assertEqual(exp, obs)
+        obs, use_temp = installer.extract_installer(game, inventory, temp_dir, "en")
+        self.assertEqual(f"The installation of {installer_path} failed. Please try again.", obs)
 
     @mock.patch('os.path.exists')
     @mock.patch('os.listdir')

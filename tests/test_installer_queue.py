@@ -8,7 +8,7 @@ from minigalaxy import installer, Platform
 from minigalaxy.config import Config
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
-from minigalaxy.installer import InstallTask
+from minigalaxy.installer import InstallerInventory, InstallTask
 
 
 class Test(TestCase):
@@ -75,7 +75,9 @@ class Test(TestCase):
 
         self.assertIsNone(installer.INSTALL_QUEUE, "Global INSTALL_QUEUE must not exist yet")
         game = Game("Beneath A Steel Sky", install_dir="/home/makson/GOG Games/Beneath a Steel Sky")
-        installer.enqueue_game_install("42", MagicMock(), game, "/path/to/installer")
+        inventory = InstallerInventory()
+        inventory.item_id = 42
+        installer.enqueue_game_install(MagicMock(), game, inventory)
 
         self.assertIs(queue_instance, installer.INSTALL_QUEUE)
         queue_instance.put.assert_called_once()
@@ -86,11 +88,13 @@ class Test(TestCase):
 
         installer.INSTALL_QUEUE = None
         result_callback = MagicMock()
+        config = MagicMock()
 
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform=Platform.WINDOWS)
-        installer.enqueue_game_install(12345, result_callback,
-                                       game, installer="adrift.exe", language="", install_dir="",
-                                       keep_installers=False, create_desktop_file=True)
+        inventory = InstallerInventory("adrift.exe")
+        inventory.item_id = 12345
+        installer.enqueue_game_install(result_callback,
+                                       game, inventory=inventory, config=config)
         time.sleep(0.5)
         lock = installer.INSTALL_QUEUE.state_lock
         with lock:
@@ -108,9 +112,10 @@ class Test(TestCase):
         mock_install.side_effect = installer.InstallException("error")
 
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform=Platform.WINDOWS)
-        installer.enqueue_game_install(12345, result_callback,
-                                       game, installer="adrift.exe", language="", install_dir="",
-                                       keep_installers=False, create_desktop_file=True)
+        inventory = InstallerInventory()
+        inventory.item_id = 12345
+        installer.enqueue_game_install(result_callback,
+                                       game, inventory, config=Config())
         time.sleep(0.5)
         lock = installer.INSTALL_QUEUE.state_lock
         with lock:
@@ -123,8 +128,10 @@ class Test(TestCase):
         '''[scenario: InstallTask__init__ enforces result_callback to be a callable]'''
 
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform=Platform.WINDOWS)
+        inventory = InstallerInventory("/not/a/real/installer.exe")
+        inventory.item_id = 815
         with self.assertRaises(ValueError) as cm:
-            installer.InstallTask(815, "not-a-callable", game)
+            installer.InstallTask("not-a-callable", game, inventory=inventory)
         # the search for a Game instance happens before the check of callback, so assert the message as well
         self.assertEqual("result_callback is required", str(cm.exception))
 
@@ -134,13 +141,15 @@ class Test(TestCase):
         def callback(): pass
 
         game = Game("Absolute Drift", install_dir="/home/makson/GOG Games/Absolute Drift", platform=Platform.WINDOWS)
+        inventory = InstallerInventory("/not/a/real/installer.exe")
+        inventory.item_id = 815
 
         with self.assertRaises(ValueError) as cm:
-            installer.InstallTask(815, callback)
+            installer.InstallTask(callback, inventory=inventory)
         self.assertEqual("No instance of Game in InstallTask constructor arguments", str(cm.exception))
 
         # counter-test: pass game as part of kwargs, it should not raise an exception
-        installer.InstallTask(815, callback, game=game)
+        installer.InstallTask(callback, game=game, inventory=inventory)
 
     def test_locate_argument_byType(self):
         test_args = [self, Config()]
