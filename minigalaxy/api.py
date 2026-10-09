@@ -1,12 +1,13 @@
 import http
 import logging
 import time
-from urllib.parse import urlencode
 import requests
 import xml.etree.ElementTree as ET
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from requests import Session
+from typing import Callable, List
+from urllib.parse import urlencode
 
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
@@ -78,29 +79,40 @@ class Api:
             refresh_token = ""
         return refresh_token
 
-    def get_library_page(self, page: int):
+    def get_library(self, chunk_size: int = 0, chunk_callback: Callable[[List[Game]], None] = None):
+        """Load and return the entire library.
+        Optionally, when 'chunk_size' and 'chunk_callback' are given, the function will invoke 'chunk_callback' whenever
+        'chunk_size' more games were fully parsed, passing [added_games] as argument to 'chunk_callback'
+        """
         err_msg = ""
         games = []
         if not self.active_token:
-            return [], "Couldn't connect to GOG servers"
+            return games, "Couldn't connect to GOG servers", False
 
+        current_page = 1
+        all_pages_processed = False
         url = "https://embed.gog.com/account/getFilteredProducts"
 
-        params = {
-            'mediaType': 1,  # 1 means game
-            'page': page,
-        }
-        response = self.__request(url, params=params)
-        if "totalPages" not in response:
-            err_msg = "Couldn't load game library"
-            return games, err_msg, True
-        total_pages = response["totalPages"]
+        while not all_pages_processed:
+            params = {
+                'mediaType': 1,  # 1 means game
+                'page': current_page,
+            }
+            response = self.__request(url, params=params)
+            if "totalPages" not in response:
+                err_msg = "Couldn't load game library"
+                return games, err_msg, False
+            total_pages = response["totalPages"]
 
-        self.__parse_productlist_json(response["products"], games)
+            self.__parse_productlist_json(response["products"], games)
 
-        games = self.__filter_games_with_valid_platforms(games)
+            if current_page == total_pages:
+                all_pages_processed = True
+            current_page += 1
 
-        return games, err_msg, page == total_pages
+            self.__filter_games_with_valid_platforms(games, chunk_size, chunk_callback)
+
+        return games, err_msg, True
 
     def __parse_productlist_json(self, product_list, game_list):
         for product in product_list:
@@ -114,43 +126,67 @@ class Api:
                         image_url=product["image"], platform=Platform.WINDOWS, category=product.get("category", None))
             game_list.append(game)
 
-    def __filter_games_with_valid_platforms(self, games):
+    def __remove_installed_games_from_list(self, games: List[Game]):
+        result = []
+        for game in games:
+            if not game.is_installed():
+                result.append(game)
+        return result
+
+    def __filter_games_with_valid_platforms(self, games, chunk_size: int, chunk_callback: Callable[[List[Game]], None]):
         """
         Query the products api in batches of 50 and pull the supported platforms info out of there.
         This will also assign the resulting product info to the game to cache it for further use by LibraryEntry.
+        When a chunk_size and callback are given, the callback is called whenever 'chunk_size' games are processed.
+        The product info is pulled in chunks of 50 regardless because batch-rest operations are less expensive.
+        So chunk_size for the callback should be <= 50
         """
         # the additional platform check is only needed for games which are not installed
-        games_with_platform = []
-        for game in games:
-            if not game.is_installed():
-                games_with_platform.append(game)
-        games = games_with_platform
+        games = self.__remove_installed_games_from_list(games)
         games_with_platform = []
 
         while len(games) > 0:
-            chunk = {}
+            api_chunk = {}
             for game in games[:50]:
-                chunk[game.id] = game
+                api_chunk[game.id] = game
             games = games[50:]
 
-            id_query = ','.join(str(gameid) for gameid in chunk)
+            id_query = ','.join(str(gameid) for gameid in api_chunk)
             request_url = "{}?expand=downloads,expanded_dlcs&ids={}".format(self.PRODUCTS_API, id_query)
             # returns a list at the top level
             product_infos = self.__request(request_url)
-            if not product_infos or len(product_infos) < len(chunk):
+            if not product_infos or len(product_infos) < len(api_chunk):
                 logging.warning("The current batch of product infos does not contain all requested games.")
 
-            self.__upate_games_with_platform(games_with_platform, product_infos, chunk)
+            self.__upate_games_with_platform(games_with_platform, product_infos, api_chunk, chunk_size, chunk_callback)
+
+        if chunk_size > 0 and chunk_callback:
+            last_chunk = len(games_with_platform) % chunk_size
+        else:
+            last_chunk = 0
+        if last_chunk > 0:
+            chunk_callback(games_with_platform[-last_chunk:])
         return games_with_platform
 
-    def __upate_games_with_platform(self, games_with_platform: list, product_infos: list, game_dict: dict):
+    def __upate_games_with_platform(self, games_with_platform: list, product_infos: list, game_dict: dict,
+                                    chunk_size: int, chunk_callback: Callable[[List[Game]], None]):
+        processed_games = 0
         for product in product_infos:
             platform = self.__platform_from_product(product)
             game = game_dict[product.get('id')]
-            if platform:
-                games_with_platform.append(game)
-                game.platform = platform
-                game.product_info = product
+            if not platform:
+                continue
+
+            games_with_platform.append(game)
+            game.platform = platform
+            game.product_info = product
+
+            if not chunk_callback or chunk_size < 1:
+                continue
+            if len(games_with_platform) - processed_games == chunk_size:
+                processed_games = len(games_with_platform)
+                chunk_callback(games_with_platform[-chunk_size:])
+                time.sleep(0.1)
 
     def __platform_from_product(self, product: dict):
         """Expects a dictionary in the format provided by 'api.gog.com/products' """

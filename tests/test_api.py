@@ -103,18 +103,18 @@ class TestApiGog(TestCase):
         self.session.get.return_value = response_mock
         self.session.get().status_code = http.HTTPStatus.OK
         exp = "Neverwinter Nights: Enhanced Edition"
-        retrieved_games, _, _ = self.api.get_library_page(page=1)
+        retrieved_games, _, _ = self.api.get_library()
         obs = retrieved_games[0].name
         self.assertEqual(exp, obs)
 
-    def test_get_library_page_invalid_httpstatus(self):
+    def test_get_library_invalid_httpstatus(self):
         self.api.active_token = False
         self.api.active_token_expiration_time = time.time() + 10.0
         response_mock = MagicMock()
         response_mock.json.return_value = {}
         self.session.get.return_value = response_mock
         exp = "Couldn't connect to GOG servers"
-        _, obs, _ = self.api.get_library_page(page=1)
+        _, obs, _ = self.api.get_library()
         self.assertEqual(exp, obs)
 
     def test_parse_productlist_json(self):

@@ -50,6 +50,7 @@ class Library(Gtk.Viewport):
         self.search_string = ""
         self.offline = False
         self.games = []
+        self.game_categories = {}
         self.owned_products_ids = []
         self._queue = []
         self.category_filters = []
@@ -92,15 +93,19 @@ class Library(Gtk.Viewport):
         GLib.idle_add(_check_all_updates, [*self.games])
         GLib.idle_add(_resume_all_downloads, [*self.games])
 
-    def __create_gametiles_iteratively(self, step_width=5):
-        if len(self.games) < step_width*2:
-            GLib.idle_add(self.__create_gametiles, [*self.games])
+    def __create_gametiles_iteratively(self, step_width=5, games=None):
+        # make a copy of self.games to guard against concurrent removals sabotaging chunks
+        if games:
+            games_to_add = [*games]
+        else:
+            games_to_add = [*self.games]
+
+        if len(games_to_add) < step_width*2:
+            GLib.idle_add(self.__create_gametiles, games_to_add)
             # wait until the update is done to make sure there's a consistent state before going on
             time.sleep(0.1)
             return
 
-        # make a copy of self.games to guard against concurrent removals sabotaging chunks
-        games_to_add = [*self.games]
         index = 0
         while index < len(games_to_add):
             games_chunk = games_to_add[index:index+step_width]
@@ -185,6 +190,8 @@ class Library(Gtk.Viewport):
                 self.games.remove(game)
 
     def __add_gametile(self, game):
+        if game not in self.games:
+            self.games.append(game)
         view = self.config.view
         if view == "grid":
             game_tile = GameTile(self, game)
@@ -239,14 +246,39 @@ class Library(Gtk.Viewport):
 
         return games
 
+    def process_library_chunk(self, retrieved_games: List[Game]):
+        game_category_dict = self.game_categories
+        for game in retrieved_games:
+            # NOTE: the 'in' check and 'list.index' function depend on the '__eq__' method of Game.
+            # 'Game.__eq__(self, other)' is a bit lenient, it ignores the property 'id' if it is zero for 'self' or 'other'
+            # This leniency is vital in correctly detecting installed games with missing metadata.
+
+            # add game to list which is not installed
+            if game not in self.games:
+                continue
+            local_game = self.games[self.games.index(game)]
+            # update the local Game instance with data retrieved from remote, but only when both are not the same instance
+            _update_gameinfo(local_game, game, game_category_dict)
+
+        self.__create_gametiles_iteratively(5, retrieved_games)
+
     def __add_games_from_api(self):
         logging.info("Start retrieving owned games from the api...")
-        game_category_dict = {}
+        self.game_categories = {}
+        all_games, err_msg, success = self.api.get_library(chunk_size=10, chunk_callback=self.process_library_chunk)
+        if err_msg:
+            self.offline = True
+            logging.info("Client is offline, showing installed games only")
+            GLib.idle_add(self.parent_window.show_error, _("Failed to retrieve library"), _(err_msg))
+            return
+        else:
+            self.offline = False
+        """
         current_page = 1
         last_page_processed = False
         while not last_page_processed:
-            retrieved_games, err_msg, last_page_processed = self.api.get_library_page(page=current_page)
-            current_page += 1
+            retrieved_games, err_msg, last_page_processed
+            = self.api.get_library_in_chunks(chunk_size=10, self.process_library_chunk)
             if not err_msg:
                 self.offline = False
             else:
@@ -267,9 +299,10 @@ class Library(Gtk.Viewport):
                 local_game = self.games[self.games.index(game)]
                 # update the local Game instance with data retrieved from remote, but only when both are not the same instance
                 _update_gameinfo(local_game, game, game_category_dict)
-                GLib.idle_add(self.__create_gametiles, [game])
 
-        update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
+            GLib.idle_add(self.__create_gametiles_iteratively, [game])
+        """
+        update_game_categories_file(self.game_categories, CATEGORIES_FILE_PATH)
 
 
 def _check_all_updates(games: List[Game] | []):
