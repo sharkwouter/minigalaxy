@@ -754,7 +754,7 @@ msgid "Variable flags:"
 msgstr "變數旗標："
 
 #: minigalaxy/ui/library_entry.py:726
-msgid "Verifying checksums…"
+msgid "Verifying…"
 msgstr ""
 
 #: minigalaxy/ui/information.py:144

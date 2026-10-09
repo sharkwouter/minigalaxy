@@ -775,7 +775,7 @@ class LibraryEntry:
         self.update_visible_widgets(info_buttons=True)
 
     def state_verifying(self):
-        self.set_main_button(False, _("Verifying checksums…"))
+        self.set_main_button(False, _("Verifying…"))
         self.update_visible_widgets(self.progress_bar, self.button_cancel, info_buttons=True)
 
     def update_to_state(self, state):
