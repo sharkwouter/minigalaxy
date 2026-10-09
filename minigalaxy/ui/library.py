@@ -88,6 +88,8 @@ class Library(Gtk.Viewport):
         self.__add_games_from_api()
         GLib.idle_add(self.filter_library)
 
+        GLib.idle_add(_resume_all_downloads, args=[*self.games])
+
     def __create_gametiles_iteratively(self, step_width=5):
         if len(self.games) < step_width*2:
             GLib.idle_add(self.__create_gametiles, [*self.games])
@@ -187,8 +189,6 @@ class Library(Gtk.Viewport):
             game_tile = GameTileList(self, game)
         game.library_tile = game_tile
 
-        # Start download if Minigalaxy was closed while downloading this game
-        game_tile.resume_download_if_expected()
         self.flowbox.add(game_tile)
         '''
         using flowbox.show_all at this point would overrule any state-based
@@ -267,6 +267,13 @@ class Library(Gtk.Viewport):
                 GLib.idle_add(self.__create_gametiles, [game])
 
         update_game_categories_file(game_category_dict, CATEGORIES_FILE_PATH)
+
+
+def _resume_all_downloads(games: List[Game] | []):
+    for g in games:
+        if not g.library_tile:
+            continue
+        g.library_tile.resume_download_if_expected()
 
 
 def _update_gameinfo(local_game, api_game, game_category_dict={}):
