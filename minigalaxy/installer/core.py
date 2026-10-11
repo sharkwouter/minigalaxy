@@ -86,7 +86,7 @@ def install_game(  # noqa: C901
         progress_callback(InstallResultType.INSTALL_START, game.name)
         fail_on_error(verify_disk_space(game, installer), InstallResultType.FAILURE)
 
-        tmp_dir, = fail_on_error(make_tmp_dir(game))
+        tmp_dir = make_tmp_dir(str(game.id), temp_type="extract")
 
         installed_to_tmp, = fail_on_error(extract_installer(game, installer_inventory, tmp_dir, language))
 

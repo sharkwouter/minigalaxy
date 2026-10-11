@@ -19,15 +19,17 @@ def get_available_disk_space(location):
     return available_diskspace
 
 
-def make_tmp_dir(game):
-    # Make a temporary empty directory for extracting the installer
-    error_message = ""
-    extract_dir = os.path.join(CACHE_DIR, "extract")
-    temp_dir = os.path.join(extract_dir, str(game.id))
+def make_tmp_dir(name, temp_type="tmp"):
+    """Create a temporary empty directory.
+    Directory will be created as subdirectory 'CACHE_DIR/temp_type/name'.
+    @return: directory path on success. Raises error otherwise.
+    """
+    extract_dir = os.path.join(CACHE_DIR, temp_type)
+    temp_dir = os.path.join(extract_dir, name)
     if os.path.exists(temp_dir):
         shutil.rmtree(temp_dir, ignore_errors=True)
     os.makedirs(temp_dir, mode=0o755)
-    return error_message, temp_dir
+    return temp_dir
 
 
 def safe_delete(file_list):
