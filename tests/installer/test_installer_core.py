@@ -2,10 +2,12 @@ import copy
 import minigalaxy
 import os
 
+import minigalaxy.installer.core as installer
+
 from unittest import TestCase, mock
 from unittest.mock import patch, mock_open, MagicMock, call
 
-from minigalaxy import installer, Platform
+from minigalaxy import Platform
 from minigalaxy.config import Config
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
@@ -47,7 +49,7 @@ class TestInstaller(TestCase):
         obs = installer.install_game(game, installer_inventory=MagicMock(), config=self.config)
         self.assertEqual("Unhandled error.", obs)
 
-    @mock.patch('minigalaxy.installer.verify_installer_integrity')
+    @mock.patch('minigalaxy.installer.core.verify_installer_integrity')
     def test_install_game_with_checksum_exception(self, mock_checksum):
         '''[scenario: install_game with raise_error=True uses raise instead of return - checksum failure variant]'''
         failed_file_list = {"/cache/adrift_setup-1.bin": "md5abc"}
@@ -62,8 +64,8 @@ class TestInstaller(TestCase):
         self.assertEqual(installer.InstallResultType.CHECKSUM_ERROR, result.exception.fail_type, result.exception.message)
         self.assertIs(failed_file_list, result.exception.data)
 
-    @mock.patch('minigalaxy.installer.verify_disk_space')
-    @mock.patch('minigalaxy.installer.verify_installer_integrity')
+    @mock.patch('minigalaxy.installer.core.verify_disk_space')
+    @mock.patch('minigalaxy.installer.core.verify_installer_integrity')
     def test_install_game_with_failure_exception(self, mock_checksum, mock_disk_check):
         '''[scenario: install_game with raise_error=True uses raise instead of return - regular failure variant]'''
         mock_disk_check.return_value = "disk_full"
@@ -132,9 +134,8 @@ class TestInstaller(TestCase):
             installer.fail_on_error(("error_message", 12345), data="data_overridden")
         self.assertEqual("data_overridden", cm.exception.data, "data parameter must have priority over tuple entries")
 
-    @mock.patch('minigalaxy.installer.safe_delete')
-    @mock.patch('minigalaxy.installer.verify_installer_integrity')
-    def test_remove_corrupt_files_only(self, mock_checksum, mock_remove):
+    @mock.patch('minigalaxy.installer.core.verify_installer_integrity')
+    def test_remove_corrupt_files_only(self, mock_checksum):
         '''[scenario: install_game fails checksum, verify that remove_installer will be called, but not remove valid files]'''
 
         install_dir = "/home/makson/GOG Games/Absolute Drift"
@@ -151,6 +152,7 @@ class TestInstaller(TestCase):
         ]
 
         inventory = installer.InstallerInventory("/cache/adrift_setup.exe")
+        inventory.delete_invalid_files = MagicMock()
         for f in all_files:
             inventory.add_file(f, FileInfo("ok_md5", 0))
         for f in failed_file_list:
@@ -163,7 +165,7 @@ class TestInstaller(TestCase):
             installer.install_game(game, config=self.config,
                                    installer_inventory=inventory, raise_error=True)
 
-        mock_remove.assert_called_once_with(failed_file_list)
+        inventory.delete_invalid_files.assert_called_once()
 
     @mock.patch('os.path.exists')
     @mock.patch('hashlib.md5')
@@ -262,7 +264,7 @@ class TestInstaller(TestCase):
         self.assertEqual(exp, obs)
 
     @mock.patch('os.path.exists')
-    @mock.patch('minigalaxy.installer.extract_by_wine')
+    @mock.patch('minigalaxy.installer.core.extract_by_wine')
     @mock.patch('shutil.which')
     def test1_get_lang_with_innoextract(self, mock_which, mock_wine_extract, mock_exists):
         """[scenario: no innoextract - default en-US used]"""
@@ -276,7 +278,7 @@ class TestInstaller(TestCase):
         installer.extract_windows(game, installer_path, "en")
 
     @mock.patch('shutil.which')
-    @mock.patch('minigalaxy.installer._exe_cmd')
+    @mock.patch('minigalaxy.installer.core._exe_cmd')
     def test2_get_lang_with_innoextract(self, mock_exe, mock_which):
         """[scenario: innoextract --list-languages returns locale ids]"""
         lines = [" - fr-FR\n", " - jp-JP\n", " - en-US\n", " - ru-RU"]
@@ -288,7 +290,7 @@ class TestInstaller(TestCase):
         self.assertEqual(exp, obs)
 
     @mock.patch('shutil.which')
-    @mock.patch('minigalaxy.installer._exe_cmd')
+    @mock.patch('minigalaxy.installer.core._exe_cmd')
     def test3_get_lang_with_innoextract(self, mock_exe, mock_which):
         """[scenario: innoextract --list-languages returns language names]"""
         lines = [" - english: English\n", " - german: Deutsch\n", " - french: Français"]
@@ -300,7 +302,7 @@ class TestInstaller(TestCase):
         self.assertEqual(exp, obs)
 
     @mock.patch('shutil.which')
-    @mock.patch('minigalaxy.installer._exe_cmd')
+    @mock.patch('minigalaxy.installer.core._exe_cmd')
     def test4_get_lang_with_innoextract(self, mock_exe, mock_which):
         """[scenario: innoextract --list-languages can't be matched - default en-US is used]"""
         mock_exe.return_value = '', '', 0
@@ -394,16 +396,6 @@ class TestInstaller(TestCase):
         self.assertEqual(exp, obs)
 
     @mock.patch('os.statvfs')
-    def test_get_availablediskspace(self, mock_os_statvfs):
-        frsize = 4096
-        bavail = 29699296
-        mock_os_statvfs().f_frsize = frsize
-        mock_os_statvfs().f_bavail = bavail
-        exp = frsize * bavail
-        obs = installer.get_available_disk_space("/")
-        self.assertEqual(exp, obs)
-
-    @mock.patch('os.statvfs')
     def test1_check_diskspace(self, mock_os_statvfs):
         frsize = 4096
         bavail = 29699296
@@ -487,7 +479,7 @@ class TestInstaller(TestCase):
     @mock.patch("os.stat")
     @mock.patch("os.path.isdir")
     @mock.patch("os.path.realpath")
-    @mock.patch("minigalaxy.installer.is_empty_dir")
+    @mock.patch("minigalaxy.file_utils.is_empty_dir")
     @mock.patch('os.remove')
     @mock.patch("os.path.isfile")
     @mock.patch('os.rmdir')
@@ -513,7 +505,7 @@ class TestInstaller(TestCase):
 
     @mock.patch("minigalaxy.installer.InstallerInventory.size_of")
     @mock.patch("os.path.isdir")
-    @mock.patch("minigalaxy.installer.is_empty_dir")
+    @mock.patch("minigalaxy.file_utils.is_empty_dir")
     @mock.patch('os.remove')
     @mock.patch("os.path.isfile")
     @mock.patch('os.rmdir')
@@ -543,7 +535,7 @@ class TestInstaller(TestCase):
 
     @mock.patch("os.path.isdir")
     @mock.patch("os.path.realpath")
-    @mock.patch("minigalaxy.installer.is_empty_dir")
+    @mock.patch("minigalaxy.file_utils.is_empty_dir")
     @mock.patch('os.remove')
     @mock.patch("os.path.isfile")
     @mock.patch('os.rmdir')
