@@ -20,24 +20,15 @@ from minigalaxy import Platform
 from minigalaxy.config import Config
 from minigalaxy.constants import GAME_LANGUAGE_IDS
 from minigalaxy.file_info import FileInfo
+from minigalaxy.file_utils import get_available_disk_space, make_tmp_dir, remove_empty_dirs_upwards, safe_delete
 from minigalaxy.game import Game
 from minigalaxy.resources import get_data_file
 from minigalaxy.translation import _
 from minigalaxy.launcher import get_execute_commands, get_wine_path, wine_restore_game_link
-from minigalaxy.paths import CACHE_DIR, THUMBNAIL_DIR, APPLICATIONS_DIR, DOWNLOAD_DIR
+from minigalaxy.paths import THUMBNAIL_DIR, APPLICATIONS_DIR, DOWNLOAD_DIR
 
 
 INSTALL_QUEUE = None
-
-
-def get_available_disk_space(location):
-    """Check disk space available to the user. This method uses the absolute path so
-    symlinks to disks with sufficient space are correctly measured. Note this is
-    a linux-specific command."""
-    absolute_location = os.path.realpath(location)
-    disk_status = os.statvfs(os.path.dirname(absolute_location))
-    available_diskspace = disk_status.f_frsize * disk_status.f_bavail
-    return available_diskspace
 
 
 def get_game_size_from_unzip(installer):
@@ -190,17 +181,6 @@ def verify_disk_space(game, installer):
             err_msg = _("Not enough space to extract game. Required: {} Available: {}")\
                 .format(required_space, get_available_disk_space(game.install_dir))
     return err_msg
-
-
-def make_tmp_dir(game):
-    # Make a temporary empty directory for extracting the installer
-    error_message = ""
-    extract_dir = os.path.join(CACHE_DIR, "extract")
-    temp_dir = os.path.join(extract_dir, str(game.id))
-    if os.path.exists(temp_dir):
-        shutil.rmtree(temp_dir, ignore_errors=True)
-    os.makedirs(temp_dir, mode=0o755)
-    return error_message, temp_dir
 
 
 def extract_installer(game: Game, inventory, temp_dir: str, language: str):
@@ -436,30 +416,6 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
         return str(e)
 
     return ""
-
-
-def safe_delete(file_list):
-    """Tries to delete the given files without throwing exceptions where possible."""
-    logging.info("Trying to safely delete: %s", file_list)
-    for f in file_list:
-        if is_empty_dir(f):
-            os.rmdir(f)
-        elif os.path.isfile(f):
-            os.remove(f)
-
-
-def is_empty_dir(path):
-    return os.path.isdir(path) and not os.listdir(path)
-
-
-def remove_empty_dirs_upwards(start_dir, stop_dirs):
-    file_dir = start_dir
-    while is_empty_dir(file_dir):
-        logging.info("Remove now empty sub-directory [%s]", file_dir)
-        os.rmdir(file_dir)
-        file_dir = os.path.dirname(file_dir)
-        if file_dir in stop_dirs:
-            break
 
 
 def postinstaller(game):
