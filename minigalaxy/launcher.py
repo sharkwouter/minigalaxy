@@ -46,7 +46,7 @@ def regedit_game(game):
 
 def winetricks_game(game):
     prefix = os.path.join(game.install_dir, "prefix")
-    subprocess.Popen(['env', f'WINEPREFIX={prefix}', 'winetricks'])
+    subprocess.Popen(['env', f'WINEPREFIX={prefix}', f'WINE={get_wine_path(game)}', 'winetricks'])
 
 
 def start_game(game, execute_command: LaunchCommand) -> str:
