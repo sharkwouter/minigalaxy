@@ -5,6 +5,7 @@
 - Releases will now include a basic AppImage (experimental) (thanks to GB609)
 - Releases now target Ubuntu 26.04
 - Mangohud dlsym enabled by default (thanks to RoGreat)
+- Bugfix: custom wine paths are now also passed on to `winetricks` (thanks to GB609)
 
 **1.4.2**
 - Critical bugfix: Use another API to determine game platform support (thanks to GB609)
