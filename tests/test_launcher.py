@@ -7,7 +7,28 @@ from minigalaxy.game import Game
 from minigalaxy.launch_command import LaunchCommand
 
 
-class Test(TestCase):
+class LauncherTest(TestCase):
+
+    @mock.patch("minigalaxy.launcher.get_wine_path")
+    @mock.patch('subprocess.Popen')
+    def test_winetricks_regurlar(self, mock_popen, mock_wine_path):
+        mock_wine_path.return_value = "wine"
+        game = Game("Test Game", install_dir="/test/install/dir")
+        expected_command = ['env', 'WINEPREFIX=/test/install/dir/prefix', 'WINE=wine', 'winetricks']
+
+        launcher.winetricks_game(game)
+        mock_popen.assert_called_once_with(expected_command)
+
+    @mock.patch("minigalaxy.launcher.get_wine_path")
+    @mock.patch('subprocess.Popen')
+    def test_winetricks_custom_path(self, mock_popen, mock_wine_path):
+        mock_wine_path.return_value = "/usr/local/bin/proton-ge"
+        game = Game("Test Game", install_dir="/test/install/dir")
+        expected_command = ['env', 'WINEPREFIX=/test/install/dir/prefix', 'WINE=/usr/local/bin/proton-ge', 'winetricks']
+
+        launcher.winetricks_game(game)
+        mock_popen.assert_called_once_with(expected_command)
+
     def test1_determine_launcher_type(self):
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'start.sh', 'minigalaxy-dlc.json', 'gameinfo']
         exp = "start_script"
