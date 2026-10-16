@@ -25,10 +25,10 @@ class LauncherTest(TestCase):
         mock_wine_path.return_value = "/usr/local/bin/proton-ge"
         game = Game("Test Game", install_dir="/test/install/dir")
         expected_command = ['env', 'WINEPREFIX=/test/install/dir/prefix', 'WINE=/usr/local/bin/proton-ge', 'winetricks']
-    
+
         launcher.winetricks_game(game)
         mock_popen.assert_called_once_with(expected_command)
-        
+
     def test1_determine_launcher_type(self):
         files = ['thumbnail.jpg', 'docs', 'support', 'game', 'start.sh', 'minigalaxy-dlc.json', 'gameinfo']
         exp = "start_script"
