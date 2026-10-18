@@ -37,7 +37,6 @@ class LibraryEntry:
         self.download_manager = parent_library.download_manager
         self.game = game
 
-        self.offline = parent_library.offline
         self.thumbnail_set = False
         self.download_list = []
         self.download_progress_manager = CombinedProgressWatcher(self.set_progress, self.download_list)
@@ -105,6 +104,16 @@ class LibraryEntry:
             self.config.current_downloads = reduced_list
         else:
             self.config.remove_ongoing_download(item_id)
+
+    @property
+    def offline(self) -> bool:
+        """Live api connectivity state, owned by the library (which reads it from the window).
+
+        There deliberately is no local copy: entries for installed games are constructed before
+        the library has performed any api operation, so a copy taken at construction time would
+        stay False while the client is actually offline and update/dlc lookups would throw.
+        """
+        return self.parent_library.offline
 
     def show_information(self, button):
         information_window = Information(self.parent_window, self.game, self.config, self.api, self.download_manager)
