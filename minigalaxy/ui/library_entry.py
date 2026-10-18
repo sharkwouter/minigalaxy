@@ -37,7 +37,6 @@ class LibraryEntry:
         self.download_manager = parent_library.download_manager
         self.game = game
 
-        self.offline = parent_library.offline
         self.thumbnail_set = False
         self.download_list = []
         self.download_progress_manager = CombinedProgressWatcher(self.set_progress, self.download_list)
@@ -67,6 +66,10 @@ class LibraryEntry:
             State.VERIFYING: self.state_verifying
         }
         self.thumbnail_loaded = False
+
+    @property
+    def offline(self):
+        return self.parent_library.offline
 
     def init_ui_elements(self):
         self.icon_bar = GameIconBar(self, self.game)

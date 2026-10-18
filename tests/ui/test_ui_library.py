@@ -58,6 +58,16 @@ class TestLibrary(TestCase):
         config.view = "grid"
         self.mock_config = config
 
+    def test_offline_status_tracks_parent_window(self):
+        parent_window = MagicMock()
+        parent_window.offline = True
+
+        test_library = Library(parent_window, self.mock_config, MagicMock(), MagicMock())
+
+        self.assertTrue(test_library.offline)
+        test_library.offline = False
+        self.assertFalse(parent_window.offline)
+
     def test1_add_games_from_api(self):
         self_games = []
         for game in SELF_GAMES:
@@ -409,6 +419,16 @@ class TestLibrary(TestCase):
 
 
 class TestLibraryEntry(TestCase):
+    def test_offline_status_tracks_parent_library(self):
+        parent_library = MagicMock()
+        parent_library.offline = True
+        entry = LibraryEntry.__new__(LibraryEntry)
+        entry.parent_library = parent_library
+
+        self.assertTrue(entry.offline)
+        parent_library.offline = False
+        self.assertFalse(entry.offline)
+
     def test_failsafe_callback_ignores_exception(self):
         callback = MagicMock()
         callback.side_effect = ValueError("Should not be thrown")
