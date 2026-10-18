@@ -58,6 +58,20 @@ class TestLibrary(TestCase):
         config.view = "grid"
         self.mock_config = config
 
+    def test_offline_is_kept_by_the_window_and_followed_live(self):
+        """#788: the offline flag lives in the window; the library only reads and forwards it."""
+        window = MagicMock()
+        window.offline = False
+        test_library = Library(window, self.mock_config, MagicMock(), MagicMock())
+        self.assertFalse(test_library.offline)
+
+        window.offline = True
+        self.assertTrue(test_library.offline, "the library must see the window going offline")
+
+        test_library.offline = False
+        self.assertFalse(window.offline, "clearing the library's offline state must reach the window")
+        self.assertFalse(test_library.offline)
+
     def test1_add_games_from_api(self):
         self_games = []
         for game in SELF_GAMES:
@@ -409,6 +423,20 @@ class TestLibrary(TestCase):
 
 
 class TestLibraryEntry(TestCase):
+    def test_offline_is_read_live_from_the_library(self):
+        """#788: the offline flag must not be copied at construction time.
+
+        Entries for installed games are built before the library performs any api operation,
+        so a copy would stay False while the client is offline and update/dlc lookups throw.
+        """
+        entry = LibraryEntry.__new__(LibraryEntry)
+        entry.parent_library = MagicMock()
+        entry.parent_library.offline = False
+        self.assertFalse(entry.offline)
+
+        entry.parent_library.offline = True
+        self.assertTrue(entry.offline, "the entry must follow the library going offline, not a copy taken at construction")
+
     def test_failsafe_callback_ignores_exception(self):
         callback = MagicMock()
         callback.side_effect = ValueError("Should not be thrown")
