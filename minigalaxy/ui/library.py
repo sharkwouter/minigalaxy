@@ -48,12 +48,25 @@ class Library(Gtk.Viewport):
         self.download_manager = download_manager
         self.show_installed_only = self.config.installed_filter
         self.search_string = ""
-        self.offline = False
         self.games = []
         self.owned_products_ids = []
         self._queue = []
         self.category_filters = []
         self.configure_library_sort()
+
+    @property
+    def offline(self) -> bool:
+        """Live api connectivity state, kept in one place: the window.
+
+        There deliberately is no local copy: LibraryEntry instances are created for installed
+        games before any api operation has run, so a copy taken at construction time would go
+        stale as soon as the connection state changes.
+        """
+        return self.parent_window.offline
+
+    @offline.setter
+    def offline(self, value: bool) -> None:
+        self.parent_window.offline = value
 
     def _debounce(self, thunk):
         if thunk not in self._queue:
