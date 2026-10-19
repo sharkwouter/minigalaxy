@@ -64,31 +64,6 @@ class BrowserWindow(Gtk.Dialog):
 
         dialog = CertDialog(parent=self, cert=cert)
         dialog.run()
-        """
-        valid_from = cert.get_not_valid_before()
-        valid_from = valid_from.format_iso8601() if valid_from else '-'
-        valid_to = cert.get_not_valid_after()
-        valid_to = valid_to.format_iso8601() if valid_to else '-'
-
-        lines.append(_('Issuer: {}').format(cert.get_issuer_name()))
-        lines.append(_('Subject: {}').format(cert.get_subject_name()))
-        lines.append(_('Valid:\n\tfrom {}\n\tto {}').format(valid_from, valid_to))
-        lines.append('')
-        lines.append(_('Raw certificate data:'))
-        lines.append(f'<span font-family="mono" size="smaller">{cert.props.certificate_pem}</span>')
-
-        message = '\n'.join(lines)
-        dialog = Gtk.MessageDialog(title=_("Show certificate"), parent=self,
-                                   flags=Gtk.DialogFlags.MODAL,
-                                   buttons=Gtk.ButtonsType.OK)
-        dialog.set_markup(message)
-        for w in dialog.get_message_area().get_children():
-            if isinstance(w, Gtk.Label):
-                w.set_selectable(True)
-        dialog.connect('response', lambda *args: dialog.destroy())
-        dialog.run()
-        print(message)
-        """
 
 
 class Login():
