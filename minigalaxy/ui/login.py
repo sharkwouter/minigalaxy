@@ -5,9 +5,9 @@ from minigalaxy.ui.gtk import Gtk, load_ui
 from minigalaxy.ui.webkit import WebKit2
 
 
-@Gtk.Template(string=load_ui("login.ui"))
+@Gtk.Template(string=load_ui("browser.ui"))
 class BrowserWindow(Gtk.Dialog):
-    __gtype_name__ = "Login"
+    __gtype_name__ = "Browser"
 
     box = Gtk.Template.Child()
     urlbar = Gtk.Template.Child()
