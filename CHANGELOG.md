@@ -1,4 +1,5 @@
 **1.4.3**
+- Show the url and a button for certificate display in the Login window (thanks to GB609)
 - Speed up loading games from the GOG API (thanks to GB609 and sharkwouter)
 - Canceling an automatic windows game installation will not retry with the fallback any longer (thanks to GB609)
 - Fix not-installed Linux games missing from the library (thanks to slowsage)
