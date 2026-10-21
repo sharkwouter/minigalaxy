@@ -222,7 +222,7 @@ class Window(Gtk.ApplicationWindow):
             redirect_url = self.api.get_redirect_url()
             login = Login(login_url=login_url, redirect_url=redirect_url, parent=self)
             response = login.run()
-            login.hide()
+            login.destroy()
             if response == Gtk.ResponseType.DELETE_EVENT:
                 self.destroy()
                 exit(0)
