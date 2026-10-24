@@ -9,7 +9,7 @@ from minigalaxy.paths import CACHE_DIR
 class TestFileUtils(TestCase):
 
     @mock.patch('os.statvfs')
-    def test_get_availablediskspace(self, mock_os_statvfs):
+    def test_get_available_diskspace(self, mock_os_statvfs):
         frsize = 4096
         bavail = 29699296
         mock_os_statvfs().f_frsize = frsize
