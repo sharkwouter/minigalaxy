@@ -26,7 +26,7 @@ class InstallerInventory:
             self.set_path_once(installer_path)
 
     @staticmethod
-    def from_file_system(installer_executable_path, files_to_check=[]):
+    def from_file_system(installer_executable_path, files_to_check: list[str] | None = None):
         """
         Helper utility to build an instance of InstallerInventory from files in the same directory
         as the file given with 'installer_executable_path'.
