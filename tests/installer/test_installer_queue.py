@@ -4,14 +4,16 @@ from unittest import TestCase, mock
 from unittest.mock import MagicMock
 from threading import RLock, Thread
 
-from minigalaxy import installer, Platform
+from minigalaxy.installer import core as installer
+
+from minigalaxy import Platform
 from minigalaxy.config import Config
 from minigalaxy.file_info import FileInfo
 from minigalaxy.game import Game
 from minigalaxy.installer import InstallerInventory, InstallTask
 
 
-class Test(TestCase):
+class TestInstallQueue(TestCase):
 
     def test_no_duplicates(self):
         '''[scenario: InstallerQueue.put() must ignore items which are equal to already placed items.]'''
@@ -64,7 +66,7 @@ class Test(TestCase):
             test_queue.queue.clear()
             lock.release()
 
-    @mock.patch('minigalaxy.installer.InstallerQueue')
+    @mock.patch('minigalaxy.installer.core.InstallerQueue')
     def test_enqueue_game_install_lazy_init(self, mock_queue_class):
         '''[scenario: The very first invocation of installer.enqueue_game_install creates the global InstallerQueue]'''
 
@@ -82,7 +84,7 @@ class Test(TestCase):
         self.assertIs(queue_instance, installer.INSTALL_QUEUE)
         queue_instance.put.assert_called_once()
 
-    @mock.patch('minigalaxy.installer.install_game')
+    @mock.patch('minigalaxy.installer.core.install_game')
     def test_enqueue_game(self, mock_install):
         """[scenario: Game gets queued and ultimately runs into install_game]"""
 
@@ -103,7 +105,7 @@ class Test(TestCase):
                 12345, installer.InstallResultType.SUCCESS, "/home/makson/GOG Games/Absolute Drift"
             ))
 
-    @mock.patch('minigalaxy.installer.install_game')
+    @mock.patch('minigalaxy.installer.core.install_game')
     def test_enqueue_game_failure(self, mock_install):
         """[scenario: Game gets queued and ultimately runs into install_game]"""
 
