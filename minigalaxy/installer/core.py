@@ -30,8 +30,11 @@ from minigalaxy.paths import THUMBNAIL_DIR, APPLICATIONS_DIR, DOWNLOAD_DIR
 
 INSTALL_QUEUE = None
 
+# Set up type alias for install progress callbacks in a way that is compatible to py3.11
+InstallProgressCallback = Callable[[InstallResult], None]
 
-def get_game_size_from_unzip(installer):
+
+def get_game_size_from_unzip(installer: str) -> int:
     var = subprocess.Popen(['unzip', '-v', installer], stdout=subprocess.PIPE)
     output = var.communicate()[0].decode("utf-8")
     lines_list = output.split("\n")
@@ -43,7 +46,7 @@ def get_game_size_from_unzip(installer):
     return size_value
 
 
-def check_diskspace(required_size, location):
+def check_diskspace(required_size: str | int, location: str) -> bool:
     """This method will return True when the disk space available is sufficient
     for the Download and Install. If not sufficient, it returns False."""
     installed_game_size = int(required_size)
@@ -53,7 +56,7 @@ def check_diskspace(required_size, location):
 
 # result_callback should be 'result_callback: Callable[InstallResult]',
 # but that is not yet possible due to the file structure
-def enqueue_game_install(result_callback, *args, **kwargs):
+def enqueue_game_install(result_callback: InstallProgressCallback, *args, **kwargs) -> None:
     global INSTALL_QUEUE
     if not INSTALL_QUEUE:
         INSTALL_QUEUE = InstallerQueue()
@@ -65,9 +68,9 @@ def enqueue_game_install(result_callback, *args, **kwargs):
 def install_game(  # noqa: C901
         game: Game,
         config: Config,
-        installer_inventory=None,
-        raise_error=False,
-        progress_callback=None
+        installer_inventory: InstallerInventory = None,
+        raise_error: bool = False,
+        progress_callback: InstallProgressCallback = None  # argument order requires default, but None will fail the code
 ):
     installer = installer_inventory.installer_executable
     language = config.lang,
@@ -126,7 +129,13 @@ def install_game(  # noqa: C901
     return error_message
 
 
-def fail_on_error(message_to_test, fail_type=None, data=None):
+def fail_on_error(message_to_test: str | tuple, fail_type: InstallResultType = None, data=None) -> int:
+    """Temporary helper function used to wrap 'error-by-return-string' functions into
+    code blocks raising InstallException instead.
+    This function expects either a string or a tuple with a string as first entry.
+    When this string is NOT empty, it is assumed to be an error message and this function will raise an InstallException.
+    If it is empty, the first argument/entry in the tuple is dropped and the reduced tuple is returned.
+    """
     remaining_args = None
     if isinstance(message_to_test, tuple):
         remaining_args = message_to_test[1:]
@@ -142,7 +151,9 @@ def fail_on_error(message_to_test, fail_type=None, data=None):
     return remaining_args
 
 
-def verify_installer_integrity(game, installer_inventory, progress_callback=None):
+def verify_installer_integrity(game: Game, installer_inventory: InstallerInventory,
+                               progress_callback: InstallProgressCallback) -> None:
+    """Calculate and compare checksums. Raise InstallException in case of mismatches."""
     error_messages = []
     invalid_files = {}
 
@@ -173,7 +184,10 @@ def verify_installer_integrity(game, installer_inventory, progress_callback=None
         raise InstallException('\n'.join(error_messages), InstallResultType.CHECKSUM_ERROR, invalid_files)
 
 
-def verify_disk_space(game, installer):
+def verify_disk_space(game: Game, installer: str) -> str:
+    """Check if there is enough disk space available to extract the given linux game.
+    @return: Error message for insufficient disk space, empty string otherwise.
+    """
     err_msg = ""
     if game.platform == Platform.LINUX:
         required_space = get_game_size_from_unzip(installer)
@@ -183,7 +197,16 @@ def verify_disk_space(game, installer):
     return err_msg
 
 
-def extract_installer(game: Game, inventory, temp_dir: str, language: str):
+def extract_installer(game: Game, inventory: InstallerInventory, temp_dir: str, language: str) -> tuple[str, bool]:
+    """Extract the given 'game' from files in the 'inventory'.
+    'Extracting' currently behaves differently depending on the game's platform:
+    - Linux games are treated as zip files and get extracted to temp_dir.
+      A subsequent install step moves them to their final install location.
+    - For Windows games, a new directory and wine prefix are set up at the final install location,
+      then the gog installer executable is run in that prefix.
+    @return tuple[0]: str - error message or empty string if successful
+            tuple[1]: bool - whether the game was placed in 'temp_dir' or not
+    """
     installer = inventory.installer_executable
     # Extract the installer
     if inventory.target_platform in [Platform.LINUX]:
@@ -192,7 +215,12 @@ def extract_installer(game: Game, inventory, temp_dir: str, language: str):
         return extract_windows(game, installer, language)
 
 
-def extract_linux(installer, temp_dir):
+def extract_linux(installer: str, temp_dir: str) -> tuple[str, bool]:
+    """Extract the given Linux game to 'temp_dir'.
+    In case of errors, the first value of the tuple contains an error description.
+    The second entry of the result is 'True' - Linux installs perform 2 individual steps: extract, then move.
+    @return [error_message | ""], True
+    """
     err_msg = ""
     command = ["unzip", "-qq", installer, "-d", temp_dir]
     stdout, stderr, exitcode = _exe_cmd(command)
@@ -204,7 +232,12 @@ def extract_linux(installer, temp_dir):
     return err_msg, True
 
 
-def extract_windows(game: Game, installer: str, language: str):
+def extract_windows(game: Game, installer: str, language: str) -> tuple[str, bool]:
+    """Install the given Windows game.
+    In case of errors, the first value of the tuple contains an error description.
+    The second entry of the result tuple is 'False' - Windows installs don't use any temp directory from Minigalaxy.
+    @return [error_message | ""], False
+    """
     languageLog = os.path.join(game.install_dir, 'minigalaxy_setup_languages.log')
     if not os.path.exists(game.install_dir):
         os.makedirs(game.install_dir)
@@ -214,7 +247,10 @@ def extract_windows(game: Game, installer: str, language: str):
     return extract_by_wine(game, installer, game_lang), False
 
 
-def extract_by_wine(game, installer, game_lang, config=Config()):
+def extract_by_wine(game: Game, installer: str, game_lang: str) -> str:
+    """Try to install the given Windows game.
+    @return: error message on failure, empty string otherwise
+    """
     # Set the prefix for Windows games
     prefix_dir = os.path.join(game.install_dir, "prefix")
     wine_env = [
@@ -264,8 +300,7 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
     # look at the exit codes and runtime behaviour to determine if the second try is needed
     # see https://jrsoftware.org/ishelp/index.php?topic=setupexitcodes
     if not success and code not in [2, 5]:
-        # some games will reject the /SILENT flag
-        # because they require the user to accept EULA at the beginning
+        # Some games will reject the /SILENT flag because they require the user to accept EULA at the beginning.
         # Open normal installer as fallback and hope for the best
         logging.error('Unattended install failed. Try install with wizard dialog.')
         success, code = try_wine_command(installer_cmd_basic)
@@ -278,7 +313,10 @@ def extract_by_wine(game, installer, game_lang, config=Config()):
     return ""
 
 
-def try_wine_command(command_arr):
+def try_wine_command(command_arr: list[str]) -> tuple[bool, int]:
+    """Try to run the given command and catch its exit code.
+    @return success, exitcode
+    """
     logging.debug('trying to run wine command:[%s]', shlex.join(command_arr))
     stdout, stderr, exitcode = _exe_cmd(command_arr, True)
     if exitcode not in [0]:
@@ -289,7 +327,7 @@ def try_wine_command(command_arr):
     return True, 0
 
 
-def move_and_overwrite(game, temp_dir, installed_to_tmp):
+def move_and_overwrite(game: Game, temp_dir: str, installed_to_tmp: bool) -> str:
     # Copy the game files into the correct directory
     error_message = ""
     source_dir = (os.path.join(temp_dir, "data", "noarch") if game.platform == Platform.LINUX else
@@ -308,7 +346,7 @@ def move_and_overwrite(game, temp_dir, installed_to_tmp):
     return error_message
 
 
-def copy_thumbnail(game):
+def copy_thumbnail(game: Game):
     error_message = ""
     new_thumbnail_path = os.path.join(game.install_dir, "thumbnail.jpg")
     # Copy thumbnail
@@ -321,7 +359,7 @@ def copy_thumbnail(game):
     return error_message
 
 
-def get_exec_line(game):
+def get_exec_line(game: Game) -> str:
     """Handles quoting of Exec key which is stricter than regular shell quoting
     See https://specifications.freedesktop.org/desktop-entry-spec/latest/exec-variables.html for details"""
     chars_to_quote = re.compile(r'(["$`\\])', re.ASCII)  # double-qoute, dollar and backtick
@@ -345,7 +383,10 @@ def get_exec_line(game):
     return " ".join(exe_cmd_list)
 
 
-def create_applications_file(game, override=False):
+def create_applications_file(game: Game, override: bool = False) -> str:
+    """Create a .desktop file for the given game.
+    @return: none-empty string on failure
+    """
     error_message = ""
     path_to_shortcut = os.path.join(APPLICATIONS_DIR, "{}.desktop".format(game.get_stripped_name(to_path=True)))
     # Create desktop file definition
@@ -387,7 +428,8 @@ def create_applications_file(game, override=False):
     return error_message
 
 
-def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_installers: bool, inventory=None):
+def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_installers: bool,
+                     inventory: InstallerInventory = None) -> str:
     installer_dir = os.path.dirname(installer)
     if not os.path.isdir(installer_dir):
         error_message = "No installer directory is present: {}".format(installer_dir)
@@ -418,7 +460,7 @@ def remove_installer(game: Game, installer: str, keep_installers_dir: str, keep_
     return ""
 
 
-def postinstaller(game):
+def postinstaller(game: Game) -> str:
     err_msg = ""
     postinst_script = os.path.join(game.install_dir, "support", "postinst.sh")
     if os.path.isfile(postinst_script):
@@ -429,7 +471,7 @@ def postinstaller(game):
     return err_msg
 
 
-def uninstall_game(game):
+def uninstall_game(game: Game):
     shutil.rmtree(game.install_dir, ignore_errors=True)
     if os.path.isfile(game.status_file_path):
         os.remove(game.status_file_path)
@@ -494,7 +536,7 @@ def _mv(source_dir, target_dir):
 # Others installers return "French : Français" but disallow to choose game's language before installation
 # When outputLogFile is given, the output of --list-languages is also saved in this file to have a bit of
 # additional debug information in GH tickets in case the wrong language is picked during installation
-def match_game_lang_to_installer(installer: str, language: str, outputLogFile=None):
+def match_game_lang_to_installer(installer: str, language: str, outputLogFile=None) -> str:
     if not shutil.which('innoextract'):
         return 'en-US'
 
@@ -533,7 +575,7 @@ def match_game_lang_to_installer(installer: str, language: str, outputLogFile=No
 class InstallTask:
     """Encapsulates all pieces of information needed to call 'install_game'"""
 
-    def __init__(self, result_callback: Callable[[InstallResult], None] | None = None, *args, **kwargs):
+    def __init__(self, result_callback: InstallProgressCallback | None = None, *args, **kwargs):
         """The first argument to this constructor must be a progress/result callback for the (async) installation.
         All further arguments are kept in their '*args' / '**kwargs' form to be passed to 'install_game' later.
         InstallTask itself requires the related 'Game' and 'InstallerInventory' instances passed on as well.
@@ -582,7 +624,7 @@ class InstallTask:
         raise ValueError(f"No instance of {class_type.__name__} in InstallTask constructor arguments")
 
     @staticmethod
-    def get_title_for_id(game: Game, item_id):
+    def get_title_for_id(game: Game, item_id: int):
         if game.id == item_id:
             return game.name
         else:
@@ -614,7 +656,7 @@ class InstallerQueue:
                 raise Empty
             return self.queue.popleft()
 
-    def put(self, item):
+    def put(self, item: InstallTask):
         """
         Puts the given item into the queue, if it is not contained (or in work) already.
         Returns True if the item was added, False otherwise.

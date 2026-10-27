@@ -18,7 +18,7 @@ class InstallerInventory:
         PLATFORM = "platform"
         EXECUTABLE = "exe"
 
-    def __init__(self, installer_path=None):
+    def __init__(self, installer_path: str = ""):
         self.inventory_file = None
         self.data = {}
         self.meta = {}
@@ -26,7 +26,7 @@ class InstallerInventory:
             self.set_path_once(installer_path)
 
     @staticmethod
-    def from_file_system(installer_executable_path, files_to_check: list[str] | None = None):
+    def from_file_system(installer_executable_path: str, files_to_check: list[str] | None = None):
         """
         Helper utility to build an instance of InstallerInventory from files in the same directory
         as the file given with 'installer_executable_path'.
@@ -60,7 +60,7 @@ class InstallerInventory:
         return inventory
 
     @staticmethod
-    def size_of(file):
+    def size_of(file: str) -> int:
         return os.stat(file).st_size
 
     @property
@@ -76,11 +76,11 @@ class InstallerInventory:
         self.meta[InstallerInventory.MetaKey.EXECUTABLE] = new_value
 
     @property
-    def item_id(self):
+    def item_id(self) -> int:
         return self.meta.get(InstallerInventory.MetaKey.ID, 0)
 
     @item_id.setter
-    def item_id(self, new_value) -> None:
+    def item_id(self, new_value: int) -> None:
         self.meta[InstallerInventory.MetaKey.ID] = new_value
 
     @property
@@ -94,7 +94,7 @@ class InstallerInventory:
     def target_platform(self, new_value: str) -> None:
         self.meta[InstallerInventory.MetaKey.PLATFORM] = new_value
 
-    def set_path_once(self, installer_path=None):
+    def set_path_once(self, installer_path: str = ""):
         """Encapsulates a batch of one-time initialisations like setting directory and inventory file names.
         The initialisation also tries to directly load the contents of the inventory file via `load` (if existing).
         This only happens when the name of the inventory file wasn't created yet AND a none-empty path was given.
@@ -168,10 +168,10 @@ class InstallerInventory:
         if executable:
             self.meta[InstallerInventory.MetaKey.EXECUTABLE] = executable
 
-    def has_checksum(self, file_name):
+    def has_checksum(self, file_name: str) -> bool:
         return not self.data.get(file_name, {}).get("md5", None) is None
 
-    def verify_checksum(self, file_name, actual_checksum):
+    def verify_checksum(self, file_name: str, actual_checksum: str) -> bool:
         file_info = self.data.get(file_name)
         recorded_checksum = file_info.get("md5", "")
         if recorded_checksum == actual_checksum:
@@ -180,13 +180,13 @@ class InstallerInventory:
             file_info["md5"] = False
             return False
 
-    def get_expected_total_size(self):
+    def get_expected_total_size(self) -> int:
         total_size = 0
         for file_data in self.data.values():
             total_size += file_data.get('size', 0)
         return total_size
 
-    def is_complete(self):
+    def is_complete(self) -> bool:
         self.load()
         if not self.data:
             return False
@@ -198,25 +198,25 @@ class InstallerInventory:
 
         return True
 
-    def as_keep_files_list(self):
+    def as_keep_files_list(self) -> list[str]:
         """Returns a list of all files contained in this inventory INCLUDING the inventory itself"""
         files = self.contained_files()
         files.append(self.inventory_file)
         return files
 
-    def contained_files(self):
+    def contained_files(self) -> list[str]:
         files = []
         for f in self.data.keys():
             files.append(os.path.join(self.directory, f))
         return files
 
-    def delete_files(self):
+    def delete_files(self) -> None:
         """delete files which are part of this inventory"""
         file_list = self.as_keep_files_list()
         file_list.append(self.directory)
         safe_delete(file_list)
 
-    def delete_others(self):
+    def delete_others(self) -> None:
         """
         Delete files in the same directory, which are NOT part of this inventory.
         Used to remove previous versions after successful install.
@@ -230,7 +230,7 @@ class InstallerInventory:
 
         safe_delete(delete_list)
 
-    def delete_invalid_files(self):
+    def delete_invalid_files(self) -> None:
         """
         Delete files of this inventory which are flagged as having an invalid checksum.
         Flagging must have happened by calling IntallerInventory.verify_checksum.
@@ -243,7 +243,7 @@ class InstallerInventory:
 
         safe_delete(delete_list)
 
-    def __detect_platform_type(self, files=[]):
+    def __detect_platform_type(self, files=[]) -> Platform | None:
         """Go over the list of files in the installer and determine OS based on file name endings.
         @param files: optional. Uses the files contained in the installer by default.
                Can be used in situations where the installer itself doesn't contain any files (yet)
@@ -257,7 +257,7 @@ class InstallerInventory:
 
         return None
 
-    def __search_executable(self, files=[]):
+    def __search_executable(self, files=[]) -> str | None:
         """Search the actual installer executable in the list of inventory files.
         @param files: optional. Uses the files contained in the installer by default.
                Can be used in situations where the installer itself doesn't contain any files (yet).

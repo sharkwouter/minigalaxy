@@ -20,7 +20,7 @@ class InstallResultType(Enum):
 
 class InstallResult:
 
-    def __init__(self, install_id, result_type: InstallResultType, reason, details=None):
+    def __init__(self, install_id: int, result_type: InstallResultType, reason: str, details=None):
         """Data class that will be passed to result_callback of InstallTask
         reason is a type-dependent string:
         - INSTALL_START: game name
@@ -57,7 +57,7 @@ class InstallResult:
 
 class InstallException(Exception):
 
-    def __init__(self, message, fail_type=InstallResultType.FAILURE, data=None):
+    def __init__(self, message: str, fail_type=InstallResultType.FAILURE, data=None):
         self.fail_type = fail_type
         self.message = message
         self.data = data

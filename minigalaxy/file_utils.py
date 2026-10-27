@@ -9,7 +9,7 @@ import os
 from minigalaxy.paths import CACHE_DIR
 
 
-def get_available_disk_space(location):
+def get_available_disk_space(location: str) -> int:
     """Check disk space available to the user. This method uses the absolute path so
     symlinks to disks with sufficient space are correctly measured. Note this is
     a linux-specific command."""
@@ -19,7 +19,7 @@ def get_available_disk_space(location):
     return available_diskspace
 
 
-def make_tmp_dir(name, temp_type="tmp"):
+def make_tmp_dir(name: str, temp_type: str = "tmp") -> str:
     """Create a temporary empty directory.
     Directory will be created as subdirectory 'CACHE_DIR/temp_type/name'.
     @return: directory path on success. Raises error otherwise.
@@ -32,7 +32,7 @@ def make_tmp_dir(name, temp_type="tmp"):
     return temp_dir
 
 
-def safe_delete(file_list):
+def safe_delete(file_list: list[str]) -> None:
     """Tries to delete the given files without throwing exceptions where possible."""
     logging.info("Trying to safely delete: %s", file_list)
     for f in file_list:
@@ -42,11 +42,11 @@ def safe_delete(file_list):
             os.remove(f)
 
 
-def is_empty_dir(path):
+def is_empty_dir(path: str) -> bool:
     return os.path.isdir(path) and not os.listdir(path)
 
 
-def remove_empty_dirs_upwards(start_dir, stop_dirs):
+def remove_empty_dirs_upwards(start_dir: str, stop_dirs: str) -> None:
     """Starting from a deeply nested empty directory, remove parents when their only child was one empty directory."""
     file_dir = start_dir
     while is_empty_dir(file_dir):
