@@ -111,7 +111,7 @@ class Library(Gtk.Viewport):
     def __load_tile_states(self):
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
-            tile.reload_state(False)
+            tile.reload_state(check_for_upates=False)
 
     def filter_library(self, widget: Gtk.Widget = None):
         if isinstance(widget, Gtk.Switch):

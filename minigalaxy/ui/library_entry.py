@@ -665,7 +665,8 @@ class LibraryEntry:
             return
         if self.game.is_installed():
             self.update_to_state(State.INSTALLED)
-            self.run_update_check()
+            if check_for_updates:
+                self.run_update_check()
         elif self.get_keep_executable_path():
             self.update_to_state(State.INSTALLABLE)
         else:
