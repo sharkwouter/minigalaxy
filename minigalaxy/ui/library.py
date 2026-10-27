@@ -101,8 +101,9 @@ class Library(Gtk.Viewport):
 
         # make a copy of self.games to guard against concurrent removals sabotaging chunks
         games_to_add = [*self.games]
+        number_games_to_add = len(games_to_add)
         index = 0
-        while index < len(games_to_add):
+        while index < number_games_to_add:
             games_chunk = games_to_add[index:index+step_width]
             GLib.idle_add(self.__create_gametiles, games_chunk)
             index += step_width
