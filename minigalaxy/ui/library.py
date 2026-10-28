@@ -101,8 +101,9 @@ class Library(Gtk.Viewport):
 
         # make a copy of self.games to guard against concurrent removals sabotaging chunks
         games_to_add = [*self.games]
+        number_games_to_add = len(games_to_add)
         index = 0
-        while index < len(games_to_add):
+        while index < number_games_to_add:
             games_chunk = games_to_add[index:index+step_width]
             GLib.idle_add(self.__create_gametiles, games_chunk)
             index += step_width
@@ -111,7 +112,7 @@ class Library(Gtk.Viewport):
     def __load_tile_states(self):
         for child in self.flowbox.get_children():
             tile = child.get_children()[0]
-            tile.reload_state(False)
+            tile.reload_state(check_for_upates=False)
 
     def filter_library(self, widget: Gtk.Widget = None):
         if isinstance(widget, Gtk.Switch):
