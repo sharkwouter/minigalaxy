@@ -16,7 +16,7 @@
         <property name="valign">start</property>
         <property name="icon-name">emblem-synchronizing</property>
         <property name="icon_size">2</property>
-        <property name="tooltip-text" translatable="yes">An update available for this game.</property>
+        <property name="tooltip-text" translatable="yes">An update is available for this game.</property>
       </object>
       <packing>
         <property name="expand">False</property>
