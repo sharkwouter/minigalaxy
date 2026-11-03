@@ -71,9 +71,7 @@ class LibraryEntry:
     def init_ui_elements(self):
         self.icon_bar = GameIconBar(self, self.game)
         self.platform_icon_bar_placeholder.pack_start(self.icon_bar, False, False, 0)
-
         self.image.set_tooltip_text(self.game.name)
-
         self.reload_state(check_for_updates=False)
         self.load_thumbnail()
 
@@ -386,11 +384,6 @@ class LibraryEntry:
     def __install_update(self, inventory: InstallerInventory):
 
         def on_success():
-            image_tooltip = self.game.name
-            if self.game.platform == Platform.WINDOWS:
-                image_tooltip += " (Wine)"
-
-            self.__set_image_tooltip(image_tooltip)
             # need to only check and update dlcs which are installed
             for dlc in self.dlc_dict.values():
                 dlc.refresh_download_info()
@@ -407,7 +400,7 @@ class LibraryEntry:
         * changing state of the UI element accordingly
         * showing an error message on failure
         * this function only handles 'final' states of an installation, dealing with progress reports
-          is delegated to __handle_install_state_update
+         is delegated to __handle_install_state_update
         """
 
         item_name = dlc_title if dlc_title else self.game.name
@@ -643,9 +636,6 @@ class LibraryEntry:
         GLib.idle_add(self.image.set_from_file, thumbnail_file)
         return True
 
-    def __set_image_tooltip(self, text):
-        GLib.idle_add(self.image.set_tooltip_text, text)
-
     '''----- END UI REPRESENTATION UTILITIES -----'''
 
     '''----- STATE HANDLING -----'''
@@ -767,9 +757,6 @@ class LibraryEntry:
         self.set_main_button(True, _("Play"))
 
         self.update_visible_widgets(self.menu_button_update, self.menu_button_uninstall, info_buttons=True)
-
-        tooltip_text = "{} (update{})".format(self.game.name, ", Wine" if self.game.platform == Platform.WINDOWS else "")
-        self.image.set_tooltip_text(tooltip_text)
 
     def state_updating(self):
         self.set_main_button(False, _("Updating…"))
