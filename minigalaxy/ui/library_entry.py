@@ -636,9 +636,6 @@ class LibraryEntry:
         GLib.idle_add(self.image.set_from_file, thumbnail_file)
         return True
 
-    def __set_image_tooltip(self, text):
-        GLib.idle_add(self.image.set_tooltip_text, text)
-
     '''----- END UI REPRESENTATION UTILITIES -----'''
 
     '''----- STATE HANDLING -----'''
